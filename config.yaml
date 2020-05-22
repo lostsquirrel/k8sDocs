@@ -1,0 +1,12 @@
+baseURL: "http://example.org/"
+languageCode: "zh-cn"
+title: "K8S 文档笔记"
+defaultContentLanguage: "zh"
+theme: techdoc
+hascjklanguage: true
+metaDataFormat: yaml
+params:
+  description: test
+  version: 0.0.1
+  title: "K8S 文档笔记"
+  menu_style: slide-menu
