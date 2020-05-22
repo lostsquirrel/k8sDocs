@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>http://example.org/concetps/overview/00_what_is_k8s/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/concetps/overview/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/hello_world/</loc>
+    <lastmod>2017-10-17T14:00:45+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/concetps/cluster-architecture/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/concetps/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/concetps/containers/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/tasks/configure-pod-container/</loc>
+    <lastmod>2020-05-22T10:52:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/tasks/</loc>
+    <lastmod>2020-05-22T10:52:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/</loc>
+    <lastmod>2020-05-22T10:52:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/</loc>
+    <lastmod>2019-10-26T15:26:15+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/about/</loc>
+    <lastmod>2014-04-09T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://example.org/tasks3/configure-pod-container/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/tasks4/configure-pod-container/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/tasks2/configure-pod-container/test21/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/categories/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/tasks2/configure-pod-container/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/tags/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/tasks2/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/tasks3/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/tasks4/</loc>
+  </url>
+  
+</urlset>
