@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>k8s 是什么 - K8S 文档笔记</title>
+<meta name="description" content="test">
+<meta name="generator" content="Hugo 0.68.3" />
+<link href="http://example.org/index.xml" rel="alternate" type="application/rss+xml">
+<link rel="canonical" href="http://example.org/2-concetps/00-overview/00_what_is_k8s/">
+<link rel="stylesheet" href="http://example.org/css/theme.min.css">
+<script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+<link rel="stylesheet" href="http://example.org/css/chroma.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.easing@1.4.1/jquery.easing.min.js"></script>
+<script src="http://example.org/js/bundle.js"></script><style>
+:root {}
+</style>
+<meta property="og:title" content="k8s 是什么" />
+<meta property="og:description" content="k8s 是一个可扩展，可移植的开源平台，用于管理容器化的工作负载和服务，帮助实现声明式配置与自动化，有一个区大且快速发展的生态系统 源自Google" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/2-concetps/00-overview/00_what_is_k8s/" />
+<meta property="og:site_name" content="K8S 文档笔记" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="k8s 是什么"/>
+<meta name="twitter:description" content="k8s 是一个可扩展，可移植的开源平台，用于管理容器化的工作负载和服务，帮助实现声明式配置与自动化，有一个区大且快速发展的生态系统 源自Google"/>
+<meta itemprop="name" content="k8s 是什么">
+<meta itemprop="description" content="k8s 是一个可扩展，可移植的开源平台，用于管理容器化的工作负载和服务，帮助实现声明式配置与自动化，有一个区大且快速发展的生态系统 源自Google">
+
+<meta itemprop="wordCount" content="1697">
+
+
+
+<meta itemprop="keywords" content="" /></head>
+<body><div class="container"><header>
+<h1>K8S 文档笔记</h1>
+
+ <span class="version">Version 0.0.1</span>
+
+<p class="description">test</p>
+
+</header>
+
+<div class="content-container">
+<main><h1>k8s 是什么</h1>
+<p>k8s 是一个可扩展，可移植的开源平台，用于管理容器化的工作负载和服务，帮助实现声明式配置与自动化，有一个区大且快速发展的生态系统
+源自Google 15年的生产经验</p>
+<h2 id="部署方式演进">部署方式演进</h2>
+<p><img src="https://d33wubrfki0l68.cloudfront.net/26a177ede4d7b032362289c6fccd448fc4a91174/eb693/images/docs/container_evolution.svg" alt="deployment"> <a href="https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/">来源 kubernetes.io</a></p>
+<h3 id="传统部署时代">传统部署时代</h3>
+<p>应用直接部署在物理服务器上，无法设置资源限制，因而可能引起资源分配问题
+如果每个应用独立部署在物理机上，资源利用不充分，维护大量物理机费用高昂</p>
+<h3 id="虚拟化部署">虚拟化部署</h3>
+<p>通过虚拟机方式实现资源隔离和应用的扩展
+虚拟机会在其自己的操作系统运行一个机器所有的组件</p>
+<h3 id="容器化部署">容器化部署</h3>
+<p>容器与虚拟机类似，但有更低的隔离级别，应用之间共享操作系统，因此容器被认为更轻量，与虚拟机类似，容器有独立的文件系统，CPU,内存，进程空间等。些两者都能实现与底层基础设施解耦，因此可以在不同的操作系统与云环境之间移植
+容器变得流行，因为它提供了以下额外的优势</p>
+<ul>
+<li>相较与虚拟机镜像创建更高效，更快捷的应用创建，更宽松的部署</li>
+<li>持续开发，集成，部署能通过镜像构建变得快速可靠，部署回滚也因为镜像的不可变性而变得快速和容易</li>
+<li>分离 开发和运维的关注点 在构建和发布时创建镜像而不是在部署。实现了应用与基础设施的解耦</li>
+<li>不止可以观测到系统级的信息和指数，还可以观测到应用的健康状态及其它信息</li>
+<li>实现 开发，测试，生产各环境的一致性。 可以在开发的笔记本和云运营上的环境上运行同样的镜像</li>
+<li>实现云环境和各种操作系统之间的可移植， 可运行在 Ubuntu, RHEL, CoreOS, on-premises,主流云环境，其它环境</li>
+<li>应用指数管理： 将抽像级别在虚拟操作系统运行应用提升到在一个运行在逻辑资源上的操作系统上运行应用</li>
+<li>松耦合，分布式，灵活，开放的微服务，应用被拆分为较小，独立，可以动态部署和管理。不是运行在一个专用大机器来运行一个单体应用</li>
+<li>资源隔离： 可预期的应用性能</li>
+<li>资源利用率: 高效充分</li>
+</ul>
+<h2 id="为啥需要-k8s它又能做啥">为啥需要 k8s，它又能做啥</h2>
+<p>以上可知，应用容器化是个好东西，但在生产环境中,需要管理容器，并保证应用一直可用。 比如当一个容器挂掉以后，需要要马上再启动一个。如果这些都由一个系统来搞定，是不是管理容器就更容易了。而 k8s 就是为些而生的。 k8s 提供了运行弹性分布式系统的框架。提供应用的扩展和容灾等如下功能：</p>
+<ul>
+<li>
+<p>服务发现和负载均衡
+在 k8s 中可以通过 DNS 名称或 IP 地址来访问容器， 如果流量较高可能负载到多个容器上</p>
+</li>
+<li>
+<p>存储编排
+k8s 允许你自动挂载你选择的存储系统，比如 本地存储或公有云存储</p>
+</li>
+<li>
+<p>自动化更新或回滚
+由你来定义部署容器的状态，k8s 通过控制器来实现这些状态</p>
+</li>
+<li>
+<p>自动化调度
+将能够运行对应容器的节点加入 k8s 集群， 为容器定义需要的 CPU和内存资源数。k8s会把容器调度到合适的节点上，并充分利用节点资源</p>
+</li>
+<li>
+<p>自愈
+k8s 能重启替换挂掉的容器，根据配置检测不响应的容器，不让未就绪的容器进度流量负载列表</p>
+</li>
+<li>
+<p>敏感数据和配置管理
+通过配置管理敏感数据，而不需要将敏感数据打入到容器镜像中</p>
+</li>
+</ul>
+<h2 id="k8s-不xxx">k8s 不XXX</h2>
+<ul>
+<li>
+<p>k8s 不限制应用的类型，k8s 致力于支持各种类型的工作负载，包括 无状态应用，有状态应用，数据处理工作，如果一个应用可以在容器中运行，就可以在k8s上运行</p>
+</li>
+<li>
+<p>k8s 不发布源码，不构建应用。 可由组织文化和技术偏好决定CI/CD的工作流</p>
+</li>
+<li>
+<p>k8s 不提供应用层的服务，比如 中间件(eg: 消息总线)，数据处理框架(eg: Spark), 数据库(eg: mysql), 缓存服务，集群存储系统(eg: Ceph) 等作为其内置服务， 这些组件可以直接运行在 k8s 上或者通过 k8s 可移植机制(Open Service Broker)让k8s 集群中的应用访问</p>
+</li>
+<li>
+<p>k8s 不指定 日志，监控，报警解决方案，只提供集成方式，和收集导出相关metrics的机制</p>
+</li>
+<li>
+<p>k8s 不提供也不要求一种配置 语言/系统(e.g. jsonnet)，只提供任意形式的声明式规范的声明式的API?</p>
+</li>
+<li>
+<p>k8s 不提供也不接收？ 任何 综合机器配置，维护，管理，自愈系统
+k8s 也不仅仅是一个编排系统，实事上它消除了对编排的需求。 编排的技术定义是执行一个定义的工作流：先做A,然后B,再然后C. 相反的，k8s由一组独立的，可组合的管理理进程组成，它们的任务就是保证当前的状态与期望的状态是一致的。不关心怎么从A到C. 不需要中心化的控制。 这样可以使系统更易用，更强大，健壮，有更好的弹性和扩展性</p>
+</li>
+</ul>
+<h2 id="kubernetesk8s的字面意思">Kubernetes(K8s),的字面意思</h2>
+<p>源自希腊词，意思是舵手或引向员，是最高的管理和控制， k8s 是缩写</p>
+<h2 id="参考资料">参考资料</h2>
+<ol>
+<li><a href="https://research.google.com/pubs/pub43438.html">https://research.google.com/pubs/pub43438.html</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/">https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/</a></li>
+</ol>
+<div class="edit-meta">
+
+<br></div><nav class="pagination"><a class="nav nav-prev" href="http://example.org/2-concetps/00-overview/" title="Overview"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - Overview</a>
+<a class="nav nav-next" href="http://example.org/2-concetps/01-cluster-architecture/" title="Cluster Architecture">Next - Cluster Architecture <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+</nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
+</footer>
+</main><div class="sidebar">
+
+<nav class="slide-menu">
+<ul>
+<li class=""><a href="http://example.org/">Home</a></li>
+
+<li class="parent has-sub-menu"><a href="http://example.org/2-concetps/">Concepts<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+
+<li class="parent has-sub-menu"><a href="http://example.org/2-concetps/00-overview/">Overview<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+<li class="active"><a href="http://example.org/2-concetps/00-overview/00_what_is_k8s/">k8s 是什么</a></li>
+</ul>
+  
+</li>
+
+<li class=""><a href="http://example.org/2-concetps/01-cluster-architecture/">Cluster Architecture</a>
+  
+</li>
+
+<li class=""><a href="http://example.org/2-concetps/02-containers/">Containers</a>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="http://example.org/3-tasks/">3-tasks<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="http://example.org/3-tasks/02-configure-pod-container/">Configure Pod Containters<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="http://example.org/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
+<li class=""><a href="http://example.org/3-tasks/02-configure-pod-container/test21/">21</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="http://example.org/4-tutorials/">4-tutorials<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="http://example.org/4-tutorials/00-hello-minikube/">Hello Minikube</a>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="http://example.org/5-reference/">5-references<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="http://example.org/5-reference/00-glossary/">Standardized Glossary</a>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="http://example.org/1-setup/">Getting started<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="http://example.org/1-setup/00-release/">Release notes and version skew</a>
+  
+</li>
+</ul>
+  
+</li>
+</ul>
+</nav>
+
+
+
+<div class="sidebar-footer"></div>
+</div>
+</div><a href="#" id="backtothetop-fixed" class="backtothetop"
+ data-backtothetop-duration="600"
+ data-backtothetop-easing="easeOutQuart"
+ data-backtothetop-fixed-fadeIn="1000"
+ data-backtothetop-fixed-fadeOut="1000"
+ data-backtothetop-fixed-bottom="10"
+ data-backtothetop-fixed-right="20">
+<span class="fa-layers fa-fw">
+<i class="fas fa-circle"></i>
+<i class="fas fa-arrow-circle-up"></i>
+</span></a>
+</div>
+</body>
+</html>

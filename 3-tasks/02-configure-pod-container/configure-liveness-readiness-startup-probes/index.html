@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>存活(liveness), 就绪(readiness), 启动(startup)探针配置 - K8S 文档笔记</title>
+<meta name="description" content="test">
+<meta name="generator" content="Hugo 0.68.3" />
+<link href="http://example.org/index.xml" rel="alternate" type="application/rss+xml">
+<link rel="canonical" href="http://example.org/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/">
+<link rel="stylesheet" href="http://example.org/css/theme.min.css">
+<script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+<link rel="stylesheet" href="http://example.org/css/chroma.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.easing@1.4.1/jquery.easing.min.js"></script>
+<script src="http://example.org/js/bundle.js"></script><style>
+:root {}
+</style>
+<meta property="og:title" content="存活(liveness), 就绪(readiness), 启动(startup)探针配置" />
+<meta property="og:description" content="本文介结怎么配置容器的 存活, 就绪, 启动探针配置 kubelet 通过存活探针的结果来决定何时应该重启容器。例如，可以发现一个应用在运行但不能继续干活比如发生" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/" />
+<meta property="article:published_time" content="2020-05-22T10:52:35+08:00" />
+<meta property="article:modified_time" content="2020-05-22T10:52:35+08:00" /><meta property="og:site_name" content="K8S 文档笔记" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="存活(liveness), 就绪(readiness), 启动(startup)探针配置"/>
+<meta name="twitter:description" content="本文介结怎么配置容器的 存活, 就绪, 启动探针配置 kubelet 通过存活探针的结果来决定何时应该重启容器。例如，可以发现一个应用在运行但不能继续干活比如发生"/>
+<meta itemprop="name" content="存活(liveness), 就绪(readiness), 启动(startup)探针配置">
+<meta itemprop="description" content="本文介结怎么配置容器的 存活, 就绪, 启动探针配置 kubelet 通过存活探针的结果来决定何时应该重启容器。例如，可以发现一个应用在运行但不能继续干活比如发生">
+<meta itemprop="datePublished" content="2020-05-22T10:52:35&#43;08:00" />
+<meta itemprop="dateModified" content="2020-05-22T10:52:35&#43;08:00" />
+<meta itemprop="wordCount" content="2558">
+
+
+
+<meta itemprop="keywords" content="" /></head>
+<body><div class="container"><header>
+<h1>K8S 文档笔记</h1>
+
+ <span class="version">Version 0.0.1</span>
+
+<p class="description">test</p>
+
+</header>
+
+<div class="content-container">
+<main><h1>存活(liveness), 就绪(readiness), 启动(startup)探针配置</h1>
+<p>本文介结怎么配置容器的 存活, 就绪, 启动探针配置</p>
+<p>kubelet 通过存活探针的结果来决定何时应该重启容器。例如，可以发现一个应用在运行但不能继续干活比如发生死锁，在这种情况下，如果不是有bug 那重启便可以使应用恢复，以提高应用的可用性。</p>
+<p>kubelet 通过就绪探针的结果来决定何时容器可以提供服务。当一个Pod所有的容器都就绪后才认为其就绪。就绪探针的一个应用场景为Pod 作为 Service 后台时，当 Pod 不是就绪状态时，会从 Service 的负载均衡列表中移除</p>
+<p>kubelet 通过启动探针的结果为确定应用容器的否启动。当配置启动探针时， 存活探针和就绪探针会在启动探针成功后才开始工作。以保证这些探针不会影响应用正常启动。特别针对启动较慢的应用，防止其在启动之前因为存活探针导致重启</p>
+<h2 id="基于命令的存活探针实验一">基于命令的存活探针[实验一]</h2>
+<p>大多数应用长时间运行后最终都会因各种原因而挂掉，不得不重启。k8s 提供存活探针来发现和补救这个问题</p>
+<ul>
+<li>
+<p>实验镜像 <code>k8s.gcr.io/busybox</code> (可以是其它任意常见基础镜像)</p>
+</li>
+<li>
+<p>实验配置(<code>exec-liveness.yaml</code>)</p>
+</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Pod
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">test</span>: liveness
+  <span style="color:#66d9ef">name</span>: liveness-exec
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">containers</span>:
+  - <span style="color:#66d9ef">name</span>: liveness
+    <span style="color:#66d9ef">image</span>: busybox
+    <span style="color:#66d9ef">args</span>:
+    - /bin/sh
+    - -c
+    - touch /tmp/healthy; sleep <span style="color:#ae81ff">30</span>; rm -rf /tmp/healthy; sleep <span style="color:#ae81ff">600</span>
+    <span style="color:#66d9ef">livenessProbe</span>:
+      <span style="color:#66d9ef">exec</span>:
+        <span style="color:#66d9ef">command</span>:
+        - cat
+        - /tmp/healthy
+      <span style="color:#66d9ef">initialDelaySeconds</span>: <span style="color:#ae81ff">5</span>
+      <span style="color:#66d9ef">periodSeconds</span>: <span style="color:#ae81ff">5</span>
+</code></pre></div><ul>
+<li>
+<p>配置说明</p>
+<ul>
+<li><code>periodSeconds</code> kubelet 会每5秒执行一次存活探针</li>
+<li><code>initialDelaySeconds</code> kubelet 应该在容器启动5秒后，执行第一次存活探针</li>
+<li><code>cat /tmp/healthy</code> kubelet 在目标容器中执行该命令作为探针，如果命令成功返回0，则认为容器存活，否则 kubelet 认为容器已经不能正常工作，会杀死并重启该容器</li>
+<li><code>/bin/sh -c &quot;touch /tmp/healthy; sleep 30; rm -rf /tmp/healthy; sleep 600&quot;</code> 容器启动30秒内，<code>cat /tmp/healthy</code> 返回成功， 之后 <code>cat /tmp/healthy</code> 返回失败</li>
+</ul>
+</li>
+</ul>
+<h3 id="操作步骤">操作步骤</h3>
+<ul>
+<li>开启容器</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl apply -f exec-liveness.yaml
+</code></pre></div><ul>
+<li>查看容器状态</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl get pod liveness-exec
+</code></pre></div><p>查看当前的重启次数</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl describe pod liveness-exec
+</code></pre></div><p>30 秒内结果类似</p>
+<pre><code>FirstSeen    LastSeen    Count   From            SubobjectPath           Type        Reason      Message
+--------- --------    -----   ----            -------------           --------    ------      -------
+24s       24s     1   {default-scheduler }                    Normal      Scheduled   Successfully assigned liveness-exec to worker0
+23s       23s     1   {kubelet worker0}   spec.containers{liveness}   Normal      Pulling     pulling image &quot;k8s.gcr.io/busybox&quot;
+23s       23s     1   {kubelet worker0}   spec.containers{liveness}   Normal      Pulled      Successfully pulled image &quot;k8s.gcr.io/busybox&quot;
+23s       23s     1   {kubelet worker0}   spec.containers{liveness}   Normal      Created     Created container with docker id 86849c15382e; Security:[seccomp=unconfined]
+23s       23s     1   {kubelet worker0}   spec.containers{liveness}   Normal      Started     Started container with docker id 86849c15382e
+</code></pre><p>30 秒后</p>
+<pre><code>FirstSeen LastSeen    Count   From            SubobjectPath           Type        Reason      Message
+--------- --------    -----   ----            -------------           --------    ------      -------
+37s       37s     1   {default-scheduler }                    Normal      Scheduled   Successfully assigned liveness-exec to worker0
+36s       36s     1   {kubelet worker0}   spec.containers{liveness}   Normal      Pulling     pulling image &quot;k8s.gcr.io/busybox&quot;
+36s       36s     1   {kubelet worker0}   spec.containers{liveness}   Normal      Pulled      Successfully pulled image &quot;k8s.gcr.io/busybox&quot;
+36s       36s     1   {kubelet worker0}   spec.containers{liveness}   Normal      Created     Created container with docker id 86849c15382e; Security:[seccomp=unconfined]
+36s       36s     1   {kubelet worker0}   spec.containers{liveness}   Normal      Started     Started container with docker id 86849c15382e
+2s        2s      1   {kubelet worker0}   spec.containers{liveness}   Warning     Unhealthy   Liveness probe failed: cat: can't open '/tmp/healthy': No such file or directory
+</code></pre><p>再过 30 秒</p>
+<p>执行 <code>kubectl get pod liveness-exec</code>， 输出类似</p>
+<pre><code>NAME            READY     STATUS    RESTARTS   AGE
+liveness-exec   1/1       Running   1          1m
+</code></pre><p>注意查看重启次数的增加</p>
+<h2 id="基于http请求的存活探针实验二">基于HTTP请求的存活探针[实验二]</h2>
+<p>另一种存活探针基于 HTTP GET 请求来实现</p>
+<ul>
+<li>
+<p>实验镜像 <code>k8s.gcr.io/liveness</code>(墙内请用 <code>registry.cn-hangzhou.aliyuncs.com/lisong/liveness</code>)</p>
+</li>
+<li>
+<p>实验配置(<code>http-liveness.yaml</code>)</p>
+</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Pod
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">test</span>: liveness
+  <span style="color:#66d9ef">name</span>: liveness-http
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">containers</span>:
+  - <span style="color:#66d9ef">name</span>: liveness
+    <span style="color:#66d9ef">image</span>: k8s.gcr.io/liveness
+    <span style="color:#66d9ef">args</span>:
+    - /server
+    <span style="color:#66d9ef">livenessProbe</span>:
+      <span style="color:#66d9ef">httpGet</span>:
+        <span style="color:#66d9ef">path</span>: /healthz
+        <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">8080</span>
+        <span style="color:#66d9ef">httpHeaders</span>:
+        - <span style="color:#66d9ef">name</span>: Custom-Header
+          <span style="color:#66d9ef">value</span>: Awesome
+      <span style="color:#66d9ef">initialDelaySeconds</span>: <span style="color:#ae81ff">3</span>
+      <span style="color:#66d9ef">periodSeconds</span>: <span style="color:#ae81ff">3</span>
+</code></pre></div><ul>
+<li>
+<p>配置说明</p>
+<ul>
+<li><code>periodSeconds</code> kubelet 会每3秒执行一次存活探针</li>
+<li><code>initialDelaySeconds</code> kubelet 应该在容器启动3秒后，执行第一次存活探针</li>
+<li><code>port: 8080</code> kubelet HTTP请求目标端口为 <code>8080</code></li>
+<li><code>path: /healthz</code> kubelet HTTP请求目标路径为 <code>8080</code></li>
+<li>kubelet 基于HTTP响应码作为探测依据，若响应码 大于等于<code>200</code>且小于<code>400</code>认为成功，其它失败</li>
+</ul>
+</li>
+<li>
+<p>实验容器关键代码(<code>server.go</code>)</p>
+</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HandleFunc</span>(<span style="color:#e6db74">&#34;/healthz&#34;</span>, <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">w</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ResponseWriter</span>, <span style="color:#a6e22e">r</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Request</span>) {
+    <span style="color:#a6e22e">duration</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Now</span>().<span style="color:#a6e22e">Sub</span>(<span style="color:#a6e22e">started</span>)
+    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">duration</span>.<span style="color:#a6e22e">Seconds</span>() &gt; <span style="color:#ae81ff">10</span> {
+        <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">WriteHeader</span>(<span style="color:#ae81ff">500</span>)
+        <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">Write</span>([]byte(<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;error: %v&#34;</span>, <span style="color:#a6e22e">duration</span>.<span style="color:#a6e22e">Seconds</span>())))
+    } <span style="color:#66d9ef">else</span> {
+        <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">WriteHeader</span>(<span style="color:#ae81ff">200</span>)
+        <span style="color:#a6e22e">w</span>.<span style="color:#a6e22e">Write</span>([]byte(<span style="color:#e6db74">&#34;ok&#34;</span>))
+    }
+})
+
+</code></pre></div><p>代码说明，在容器开启后 <code>10</code>秒内返回响应码 <code>200</code>(成功)，之后返回响应码 <code>500</code>(错误)</p>
+<h3 id="操作步骤-1">操作步骤</h3>
+<ul>
+<li>开启</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl apply -f http-liveness.yaml
+</code></pre></div><ul>
+<li>查看容器状态</li>
+</ul>
+<p>开启后马上查看重启次数</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl get pod liveness-http
+</code></pre></div><p>在开启 10秒内查看容器信息</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl describe pod liveness-http
+</code></pre></div><p>在开启 10秒后再次查看容器信息</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl describe pod liveness-http
+</code></pre></div><p>在开启 10秒后再次查看容器重启次数</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl get pod liveness-http
+</code></pre></div><h2 id="基于-tcp-的存活探针和就绪探针实验三">基于 TCP 的存活探针和就绪探针[实验三]</h2>
+<ul>
+<li>
+<p>实验镜像 <code>k8s.gcr.io/goproxy:0.1</code> (墙内请用 <code>registry.cn-hangzhou.aliyuncs.com/lisong/goproxy:0.1</code>)</p>
+</li>
+<li>
+<p>实验配置(<code>tcp-liveness-readiness.yaml</code>)</p>
+</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Pod
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: goproxy
+  <span style="color:#66d9ef">labels</span>:
+    <span style="color:#66d9ef">app</span>: goproxy
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">containers</span>:
+  - <span style="color:#66d9ef">name</span>: goproxy
+    <span style="color:#66d9ef">image</span>: k8s.gcr.io/goproxy:<span style="color:#ae81ff">0.1</span>
+    <span style="color:#66d9ef">ports</span>:
+    - <span style="color:#66d9ef">containerPort</span>: <span style="color:#ae81ff">8080</span>
+    <span style="color:#66d9ef">readinessProbe</span>:
+      <span style="color:#66d9ef">tcpSocket</span>:
+        <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">8080</span>
+      <span style="color:#66d9ef">initialDelaySeconds</span>: <span style="color:#ae81ff">5</span>
+      <span style="color:#66d9ef">periodSeconds</span>: <span style="color:#ae81ff">10</span>
+    <span style="color:#66d9ef">livenessProbe</span>:
+      <span style="color:#66d9ef">tcpSocket</span>:
+        <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">8080</span>
+      <span style="color:#66d9ef">initialDelaySeconds</span>: <span style="color:#ae81ff">15</span>
+      <span style="color:#66d9ef">periodSeconds</span>: <span style="color:#ae81ff">20</span>
+</code></pre></div><ul>
+<li>
+<p>配置说明</p>
+<p>由配置可见TCP探针与HTTP探针类似，且本练习中同时配置了存活探针和就绪探针。</p>
+<ul>
+<li><code>readinessProbe.initialDelaySeconds</code> 就绪探针于容器开启5秒后开始执行</li>
+<li><code>readinessProbe.periodSeconds</code> 就绪探针每10秒执行一次</li>
+<li><code>livenessProbe.initialDelaySeconds</code> kubelet 应该在容器启动15秒后，执行第一次存活探针</li>
+<li><code>livenessProbe.periodSeconds</code> kubelet 会每20秒执行一次存活探针</li>
+</ul>
+</li>
+</ul>
+<h3 id="操作步骤-2">操作步骤</h3>
+<ul>
+<li>开启</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl apply -f tcp-liveness-readiness.yaml
+</code></pre></div><p>开启 15秒后，查看状态</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl describe pod goproxy
+</code></pre></div><h2 id="在探针中使用命名端口">在探针中使用命名端口</h2>
+<p>命令端口可用于 HTTP和TCP 配置存活探针</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">ports</span>:
+- <span style="color:#66d9ef">name</span>: liveness-port
+  <span style="color:#66d9ef">containerPort</span>: <span style="color:#ae81ff">8080</span>
+  <span style="color:#66d9ef">hostPort</span>: <span style="color:#ae81ff">8080</span>
+
+<span style="color:#66d9ef">livenessProbe</span>:
+  <span style="color:#66d9ef">httpGet</span>:
+    <span style="color:#66d9ef">path</span>: /healthz
+    <span style="color:#66d9ef">port</span>: liveness-port
+</code></pre></div><h2 id="通过启动探针来保护启动时间长的容器">通过启动探针来保护启动时间长的容器</h2>
+<p>有时为解决传统项目在启动时可能需要额外的初始化需要花费较长时间，此时可以配置与存活探针相同命令的启动探针，示例配置如下</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">ports</span>:
+- <span style="color:#66d9ef">name</span>: liveness-port
+  <span style="color:#66d9ef">containerPort</span>: <span style="color:#ae81ff">8080</span>
+  <span style="color:#66d9ef">hostPort</span>: <span style="color:#ae81ff">8080</span>
+
+<span style="color:#66d9ef">livenessProbe</span>:
+  <span style="color:#66d9ef">httpGet</span>:
+    <span style="color:#66d9ef">path</span>: /healthz
+    <span style="color:#66d9ef">port</span>: liveness-port
+  <span style="color:#66d9ef">failureThreshold</span>: <span style="color:#ae81ff">1</span>
+  <span style="color:#66d9ef">periodSeconds</span>: <span style="color:#ae81ff">10</span>
+
+<span style="color:#66d9ef">startupProbe</span>:
+  <span style="color:#66d9ef">httpGet</span>:
+    <span style="color:#66d9ef">path</span>: /healthz
+    <span style="color:#66d9ef">port</span>: liveness-port
+  <span style="color:#66d9ef">failureThreshold</span>: <span style="color:#ae81ff">30</span>
+  <span style="color:#66d9ef">periodSeconds</span>: <span style="color:#ae81ff">10</span>
+</code></pre></div><ul>
+<li><code>startupProbe.failureThreshold</code> 启动探针的尝试次数，这里是 30</li>
+<li><code>startupProbe.periodSeconds</code> 启动探针每次尝试间隔时间，这里是 10</li>
+</ul>
+<p>因此 应用可以有 <code>failureThreshold * periodSeconds</code> (30 * 10 = 300s)， 即5分针的时间来完成启动，在这个过程中如果启动探针成功一次，则不再继续，转而由存活探针开始工作，如果启动探针最终没有一次成功，则根据容器的重启策略(<code>restartPolicy</code>)来决定下一步动作</p>
+<h2 id="定义就绪探针">定义就绪探针</h2>
+<h3 id="应用场景">应用场景</h3>
+<ul>
+<li>应用在启动是需要加载大量数据或配置文件</li>
+<li>应用需要信赖外部服务先启动</li>
+</ul>
+<p>以上场景应用暂时不能提供服务，但并不需要重启，而又不想转发流量到这个应用
+注意: 就绪探针在应用整个生命周期都在运行</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">readinessProbe</span>:
+  <span style="color:#66d9ef">exec</span>:
+    <span style="color:#66d9ef">command</span>:
+    - cat
+    - /tmp/healthy
+  <span style="color:#66d9ef">initialDelaySeconds</span>: <span style="color:#ae81ff">5</span>
+  <span style="color:#66d9ef">periodSeconds</span>: <span style="color:#ae81ff">5</span>
+</code></pre></div><p>就绪探针与存活探针配置类似
+就绪探针与存活搾在同一个容器中，可以并行执行。同时使用它们能保证流量不会到未准备好的容器上，容器挂掉是能重启</p>
+<h2 id="探针配置">探针配置</h2>
+<h3 id="探针有如下配置项以便能更精确的控制检测方式">探针有如下配置项，以便能更精确的控制检测方式</h3>
+<ul>
+<li><code>initialDelaySeconds</code> 容器开启后多少秒，存活/就绪探针开始工作。默认 <code>0</code> 最小 <code>0</code></li>
+<li><code>periodSeconds</code> 探针每次执行的时间间隔，单位秒， 默认 <code>10</code>， 最小 <code>1</code></li>
+<li><code>timeoutSeconds</code> 探针检测超时时间，单位秒，默认 1， 最小 1</li>
+<li><code>successThreshold</code> 在失败后，连续多少次成功决定状态为成功， 默认 1， 存活探针必须为 1 ， 最小值 1</li>
+<li><code>failureThreshold</code> 放弃尝试前的失败次数， 存活探针失败则重启容器。 就绪探针则标记容器为未就绪， 默认 3， 最小 1</li>
+</ul>
+<h3 id="http-类探针额外配置项">HTTP 类探针额外配置项</h3>
+<ul>
+<li><code>host</code> 请求主机名， 默认为 pod IP, 可以 <code>httpHeaders</code> 设置 <code>Host</code></li>
+<li><code>scheme</code> 请求协议 (HTTP / HTTPS) 默认 HTTP</li>
+<li><code>path</code> 请求路径</li>
+<li><code>httpHeaders</code> 请求头</li>
+<li><code>port</code> 请求端口号或命令端口名称 端口号范围 <code>1 - 65535</code></li>
+</ul>
+<p>如果协议为 https 请求不会验证证书，大多数场景不需要配置 <code>host</code> 字段。吸的地 应用监听地址为 <code>127.0.0.1</code> Pod 使用 <code>hostNetwork</code>, 如果Pod 信赖虚拟主机(比较常见)，此时不应该配置 <code>host</code> 字段，而通过 <code>httpHeaders</code> 设置 <code>Host</code>
+如果是 TCP 探针，k8s通过 <code>node</code> 来连接，因此不能使用 sevice name 作为 <code>host</code> 字段的值</p>
+<h2 id="总结">总结</h2>
+<table>
+<thead>
+<tr>
+<th>探针类型</th>
+<th>探针目的</th>
+<th>探测成功作用</th>
+<th>探测失败作用</th>
+<th>生命周期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>启动</td>
+<td>保障启动过程中不被存活探针重启</td>
+<td>表示容器启动成功，并停止运行</td>
+<td>在达到 <code>failureThreshold</code>之前，无操作，达到后由重启策略决定</td>
+<td>成功后结束或尝试直至达到 <code>failureThreshold</code> 配置的次数</td>
+</tr>
+<tr>
+<td>就绪</td>
+<td>保证容器能提供服务才引入流量</td>
+<td>标记容器就绪，service 可以分配流量</td>
+<td>标记容器未就绪，service 不能引入流量</td>
+<td>容器整个生命</td>
+</tr>
+<tr>
+<td>存活</td>
+<td>让容器不能提供服务时重启</td>
+<td>无操作</td>
+<td>达到 <code>failureThreshold</code> 配置次数后重启容器</td>
+<td>容器整个生命</td>
+</tr>
+</tbody>
+</table>
+<div class="edit-meta">
+Last updated on 22 May 2020
+
+
+<br>
+Published on 22 May 2020
+<br></div><nav class="pagination"><a class="nav nav-prev" href="http://example.org/3-tasks/02-configure-pod-container/" title="Configure Pod Containters"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - Configure Pod Containters</a>
+<a class="nav nav-next" href="http://example.org/3-tasks/02-configure-pod-container/test21/" title="21">Next - 21 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+</nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
+</footer>
+</main><div class="sidebar">
+
+<nav class="slide-menu">
+<ul>
+<li class=""><a href="http://example.org/">Home</a></li>
+
+<li class=" has-sub-menu"><a href="http://example.org/2-concetps/">Concepts<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="http://example.org/2-concetps/00-overview/">Overview<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="http://example.org/2-concetps/00-overview/00_what_is_k8s/">k8s 是什么</a></li>
+</ul>
+  
+</li>
+
+<li class=""><a href="http://example.org/2-concetps/01-cluster-architecture/">Cluster Architecture</a>
+  
+</li>
+
+<li class=""><a href="http://example.org/2-concetps/02-containers/">Containers</a>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class="parent has-sub-menu"><a href="http://example.org/3-tasks/">3-tasks<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+
+<li class="parent has-sub-menu"><a href="http://example.org/3-tasks/02-configure-pod-container/">Configure Pod Containters<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+<li class="active"><a href="http://example.org/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
+<li class=""><a href="http://example.org/3-tasks/02-configure-pod-container/test21/">21</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="http://example.org/4-tutorials/">4-tutorials<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="http://example.org/4-tutorials/00-hello-minikube/">Hello Minikube</a>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="http://example.org/5-reference/">5-references<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="http://example.org/5-reference/00-glossary/">Standardized Glossary</a>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="http://example.org/1-setup/">Getting started<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="http://example.org/1-setup/00-release/">Release notes and version skew</a>
+  
+</li>
+</ul>
+  
+</li>
+</ul>
+</nav>
+
+
+
+<div class="sidebar-footer"></div>
+</div>
+</div><a href="#" id="backtothetop-fixed" class="backtothetop"
+ data-backtothetop-duration="600"
+ data-backtothetop-easing="easeOutQuart"
+ data-backtothetop-fixed-fadeIn="1000"
+ data-backtothetop-fixed-fadeOut="1000"
+ data-backtothetop-fixed-bottom="10"
+ data-backtothetop-fixed-right="20">
+<span class="fa-layers fa-fw">
+<i class="fas fa-circle"></i>
+<i class="fas fa-arrow-circle-up"></i>
+</span></a>
+</div>
+</body>
+</html>
