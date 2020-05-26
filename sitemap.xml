@@ -28,12 +28,12 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/</loc>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/</loc>
     <lastmod>2020-05-22T10:52:35+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/</loc>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/</loc>
     <lastmod>2020-05-22T10:52:35+08:00</lastmod>
   </url>
   
@@ -57,14 +57,6 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/4-tutorials/</loc>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/</loc>
-  </url>
-  
-  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/categories/</loc>
   </url>
   
@@ -77,6 +69,10 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/</loc>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/</loc>
   </url>
   
@@ -86,6 +82,10 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/tags/</loc>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/4-tutorials/</loc>
   </url>
   
 </urlset>
