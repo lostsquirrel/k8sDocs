@@ -22,6 +22,9 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
+    - name: Update theme
+      # (Optional)If you have the theme added as submodule, you can pull it and use the most updated version
+      run: git submodule update --init --recursive
     # Runs a single command using the runners shell
     - name: Setup Hugo
       uses: peaceiris/actions-hugo@v2
