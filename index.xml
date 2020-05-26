@@ -13,10 +13,10 @@
     
     <item>
       <title>k8s 是什么</title>
-      <link>http://example.org/concetps/overview/00_what_is_k8s/</link>
+      <link>http://example.org/2-concetps/00-overview/00_what_is_k8s/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/concetps/overview/00_what_is_k8s/</guid>
+      <guid>http://example.org/2-concetps/00-overview/00_what_is_k8s/</guid>
       <description>k8s 是一个可扩展，可移植的开源平台，用于管理容器化的工作负载和服务，帮助实现声明式配置与自动化，有一个区大且快速发展的生态系统 源自Google</description>
     </item>
     
@@ -31,10 +31,10 @@
     
     <item>
       <title>存活(liveness), 就绪(readiness), 启动(startup)探针配置</title>
-      <link>http://example.org/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/</link>
+      <link>http://example.org/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/</link>
       <pubDate>Fri, 22 May 2020 10:52:35 +0800</pubDate>
       
-      <guid>http://example.org/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/</guid>
+      <guid>http://example.org/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/</guid>
       <description>本文介结怎么配置容器的 存活, 就绪, 启动探针配置 kubelet 通过存活探针的结果来决定何时应该重启容器。例如，可以发现一个应用在运行但不能继续干活比如发生</description>
     </item>
     
@@ -51,10 +51,10 @@ It makes use of a variety of open source projects including:
     
     <item>
       <title>21</title>
-      <link>http://example.org/tasks2/configure-pod-container/test21/</link>
+      <link>http://example.org/3-tasks/02-configure-pod-container/test21/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/tasks2/configure-pod-container/test21/</guid>
+      <guid>http://example.org/3-tasks/02-configure-pod-container/test21/</guid>
       <description>21 </description>
     </item>
     

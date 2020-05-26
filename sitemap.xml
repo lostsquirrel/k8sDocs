@@ -3,11 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://example.org/concetps/overview/00_what_is_k8s/</loc>
+    <loc>http://example.org/2-concetps/00-overview/00_what_is_k8s/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/concetps/overview/</loc>
+    <loc>http://example.org/2-concetps/00-overview/</loc>
   </url>
   
   <url>
@@ -16,29 +16,29 @@
   </url>
   
   <url>
-    <loc>http://example.org/concetps/cluster-architecture/</loc>
+    <loc>http://example.org/2-concetps/01-cluster-architecture/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/concetps/</loc>
+    <loc>http://example.org/2-concetps/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/concetps/containers/</loc>
+    <loc>http://example.org/2-concetps/02-containers/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/tasks/configure-pod-container/</loc>
+    <loc>http://example.org/3-tasks/</loc>
     <lastmod>2020-05-22T10:52:35+08:00</lastmod>
   </url>
   
   <url>
-    <loc>http://example.org/tasks/</loc>
+    <loc>http://example.org/3-tasks/02-configure-pod-container/</loc>
     <lastmod>2020-05-22T10:52:35+08:00</lastmod>
   </url>
   
   <url>
-    <loc>http://example.org/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/</loc>
+    <loc>http://example.org/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/</loc>
     <lastmod>2020-05-22T10:52:35+08:00</lastmod>
   </url>
   
@@ -53,15 +53,15 @@
   </url>
   
   <url>
-    <loc>http://example.org/tasks3/configure-pod-container/</loc>
+    <loc>http://example.org/3-tasks/02-configure-pod-container/test21/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/tasks4/configure-pod-container/</loc>
+    <loc>http://example.org/4-tutorials/</loc>
   </url>
   
   <url>
-    <loc>http://example.org/tasks2/configure-pod-container/test21/</loc>
+    <loc>http://example.org/5-reference/</loc>
   </url>
   
   <url>
@@ -69,23 +69,23 @@
   </url>
   
   <url>
-    <loc>http://example.org/tasks2/configure-pod-container/</loc>
+    <loc>http://example.org/1-setup/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/4-tutorials/00-hello-minikube/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/1-setup/00-release/</loc>
+  </url>
+  
+  <url>
+    <loc>http://example.org/5-reference/00-glossary/</loc>
   </url>
   
   <url>
     <loc>http://example.org/tags/</loc>
-  </url>
-  
-  <url>
-    <loc>http://example.org/tasks2/</loc>
-  </url>
-  
-  <url>
-    <loc>http://example.org/tasks3/</loc>
-  </url>
-  
-  <url>
-    <loc>http://example.org/tasks4/</loc>
   </url>
   
 </urlset>
