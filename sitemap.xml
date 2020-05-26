@@ -20,20 +20,32 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/</loc>
-  </url>
-  
-  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/</loc>
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/</loc>
-    <lastmod>2020-05-22T10:52:35+08:00</lastmod>
+    <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/</loc>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/</loc>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/</loc>
+    <lastmod>2020-05-22T10:52:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/4-tutorials/</loc>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/</loc>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/</loc>
     <lastmod>2020-05-22T10:52:35+08:00</lastmod>
   </url>
   
@@ -61,15 +73,7 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/</loc>
-  </url>
-  
-  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/4-tutorials/00-hello-minikube/</loc>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/</loc>
   </url>
   
   <url>
@@ -82,10 +86,6 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/tags/</loc>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/4-tutorials/</loc>
   </url>
   
 </urlset>
