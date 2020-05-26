@@ -2,30 +2,30 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Configure Pod Containters on K8S 文档笔记</title>
-    <link>http://example.org/3-tasks/02-configure-pod-container/</link>
+    <link>https://lostsquirrel.github.io/k8sDoc/3-tasks/02-configure-pod-container/</link>
     <description>Recent content in Configure Pod Containters on K8S 文档笔记</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Fri, 22 May 2020 10:52:35 +0800</lastBuildDate>
     
-	<atom:link href="http://example.org/3-tasks/02-configure-pod-container/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://lostsquirrel.github.io/k8sDoc/3-tasks/02-configure-pod-container/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>存活(liveness), 就绪(readiness), 启动(startup)探针配置</title>
-      <link>http://example.org/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/</link>
+      <link>https://lostsquirrel.github.io/k8sDoc/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/</link>
       <pubDate>Fri, 22 May 2020 10:52:35 +0800</pubDate>
       
-      <guid>http://example.org/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDoc/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/</guid>
       <description>本文介结怎么配置容器的 存活, 就绪, 启动探针配置 kubelet 通过存活探针的结果来决定何时应该重启容器。例如，可以发现一个应用在运行但不能继续干活比如发生</description>
     </item>
     
     <item>
       <title>21</title>
-      <link>http://example.org/3-tasks/02-configure-pod-container/test21/</link>
+      <link>https://lostsquirrel.github.io/k8sDoc/3-tasks/02-configure-pod-container/test21/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://example.org/3-tasks/02-configure-pod-container/test21/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDoc/3-tasks/02-configure-pod-container/test21/</guid>
       <description>21 </description>
     </item>
     

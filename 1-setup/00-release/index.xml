@@ -2,12 +2,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Release notes and version skew on K8S 文档笔记</title>
-    <link>http://example.org/1-setup/00-release/</link>
+    <link>https://lostsquirrel.github.io/k8sDoc/1-setup/00-release/</link>
     <description>Recent content in Release notes and version skew on K8S 文档笔记</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     
-	<atom:link href="http://example.org/1-setup/00-release/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://lostsquirrel.github.io/k8sDoc/1-setup/00-release/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>
