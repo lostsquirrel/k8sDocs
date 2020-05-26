@@ -1,4 +1,4 @@
-baseURL: "https://lostsquirrel.github.io/k8sDoc"
+baseURL: "https://lostsquirrel.github.io/k8sDocs"
 languageCode: "zh-cn"
 title: "K8S 文档笔记"
 defaultContentLanguage: "zh"
