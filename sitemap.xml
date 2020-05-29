@@ -24,7 +24,23 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/</loc>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/</loc>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/</loc>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/</loc>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/</loc>
   </url>
   
   <url>
@@ -74,10 +90,6 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/4-tutorials/00-hello-minikube/</loc>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/</loc>
   </url>
   
   <url>

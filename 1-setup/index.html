@@ -36,7 +36,60 @@
 </header>
 
 <div class="content-container">
-<main><h1>Getting started</h1><div class="edit-meta">
+<main><h1>Getting started</h1><h2 id="入门">入门</h2>
+<p>本文主要介绍 k8s 集群的选择与搭建，不同的解决方案对应不同需求: 易于维护， 安全，控制，可用资源，集群运维和管理的经验要求等
+k8s 可以部署在本地主机，云主机，on-prem,
+也可以基于云供应商或 bare metal来搭建自定义解决方案
+往简单说，可以分为学习环境和生产环境集群</p>
+<h2 id="学习环境">学习环境</h2>
+<p>如果学习k8s 可以使用基于 Docker的解决方案(工具由k8s社区维护)或在本地机器上搭建 k8s 集群</p>
+<table>
+<thead>
+<tr>
+<th>社区</th>
+<th>生态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Minikube</td>
+<td>Docker Desktop</td>
+</tr>
+<tr>
+<td>kind(Kubernetes IN Docker)</td>
+<td>Minishit</td>
+</tr>
+<tr>
+<td></td>
+<td>MicroK8s</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>
+<p>Minikube
+<a href="https://kubernetes.io/docs/setup/learning-environment/minikube/">源地址</a>
+<a href="./01-learning-environment/00-minikube/">本站地址</a></p>
+</li>
+<li>
+<p>kind
+<a href="https://kubernetes.io/docs/setup/learning-environment/kind/">源地址</a>
+<a href="./01-learning-environment/01-kind/">本站地址</a></p>
+</li>
+<li>
+<p><a href="https://www.docker.com/products/docker-desktop">Docker Desktop</a></p>
+</li>
+<li>
+<p><a href="https://docs.okd.io/latest/minishift/">Minishift</a></p>
+</li>
+<li>
+<p><a href="https://microk8s.io/">MicroK8s</a></p>
+</li>
+</ul>
+<h2 id="生产环境">生产环境</h2>
+<p>在评估生产环境解决方案时，需要考虑是自己管理k8s集群，或直接使用其它服务商提供的</p>
+<p><a href="https://kubernetes.io/partners/#conformance">k8s 合作伙伴</a>包含一批有<a href="https://github.com/cncf/k8s-conformance/#certified-kubernetes">证</a>提供商的列表</p>
+<div class="edit-meta">
 
 <br></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/" title="K8S 文档笔记"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - K8S 文档笔记</a>
 <a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/" title="Release notes and version skew">Next - Release notes and version skew <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
@@ -53,6 +106,15 @@
 <ul class="sub-menu">
 
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
+</ul>
   
 </li>
 </ul>
