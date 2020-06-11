@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Install Tools on K8S 文档笔记</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/</link>
+    <description>Recent content in Install Tools on K8S 文档笔记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 11 Jun 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>下载安装配置 kubectl</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/00-install-kubectl/</link>
+      <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/00-install-kubectl/</guid>
+      <description>kubectl 是 k8s 的命令行工具，用于通过命令管理k8s集群。 kubectl 可以用于部署应用，查看和管理集群资源，查看日志，具体使用明细请见 源地址 本站地址 准备 kubectl 版本与</description>
+    </item>
+    
+    <item>
+      <title>Linux 安装 Minikube</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/01-install-minikube-linux/</link>
+      <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/01-install-minikube-linux/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

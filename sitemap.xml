@@ -29,14 +29,17 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -48,7 +51,22 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/00-install-kubectl/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/</loc>
     <lastmod>2020-05-22T10:52:35+08:00</lastmod>
   </url>
   
@@ -58,11 +76,22 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/</loc>
-    <lastmod>2020-05-22T10:52:35+08:00</lastmod>
+    <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/07-kubectl/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/07-kubectl/00-overview/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/01-install-minikube-linux/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
