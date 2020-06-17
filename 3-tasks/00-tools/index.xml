@@ -21,12 +21,12 @@
     </item>
     
     <item>
-      <title>Linux 安装 Minikube</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/01-install-minikube-linux/</link>
+      <title>安装 Minikube</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/01-install-minikube/</link>
       <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/01-install-minikube-linux/</guid>
-      <description></description>
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/01-install-minikube/</guid>
+      <description>本文介结 Minikube 安装， Minikube 是一个创建运行在虚拟机的的本地单节点 k8s 集群的工具 环境准备 检查本机虚拟化支持 grep -E --color &#39;vmx|svm&#39; /proc/cpuinfo 安装 虚拟机管理程序(以下选择一个) VirtualBox KVM</description>
     </item>
     
   </channel>
