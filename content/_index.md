@@ -10,6 +10,8 @@ description: K8S 文档笔记
 
 # K8S 文档笔记
 
-##
+## 说明
+
+- 目录结构同官方文档结构
 
 ## Features
