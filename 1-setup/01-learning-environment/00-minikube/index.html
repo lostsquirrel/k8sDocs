@@ -29,7 +29,7 @@
 <meta itemprop="description" content="特点 一个用于创建易于部署，运行在虚拟机的的本地单节点 k8s 集群的工具 适用场景 尝试与学习 k8s 日常开发 功能特性 DNS NodePorts ConfigMaps and Secrets Dashboards Container Runtime: Docker, CRI-O, and containerd Enabling CNI (Container Network Interface) Ingress 安装">
 <meta itemprop="datePublished" content="2020-06-11T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-11T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="81">
+<meta itemprop="wordCount" content="1301">
 
 
 
@@ -66,8 +66,174 @@
 <li>Ingress</li>
 </ul>
 <h2 id="安装">安装</h2>
-<p><a href="../3-tasks/00-tools/install-minikube-linux">Linux(Ubuntu 20.04)下安装 Minikube</a></p>
-<div class="edit-meta">
+<p><a href="../../3-tasks/00-tools/install-minikube">安装 Minikube</a></p>
+<h2 id="快速入门">快速入门</h2>
+<p>以下简单介绍 minikube 的基本用法，如启动，使用，删除。</p>
+<ol>
+<li>启动 minikube 以创建集群</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"> minikube start
+</code></pre></div><p>更多运行参数参见后续章节</p>
+<ol start="2">
+<li>使用 kubectl 进行集群管理，更多见后续章节</li>
+</ol>
+<p>以下命令使用 <code>echoserver</code> 镜像 创建一个 部署（<code>Deployment</code>）， 这个镜像是一个简单的 <code>http</code> 服务，服务端口 <code>8080</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl create deployment hello-minikube --image<span style="color:#f92672">=</span>k8s.gcr.io/echoserver:1.10
+kubectl create deployment hello-minikube --image<span style="color:#f92672">=</span>registry.cn-hangzhou.aliyuncs.com/google_containers/echoserver:1.10
+</code></pre></div><p>根据网络选择一条命令执行，输出结果如下</p>
+<pre><code>deployment.apps/hello-minikube created
+</code></pre><ol start="3">
+<li>为了能够访问这个 <code>Deployment，</code> 需要为其创建一个 <code>Service</code></li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl expose deployment hello-minikube --type<span style="color:#f92672">=</span>NodePort --port<span style="color:#f92672">=</span><span style="color:#ae81ff">8080</span>
+</code></pre></div><p>其中 <code>--type=NodePort</code> 参数指定服务的类型，输出结果如下</p>
+<pre><code>service/hello-minikube exposed
+</code></pre><ol start="4">
+<li>需要等到 Deployment 对应的 Pod 启动后，才能在 <code>Service</code> 访问</li>
+</ol>
+<p>检查 Pod 是否为 运行(running) 状态,执行如下命令</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl get pod
+</code></pre></div><p>如果输出的 STATUS 列值为 ContainerCreating, 表示 Pod 还在创建中，需要再等一会儿，类似如下</p>
+<pre><code>NAME                              READY     STATUS              RESTARTS   AGE
+hello-minikube-3383150820-vctvh   0/1       ContainerCreating   0          3s
+</code></pre><p>如果输出的 STATUS 列值为 Running, 表示 Pod 启动完成，运行中，类似如下</p>
+<pre><code>NAME                              READY     STATUS    RESTARTS   AGE
+hello-minikube-3383150820-vctvh   1/1       Running   0          13s
+</code></pre><ol start="5">
+<li>获取 Service 的访问连接信息</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">minikube service hello-minikube --url
+</code></pre></div><p>输出结果类型如下</p>
+<pre><code>http://172.17.0.3:31579
+</code></pre><p>通过浏览器访问以下连接地址，输出类似如下</p>
+<pre><code>
+Hostname: hello-minikube-7df785b6bb-kjtnt
+
+Pod Information:
+	-no pod information available-
+
+Server values:
+	server_version=nginx: 1.13.3 - lua: 10008
+
+Request Information:
+	client_address=172.18.0.1
+	method=GET
+	real path=/
+	query=
+	request_version=1.1
+	request_scheme=http
+	request_uri=http://127.0.0.1:8080/
+
+Request Headers:
+	accept=*/*
+	host=127.0.0.1:31579
+	user-agent=curl/7.65.3
+
+Request Body:
+	-no body in request-
+</code></pre><p>如果不需要这个服务，删除对应对象</p>
+<ol start="7">
+<li>删除 <code>hello-minikube</code> <code>Service</code></li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl delete services hello-minikube
+</code></pre></div><p>输出如下</p>
+<pre><code>service &quot;hello-minikube&quot; deleted
+</code></pre><ol start="8">
+<li>删除 <code>hello-minikube</code> <code>Deployment</code>:</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl delete deployment hello-minikube
+</code></pre></div><p>输出如下</p>
+<pre><code>deployment.extensions &quot;hello-minikube&quot; deleted
+</code></pre><ol start="9">
+<li>停止本地集群</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">minikube stop
+</code></pre></div><p>输出如下</p>
+<pre><code>Stopping &quot;minikube&quot;...
+&quot;minikube&quot; stopped.
+</code></pre><ol start="10">
+<li>删除本地集群</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">minikube delete
+</code></pre></div><p>输出如下</p>
+<pre><code>Deleting &quot;minikube&quot; ...
+The &quot;minikube&quot; cluster has been deleted.
+</code></pre><p>后续章节还有更多关于 集群删除的内容</p>
+<h2 id="集群管理">集群管理</h2>
+<h3 id="集群启动">集群启动</h3>
+<p>通过 <code>minikube start</code> 命令启动集群，包含创建和配置一个虚拟机(也可以是其它方式)来运行一个单节点的 k8s 集群。 同时添加 kubectl 与集群交互的配置</p>
+<p>注意:</p>
+<ol>
+<li>如果需要使用代理命令如下,单独配置的环境变量不会生效</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">shell https_proxy<span style="color:#f92672">=</span>&lt;my proxy&gt; minikube start --docker-env http_proxy<span style="color:#f92672">=</span>&lt;my proxy&gt; --docker-env https_proxy<span style="color:#f92672">=</span>&lt;my proxy&gt; --docker-env no_proxy<span style="color:#f92672">=</span>192.168.99.0/24
+</code></pre></div><ol start="2">
+<li>kubectl 配置会生成一个叫  <code>minikube</code> 的上下文，并作为默认的上下文，如果需要切换为该上下文执行命令 <code>kubectl config use-context minikube</code></li>
+</ol>
+<h3 id="指定-k8s-版本">指定 k8s 版本</h3>
+<p>可以通过为 <code>minikube start</code> 的 <code>--kubernetes-version</code> 选项指定集群的 k8s 版本，例如以下命令表示指定 k8s 版本为 <code>v1.18.0</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">minikube start --driver<span style="color:#f92672">=</span>&lt;driver_name&gt;
+</code></pre></div><h3 id="指定虚拟机驱动">指定虚拟机驱动</h3>
+<p>可以通过为 <code>minikube start</code> 的 <code>--driver=&lt;enter_driver_name&gt;</code> 选项指定集群组件宿主机的实现方式，命令类似如下</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">minikube start --driver<span style="color:#f92672">=</span>&lt;driver_name&gt;
+</code></pre></div><p>minikube 支持驱动如下:
+注意： 驱动详情及插件安装见 <a href="https://minikube.sigs.k8s.io/docs/reference/drivers/">这里</a></p>
+<ul>
+<li>docker (driver installation)</li>
+<li>virtualbox (driver installation)</li>
+<li>podman (driver installation) (EXPERIMENTAL)</li>
+<li>vmwarefusion</li>
+<li>kvm2 (driver installation)</li>
+<li>hyperkit (driver installation)</li>
+<li>hyperv (driver installation) Note that the IP below is dynamic and can change. It can be retrieved with - minikube ip.</li>
+<li>vmware (driver installation) (VMware unified driver)</li>
+<li>parallels (driver installation)</li>
+<li>none(直接将k8s组件运行在主机上，需要主机系统为 Linux 且安装了 Docker)</li>
+</ul>
+<p>警告: 如果使用驱动为 none 时， 某些 k8s 组件容器以超级权限(privileged)运行，会对 minikube 之外的环境产生影响。因此不建议在个人工作站上使用</p>
+<h3 id="通过其它的容器运行环境启动集群">通过其它的容器运行环境启动集群</h3>
+<ul>
+<li>containerd</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">minikube start <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --network-plugin<span style="color:#f92672">=</span>cni <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --enable-default-cni <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --container-runtime<span style="color:#f92672">=</span>containerd <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --bootstrapper<span style="color:#f92672">=</span>kubeadm
+</code></pre></div><p>或者</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">minikube start <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --network-plugin<span style="color:#f92672">=</span>cni <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --enable-default-cni <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --extra-config<span style="color:#f92672">=</span>kubelet.container-runtime<span style="color:#f92672">=</span>remote <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --extra-config<span style="color:#f92672">=</span>kubelet.container-runtime-endpoint<span style="color:#f92672">=</span>unix:///run/containerd/containerd.sock <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --extra-config<span style="color:#f92672">=</span>kubelet.image-service-endpoint<span style="color:#f92672">=</span>unix:///run/containerd/containerd.sock <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --bootstrapper<span style="color:#f92672">=</span>kubeadm
+</code></pre></div><ul>
+<li>CRI-O</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">minikube start <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --network-plugin<span style="color:#f92672">=</span>cni <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --enable-default-cni <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --container-runtime<span style="color:#f92672">=</span>cri-o <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --bootstrapper<span style="color:#f92672">=</span>kubeadm
+</code></pre></div><p>或者</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">minikube start <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --network-plugin<span style="color:#f92672">=</span>cni <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --enable-default-cni <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --extra-config<span style="color:#f92672">=</span>kubelet.container-runtime<span style="color:#f92672">=</span>remote <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --extra-config<span style="color:#f92672">=</span>kubelet.container-runtime-endpoint<span style="color:#f92672">=</span>/var/run/crio.sock <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --extra-config<span style="color:#f92672">=</span>kubelet.image-service-endpoint<span style="color:#f92672">=</span>/var/run/crio.sock <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    --bootstrapper<span style="color:#f92672">=</span>kubeadm
+</code></pre></div><h3 id="对过重用-minkube-使用的-docker-daemon访问集群内部镜像">对过重用 minkube 使用的 Docker daemon，访问集群内部镜像</h3>
+<p>在使用单个虚拟的k8s集群时，重启 minikube 内置的 Docker 后台来避免在你构建自己的镜像的时候需要使用的镜像仓库,这样可以简化操作，加快本地操作体验</p>
+<p>注意: 不要使用 <code>latest</code> 作为镜像的标签，因为它是默认值。在镜像摘取策略为 <code>Always</code>的时候可能会出问题。</p>
+<p>在 <code>Mac/Linux</code> 主机下可以通过 <code>minikube docker-env</code> 命令返回结果，切换 Docker 后台，切换后可以通过以下命令查看其中镜像</p>
+<pre><code>docker ps
+</code></pre><p>注意:  Centos 7，可能会报如下错误</p>
+<pre><code> Could not read CA certificate &quot;/etc/docker/ca.pem&quot;: open /etc/docker/ca.pem: no such file or directory
+</code></pre><p>可以通过修改 <code>/etc/sysconfig/docker</code>, 确保环境变量与 minikube 的一致，脚本类似如下</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">shell &lt; DOCKER_CERT_PATH<span style="color:#f92672">=</span>/etc/docker --- &gt; <span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -z <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>DOCKER_CERT_PATH<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span> &gt; DOCKER_CERT_PATH<span style="color:#f92672">=</span>/etc/docker &gt; <span style="color:#66d9ef">fi</span>
+</code></pre></div><div class="edit-meta">
 Last updated on 11 Jun 2020
 
 
