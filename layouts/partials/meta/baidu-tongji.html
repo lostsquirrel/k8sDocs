@@ -2,7 +2,6 @@
 <!-- only production, not generate baidu tongji with Hugo’s built-in server -->
 {{- else -}}
 {{- with .Site.Params.baidu_tongji_id -}}
-<!-- BEGIN: baidu tongji --
 <script>
 var _hmt = _hmt || [];
 (function() {
@@ -12,6 +11,5 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
-<!-- END: Google Analytics -->
 {{- end -}}
 {{- end -}}
