@@ -29,7 +29,7 @@
 <meta itemprop="description" content="特点 一个用于创建易于部署，运行在虚拟机的的本地单节点 k8s 集群的工具 适用场景 尝试与学习 k8s 日常开发 功能特性 DNS NodePorts ConfigMaps and Secrets Dashboards Container Runtime: Docker, CRI-O, and containerd Enabling CNI (Container Network Interface) Ingress 安装">
 <meta itemprop="datePublished" content="2020-06-11T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-11T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1301">
+<meta itemprop="wordCount" content="2392">
 
 
 
@@ -110,27 +110,27 @@ hello-minikube-3383150820-vctvh   1/1       Running   0          13s
 Hostname: hello-minikube-7df785b6bb-kjtnt
 
 Pod Information:
-	-no pod information available-
+ -no pod information available-
 
 Server values:
-	server_version=nginx: 1.13.3 - lua: 10008
+ server_version=nginx: 1.13.3 - lua: 10008
 
 Request Information:
-	client_address=172.18.0.1
-	method=GET
-	real path=/
-	query=
-	request_version=1.1
-	request_scheme=http
-	request_uri=http://127.0.0.1:8080/
+ client_address=172.18.0.1
+ method=GET
+ real path=/
+ query=
+ request_version=1.1
+ request_scheme=http
+ request_uri=http://127.0.0.1:8080/
 
 Request Headers:
-	accept=*/*
-	host=127.0.0.1:31579
-	user-agent=curl/7.65.3
+ accept=*/*
+ host=127.0.0.1:31579
+ user-agent=curl/7.65.3
 
 Request Body:
-	-no body in request-
+ -no body in request-
 </code></pre><p>如果不需要这个服务，删除对应对象</p>
 <ol start="7">
 <li>删除 <code>hello-minikube</code> <code>Service</code></li>
@@ -233,7 +233,137 @@ The &quot;minikube&quot; cluster has been deleted.
 <pre><code> Could not read CA certificate &quot;/etc/docker/ca.pem&quot;: open /etc/docker/ca.pem: no such file or directory
 </code></pre><p>可以通过修改 <code>/etc/sysconfig/docker</code>, 确保环境变量与 minikube 的一致，脚本类似如下</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">shell &lt; DOCKER_CERT_PATH<span style="color:#f92672">=</span>/etc/docker --- &gt; <span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> -z <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>DOCKER_CERT_PATH<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span> &gt; DOCKER_CERT_PATH<span style="color:#f92672">=</span>/etc/docker &gt; <span style="color:#66d9ef">fi</span>
-</code></pre></div><div class="edit-meta">
+</code></pre></div><h3 id="初始化时对-k8s-配置">初始化时对 k8s 配置</h3>
+<p>在通过 <code>minikube start</code> 初始化集群时可能通过  <code>--extra-config</code> 系列选择实现对集群组件的配置
+如果我多个配置，个多次使用该选项， 选项值格式为 <code>component.key=value</code>， <code>component</code> 范围见以下列表， <code>key</code> 和 <code>value</code> 见明细</p>
+<ul>
+<li>kubelet TODO</li>
+<li>apiserver TODO</li>
+<li>proxy TODO</li>
+<li>controller-manager TODO</li>
+<li>etcd TODO</li>
+<li>scheduler TODO</li>
+</ul>
+<p><code>key</code> 的可用值具体见以上各模块文档的 <code>componentconfigs</code> 部分</p>
+<h4 id="示例">示例</h4>
+<ul>
+<li>
+<p><code>--extra-config=kubelet.MaxPods=5</code> 将 kubelet 的最大 <code>Pod</code> 数设置为 <code>5</code> (minikube 实验时设置大些(单节点原因)，不然后出事)</p>
+</li>
+<li>
+<p><code>--extra-config=scheduler.LeaderElection.LeaderElect=true</code> 将 scheduler 选举开启(该配置支持结构体嵌套配置)，配置作用见 TODO</p>
+</li>
+<li>
+<p><code>--extra-config=apiserver.authorization-mode=RBAC</code> 将 apiserver 的 AuthorizationMode 设置为 RBAC， 设置认证模式</p>
+</li>
+</ul>
+<h3 id="停止集群">停止集群</h3>
+<p><code>minikube stop</code> 用于停止集群。 它会关闭其启动的虚拟机，但保存集群的所有状态和数据。再次开启可以恢复集群之前的状态</p>
+<h3 id="删除集群">删除集群</h3>
+<p><code>minikube delete</code> 用于删除集群，它全关闭并销毁虚拟机，所有数据和状态都会消失</p>
+<h3 id="minikube-升级">minikube 升级</h3>
+<p>具体根据安装方式不同有不同的升级方式</p>
+<h2 id="集群管理-1">集群管理</h2>
+<h3 id="kubectl">kubectl</h3>
+<p><code>minikube start</code> 命令创建集群时会为 kubectl 添加对应的该集群的上下文配置。且该集群会被设置为默认上下文。
+如果切换到其它上下文后想切换回该集群可以通过以下命令</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl config use-context minikube
+</code></pre></div><p>可在命令参数中指定该上下文</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl get pods --context<span style="color:#f92672">=</span>minikube
+</code></pre></div><h3 id="dashboard">Dashboard</h3>
+<p>在集群创建好后，可以通过 <code>minikube dashboard</code> 命令获得 <code>Kubernetes Dashboard</code>访问地址</p>
+<h3 id="services">Services</h3>
+<p>在创建类型为 NodePort 的 Service 后，可以通过 <code>minikube service [-n NAMESPACE] [--url] NAME</code> 命令，获得其访问地址</p>
+<h2 id="网络">网络</h2>
+<p>minikube 创建的虚拟机通过 <code>host-only</code> 网络模式与主机通信。 可以通过 <code>minikube ip</code> 获得
+类型为 NodePort 的 Service 可以通过 这个IP 和对应的端口进行访问</p>
+<h2 id="持久化卷">持久化卷</h2>
+<p>minikube 支持的 持久化卷 的类型为 <code>hostPath</code>， 该类型持久化卷直接关联虚拟机内的目录</p>
+<p>minikube 创建的虚拟机以 <code>tmpfs</code> 启动，所以多数目录会在重启后消失(<code>minikube stop</code>), 但如下目录及文件都会一直存在</p>
+<ul>
+<li>/data</li>
+<li>/var/lib/minikube</li>
+<li>/var/lib/docker</li>
+</ul>
+<p>以下示例为创建一个映射到 <code>/data</code> 目录的持久化卷</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: PersistentVolume
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: pv0001
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">accessModes</span>:
+    - ReadWriteOnce
+  <span style="color:#66d9ef">capacity</span>:
+    <span style="color:#66d9ef">storage</span>: 5Gi
+  <span style="color:#66d9ef">hostPath</span>:
+    <span style="color:#66d9ef">path</span>: /data/pv0001/
+</code></pre></div><h2 id="被挂载的主机目录">被挂载的主机目录</h2>
+<table>
+<thead>
+<tr>
+<th>有些 minikube 驱动会将主机目录挂载到虚拟机中，方便文件共享，该特性目前不提供配置且不同系统也不尽相同，具体如下</th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Driver</td>
+<td>OS</td>
+<td>HostFolder</td>
+<td>VM</td>
+</tr>
+<tr>
+<td>VirtualBox</td>
+<td>Linux</td>
+<td>/home</td>
+<td>/hosthome</td>
+</tr>
+<tr>
+<td>VirtualBox</td>
+<td>macOS</td>
+<td>/Users</td>
+<td>/Users</td>
+</tr>
+<tr>
+<td>VirtualBox</td>
+<td>Windows</td>
+<td>C://Users</td>
+<td>/c/Users</td>
+</tr>
+<tr>
+<td>VMware Fusion</td>
+<td>macOS</td>
+<td>/Users</td>
+<td>/mnt/hgfs/Users</td>
+</tr>
+<tr>
+<td>Xhyve</td>
+<td>macOS</td>
+<td>/Users</td>
+<td>/Users</td>
+</tr>
+</tbody>
+</table>
+<p>注意： KVM 目前还不支持主机目录挂载</p>
+<h2 id="私有镜像仓库">私有镜像仓库</h2>
+<p>如何访问私有镜像仓库 看这里 TODO</p>
+<p>使用镜像仓库时推荐使用 <code>ImagePullSecrets</code> 方式。 如果想在虚拟机中配置，则可以配置在<code>/home/docker.dockercfg</code> 或 <code>/home/docker/.docker/config.json</code> 文件中</p>
+<h2 id="插件">插件</h2>
+<p>如果希望在启动或重启时加载自定义插件，可以将其放在 <code>~/.minikube/addons</code> 目录。 这个目录中的插件会在 minikube 启动(或重启)虚拟机是加载到虚拟机中</p>
+<h2 id="使用-http-代理">使用 HTTP 代理</h2>
+<p>在minikube 启动的虚拟机中，包含了 k8s 组件和 Docker daemon, 当 k8s 调度容器到 Docker, 而 Docker 需要外部网络在能拉到镜像时。而外部网络需要配置 HTTP 代理才能访问时，可以通过在 minikube start 启动添加参数配置代理，示例如下：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">minikube start --docker-env http_proxy<span style="color:#f92672">=</span>http://$YOURPROXY:PORT <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>                 --docker-env https_proxy<span style="color:#f92672">=</span>https://$YOURPROXY:PORT
+</code></pre></div><p>但如果配置了代理可能会让 <code>kubectl</code> 连接不到虚拟机，需要添加如下配置后再用 <code>minikube start</code> 启动</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">export no_proxy<span style="color:#f92672">=</span>$no_proxy,<span style="color:#66d9ef">$(</span>minikube ip<span style="color:#66d9ef">)</span>
+</code></pre></div><h2 id="已知问题">已知问题</h2>
+<p>minikube 不支持需要多节点的特性</p>
+<h2 id="设计">设计</h2>
+<p>minikube 使用 libmachine 配置虚拟机， 通过 kubeadm 管理 k8s 集群创建
+更多信息看<a href="https://git.k8s.io/community/contributors/design-proposals/cluster-lifecycle/local-cluster-ux.md">这里</a></p>
+<div class="edit-meta">
 Last updated on 11 Jun 2020
 
 
