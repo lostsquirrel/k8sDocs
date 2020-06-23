@@ -101,27 +101,27 @@ http://172.17.0.3:31579
 Hostname: hello-minikube-7df785b6bb-kjtnt
 
 Pod Information:
-	-no pod information available-
+ -no pod information available-
 
 Server values:
-	server_version=nginx: 1.13.3 - lua: 10008
+ server_version=nginx: 1.13.3 - lua: 10008
 
 Request Information:
-	client_address=172.18.0.1
-	method=GET
-	real path=/
-	query=
-	request_version=1.1
-	request_scheme=http
-	request_uri=http://127.0.0.1:8080/
+ client_address=172.18.0.1
+ method=GET
+ real path=/
+ query=
+ request_version=1.1
+ request_scheme=http
+ request_uri=http://127.0.0.1:8080/
 
 Request Headers:
-	accept=*/*
-	host=127.0.0.1:31579
-	user-agent=curl/7.65.3
+ accept=*/*
+ host=127.0.0.1:31579
+ user-agent=curl/7.65.3
 
 Request Body:
-	-no body in request-
+ -no body in request-
 ```
 
 如果不需要这个服务，删除对应对象
@@ -276,3 +276,135 @@ docker ps
 ```sh
 shell < DOCKER_CERT_PATH=/etc/docker --- > if [ -z "${DOCKER_CERT_PATH}" ]; then > DOCKER_CERT_PATH=/etc/docker > fi
 ```
+
+### 初始化时对 k8s 配置
+
+在通过 `minikube start` 初始化集群时可能通过  `--extra-config` 系列选择实现对集群组件的配置
+如果我多个配置，个多次使用该选项， 选项值格式为 `component.key=value`， `component` 范围见以下列表， `key` 和 `value` 见明细
+
+- kubelet TODO
+- apiserver TODO
+- proxy TODO
+- controller-manager TODO
+- etcd TODO
+- scheduler TODO
+
+`key` 的可用值具体见以上各模块文档的 `componentconfigs` 部分
+
+#### 示例
+
+- `--extra-config=kubelet.MaxPods=5` 将 kubelet 的最大 `Pod` 数设置为 `5` (minikube 实验时设置大些(单节点原因)，不然后出事)
+
+- `--extra-config=scheduler.LeaderElection.LeaderElect=true` 将 scheduler 选举开启(该配置支持结构体嵌套配置)，配置作用见 TODO
+
+- `--extra-config=apiserver.authorization-mode=RBAC` 将 apiserver 的 AuthorizationMode 设置为 RBAC， 设置认证模式
+
+### 停止集群
+
+`minikube stop` 用于停止集群。 它会关闭其启动的虚拟机，但保存集群的所有状态和数据。再次开启可以恢复集群之前的状态
+
+### 删除集群
+
+`minikube delete` 用于删除集群，它全关闭并销毁虚拟机，所有数据和状态都会消失
+
+### minikube 升级
+具体根据安装方式不同有不同的升级方式
+
+## 集群管理
+
+### kubectl
+
+`minikube start` 命令创建集群时会为 kubectl 添加对应的该集群的上下文配置。且该集群会被设置为默认上下文。
+如果切换到其它上下文后想切换回该集群可以通过以下命令
+```sh
+kubectl config use-context minikube
+```
+可在命令参数中指定该上下文
+
+```sh
+kubectl get pods --context=minikube
+```
+
+### Dashboard
+
+在集群创建好后，可以通过 `minikube dashboard` 命令获得 `Kubernetes Dashboard`访问地址
+
+
+### Services
+
+在创建类型为 NodePort 的 Service 后，可以通过 `minikube service [-n NAMESPACE] [--url] NAME` 命令，获得其访问地址
+
+
+## 网络
+
+minikube 创建的虚拟机通过 `host-only` 网络模式与主机通信。 可以通过 `minikube ip` 获得
+类型为 NodePort 的 Service 可以通过 这个IP 和对应的端口进行访问
+
+## 持久化卷
+
+minikube 支持的 持久化卷 的类型为 `hostPath`， 该类型持久化卷直接关联虚拟机内的目录
+
+minikube 创建的虚拟机以 `tmpfs` 启动，所以多数目录会在重启后消失(`minikube stop`), 但如下目录及文件都会一直存在
+- /data
+- /var/lib/minikube
+- /var/lib/docker
+
+以下示例为创建一个映射到 `/data` 目录的持久化卷
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv0001
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 5Gi
+  hostPath:
+    path: /data/pv0001/
+```
+
+## 被挂载的主机目录
+
+有些 minikube 驱动会将主机目录挂载到虚拟机中，方便文件共享，该特性目前不提供配置且不同系统也不尽相同，具体如下
+---------------|---------|-------------|-------
+Driver         | OS      | HostFolder  | VM
+VirtualBox     |  Linux  |    /home    |     /hosthome
+VirtualBox     |  macOS  |    /Users   |     /Users
+VirtualBox     |  Windows|    C://Users|     /c/Users
+VMware Fusion  |  macOS  |    /Users   |     /mnt/hgfs/Users
+Xhyve          |  macOS  |    /Users   |     /Users
+
+注意： KVM 目前还不支持主机目录挂载
+
+## 私有镜像仓库
+
+如何访问私有镜像仓库 看这里 TODO
+
+使用镜像仓库时推荐使用 `ImagePullSecrets` 方式。 如果想在虚拟机中配置，则可以配置在`/home/docker.dockercfg` 或 `/home/docker/.docker/config.json` 文件中
+
+## 插件
+
+如果希望在启动或重启时加载自定义插件，可以将其放在 `~/.minikube/addons` 目录。 这个目录中的插件会在 minikube 启动(或重启)虚拟机是加载到虚拟机中
+
+## 使用 HTTP 代理
+
+在minikube 启动的虚拟机中，包含了 k8s 组件和 Docker daemon, 当 k8s 调度容器到 Docker, 而 Docker 需要外部网络在能拉到镜像时。而外部网络需要配置 HTTP 代理才能访问时，可以通过在 minikube start 启动添加参数配置代理，示例如下：
+```sh
+minikube start --docker-env http_proxy=http://$YOURPROXY:PORT \
+                 --docker-env https_proxy=https://$YOURPROXY:PORT
+```
+但如果配置了代理可能会让 `kubectl` 连接不到虚拟机，需要添加如下配置后再用 `minikube start` 启动
+```sh
+export no_proxy=$no_proxy,$(minikube ip)
+```
+
+## 已知问题
+
+minikube 不支持需要多节点的特性
+
+## 设计
+
+minikube 使用 libmachine 配置虚拟机， 通过 kubeadm 管理 k8s 集群创建
+更多信息看[这里](https://git.k8s.io/community/contributors/design-proposals/cluster-lifecycle/local-cluster-ux.md)
