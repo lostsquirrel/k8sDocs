@@ -3,7 +3,7 @@
 <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Concepts - K8S 文档笔记</title>
+<title>概念(Concepts) - K8S 文档笔记</title>
 <meta name="description" content="test">
 <meta name="generator" content="Hugo 0.68.3" />
 <link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
@@ -16,16 +16,17 @@
 <script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
 :root {}
 </style>
-<meta property="og:title" content="Concepts" />
+<meta property="og:title" content="概念(Concepts)" />
 <meta property="og:description" content="test" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/" />
-<meta property="og:site_name" content="K8S 文档笔记" />
+<meta property="og:updated_time" content="2020-06-23T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Concepts"/>
+<meta name="twitter:title" content="概念(Concepts)"/>
 <meta name="twitter:description" content="test"/>
-<meta itemprop="name" content="Concepts">
-<meta itemprop="description" content="test"><script>
+<meta itemprop="name" content="概念(Concepts)">
+<meta itemprop="description" content="test">
+<script>
 var _hmt = _hmt || [];
 (function() {
   var hm = document.createElement("script");
@@ -33,7 +34,8 @@ var _hmt = _hmt || [];
   var s = document.getElementsByTagName("script")[0];
   s.parentNode.insertBefore(hm, s);
 })();
-</script></head>
+</script>
+</head>
 <body><div class="container"><header>
 <h1>K8S 文档笔记</h1>
 
@@ -44,8 +46,54 @@ var _hmt = _hmt || [];
 </header>
 
 <div class="content-container">
-<main><h1>Concepts</h1><div class="edit-meta">
+<main><h1>概念(Concepts)</h1><p>本章主要介绍 k8s 系统的主要组成部分以及 k8s 是怎么对集群进行抽象的，以帮助读者更深入的理解 k8s 是怎么工作的</p>
+<h2 id="概览">概览</h2>
+<p>在使用 k8s 时， 用户使用 k8s API 对象来描述集群的 期望状态: 比如需要运行什么应用或其它工作负载，容器要使用哪个镜像， 副本的数量， 需要提供多少的磁盘和网络资源等。用户通过 k8s API 创建对象设置期望状态。 一般是通过命令行工具 kubectl. 当然也可以能过直接调用 k8s API 来设置或修改期望的状态</p>
+<p>当用户设置好所 期望的状态后， k8s 控制面板 将通过 Pod Lifecycle Event Generator (PLEG) 将集群状态由当前状态变更到期望的状态，具体是 k8s 通过自发的通过一系列任务实现， 比如启动或重启容器，增加指定应用的副本数等方式， k8s 控制器由集群中运行的一系统进程实现：</p>
+<ul>
+<li>
+<p>Kubernetes Master 由三个进程组成，一般在集群运行在一个独立的主机上，被设计为主节点，其中三个进程为 <code>kube-apiserver</code>, kube-<code>controller-manager</code> <code>kube-scheduler</code> TODO.</p>
+</li>
+<li>
+<p>而在其它非主节点上，每个都运行以下两个进程</p>
+<ul>
+<li>kubelet TODO 用于与主节点通信</li>
+<li>kube-proxy TODO 在每个节点上用于提供网络服务的代理服务</li>
+</ul>
+</li>
+</ul>
+<h2 id="k8s-对象">k8s 对象</h2>
+<p>k8s 包含相当数量的抽象概念用于表示系统的状态: 部署应用容器和工作负载，以及其对应的网络和磁盘资源，和关于集群运行的其它信息。这些抽象概念在 k8s API 中表现为对象的形式。更相关信息见 TODO</p>
+<p>k8s 基础对象如下(TODO)</p>
+<ul>
+<li>Pod</li>
+<li>Service</li>
+<li>Volume</li>
+<li>Namespace</li>
+</ul>
+<p>k8s 还包含更高级的抽象概念，它们是通过控制器(TODO)基于基础对象构建而成，提供更多的功能和特性，包含如下(TODO)</p>
+<ul>
+<li>Deployment</li>
+<li>DaemonSet</li>
+<li>StatefulSet</li>
+<li>ReplicaSet</li>
+<li>Job</li>
+</ul>
+<h2 id="k8s-控制面板">k8s 控制面板</h2>
+<p>k8s 控制面板 由各种组件组成，用户k8s 掌控集群。
+k8s 控制面板 维护系统中所有对应的记录并用一个持续循环管理这些对象的状态。 任何时候你设置了你期望的状态后， k8s 控制面板就会让系统中所有的对象状态变更至期望的状态</p>
+<p>例如 用户创建一个新的 Deployment。 这时系统就有一个新的期望状态。首先 k8s 控制面板 会记录这个新创建的对象；然后开始启动这应用并将其调度到合适的节点上。这样系统就达成了这个新的期望状态</p>
+<h3 id="k8s-主控节点">k8s 主控节点</h3>
+<p>k8s 主控节点负责维护集群的期望状态。 当用户通过 kubectl 命令或 API 管理集群时，都是在与主控节点通信
+主控节点是由一系列维护集群状态的进程组成。 通常这个进程都会运行在集群中的同一个节点上。因此这个节点被称为主控节点。 主控节点也可能通过增加副本的方式提供可用性和冗余度</p>
+<h3 id="k8s-普通节点">k8s 普通节点</h3>
+<p>集群就的普通节点就是运行用户应用和其它工作负载的机器(可以是虚拟机，物理机等)。 这些节点由主控节点控制，用户一般很少与其直接交互</p>
+<div class="edit-meta">
+Last updated on 23 Jun 2020
 
+
+<br>
+Published on 23 Jun 2020
 <br></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/" title="使用 Kind 搭建 K8s环境"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 使用 Kind 搭建 K8s环境</a>
 <a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/" title="Overview">Next - Overview <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
@@ -76,7 +124,7 @@ var _hmt = _hmt || [];
   
 </li>
 
-<li class="parent active has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/">Concepts<span class="mark opened">-</span></a>
+<li class="parent active has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/">概念(Concepts)<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
 
