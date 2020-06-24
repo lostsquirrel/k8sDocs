@@ -3,14 +3,6 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00_what_is_k8s/</loc>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/</loc>
-  </url>
-  
-  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/hello_world/</loc>
     <lastmod>2017-10-17T14:00:45+00:00</lastmod>
   </url>
@@ -49,6 +41,14 @@
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/</loc>
     <lastmod>2020-06-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00_what_is_k8s/</loc>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/</loc>
   </url>
   
   <url>
