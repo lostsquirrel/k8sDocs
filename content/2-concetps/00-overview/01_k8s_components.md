@@ -111,8 +111,11 @@ k8s 控制中心集群了云环境的控制逻辑。 云控制管理器是集群
 ## 参考资料
 
 https://kubernetes.io/docs/concepts/overview/components/
-https://kubernetes.io/docs/concepts/cluster-administration/addons/
 
 ## 引申阅读
 
-https://kubernetes.io/docs/admin/high-availability/
+- [节点](https://kubernetes.io/docs/concepts/architecture/nodes/)
+- [控制器](https://kubernetes.io/docs/concepts/architecture/controller/)
+- [调度器](https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/)
+- [etcd 官网](https://etcd.io/docs/)
+- [k8s 集群高可用](https://kubernetes.io/docs/admin/high-availability/)
