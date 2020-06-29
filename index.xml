@@ -57,6 +57,15 @@
     </item>
     
     <item>
+      <title>k8s API 说明</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02_k8s_api/</link>
+      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02_k8s_api/</guid>
+      <description>k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这</description>
+    </item>
+    
+    <item>
       <title>下载安装配置 kubectl</title>
       <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/00-install-kubectl/</link>
       <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>

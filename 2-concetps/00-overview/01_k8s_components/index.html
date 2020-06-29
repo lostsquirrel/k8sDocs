@@ -29,7 +29,7 @@
 <meta itemprop="description" content="当完成 k8s 部署后，用户就拥有一个 k8s 集群， 一个 k8s 一般包含多台工作机，称为节点，用于运行容器化应用。 每个集群至少包含一个节点。 在节点上运行应用工作">
 <meta itemprop="datePublished" content="2020-06-28T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-24T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1459">
+<meta itemprop="wordCount" content="1474">
 
 
 
@@ -125,10 +125,15 @@ Cluster DNS，是一个DNS服务，是对其它DNS服务的补充，为k8s 集�
 <p>提供集群级的容器日志采集并存储到中心日志存储的机制，并提供查询和阅览接口
 <a href="https://kubernetes.io/docs/concepts/cluster-administration/logging/">Cluster-level Logging</a></p>
 <h2 id="参考资料">参考资料</h2>
-<p><a href="https://kubernetes.io/docs/concepts/overview/components/">https://kubernetes.io/docs/concepts/overview/components/</a>
-<a href="https://kubernetes.io/docs/concepts/cluster-administration/addons/">https://kubernetes.io/docs/concepts/cluster-administration/addons/</a></p>
+<p><a href="https://kubernetes.io/docs/concepts/overview/components/">https://kubernetes.io/docs/concepts/overview/components/</a></p>
 <h2 id="引申阅读">引申阅读</h2>
-<p><a href="https://kubernetes.io/docs/admin/high-availability/">https://kubernetes.io/docs/admin/high-availability/</a></p>
+<ul>
+<li><a href="https://kubernetes.io/docs/concepts/architecture/nodes/">节点</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/architecture/controller/">控制器</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/">调度器</a></li>
+<li><a href="https://etcd.io/docs/">etcd 官网</a></li>
+<li><a href="https://kubernetes.io/docs/admin/high-availability/">k8s 集群高可用</a></li>
+</ul>
 <div class="edit-meta">
 Last updated on 24 Jun 2020
 
@@ -136,7 +141,7 @@ Last updated on 24 Jun 2020
 <br>
 Published on 28 Jun 2020
 <br></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00_what_is_k8s/" title="k8s 是什么"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - k8s 是什么</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/3-tasks/" title="Tasks">Next - Tasks <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02_k8s_api/" title="k8s API 说明">Next - k8s API 说明 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -182,6 +187,7 @@ Published on 28 Jun 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00_what_is_k8s/">k8s 是什么</a></li>
 <li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01_k8s_components/">k8s 组件</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02_k8s_api/">k8s API 说明</a></li>
 </ul>
   
 </li>
