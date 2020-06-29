@@ -26,12 +26,14 @@ k8s 自身也解耦成多个模块，通过 API 进行交互
 
 完整 API 规范明细见 [这里](https://www.openapis.org/)
 k8s api-server 通过 `/openapi/v2` 提供 OpenAPI 规范， 用户可以通过以下请求头发送请求获取响应格式
-请求头                      | 可选值                                                      | 说明
----------------------------|------------------------------------------------------------|-
-Accept-Encoding            |gzip                                                        | 可选
-<td rowspan=3>Accept</td>  |application/com.github.proto-openapi.spec.v2@v1.0+protobuf  |  mainly for intra-cluster use   
-                           |application/json                                            |  默认
-                           |*                                                           | 响应 `application/json`
+
+|请求头                      | 可选值                                                      | 说明
+|---------------------------|------------------------------------------------------------|-
+|Accept-Encoding            |gzip                                                        | 可选
+|Accept                     |application/com.github.proto-openapi.spec.v2@v1.0+protobuf  |  mainly for intra-cluster use   
+|^                          |application/json                                            |  默认
+|^                          | 响应 `application/json`                                     |
+
 也可以是任务符合OpenAPI 规范的请求头
 k8s 还有一个基于基于 `Protobuf` 序列化的API，这套API 主要用于集群内通信。具体见对应模块 Go 源码文档，文档设计准则在[这里](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/protobuf.md)
 
