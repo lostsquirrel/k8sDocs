@@ -40,7 +40,7 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/</loc>
-    <lastmod>2020-06-24T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -49,17 +49,22 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00_what_is_k8s/</loc>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00-what-is-k8s/</loc>
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01_k8s_components/</loc>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01-k8s-components/</loc>
     <lastmod>2020-06-24T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02_k8s_api/</loc>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02-k8s-api/</loc>
     <lastmod>2020-06-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/</loc>
+    <lastmod>2020-06-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -102,18 +107,23 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/00-k8s-understanding-objects/</loc>
+    <lastmod>2020-06-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/01-install-minikube/</loc>
     <lastmod>2020-06-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/</loc>
-    <lastmod>2020-05-22T10:52:35+08:00</lastmod>
+    <loc>https://lostsquirrel.github.io/k8sDocs/</loc>
+    <lastmod>2020-06-06T15:26:15+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/</loc>
-    <lastmod>2019-10-26T15:26:15+00:00</lastmod>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/</loc>
+    <lastmod>2020-05-22T10:52:35+08:00</lastmod>
   </url>
   
   <url>

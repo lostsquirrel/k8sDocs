@@ -3,11 +3,11 @@
 <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Hello Minikube - K8S 文档笔记</title>
+<title>k8s 对象管理 - K8S 文档笔记</title>
 <meta name="description" content="test">
 <meta name="generator" content="Hugo 0.68.3" />
 <link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
-<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/00-hello-minikube/">
+<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/">
 <link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/theme.min.css">
 <script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 <link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/chroma.min.css">
@@ -16,15 +16,15 @@
 <script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
 :root {}
 </style>
-<meta property="og:title" content="Hello Minikube" />
+<meta property="og:title" content="k8s 对象管理" />
 <meta property="og:description" content="test" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/4-tutorials/00-hello-minikube/" />
-<meta property="og:site_name" content="K8S 文档笔记" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/" />
+<meta property="og:updated_time" content="2020-06-29T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Hello Minikube"/>
+<meta name="twitter:title" content="k8s 对象管理"/>
 <meta name="twitter:description" content="test"/>
-<meta itemprop="name" content="Hello Minikube">
+<meta itemprop="name" content="k8s 对象管理">
 <meta itemprop="description" content="test">
 <script>
 var _hmt = _hmt || [];
@@ -46,11 +46,13 @@ var _hmt = _hmt || [];
 </header>
 
 <div class="content-container">
-<main><h1>Hello Minikube</h1><h1 id="123">123</h1>
+<main><h1>k8s 对象管理</h1><p>k8s 对象为年老体弱化到 k8s 系统的实体。 k8s 使用这些实体表示集群的状态。本节主要介绍对象的域模型与怎么管理这些对象</p>
 <div class="edit-meta">
+Last updated on 29 Jun 2020
 
-<br></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/" title="Tutorials"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - Tutorials</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/5-reference/" title="Reference">Next - Reference <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+
+<br></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02-k8s-api/" title="k8s API 说明"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - k8s API 说明</a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/00-k8s-understanding-objects/" title="k8s 对象介绍">Next - k8s 对象介绍 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -79,7 +81,7 @@ var _hmt = _hmt || [];
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/">概念(Concepts)<span class="mark closed">+</span></a>
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/">概念(Concepts)<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
 
@@ -91,14 +93,14 @@ var _hmt = _hmt || [];
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/">概览<span class="mark closed">+</span></a>
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/">概览<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00-what-is-k8s/">k8s 是什么</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01-k8s-components/">k8s 组件</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02-k8s-api/">k8s API 说明</a></li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/">k8s 对象管理<span class="mark closed">+</span></a>
+<li class="parent active has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/">k8s 对象管理<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/00-k8s-understanding-objects/">k8s 对象介绍</a></li>
@@ -137,11 +139,11 @@ var _hmt = _hmt || [];
   
 </li>
 
-<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/">Tutorials<span class="mark opened">-</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/">Tutorials<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 
-<li class="parent active"><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/00-hello-minikube/">Hello Minikube</a>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/00-hello-minikube/">Hello Minikube</a>
   
 </li>
 </ul>

@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Overview on K8S 文档笔记</title>
+    <title>概览 on K8S 文档笔记</title>
     <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/</link>
-    <description>Recent content in Overview on K8S 文档笔记</description>
+    <description>Recent content in 概览 on K8S 文档笔记</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 24 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 29 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>k8s 是什么</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00_what_is_k8s/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00-what-is-k8s/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00_what_is_k8s/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00-what-is-k8s/</guid>
       <description>k8s 是一个可扩展，可移植的开源平台，用于管理容器化的工作负载和服务，帮助实现声明式配置与自动化，有一个区大且快速发展的生态系统 源自Google</description>
     </item>
     
     <item>
       <title>k8s 组件</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01_k8s_components/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01-k8s-components/</link>
       <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01_k8s_components/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01-k8s-components/</guid>
       <description>当完成 k8s 部署后，用户就拥有一个 k8s 集群， 一个 k8s 一般包含多台工作机，称为节点，用于运行容器化应用。 每个集群至少包含一个节点。 在节点上运行应用工作</description>
     </item>
     
     <item>
       <title>k8s API 说明</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02_k8s_api/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02-k8s-api/</link>
       <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02_k8s_api/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02-k8s-api/</guid>
       <description>k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这</description>
     </item>
     

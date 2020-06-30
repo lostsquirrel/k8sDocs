@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>k8s 对象管理 on K8S 文档笔记</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/</link>
+    <description>Recent content in k8s 对象管理 on K8S 文档笔记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 29 Jun 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>k8s 对象介绍</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/00-k8s-understanding-objects/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/00-k8s-understanding-objects/</guid>
+      <description>本文介绍 k8s 对象 是怎么在 k8s API 中表示的，怎么以 .yaml 格式输出 k8s 对象 简介 k8s 对象是 k8s 系统中持久化的实体， k8s 使用这些实体来表示集群的状态，它们具体可以表示</description>
+    </item>
+    
+  </channel>
+</rss>

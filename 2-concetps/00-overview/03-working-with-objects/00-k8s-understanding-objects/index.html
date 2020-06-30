@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>k8s 对象介绍 - K8S 文档笔记</title>
+<meta name="description" content="test">
+<meta name="generator" content="Hugo 0.68.3" />
+<link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
+<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/00-k8s-understanding-objects/">
+<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/theme.min.css">
+<script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/chroma.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.easing@1.4.1/jquery.easing.min.js"></script>
+<script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
+:root {}
+</style>
+<meta property="og:title" content="k8s 对象介绍" />
+<meta property="og:description" content="本文介绍 k8s 对象 是怎么在 k8s API 中表示的，怎么以 .yaml 格式输出 k8s 对象 简介 k8s 对象是 k8s 系统中持久化的实体， k8s 使用这些实体来表示集群的状态，它们具体可以表示" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/00-k8s-understanding-objects/" />
+<meta property="article:published_time" content="2020-06-30T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-06-29T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="k8s 对象介绍"/>
+<meta name="twitter:description" content="本文介绍 k8s 对象 是怎么在 k8s API 中表示的，怎么以 .yaml 格式输出 k8s 对象 简介 k8s 对象是 k8s 系统中持久化的实体， k8s 使用这些实体来表示集群的状态，它们具体可以表示"/>
+<meta itemprop="name" content="k8s 对象介绍">
+<meta itemprop="description" content="本文介绍 k8s 对象 是怎么在 k8s API 中表示的，怎么以 .yaml 格式输出 k8s 对象 简介 k8s 对象是 k8s 系统中持久化的实体， k8s 使用这些实体来表示集群的状态，它们具体可以表示">
+<meta itemprop="datePublished" content="2020-06-30T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-06-29T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1189">
+
+
+
+<meta itemprop="keywords" content="" />
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?46e26ffc9d975f663dff0b89f1cf7931";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+<body><div class="container"><header>
+<h1>K8S 文档笔记</h1>
+
+ <span class="version">Version 0.0.1</span>
+
+<p class="description">test</p>
+
+</header>
+
+<div class="content-container">
+<main><h1>k8s 对象介绍</h1>
+<p>本文介绍 k8s 对象 是怎么在 k8s API 中表示的，怎么以 <code>.yaml</code> 格式输出 k8s 对象</p>
+<h2 id="简介">简介</h2>
+<p>k8s 对象是 k8s 系统中持久化的实体， k8s 使用这些实体来表示集群的状态，它们具体可以表示如下:</p>
+<ul>
+<li>哪些容器的应用在(如个节点上)运行</li>
+<li>可用于运行应用的资源</li>
+<li>应用的行为策略，比如重启策略，升级，容错性</li>
+</ul>
+<p>k8s 对象是对用户一个意图的记录，当用户创建一个对象后，系统需要保证对象持续存在。用户通过创建一个来告知 k8s 需要一个什么样的 工作负载(workload), 也就是集群的期望状态(desired state)</p>
+<p>要实现对 k8s 对象的管理，比如增删改查都需要调用 k8s API, 例如，当用户可以通过 kubectl 命令来实现对API的调用。也可以通过自己写程序实现对 k8s API 的调用，调用库详见(<a href="https://kubernetes.io/docs/reference/using-api/client-libraries/">https://kubernetes.io/docs/reference/using-api/client-libraries/</a>)</p>
+<h2 id="对象的-specstatus-属性">对象的 <code>Spec</code>，<code>Status</code> 属性</h2>
+<p>基本上所有的 k8s 都包含两个嵌套对象作为属性用于管理对象的配置，其中一个对象为 <code>spec</code>， 另一个为 <code>status</code>， 用户在创建对象进设置 <code>spec</code> 来定义所需资源的特性，也就是集群的期望状态。</p>
+<p>而 <code>status</code> 字段，则是对象的当前的实际状态，由 k8s 系统及其组件进行提供和修改。 k8s 控制中心的任务就是始终让所有对象的实际状态与期望状态一致。</p>
+<p>例如: 在 k8s 中， 一个  Deployment 对象表示运行有用户集群中的一个应用，当用户创建一个 Deployment 并在 spec 对象中设置应用副本数为 3时， k8s 会读取对象属性，启动用户所期望的三个实例并更新相应的状态以达成与 spec 配置的一致。 如果其它任意一个实例失效(某一状态发生变化)， k8s 将会对 spec 与 status 之间的差异采取行动，在当前描述的情况下就会再启动一个实例代替失效的实例。更多关于对象 <code>spec</code>, <code>status</code>, <code>metadata</code> 相关信息看<a href="https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md">这里</a></p>
+<h2 id="怎么描述一个-k8s-对象">怎么描述一个 k8s 对象</h2>
+<p>用户在创建 k8s 对象时，必须要提供描述期望状态的 <code>spec</code>, 同时还需要该对象的基础信息，比如名称。 当用户使用 API 创建对象时(无论是直接调用还是通过 <code>kubectl</code> ), 对象信息都为以JSON格式作为请求的消息体发送给 API.</p>
+<p>一般情况下使用 <code>yaml</code> 文件为 <code>kubectl</code>提供信息, 此时kubectl 会将 <code>.yaml</code> 格式转化为JSON格式然后对 k8s API 发起请求</p>
+<p>以下是示例为创建一个 Deployment 必要字段和对象 <code>spec</code>的 <code>yaml</code> 文件：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: apps/v1 <span style="color:#75715e"># 集群版本 &lt; 1.9.0 使用 apps/v1beta2</span>
+<span style="color:#66d9ef">kind</span>: Deployment
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: nginx-deployment
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">replicas</span>: <span style="color:#ae81ff">3</span> <span style="color:#75715e"># 需要按以下模板运行 3 个 Pod</span>
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">matchLabels</span>:
+      <span style="color:#66d9ef">app</span>: nginx
+  <span style="color:#66d9ef">template</span>:
+    <span style="color:#66d9ef">metadata</span>:
+      <span style="color:#66d9ef">labels</span>:
+        <span style="color:#66d9ef">app</span>: nginx
+    <span style="color:#66d9ef">spec</span>:
+      <span style="color:#66d9ef">containers</span>:
+      - <span style="color:#66d9ef">name</span>: nginx
+        <span style="color:#66d9ef">image</span>: nginx:<span style="color:#ae81ff">1.14.2</span>
+        <span style="color:#66d9ef">ports</span>:
+        - <span style="color:#66d9ef">containerPort</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div><p>要使用以上的 <code>yaml</code> 文件创建一个 Deployment，一种方式是通过 <code>kubectl apply</code> 命令，并将这个 <code>yaml</code> 文件作为参数</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl apply -f nginx-deployment.yaml
+</code></pre></div><p>命令输出如下</p>
+<pre><code>deployment.apps/nginx-deployment created --record
+</code></pre><h2 id="必要字段">必要字段</h2>
+<p>在使用 <code>.yaml</code> 创建对象时，以下是必要字段:</p>
+<ul>
+<li><code>apiVersion</code> 使用哪个版本的 k8s API 创建这个对象</li>
+<li><code>kind</code> 创建对象的类型</li>
+<li><code>metadata</code> 唯一标识对象的信息，
+<ul>
+<li><code>name</code> 字符串</li>
+<li><code>UID</code> (系统会生成?)</li>
+<li><code>namespace</code>, 可选，默认 default</li>
+</ul>
+</li>
+<li><code>spec</code> 对象实际定义(期望)， 每类对象不一样</li>
+</ul>
+<p>其中 <code>spec</code> 字段值是一个嵌套对象，其字段因不同的对象类型而有不同。<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/">这个文档</a>包含k8s 所有对象的创建, 比如 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podspec-v1-core">这里是Pod的 spec 详情</a><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#deploymentspec-v1-apps">这里是Deployment的 spec 详情</a></p>
+<h2 id="源文件">源文件</h2>
+<p><a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/">https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/</a></p>
+<h2 id="引申阅读">引申阅读</h2>
+<p><a href="https://kubernetes.io/docs/reference/using-api/api-overview/">k8s API 概念说明</a>
+<a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/">k8s 最重要基础概念 Pod</a>
+<a href="https://kubernetes.io/docs/concepts/architecture/controller/">k8s 的控制器</a></p>
+<div class="edit-meta">
+Last updated on 29 Jun 2020
+
+
+<br>
+Published on 30 Jun 2020
+<br></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/" title="k8s 对象管理"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - k8s 对象管理</a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/3-tasks/" title="Tasks">Next - Tasks <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+</nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
+</footer>
+</main><div class="sidebar">
+
+<nav class="slide-menu">
+<ul>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs">Home</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/">概念(Concepts)<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/">Cluster Architecture</a>
+  
+</li>
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/">Containers</a>
+  
+</li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/">概览<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00-what-is-k8s/">k8s 是什么</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01-k8s-components/">k8s 组件</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02-k8s-api/">k8s API 说明</a></li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/">k8s 对象管理<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/00-k8s-understanding-objects/">k8s 对象介绍</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/">Tasks<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/">Install Tools<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/00-install-kubectl/">下载安装配置 kubectl</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/01-install-minikube/">安装 Minikube</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/">Configure Pod Containters<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/test21/">21</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/">Tutorials<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/00-hello-minikube/">Hello Minikube</a>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/">Reference<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/07-kubectl/">kubectl CLI<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/07-kubectl/00-overview/">kubectl 概览</a></li>
+</ul>
+  
+</li>
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/">Standardized Glossary</a>
+  
+</li>
+</ul>
+  
+</li>
+</ul>
+</nav>
+
+
+
+<div class="sidebar-footer"></div>
+</div>
+</div><a href="#" id="backtothetop-fixed" class="backtothetop"
+ data-backtothetop-duration="600"
+ data-backtothetop-easing="easeOutQuart"
+ data-backtothetop-fixed-fadeIn="1000"
+ data-backtothetop-fixed-fadeOut="1000"
+ data-backtothetop-fixed-bottom="10"
+ data-backtothetop-fixed-right="20">
+<span class="fa-layers fa-fw">
+<i class="fas fa-circle"></i>
+<i class="fas fa-arrow-circle-up"></i>
+</span></a>
+</div>
+</body>
+</html>

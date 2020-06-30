@@ -7,7 +7,7 @@
 <meta name="description" content="test">
 <meta name="generator" content="Hugo 0.68.3" />
 <link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
-<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02_k8s_api/">
+<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02-k8s-api/">
 <link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/theme.min.css">
 <script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 <link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/chroma.min.css">
@@ -19,7 +19,7 @@
 <meta property="og:title" content="k8s API 说明" />
 <meta property="og:description" content="k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02_k8s_api/" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02-k8s-api/" />
 <meta property="article:published_time" content="2020-06-29T00:00:00+00:00" />
 <meta property="article:modified_time" content="2020-06-24T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
 <meta name="twitter:card" content="summary"/>
@@ -29,7 +29,7 @@
 <meta itemprop="description" content="k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这">
 <meta itemprop="datePublished" content="2020-06-29T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-24T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1620">
+<meta itemprop="wordCount" content="1706">
 
 
 
@@ -68,11 +68,40 @@ k8s 自身也解耦成多个模块，通过 API 进行交互</p>
 <p>关于怎么做兼容和怎么修改API,依照这个(<a href="https://git.k8s.io/community/contributors/devel/sig-architecture/api_changes.md#readme">https://git.k8s.io/community/contributors/devel/sig-architecture/api_changes.md#readme</a>)</p>
 <h2 id="openapi-规范">OpenAPI 规范</h2>
 <p>完整 API 规范明细见 <a href="https://www.openapis.org/">这里</a>
-k8s api-server 通过 <code>/openapi/v2</code> 提供 OpenAPI 规范， 用户可以通过以下请求头发送请求获取响应格式
-请求头                      | 可选值                                                      | 说明
-&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;|-
-Accept-Encoding            |gzip                                                        | 可选</p>
-<!-- raw HTML omitted -->
+k8s api-server 通过 <code>/openapi/v2</code> 提供 OpenAPI 规范， 用户可以通过以下请求头发送请求获取响应格式</p>
+<table>
+<thead>
+<tr>
+<th>请求头</th>
+<th>可选值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Accept-Encoding</td>
+<td>gzip</td>
+<td>可选</td>
+</tr>
+<tr>
+<td>Accept</td>
+<td><a href="mailto:application/com.github.proto-openapi.spec.v2@v1.0">application/com.github.proto-openapi.spec.v2@v1.0</a>+protobuf</td>
+<td>mainly for intra-cluster use</td>
+</tr>
+<tr>
+<td>^</td>
+<td>application/json</td>
+<td>默认</td>
+</tr>
+<tr>
+<td>^</td>
+<td>响应 <code>application/json</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>也可以是任务符合OpenAPI 规范的请求头
+k8s 还有一个基于基于 <code>Protobuf</code> 序列化的API，这套API 主要用于集群内通信。具体见对应模块 Go 源码文档，文档设计准则在<a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/protobuf.md">这里</a></p>
 <h2 id="api-版本">API 版本</h2>
 <p>为方便移除资源项或修改资源结构，k8s 同时存在多个版本的 API, 每个版本的 API 路径都不一样，比如 <code>/api/v1</code> <code>/apis/extensions/v1beta1</code>
 这样版本就通过区分就在API这一层完成，而不用到资源或资源荐，可以做到清晰明了,并提供一致的系统资源的行为。
@@ -151,8 +180,8 @@ Last updated on 24 Jun 2020
 
 <br>
 Published on 29 Jun 2020
-<br></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01_k8s_components/" title="k8s 组件"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - k8s 组件</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/3-tasks/" title="Tasks">Next - Tasks <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+<br></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01-k8s-components/" title="k8s 组件"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - k8s 组件</a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/" title="k8s 对象管理">Next - k8s 对象管理 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -193,12 +222,20 @@ Published on 29 Jun 2020
   
 </li>
 
-<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/">Overview<span class="mark opened">-</span></a>
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/">概览<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00_what_is_k8s/">k8s 是什么</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01_k8s_components/">k8s 组件</a></li>
-<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02_k8s_api/">k8s API 说明</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00-what-is-k8s/">k8s 是什么</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01-k8s-components/">k8s 组件</a></li>
+<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02-k8s-api/">k8s API 说明</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/">k8s 对象管理<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/00-k8s-understanding-objects/">k8s 对象介绍</a></li>
+</ul>
+  
+</li>
 </ul>
   
 </li>
