@@ -1,6 +1,6 @@
 ---
 title: k8s 对象介绍
-weight: 200031
+weight: 200030
 date: 2020-06-29
 publishdate: 2020-06-30
 ---
