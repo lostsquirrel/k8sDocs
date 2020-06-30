@@ -2,7 +2,7 @@
 title: k8s 对象介绍
 weight: 200031
 date: 2020-06-29
-draft: true
+publishdate: 2020-06-30
 ---
 
 本文介绍 k8s 对象 是怎么在 k8s API 中表示的，怎么以 `.yaml` 格式输出 k8s 对象
@@ -27,51 +27,63 @@ k8s 对象是对用户一个意图的记录，当用户创建一个对象后，�
 例如: 在 k8s 中， 一个  Deployment 对象表示运行有用户集群中的一个应用，当用户创建一个 Deployment 并在 spec 对象中设置应用副本数为 3时， k8s 会读取对象属性，启动用户所期望的三个实例并更新相应的状态以达成与 spec 配置的一致。 如果其它任意一个实例失效(某一状态发生变化)， k8s 将会对 spec 与 status 之间的差异采取行动，在当前描述的情况下就会再启动一个实例代替失效的实例。更多关于对象 `spec`, `status`, `metadata` 相关信息看[这里](https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md)
 
 
-## 表示 k8s 对象
+## 怎么描述一个 k8s 对象
 
-    一般情况下使用 kubectl, kubectl 会将 .yaml 格式转化为 k8s API 需要的 JSON 模式
-    示例：
-    ```yaml
-    apiVersion: apps/v1
-    kind: Deployment
+用户在创建 k8s 对象时，必须要提供描述期望状态的 `spec`, 同时还需要该对象的基础信息，比如名称。 当用户使用 API 创建对象时(无论是直接调用还是通过 `kubectl` ), 对象信息都为以JSON格式作为请求的消息体发送给 API.
+
+一般情况下使用 `yaml` 文件为 `kubectl`提供信息, 此时kubectl 会将 `.yaml` 格式转化为JSON格式然后对 k8s API 发起请求
+
+
+以下是示例为创建一个 Deployment 必要字段和对象 `spec`的 `yaml` 文件：
+```yaml
+apiVersion: apps/v1 # 集群版本 < 1.9.0 使用 apps/v1beta2
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3 # 需要按以下模板运行 3 个 Pod
+  selector:
+    matchLabels:
+      app: nginx
+  template:
     metadata:
-      name: nginx-deployment
+      labels:
+        app: nginx
     spec:
-      replicas: 3
-      selector:
-        matchLabels:
-          app: nginx
-      template:
-        metadata:
-          labels:
-            app: nginx
-        spec:
-          containers:
-          - name: nginx
-            image: nginx:1.7.9
-            ports:
-            - containerPort: 80
-    ```
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+```
 
-    通过 `kubectl create` 创建对象
-    ```sh
-    kubectl create -f https://k8s.io/docs/user-guide/nginx-deployment.yaml --record
-    ```
+要使用以上的 `yaml` 文件创建一个 Deployment，一种方式是通过 `kubectl apply` 命令，并将这个 `yaml` 文件作为参数
+
+```sh
+kubectl apply -f nginx-deployment.yaml
+```
+命令输出如下
+```
+deployment.apps/nginx-deployment created --record
+```
+
 ## 必要字段
 
-    使用 `.yaml` 创建对象时的必要字段
-    - `apiVersion` 使用哪个版本的 k8s API 创建这个对象
-    - `kind` 创建对象的类型
-    - `metadata` 唯一标识对象的信息，
-        - `name` 字符串
-        - `UID` (系统会生成?)
-        - `namespace`, 可选，默认 default
-    - `spec` 对象实际定义， 每类对象不一样，详见(https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.9/)
+在使用 `.yaml` 创建对象时，以下是必要字段:
+- `apiVersion` 使用哪个版本的 k8s API 创建这个对象
+- `kind` 创建对象的类型
+- `metadata` 唯一标识对象的信息，
+  - `name` 字符串
+  - `UID` (系统会生成?)
+  - `namespace`, 可选，默认 default
+- `spec` 对象实际定义(期望)， 每类对象不一样
+
+其中 `spec` 字段值是一个嵌套对象，其字段因不同的对象类型而有不同。[这个文档](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/)包含k8s 所有对象的创建, 比如 [这里是Pod的 spec 详情](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podspec-v1-core)[这里是Deployment的 spec 详情](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#deploymentspec-v1-apps)
 
 ## 源文件
 
 https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/
-
 ## 引申阅读
-
-https://git.k8s.io/community/contributors/devel/api-conventions.md
+[k8s API 概念说明](https://kubernetes.io/docs/reference/using-api/api-overview/)
+[k8s 最重要基础概念 Pod](https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/)
+[k8s 的控制器](https://kubernetes.io/docs/concepts/architecture/controller/)
