@@ -10,13 +10,13 @@ k8s 可以在一个物理集群上创建多个虚拟集群, 每个名字空间�
 
 名字空间是为用户分散于有多个组或项目下的场景设计的。 如果只有二三十个用户就不用想了，当需要用到名字空间的特性时才考虑用名字空间
 名字空间是对象名称的一个作用域，对象命名只需要在一个名字空间唯一即可，名字空间不可以嵌套且一个资源对象只能属于一个名字空间
-名字空间是集群中多个(组)用户分配资源的一个方式([通过资源配额](../../08-policy/01-resource-quotas))
+名字空间是集群中多个(组)用户分配资源的一个方式([通过资源配额](../../../08-policy/01-resource-quotas))
 未来版本，一个名字空间下的对象可能有相同的默认访问控制策略
 不必要用名字空间来区分差异较小的资源，比如同一个软件的不同版本，可以同一个名字空间下使用标签(labels)区分这些对象
 
 ## 管理名字空间
 
-名字空间的创建和删除请见[管理指南名字空间部分](../../3-tasks/01-administer-cluster/34-namespaces)
+名字空间的创建和删除请见[管理指南名字空间部分](../../../../3-tasks/01-administer-cluster/34-namespaces)
 
 注意: 在自定义名字空间是，避免使用 `kube-` 作为前缀， 这个前缀是 k8s 名字空间保留字
 
@@ -61,11 +61,11 @@ kubectl config view --minify | grep namespace:
 
 ### 名字空间与DNS的关系
 
-当用户创建 [Service]() 时会对应生成一条 DNS 记录, 而这条记录中的格式为 `<service-name>.<namespace-name>.svc.cluster.local` 也就是说 通过 `<service-name>` 只能解析到本名字空间的服务，这在不同名字空间使用同一套配置时相关有用，比如开发，演示，生产等不同环境。如果跨名字空间访问 Service 需要使用全限定名(FQDN)，一般来说只需要 `<service-name>.<namespace-name>` 也是可以的
+当用户创建 [Service](../../../04-services-networking/00-service) 时会对应生成一条 [DNS 记录](../../../04-services-networking/03-dns-pod-service), 而这条记录中的格式为 `<service-name>.<namespace-name>.svc.cluster.local` 也就是说 通过 `<service-name>` 只能解析到本名字空间的服务，这在不同名字空间使用同一套配置时相关有用，比如开发，演示，生产等不同环境。如果跨名字空间访问 Service 需要使用全限定名(FQDN)，一般来说只需要 `<service-name>.<namespace-name>` 也是可以的
 
 ## 那些不属于任何名字空间的对象
 
-大多数 k8s 资源( pod, service, replication controller 等)都会属于某一个名字空间。 而 名字空间 资源则不属于任何名字空间。 还有一个底层资源 比如 节点， persistentVolumes 也不属于任何名字空间
+大多数 k8s 资源( pod, service, replication controller 等)都会属于某一个名字空间。 而 名字空间 资源则不属于任何名字空间。 还有一个底层资源 比如 [节点](../../../01-cluster-architecture/00-nodes/)， persistentVolumes 也不属于任何名字空间
 
 以下命令可以查看资源是否属于名字空间:
 ```sh
