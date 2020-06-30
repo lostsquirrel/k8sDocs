@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>K8S 文档笔记</title>
+<meta name="description" content="test">
+<meta name="generator" content="Hugo 0.68.3" />
+<link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
+<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/03-label-selectors/">
+<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/theme.min.css">
+<script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/chroma.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.easing@1.4.1/jquery.easing.min.js"></script>
+<script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
+:root {}
+</style>
+<meta property="og:title" content="" />
+<meta property="og:description" content="标签和标签选择器 标签是附加在对象上的键值对，应该与所在的对象有关且具有意思 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/03-label-selectors/" />
+<meta property="article:published_time" content="2020-06-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-06-29T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content=""/>
+<meta name="twitter:description" content="标签和标签选择器 标签是附加在对象上的键值对，应该与所在的对象有关且具有意思 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在"/>
+<meta itemprop="name" content="">
+<meta itemprop="description" content="标签和标签选择器 标签是附加在对象上的键值对，应该与所在的对象有关且具有意思 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在">
+<meta itemprop="datePublished" content="2020-06-29T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-06-29T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1009">
+
+
+
+<meta itemprop="keywords" content="" />
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?46e26ffc9d975f663dff0b89f1cf7931";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+<body><div class="container"><header>
+<h1>K8S 文档笔记</h1>
+
+ <span class="version">Version 0.0.1</span>
+
+<p class="description">test</p>
+
+</header>
+
+<div class="content-container">
+<main><h1></h1>
+<h1 id="标签和标签选择器">标签和标签选择器</h1>
+<p>标签是附加在对象上的键值对，应该与所在的对象有关且具有意思
+标签可以用于组织和筛选一组对象
+标签可以在对象创建时就定义，也可以在对象创建后任何时间添加或修改
+一个对象可以有多个标签，但同一个对象所有标签的名称必须唯一
+标签不适用于非标识性的内容，非标识性内容应该使用注解(annotations)</p>
+<h2 id="动机">动机</h2>
+<p>标签让用户可以以松耦合的形式把组织架构映射到系统对象上，而不需要客户端存在这些映射
+常用标签示例：</p>
+<ul>
+<li>&ldquo;release&rdquo; : &ldquo;stable&rdquo;, &ldquo;release&rdquo; : &ldquo;canary&rdquo;</li>
+<li>&ldquo;environment&rdquo; : &ldquo;dev&rdquo;, &ldquo;environment&rdquo; : &ldquo;qa&rdquo;, &ldquo;environment&rdquo; : &ldquo;production&rdquo;</li>
+<li>&ldquo;tier&rdquo; : &ldquo;frontend&rdquo;, &ldquo;tier&rdquo; : &ldquo;backend&rdquo;, &ldquo;tier&rdquo; : &ldquo;cache&rdquo;</li>
+<li>&ldquo;partition&rdquo; : &ldquo;customerA&rdquo;, &ldquo;partition&rdquo; : &ldquo;customerB&rdquo;</li>
+<li>&ldquo;track&rdquo; : &ldquo;daily&rdquo;, &ldquo;track&rdquo; : &ldquo;weekly&rdquo;</li>
+</ul>
+<h2 id="语法和字符集">语法和字符集</h2>
+<pre><code>- 键 由前缀和名称组成，由斜线(/)分隔
+    - 前缀 可选，必须是一个 DNS 字域名 总长度不超过 253 个字符
+    - 名称 不多于63个字符，必须以字母或数字 ([a-z0-9A-Z])开头和结束，包含中划线(-)，下划线 `(_)`，点 (.),字母,数字
+
+系统自动化组件(e.g. kube-scheduler, kube-controller-manager, kube-apiserver, kubectl, or other third-party automation), 给最终用户对象加标签时必须加前缀， `kubernetes.io/` 为 k8s 核心组件保留使用
+
+- 值 可以为空，不多于63个字符，必须以字母或数字 ([a-z0-9A-Z])开头和结束，包含中划线(-)，下划线 `(_)`，点 (.),字母,数字
+</code></pre>
+<h2 id="标签选择器">标签选择器</h2>
+<pre><code>在对象之间，标签不需要唯一，并且一般来说，会有多个对象有相同的标签
+通过标签选择器，用户/客户端可以选择器，选取一个对象集
+标签选择器是k8s 核心分组基础
+目前支持两种选择方式： 等值选择，集合选择
+一个标签选择器，可以有多个选择条件，用逗号分隔，条件之间为逻辑与关系
+一个空选择器，选择所有对象
+一个null选择器，不选择任何对象
+两个controller 的选择器不能有交集，不然他们会打架
+</code></pre>
+<h3 id="等值选择">等值选择</h3>
+<pre><code>操作符
+- =,==, 表示等于; 对象标签的键和值都要一致
+- != 表示不等于; 对象标签有该键，但不是该值
+例：
+```
+environment = production # 包含标签键为 environment， 标签值为 production
+tier != frontend # 包含标签键为 tier，标签值不为 frontend
+```
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cuda-test
+spec:
+  containers:
+    - name: cuda-test
+      image: &quot;k8s.gcr.io/cuda-vector-add:v0.1&quot;
+      resources:
+        limits:
+          nvidia.com/gpu: 1
+  nodeSelector:
+    accelerator: nvidia-tesla-p100
+```
+</code></pre>
+<h3 id="集合选择">集合选择</h3>
+<pre><code>操作符
+- in `environment in (production, qa)` 对象标签有该键， 且值在这个集合内
+- notin `tier notin (frontend, backend)` 对象标签有该键， 且值不在这个集合内
+- exists
+    `partition` 对象标签有该键
+    `!partition` 对象标签没有该键
+</code></pre>
+<p>两种选择方式可以组合使用 例： <code>partition in (customerA, customerB),environment!=qa</code></p>
+<h2 id="选择器在-api-上的使用">选择器在 API 上的使用</h2>
+<pre><code>LIST/ WATCH 过虑
+- equality-based requirements: ?labelSelector=environment%3Dproduction,tier%3Dfrontend
+- set-based requirements: ?labelSelector=environment+in+%28production%2Cqa%29%2Ctier+in+%28frontend%29
+
+```sh
+$ kubectl get pods -l environment=production,tier=frontend
+
+$ kubectl get pods -l 'environment in (production),tier in (frontend)'
+
+# 达到 逻辑与的效果
+$ kubectl get pods -l 'environment in (production, qa)'
+#
+$ kubectl get pods -l 'environment,environment notin (frontend)'
+```
+</code></pre>
+<h3 id="service-and-replicationcontroller-对选择器的使用">Service and ReplicationController 对选择器的使用</h3>
+<pre><code>```yaml
+selector:
+    component: redis # 相当于 component=redis 或 component in (redis)
+```
+</code></pre>
+<h3 id="支持集合选择的资源">支持集合选择的资源</h3>
+<pre><code>`Job`, `Deployment`, `Replica Set`, `Daemon Set`
+```yaml
+selector:
+  matchLabels:
+    component: redis
+  matchExpressions:
+    - {key: tier, operator: In, values: [cache]}
+    - {key: environment, operator: NotIn, values: [dev]}
+```
+
+operator: In, NotIn, Exists, DoesNotExist
+</code></pre>
+<div class="edit-meta">
+Last updated on 29 Jun 2020
+
+
+<br>
+Published on 29 Jun 2020
+<br></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/02-namespace/" title="名字空间(Namespaces)"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 名字空间(Namespaces)</a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/" title="">Next -  <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+</nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
+</footer>
+</main><div class="sidebar">
+
+<nav class="slide-menu">
+<ul>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs">Home</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/">概念(Concepts)<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/">Cluster Architecture</a>
+  
+</li>
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/">Containers</a>
+  
+</li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/">概览<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00-what-is-k8s/">k8s 是什么</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01-k8s-components/">k8s 组件</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02-k8s-api/">k8s API 说明</a></li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/">k8s 对象管理<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/00-understanding-objects/">k8s 对象介绍</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/01-names/">对象命令与ID</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/03-label-selectors/"></a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/"></a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/01-resource-quotas/">资源配额</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/00-service/">Service</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/">Tasks<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/">Install Tools<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/00-install-kubectl/">下载安装配置 kubectl</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/01-install-minikube/">安装 Minikube</a></li>
+</ul>
+  
+</li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/34-namespaces/"></a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/">Configure Pod Containters<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/test21/">21</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/">Tutorials<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/00-hello-minikube/">Hello Minikube</a>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/">Reference<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/07-kubectl/">kubectl CLI<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/07-kubectl/00-overview/">kubectl 概览</a></li>
+</ul>
+  
+</li>
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/10_drivers/">Minikube Drivers</a>
+  
+</li>
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/">Standardized Glossary</a>
+  
+</li>
+</ul>
+  
+</li>
+</ul>
+</nav>
+
+
+
+<div class="sidebar-footer"></div>
+</div>
+</div><a href="#" id="backtothetop-fixed" class="backtothetop"
+ data-backtothetop-duration="600"
+ data-backtothetop-easing="easeOutQuart"
+ data-backtothetop-fixed-fadeIn="1000"
+ data-backtothetop-fixed-fadeOut="1000"
+ data-backtothetop-fixed-bottom="10"
+ data-backtothetop-fixed-right="20">
+<span class="fa-layers fa-fw">
+<i class="fas fa-circle"></i>
+<i class="fas fa-arrow-circle-up"></i>
+</span></a>
+</div>
+</body>
+</html>

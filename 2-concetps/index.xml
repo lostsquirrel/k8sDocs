@@ -11,5 +11,23 @@
 	<atom:link href="https://lostsquirrel.github.io/k8sDocs/2-concetps/index.xml" rel="self" type="application/rss+xml" />
     
     
+    <item>
+      <title>资源配额</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/01-resource-quotas/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/01-resource-quotas/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
+      <title>Service</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/00-service/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/00-service/</guid>
+      <description>TODO</description>
+    </item>
+    
   </channel>
 </rss>

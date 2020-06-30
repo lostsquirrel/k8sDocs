@@ -20,5 +20,41 @@
       <description>本文介绍 k8s 对象 是怎么在 k8s API 中表示的，怎么以 .yaml 格式输出 k8s 对象 简介 k8s 对象是 k8s 系统中持久化的实体， k8s 使用这些实体来表示集群的状态，它们具体可以表示</description>
     </item>
     
+    <item>
+      <title>对象命令与ID</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/01-names/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/01-names/</guid>
+      <description>在 k8s 的对象中，同一类型的对象名称唯一， 比如在一个 名字空间中只能有一个叫 myapp-1234 在 Pod， 但不同类型的资源可以有相同的名称，比如还可以定义一个叫 myapp-1234 在</description>
+    </item>
+    
+    <item>
+      <title>名字空间(Namespaces)</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/02-namespace/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/02-namespace/</guid>
+      <description>k8s 可以在一个物理集群上创建多个虚拟集群, 每个名字空间就是一个虚拟集群 啥时候用名字空间 名字空间是为用户分散于有多个组或项目下的场景设计的。 如果</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/03-label-selectors/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/03-label-selectors/</guid>
+      <description>标签和标签选择器 标签是附加在对象上的键值对，应该与所在的对象有关且具有意思 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/</guid>
+      <description>注解 (Annotations) 为对象添加非标识性元数据(non-identifying) 常见使用注解的示例： Fields managed by a declarative configuration layer. Attaching these fields as annotations distinguishes them from default values set by clients or servers, and from auto-generated fields and fields</description>
+    </item>
+    
   </channel>
 </rss>
