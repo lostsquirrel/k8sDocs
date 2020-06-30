@@ -6,9 +6,19 @@
     <description>Recent content in Cluster Architecture on K8S 文档笔记</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
+    <lastBuildDate>Tue, 30 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>节点</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/00-nodes/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/00-nodes/</guid>
+      <description>TODO</description>
+    </item>
     
   </channel>
 </rss>

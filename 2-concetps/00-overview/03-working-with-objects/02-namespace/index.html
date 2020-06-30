@@ -59,11 +59,11 @@ var _hmt = _hmt || [];
 <h2 id="啥时候用名字空间">啥时候用名字空间</h2>
 <p>名字空间是为用户分散于有多个组或项目下的场景设计的。 如果只有二三十个用户就不用想了，当需要用到名字空间的特性时才考虑用名字空间
 名字空间是对象名称的一个作用域，对象命名只需要在一个名字空间唯一即可，名字空间不可以嵌套且一个资源对象只能属于一个名字空间
-名字空间是集群中多个(组)用户分配资源的一个方式(<a href="../../08-policy/01-resource-quotas">通过资源配额</a>)
+名字空间是集群中多个(组)用户分配资源的一个方式(<a href="../../../08-policy/01-resource-quotas">通过资源配额</a>)
 未来版本，一个名字空间下的对象可能有相同的默认访问控制策略
 不必要用名字空间来区分差异较小的资源，比如同一个软件的不同版本，可以同一个名字空间下使用标签(labels)区分这些对象</p>
 <h2 id="管理名字空间">管理名字空间</h2>
-<p>名字空间的创建和删除请见<a href="../../3-tasks/01-administer-cluster/34-namespaces">管理指南名字空间部分</a></p>
+<p>名字空间的创建和删除请见<a href="../../../../3-tasks/01-administer-cluster/34-namespaces">管理指南名字空间部分</a></p>
 <p>注意: 在自定义名字空间是，避免使用 <code>kube-</code> 作为前缀， 这个前缀是 k8s 名字空间保留字</p>
 <h3 id="查看">查看</h3>
 <p>可以通过以下命令查看当前集群所有名字空间:</p>
@@ -92,9 +92,9 @@ kubectl get pods --namespace<span style="color:#f92672">=</span>&lt;insert-names
 <span style="color:#75715e"># Validate it</span>
 kubectl config view --minify | grep namespace:
 </code></pre></div><h3 id="名字空间与dns的关系">名字空间与DNS的关系</h3>
-<p>当用户创建 <a href="">Service</a> 时会对应生成一条 DNS 记录, 而这条记录中的格式为 <code>&lt;service-name&gt;.&lt;namespace-name&gt;.svc.cluster.local</code> 也就是说 通过 <code>&lt;service-name&gt;</code> 只能解析到本名字空间的服务，这在不同名字空间使用同一套配置时相关有用，比如开发，演示，生产等不同环境。如果跨名字空间访问 Service 需要使用全限定名(FQDN)，一般来说只需要 <code>&lt;service-name&gt;.&lt;namespace-name&gt;</code> 也是可以的</p>
+<p>当用户创建 <a href="../../../04-services-networking/00-service">Service</a> 时会对应生成一条 <a href="../../../04-services-networking/03-dns-pod-service">DNS 记录</a>, 而这条记录中的格式为 <code>&lt;service-name&gt;.&lt;namespace-name&gt;.svc.cluster.local</code> 也就是说 通过 <code>&lt;service-name&gt;</code> 只能解析到本名字空间的服务，这在不同名字空间使用同一套配置时相关有用，比如开发，演示，生产等不同环境。如果跨名字空间访问 Service 需要使用全限定名(FQDN)，一般来说只需要 <code>&lt;service-name&gt;.&lt;namespace-name&gt;</code> 也是可以的</p>
 <h2 id="那些不属于任何名字空间的对象">那些不属于任何名字空间的对象</h2>
-<p>大多数 k8s 资源( pod, service, replication controller 等)都会属于某一个名字空间。 而 名字空间 资源则不属于任何名字空间。 还有一个底层资源 比如 节点， persistentVolumes 也不属于任何名字空间</p>
+<p>大多数 k8s 资源( pod, service, replication controller 等)都会属于某一个名字空间。 而 名字空间 资源则不属于任何名字空间。 还有一个底层资源 比如 <a href="../../../01-cluster-architecture/00-nodes/">节点</a>， persistentVolumes 也不属于任何名字空间</p>
 <p>以下命令可以查看资源是否属于名字空间:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># 在一个名字空间中</span>
 kubectl api-resources --namespaced<span style="color:#f92672">=</span>true
@@ -147,7 +147,11 @@ Published on 30 Jun 2020
   
 <ul class="sub-menu">
 
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/">Cluster Architecture</a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/">Cluster Architecture<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/00-nodes/">节点</a></li>
+</ul>
   
 </li>
 
@@ -176,8 +180,23 @@ Published on 30 Jun 2020
 </ul>
   
 </li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/">Policies<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/01-resource-quotas/">资源配额</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/"><span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/00-service/">Service</a></li>
+</ul>
+  
+</li>
 </ul>
   
 </li>
@@ -194,7 +213,14 @@ Published on 30 Jun 2020
 </ul>
   
 </li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/34-namespaces/"></a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/">Administer a Cluster<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/34-namespaces/">通过名字空间分享一个集群</a></li>
+</ul>
+  
+</li>
 
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/">Configure Pod Containters<span class="mark closed">+</span></a>
   

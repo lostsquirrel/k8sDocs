@@ -3,11 +3,11 @@
 <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Cluster Architecture - K8S 文档笔记</title>
+<title>Policies - K8S 文档笔记</title>
 <meta name="description" content="test">
 <meta name="generator" content="Hugo 0.68.3" />
 <link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
-<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/">
+<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/">
 <link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/theme.min.css">
 <script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 <link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/chroma.min.css">
@@ -16,15 +16,15 @@
 <script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
 :root {}
 </style>
-<meta property="og:title" content="Cluster Architecture" />
+<meta property="og:title" content="Policies" />
 <meta property="og:description" content="test" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/" />
 <meta property="og:updated_time" content="2020-06-30T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Cluster Architecture"/>
+<meta name="twitter:title" content="Policies"/>
 <meta name="twitter:description" content="test"/>
-<meta itemprop="name" content="Cluster Architecture">
+<meta itemprop="name" content="Policies">
 <meta itemprop="description" content="test">
 <script>
 var _hmt = _hmt || [];
@@ -46,12 +46,14 @@ var _hmt = _hmt || [];
 </header>
 
 <div class="content-container">
-<main><h1>Cluster Architecture</h1><div class="edit-meta">
+<main><h1>Policies</h1><div class="edit-meta">
 Last updated on 30 Jun 2020
 
 
-<br></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/" title="概念(Concepts)"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 概念(Concepts)</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/00-nodes/" title="节点">Next - 节点 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+<br>
+Published on 30 Jun 2020
+<br></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/" title=""><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - </a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/01-resource-quotas/" title="资源配额">Next - 资源配额 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -84,7 +86,7 @@ Last updated on 30 Jun 2020
   
 <ul class="sub-menu">
 
-<li class="parent active has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/">Cluster Architecture<span class="mark opened">-</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/">Cluster Architecture<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/00-nodes/">节点</a></li>
@@ -118,7 +120,7 @@ Last updated on 30 Jun 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/">Policies<span class="mark closed">+</span></a>
+<li class="parent active has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/">Policies<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/01-resource-quotas/">资源配额</a></li>

@@ -9,6 +9,7 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/</loc>
+    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -68,6 +69,16 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/00-nodes/</loc>
+    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/</loc>
+    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/01-resource-quotas/</loc>
     <lastmod>2020-06-30T00:00:00+00:00</lastmod>
   </url>
@@ -88,6 +99,11 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/</loc>
+    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/34-namespaces/</loc>
     <lastmod>2020-06-30T00:00:00+00:00</lastmod>
   </url>
@@ -95,6 +111,11 @@
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/</loc>
     <lastmod>2020-05-22T10:52:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/03-dns-pod-service/</loc>
+    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -137,6 +158,11 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/00-service/</loc>
+    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/</loc>
     <lastmod>2020-06-30T00:00:00+00:00</lastmod>
   </url>
   

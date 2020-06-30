@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>K8S 文档笔记</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/</link>
+    <description>Recent content on K8S 文档笔记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 30 Jun 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>DNS for Services and Pods</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/03-dns-pod-service/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/03-dns-pod-service/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
+      <title>Service</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/00-service/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/00-service/</guid>
+      <description>TODO</description>
+    </item>
+    
+  </channel>
+</rss>

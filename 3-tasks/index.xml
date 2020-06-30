@@ -11,14 +11,5 @@
 	<atom:link href="https://lostsquirrel.github.io/k8sDocs/3-tasks/index.xml" rel="self" type="application/rss+xml" />
     
     
-    <item>
-      <title></title>
-      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/34-namespaces/</link>
-      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/34-namespaces/</guid>
-      <description>TODO</description>
-    </item>
-    
   </channel>
 </rss>
