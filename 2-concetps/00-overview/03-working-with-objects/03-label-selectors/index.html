@@ -3,7 +3,7 @@
 <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>K8S 文档笔记</title>
+<title>标签和标签选择器 - K8S 文档笔记</title>
 <meta name="description" content="test">
 <meta name="generator" content="Hugo 0.68.3" />
 <link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
@@ -16,20 +16,20 @@
 <script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
 :root {}
 </style>
-<meta property="og:title" content="" />
-<meta property="og:description" content="标签和标签选择器 标签是附加在对象上的键值对，应该与所在的对象有关且具有意思 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在" />
+<meta property="og:title" content="标签和标签选择器" />
+<meta property="og:description" content="标签是附加在对象上的键值对，应该与所在的对象有关且具有意义 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在对象创建后任何时" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/03-label-selectors/" />
 <meta property="article:published_time" content="2020-06-29T00:00:00+00:00" />
 <meta property="article:modified_time" content="2020-06-29T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content=""/>
-<meta name="twitter:description" content="标签和标签选择器 标签是附加在对象上的键值对，应该与所在的对象有关且具有意思 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在"/>
-<meta itemprop="name" content="">
-<meta itemprop="description" content="标签和标签选择器 标签是附加在对象上的键值对，应该与所在的对象有关且具有意思 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在">
+<meta name="twitter:title" content="标签和标签选择器"/>
+<meta name="twitter:description" content="标签是附加在对象上的键值对，应该与所在的对象有关且具有意义 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在对象创建后任何时"/>
+<meta itemprop="name" content="标签和标签选择器">
+<meta itemprop="description" content="标签是附加在对象上的键值对，应该与所在的对象有关且具有意义 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在对象创建后任何时">
 <meta itemprop="datePublished" content="2020-06-29T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-29T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1009">
+<meta itemprop="wordCount" content="1137">
 
 
 
@@ -54,32 +54,36 @@ var _hmt = _hmt || [];
 </header>
 
 <div class="content-container">
-<main><h1></h1>
-<h1 id="标签和标签选择器">标签和标签选择器</h1>
-<p>标签是附加在对象上的键值对，应该与所在的对象有关且具有意思
+<main><h1>标签和标签选择器</h1>
+<p>标签是附加在对象上的键值对，应该与所在的对象有关且具有意义
 标签可以用于组织和筛选一组对象
 标签可以在对象创建时就定义，也可以在对象创建后任何时间添加或修改
 一个对象可以有多个标签，但同一个对象所有标签的名称必须唯一
-标签不适用于非标识性的内容，非标识性内容应该使用注解(annotations)</p>
+标签可以让UI或命令行工具快速地查询和监听对象，所以标签不适用于非标识性的内容，非标识性内容应该使用注解(<a href="../04-annotation/">annotations</a>)</p>
 <h2 id="动机">动机</h2>
 <p>标签让用户可以以松耦合的形式把组织架构映射到系统对象上，而不需要客户端存在这些映射
-常用标签示例：</p>
+服务部署和批处理流水线通常胡是多维的实体(比如: 多个分区或部署， 多条发布线， 多个层级， 每个次级又有多个微服务)。 要管理这些对象经常需要多维度分割操作， 这就需要打破严格的层级结构的表现形式， 特别是由基础设施而不是由用户决定的死板的层级结构</p>
+<p>常用标签示例：</p>
 <ul>
-<li>&ldquo;release&rdquo; : &ldquo;stable&rdquo;, &ldquo;release&rdquo; : &ldquo;canary&rdquo;</li>
-<li>&ldquo;environment&rdquo; : &ldquo;dev&rdquo;, &ldquo;environment&rdquo; : &ldquo;qa&rdquo;, &ldquo;environment&rdquo; : &ldquo;production&rdquo;</li>
-<li>&ldquo;tier&rdquo; : &ldquo;frontend&rdquo;, &ldquo;tier&rdquo; : &ldquo;backend&rdquo;, &ldquo;tier&rdquo; : &ldquo;cache&rdquo;</li>
-<li>&ldquo;partition&rdquo; : &ldquo;customerA&rdquo;, &ldquo;partition&rdquo; : &ldquo;customerB&rdquo;</li>
-<li>&ldquo;track&rdquo; : &ldquo;daily&rdquo;, &ldquo;track&rdquo; : &ldquo;weekly&rdquo;</li>
+<li><code>&quot;release&quot; : &quot;stable&quot;</code>, <code>&quot;release&quot; : &quot;canary&quot;</code></li>
+<li><code>&quot;environment&quot; : &quot;dev&quot;</code>, <code>&quot;environment&quot; : &quot;qa&quot;</code>, <code>&quot;environment&quot; : &quot;production&quot;</code></li>
+<li><code>&quot;tier&quot; : &quot;frontend&quot;</code>, <code>&quot;tier&quot; : &quot;backend&quot;</code>, <code>&quot;tier&quot; : &quot;cache&quot;</code></li>
+<li><code>&quot;partition&quot; : &quot;customerA&quot;</code>, <code>&quot;partition&quot; : &quot;customerB&quot;</code></li>
+<li><code>&quot;track&quot; : &quot;daily&quot;</code>, <code>&quot;track&quot; : &quot;weekly&quot;</code></li>
 </ul>
 <h2 id="语法和字符集">语法和字符集</h2>
-<pre><code>- 键 由前缀和名称组成，由斜线(/)分隔
-    - 前缀 可选，必须是一个 DNS 字域名 总长度不超过 253 个字符
-    - 名称 不多于63个字符，必须以字母或数字 ([a-z0-9A-Z])开头和结束，包含中划线(-)，下划线 `(_)`，点 (.),字母,数字
-
-系统自动化组件(e.g. kube-scheduler, kube-controller-manager, kube-apiserver, kubectl, or other third-party automation), 给最终用户对象加标签时必须加前缀， `kubernetes.io/` 为 k8s 核心组件保留使用
-
-- 值 可以为空，不多于63个字符，必须以字母或数字 ([a-z0-9A-Z])开头和结束，包含中划线(-)，下划线 `(_)`，点 (.),字母,数字
-</code></pre>
+<ul>
+<li>键 由前缀和名称组成，由斜线(/)分隔
+<ul>
+<li>前缀 可选，必须是一个 DNS 字域名 总长度不超过 253 个字符</li>
+<li>名称 不多于63个字符，必须以字母或数字 ([a-z0-9A-Z])开头和结束，包含中划线(-)，下划线 <code>(_)</code>，点 (.),字母,数字</li>
+</ul>
+</li>
+</ul>
+<p>系统自动化组件(e.g. kube-scheduler, kube-controller-manager, kube-apiserver, kubectl, or other third-party automation), 给最终用户对象加标签时必须加前缀， <code>kubernetes.io/</code> 为 k8s 核心组件保留使用</p>
+<ul>
+<li>值 可以为空，不多于63个字符，必须以字母或数字 ([a-z0-9A-Z])开头和结束，包含中划线(-)，下划线 <code>(_)</code>，点 (.),字母,数字</li>
+</ul>
 <h2 id="标签选择器">标签选择器</h2>
 <pre><code>在对象之间，标签不需要唯一，并且一般来说，会有多个对象有相同的标签
 通过标签选择器，用户/客户端可以选择器，选取一个对象集
@@ -165,8 +169,8 @@ Last updated on 29 Jun 2020
 
 <br>
 Published on 29 Jun 2020
-<br></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/02-namespace/" title="名字空间(Namespaces)"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 名字空间(Namespaces)</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/" title="">Next -  <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/2-concetps/00-overview/03-working-with-objects/03-label-selectors.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/02-namespace/" title="名字空间(Namespaces)"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 名字空间(Namespaces)</a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/" title="注解 (Annotations)">Next - 注解 (Annotations) <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -224,8 +228,8 @@ Published on 29 Jun 2020
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/00-understanding-objects/">k8s 对象介绍</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/01-names/">对象命令与ID</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
-<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/03-label-selectors/"></a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/"></a></li>
+<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/03-label-selectors/">标签和标签选择器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/">注解 (Annotations)</a></li>
 </ul>
   
 </li>

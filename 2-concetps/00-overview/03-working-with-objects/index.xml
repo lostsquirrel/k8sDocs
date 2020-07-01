@@ -39,16 +39,16 @@
     </item>
     
     <item>
-      <title></title>
+      <title>标签和标签选择器</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/03-label-selectors/</link>
       <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/03-label-selectors/</guid>
-      <description>标签和标签选择器 标签是附加在对象上的键值对，应该与所在的对象有关且具有意思 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在</description>
+      <description>标签是附加在对象上的键值对，应该与所在的对象有关且具有意义 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在对象创建后任何时</description>
     </item>
     
     <item>
-      <title></title>
+      <title>注解 (Annotations)</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/</link>
       <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
       
