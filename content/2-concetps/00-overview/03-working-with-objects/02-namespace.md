@@ -61,7 +61,7 @@ kubectl config view --minify | grep namespace:
 
 ### 名字空间与DNS的关系
 
-当用户创建 [Service](../../../04-services-networking/00-service) 时会对应生成一条 [DNS 记录](../../../04-services-networking/03-dns-pod-service), 而这条记录中的格式为 `<service-name>.<namespace-name>.svc.cluster.local` 也就是说 通过 `<service-name>` 只能解析到本名字空间的服务，这在不同名字空间使用同一套配置时相关有用，比如开发，演示，生产等不同环境。如果跨名字空间访问 Service 需要使用全限定名(FQDN)，一般来说只需要 `<service-name>.<namespace-name>` 也是可以的
+当用户创建 [Service](../../../04-services-networking/00-service/) 时会对应生成一条 [DNS 记录](../../../04-services-networking/03-dns-pod-service/), 而这条记录中的格式为 `<service-name>.<namespace-name>.svc.cluster.local` 也就是说 通过 `<service-name>` 只能解析到本名字空间的服务，这在不同名字空间使用同一套配置时相关有用，比如开发，演示，生产等不同环境。如果跨名字空间访问 Service 需要使用全限定名(FQDN)，一般来说只需要 `<service-name>.<namespace-name>` 也是可以的
 
 ## 那些不属于任何名字空间的对象
 
