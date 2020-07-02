@@ -170,7 +170,7 @@
       <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/</guid>
-      <description>注解 (Annotations) 为对象添加非标识性元数据(non-identifying) 常见使用注解的示例： Fields managed by a declarative configuration layer. Attaching these fields as annotations distinguishes them from default values set by clients or servers, and from auto-generated fields and fields</description>
+      <description>用户可以将任非标识符元素关联到对象上，其它库或工具可以读取这些元数据 关联元数据到对象 用户可以通过标签或注意的方式将元数据关联到对象上，标签用</description>
     </item>
     
     <item>

@@ -17,19 +17,19 @@
 :root {}
 </style>
 <meta property="og:title" content="注解 (Annotations)" />
-<meta property="og:description" content="注解 (Annotations) 为对象添加非标识性元数据(non-identifying) 常见使用注解的示例： Fields managed by a declarative configuration layer. Attaching these fields as annotations distinguishes them from default values set by clients or servers, and from auto-generated fields and fields" />
+<meta property="og:description" content="用户可以将任非标识符元素关联到对象上，其它库或工具可以读取这些元数据 关联元数据到对象 用户可以通过标签或注意的方式将元数据关联到对象上，标签用" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/" />
-<meta property="article:published_time" content="2020-06-29T00:00:00+00:00" />
+<meta property="article:published_time" content="2020-07-02T00:00:00+00:00" />
 <meta property="article:modified_time" content="2020-06-29T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="注解 (Annotations)"/>
-<meta name="twitter:description" content="注解 (Annotations) 为对象添加非标识性元数据(non-identifying) 常见使用注解的示例： Fields managed by a declarative configuration layer. Attaching these fields as annotations distinguishes them from default values set by clients or servers, and from auto-generated fields and fields"/>
+<meta name="twitter:description" content="用户可以将任非标识符元素关联到对象上，其它库或工具可以读取这些元数据 关联元数据到对象 用户可以通过标签或注意的方式将元数据关联到对象上，标签用"/>
 <meta itemprop="name" content="注解 (Annotations)">
-<meta itemprop="description" content="注解 (Annotations) 为对象添加非标识性元数据(non-identifying) 常见使用注解的示例： Fields managed by a declarative configuration layer. Attaching these fields as annotations distinguishes them from default values set by clients or servers, and from auto-generated fields and fields">
-<meta itemprop="datePublished" content="2020-06-29T00:00:00&#43;00:00" />
+<meta itemprop="description" content="用户可以将任非标识符元素关联到对象上，其它库或工具可以读取这些元数据 关联元数据到对象 用户可以通过标签或注意的方式将元数据关联到对象上，标签用">
+<meta itemprop="datePublished" content="2020-07-02T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-29T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="200">
+<meta itemprop="wordCount" content="798">
 
 
 
@@ -55,24 +55,52 @@ var _hmt = _hmt || [];
 
 <div class="content-container">
 <main><h1>注解 (Annotations)</h1>
-<h1 id="注解-annotations">注解 (Annotations)</h1>
-<p>为对象添加非标识性元数据(non-identifying)
-常见使用注解的示例：</p>
+<p>用户可以将任非标识符元素关联到对象上，其它库或工具可以读取这些元数据</p>
+<h2 id="关联元数据到对象">关联元数据到对象</h2>
+<p>用户可以通过标签或注意的方式将元数据关联到对象上，标签用于选择或查找符合条件的对象， 而在注解中的元数据则不是用于选择或查找对象的，其中的内容可以很小也可以很大，可以是结构化数据也可以是非结构化数据，还可以使用标签不允许的字符
+注解与标签类似，也是键值对形式的字典，例如:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#e6db74">&#34;metadata&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
+  <span style="color:#f92672">&#34;annotations&#34;</span>: {
+    <span style="color:#f92672">&#34;key1&#34;</span> : <span style="color:#e6db74">&#34;value1&#34;</span>,
+    <span style="color:#f92672">&#34;key2&#34;</span> : <span style="color:#e6db74">&#34;value2&#34;</span>
+  }
+}
+</code></pre></div><p>可以用注解存储的常见数据示例：</p>
 <ul>
-<li>Fields managed by a declarative configuration layer. Attaching these fields as annotations distinguishes them from default values set by clients or servers, and from auto-generated fields and fields set by auto-sizing or auto-scaling systems.</li>
+<li>由声明式配置层管理的字段. 把这些字段作为注解关联到对象是为能与诸如以下字段做区分: 由客户端或服务端设置的默认值; 由自动扩容系统自动生成的字段</li>
 <li>构建，发布，镜像相关信息如 时间戳，发布编号，git 分支，PR 编号，镜像 hash, 镜像库地址</li>
-<li>Pointers to logging, monitoring, analytics, or audit repositories.</li>
-<li>客户端库或工具用于调试目的的信息 例如：名称, 版本, 构建信息.</li>
-<li>来自用户或 工具/系统 信息, 例如 对象相关的外部系统URLs</li>
-<li>Lightweight rollout tool metadata: for example, config or checkpoints.</li>
-<li>负责人的联系信息</li>
+<li>日志, 监控, 分析, 审计仓库的信息.</li>
+<li>关于客户端库或工具可用于调试目的的信息 例如：名称, 版本, 构建信息.</li>
+<li>来自用户或 工具/系统 信息, 例如 对象在外部系统中的URLs地址</li>
+<li>轻量级回滚帮助信息， 例如, 配置或检查点.</li>
+<li>对使用对象的用户提供修改指导或非标准特性的使用说明</li>
 </ul>
-<div class="edit-meta">
+<p>当然这些信息可以保存在外部的数据库或系统中，但这样制作部署，管理，自省的工具库就不那么容易了</p>
+<h2 id="语法和字符集">语法和字符集</h2>
+<p>标签由 键值对组成。 合法的键可以由两上部分组成， 一个可选的前级加上本身的名称中间用斜线(<code>/</code>)分隔。
+名称部分 不得多于63个字符，必须以字母或数字 ([a-z0-9A-Z])开头和结束，中间部分可以包含中划线(<code>-</code>)，下划线 <code>(_)</code>，点 (<code>.</code>),字母,数字。
+如果要使用前缀， 前端必须是一个合法的 DNS 字域名，由多个 DNS 标签组成，中间由点(<code>.</code>)分隔， 总长度不超过 253 个字符</p>
+<p>如果一个标签键没有前缀则假定它是属于用于私有的，
+由系统自动化组件(e.g. <code>kube-scheduler</code>, <code>kube-controller-manager</code>, <code>kube-apiserver</code>, <code>kubectl</code>, 或其它第三方自动化工具), 在给用户对象加标签时必须加前缀， <code>kubernetes.io/</code>和 <code>k8s.io/</code> 为 k8s 核心组件保留前缀</p>
+<p>以下示例一个包含一个注解 <code>imageregistry: https://hub.docker.com/</code> 的 Pod</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Pod
+metadata:
+  <span style="color:#66d9ef">name</span>: annotations-demo
+  annotations:
+    <span style="color:#66d9ef">imageregistry</span>: <span style="color:#e6db74">&#34;https://hub.docker.com/&#34;</span>
+spec:
+  containers:
+  - <span style="color:#66d9ef">name</span>: nginx
+    <span style="color:#66d9ef">image</span>: nginx:<span style="color:#ae81ff">1.14.2</span>
+    ports:
+    - <span style="color:#66d9ef">containerPort</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div><div class="edit-meta">
 Last updated on 29 Jun 2020
 
 
 <br>
-Published on 29 Jun 2020
+Published on 2 Jul 2020
 <br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/2-concetps/00-overview/03-working-with-objects/04-annotation.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/03-label-selectors/" title="标签和标签选择器"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 标签和标签选择器</a>
 <a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/" title="Cluster Architecture">Next - Cluster Architecture <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
