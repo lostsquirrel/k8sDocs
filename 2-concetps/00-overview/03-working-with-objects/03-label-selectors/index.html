@@ -20,16 +20,16 @@
 <meta property="og:description" content="标签是附加在对象上的键值对，应该与所在的对象有关且具有意义 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在对象创建后任何时" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/03-label-selectors/" />
-<meta property="article:published_time" content="2020-06-29T00:00:00+00:00" />
+<meta property="article:published_time" content="2020-07-02T00:00:00+00:00" />
 <meta property="article:modified_time" content="2020-06-29T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="标签和标签选择器"/>
 <meta name="twitter:description" content="标签是附加在对象上的键值对，应该与所在的对象有关且具有意义 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在对象创建后任何时"/>
 <meta itemprop="name" content="标签和标签选择器">
 <meta itemprop="description" content="标签是附加在对象上的键值对，应该与所在的对象有关且具有意义 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在对象创建后任何时">
-<meta itemprop="datePublished" content="2020-06-29T00:00:00&#43;00:00" />
+<meta itemprop="datePublished" content="2020-07-02T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-29T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1137">
+<meta itemprop="wordCount" content="2091">
 
 
 
@@ -72,103 +72,130 @@ var _hmt = _hmt || [];
 <li><code>&quot;track&quot; : &quot;daily&quot;</code>, <code>&quot;track&quot; : &quot;weekly&quot;</code></li>
 </ul>
 <h2 id="语法和字符集">语法和字符集</h2>
-<ul>
-<li>键 由前缀和名称组成，由斜线(/)分隔
-<ul>
-<li>前缀 可选，必须是一个 DNS 字域名 总长度不超过 253 个字符</li>
-<li>名称 不多于63个字符，必须以字母或数字 ([a-z0-9A-Z])开头和结束，包含中划线(-)，下划线 <code>(_)</code>，点 (.),字母,数字</li>
-</ul>
-</li>
-</ul>
-<p>系统自动化组件(e.g. kube-scheduler, kube-controller-manager, kube-apiserver, kubectl, or other third-party automation), 给最终用户对象加标签时必须加前缀， <code>kubernetes.io/</code> 为 k8s 核心组件保留使用</p>
-<ul>
-<li>值 可以为空，不多于63个字符，必须以字母或数字 ([a-z0-9A-Z])开头和结束，包含中划线(-)，下划线 <code>(_)</code>，点 (.),字母,数字</li>
-</ul>
-<h2 id="标签选择器">标签选择器</h2>
-<pre><code>在对象之间，标签不需要唯一，并且一般来说，会有多个对象有相同的标签
-通过标签选择器，用户/客户端可以选择器，选取一个对象集
-标签选择器是k8s 核心分组基础
-目前支持两种选择方式： 等值选择，集合选择
-一个标签选择器，可以有多个选择条件，用逗号分隔，条件之间为逻辑与关系
-一个空选择器，选择所有对象
-一个null选择器，不选择任何对象
-两个controller 的选择器不能有交集，不然他们会打架
-</code></pre>
-<h3 id="等值选择">等值选择</h3>
-<pre><code>操作符
-- =,==, 表示等于; 对象标签的键和值都要一致
-- != 表示不等于; 对象标签有该键，但不是该值
-例：
-```
-environment = production # 包含标签键为 environment， 标签值为 production
-tier != frontend # 包含标签键为 tier，标签值不为 frontend
-```
-```yaml
-apiVersion: v1
-kind: Pod
+<p>标签由 键值对组成。 合法的键可以由两上部分组成， 一个可选的前级加上本身的名称中间用斜线(<code>/</code>)分隔。
+名称部分 不得多于63个字符，必须以字母或数字 ([a-z0-9A-Z])开头和结束，中间部分可以包含中划线(<code>-</code>)，下划线 <code>(_)</code>，点 (<code>.</code>),字母,数字。
+如果要使用前缀， 前端必须是一个合法的 DNS 字域名，由多个 DNS 标签组成，中间由点(<code>.</code>)分隔， 总长度不超过 253 个字符</p>
+<p>如果一个标签键没有前缀则假定它是属于用于私有的，
+由系统自动化组件(e.g. <code>kube-scheduler</code>, <code>kube-controller-manager</code>, <code>kube-apiserver</code>, <code>kubectl</code>, 或其它第三方自动化工具), 在给用户对象加标签时必须加前缀， <code>kubernetes.io/</code>和 <code>k8s.io/</code> 为 k8s 核心组件保留前缀</p>
+<p>值 可以为空，不多于63个字符，必须以字母或数字 ([<code>a-z0-9A-Z</code>])开头和结束，中间可以包含中划线(<code>-</code>)，下划线 <code>(_)</code>，点 (.),字母,数字</p>
+<p>以下示例中的 Pod 包含 <code>environment: production</code> 和 <code>app: nginx</code> 两个标签:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">
+<span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Pod
 metadata:
-  name: cuda-test
+  <span style="color:#66d9ef">name</span>: label-demo
+  labels:
+    <span style="color:#66d9ef">environment</span>: production
+    <span style="color:#66d9ef">app</span>: nginx
 spec:
   containers:
-    - name: cuda-test
-      image: &quot;k8s.gcr.io/cuda-vector-add:v0.1&quot;
+  - <span style="color:#66d9ef">name</span>: nginx
+    <span style="color:#66d9ef">image</span>: nginx:<span style="color:#ae81ff">1.14.2</span>
+    ports:
+    - <span style="color:#66d9ef">containerPort</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div><h2 id="标签选择器">标签选择器</h2>
+<p>与对象名称和对象UID不同，对象标签在对象之间不需要唯一，并且一般来说，会有多个对象有相同的标签
+用户或客户端程序可以选择器可以通过标签选择器选取一个对象集. 标签选择器是 k8s 核心分组r 基础
+目前标签选择器支持两种选择方式： 等值选择，集合选择。
+在待值选择时， 一个标签选择器可以由多个选择条件组成，每个条件用逗号分隔，表示匹配同时满足这些条件的对象，所以这里逗号相当与逻辑与(<code>&amp;&amp;</code>)关系
+空选择器或不使用选择在不同的情况下，有不同的表现。用户标签的 API 需要要正确和有意义的说明文档
+注意: 对于有些 API 类型，比如 <code>ReplicaSets</code> 同一个名字空间两个不同实例的标签选择器不能有交叉， 否些控制器就会将些认为是冲突，导致不能别副本数是否正确(TODO 这里需要有一个示例，描述不太好理解)</p>
+<p>警告: 在编写选择器条件时需要注意，对于 等值选择，集合选择 都没有逻辑与(<code>||</code>)操作符</p>
+<h3 id="等值选择">等值选择</h3>
+<p>等值选择可以分别对于标签的 键和值的相等与不相等，只要对象的标签含有选择器所有的条件相匹配的标签就会选中，不管该对象是否还有其它标签
+操作符</p>
+<ul>
+<li>=,==, 表示等于; 对象标签的键和值都要一致</li>
+<li>!= 表示不等于; 对象标签有该键，但不是该值
+例：</li>
+</ul>
+<pre><code>environment = production # 筛选包含标签键为 environment， 且对应值为 production 的对象
+tier != frontend # 筛选包含标签键为 tier，且对应值不为 frontend 的对象
+</code></pre><p>筛选<code>production</code>环境中层级除 <code>frontend</code> 外的对象可以写成 <code>environment=production,tier!=frontend</code></p>
+<p>等值选择标签选择器的一个应用场景为为 Pod 指定 节点选择的条件。以下 Pod 节点选择的条件为 <code>accelerator=nvidia-tesla-p100</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Pod
+metadata:
+  <span style="color:#66d9ef">name</span>: cuda-test
+spec:
+  containers:
+    - <span style="color:#66d9ef">name</span>: cuda-test
+      <span style="color:#66d9ef">image</span>: <span style="color:#e6db74">&#34;k8s.gcr.io/cuda-vector-add:v0.1&#34;</span>
       resources:
         limits:
-          nvidia.com/gpu: 1
+          <span style="color:#66d9ef">nvidia.com/gpu</span>: <span style="color:#ae81ff">1</span>
   nodeSelector:
-    accelerator: nvidia-tesla-p100
-```
-</code></pre>
-<h3 id="集合选择">集合选择</h3>
-<pre><code>操作符
-- in `environment in (production, qa)` 对象标签有该键， 且值在这个集合内
-- notin `tier notin (frontend, backend)` 对象标签有该键， 且值不在这个集合内
-- exists
-    `partition` 对象标签有该键
-    `!partition` 对象标签没有该键
-</code></pre>
-<p>两种选择方式可以组合使用 例： <code>partition in (customerA, customerB),environment!=qa</code></p>
+    <span style="color:#66d9ef">accelerator</span>: nvidia-tesla-p100
+</code></pre></div><h3 id="集合选择器">集合选择器</h3>
+<p>标签的集合选择器可以且于多值过虑。 支持三种操作符 <code>in</code>,<code>notin</code> 和 <code>exists</code>(仅用在键上)
+示例:</p>
+<pre><code>environment in (production, qa) # 筛选 有键为 environment 且对应值为 production 或 qa 的对象
+tier notin (frontend, backend) # 筛选 有键为 tier 且值 不是frontend 也不是 backend 的对象和所有不包含键为 tier 的对象
+partition # 筛选 存在键为 tier 不管值是啥的对象
+!partition # 筛选 不存在键为 tier 不管值是啥的对象
+partition,environment notin (qa) # 筛选 存在键为 partition 且 environment 的值不是 qa
+</code></pre><p>多个条件之间的逗号赞同一逻辑与(<code>&amp;&amp;</code>)
+<code>environment=production</code> 与 <code>environment in (production)</code> 等同
+<code>!=</code> 与 <code>notin</code> 单值时等同
+两种标签选择方式可以组合使用 例： <code>partition in (customerA, customerB),environment!=qa</code></p>
 <h2 id="选择器在-api-上的使用">选择器在 API 上的使用</h2>
-<pre><code>LIST/ WATCH 过虑
-- equality-based requirements: ?labelSelector=environment%3Dproduction,tier%3Dfrontend
-- set-based requirements: ?labelSelector=environment+in+%28production%2Cqa%29%2Ctier+in+%28frontend%29
-
-```sh
-$ kubectl get pods -l environment=production,tier=frontend
-
-$ kubectl get pods -l 'environment in (production),tier in (frontend)'
-
-# 达到 逻辑与的效果
-$ kubectl get pods -l 'environment in (production, qa)'
-#
-$ kubectl get pods -l 'environment,environment notin (frontend)'
-```
-</code></pre>
-<h3 id="service-and-replicationcontroller-对选择器的使用">Service and ReplicationController 对选择器的使用</h3>
-<pre><code>```yaml
-selector:
-    component: redis # 相当于 component=redis 或 component in (redis)
-```
-</code></pre>
-<h3 id="支持集合选择的资源">支持集合选择的资源</h3>
-<pre><code>`Job`, `Deployment`, `Replica Set`, `Daemon Set`
-```yaml
-selector:
+<h3 id="list-watch-操作时过虑对象">LIST/ WATCH 操作时过虑对象</h3>
+<p>在时行LIST/ WATCH 操作时可以通过标签选择筛选需要的对象。 上节提及的两种方式都可以使用， 在URL中请求参数类似如下:</p>
+<ul>
+<li>等值选择: <code>?labelSelector=environment%3Dproduction,tier%3Dfrontend</code></li>
+<li>集合选择: <code>?labelSelector=environment+in+%28production%2Cqa%29%2Ctier+in+%28frontend%29</code></li>
+</ul>
+<p>也可以用于 REST 客户端 或 <code>kubectl</code>
+例如 <code>kubectl</code> 中使用</p>
+<p>等值选择</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl get pods -l environment<span style="color:#f92672">=</span>production,tier<span style="color:#f92672">=</span>frontend
+</code></pre></div><p>集合选择</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl get pods -l <span style="color:#e6db74">&#39;environment in (production),tier in (frontend)&#39;</span>
+</code></pre></div><p>集合选择的表达更宽泛，比如这个可以达到或的效果</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl get pods -l <span style="color:#e6db74">&#39;environment in (production, qa)&#39;</span>
+</code></pre></div><p>逻辑否的效果</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl get pods -l <span style="color:#e6db74">&#39;environment,environment notin (frontend)&#39;</span>
+</code></pre></div><h3 id="set-references-in-api-objects-啥意思">Set references in API objects 啥意思</h3>
+<p>有些 k8s 对象，比如 <a href="../../../04-services-networking/00-service/">Service</a> <a href="../../../03-workloads/01-controllers/01-replicationcontroller/">ReplicationController</a> 也是通过标签选择器来限定被其管理的资源对象，比如 <a href="../../../03-workloads/00-pods/01-pod/">Pod</a></p>
+<h3 id="service-和-replicationcontroller-对选择器的使用"><code>Service</code> 和 <code>ReplicationController</code> 对选择器的使用</h3>
+<p>Service 通过标签选择器来指定负载均衡的 Pod
+ReplicationController 也是通过标签选择器来指定被其管理的 Pod</p>
+<p>只支持等值选择，可以为 <code>yaml</code> 或 <code>JSON</code> 格式
+示例:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">selector:
+    <span style="color:#66d9ef">component</span>: redis <span style="color:#75715e"># 相当于 component=redis 或 component in (redis)</span>
+</code></pre></div><h3 id="支持集合选择的资源">支持集合选择的资源</h3>
+<p>较新的资源，如 <code>Job</code>, <code>Deployment</code>, <code>ReplicaSet</code>, <code>DaemonSet</code> 都支持集合选择</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">selector:
   matchLabels:
-    component: redis
+    <span style="color:#66d9ef">component</span>: redis
   matchExpressions:
-    - {key: tier, operator: In, values: [cache]}
-    - {key: environment, operator: NotIn, values: [dev]}
-```
-
-operator: In, NotIn, Exists, DoesNotExist
-</code></pre>
+    - {<span style="color:#66d9ef">key: tier, operator: In, values</span>: [cache]}
+    - {<span style="color:#66d9ef">key: environment, operator: NotIn, values</span>: [dev]}
+</code></pre></div><ul>
+<li><code>matchLabels</code> 是一个键值对字典</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">selector:
+  matchLabels:
+    <span style="color:#66d9ef">component</span>: redis
+<span style="color:#75715e"># 等同与</span>
+selector:
+  matchExpressions:
+    - {<span style="color:#66d9ef">key: component, operator: In, values</span>: [redis]}
+</code></pre></div><ul>
+<li><code>matchExpressions</code> 是一个条件的集合
+其条件中可用的操作符(operator)包括: <code>In</code>, <code>NotIn</code>, <code>Exists</code>, <code>DoesNotExist</code>
+<code>NotIn</code> 的值必须非空
+包括 <code>matchLabels</code> 和 <code>matchExpressions</code> 定义的条件,所有条件之间的关系为逻辑与.</li>
+</ul>
+<h3 id="选择节点集合">选择节点集合</h3>
+<p>标签的另一个应用场景为筛选 Pod 可以调度的 节点。 具体见<a href="../../../09-scheduling-eviction/02-assign-pod-node/">这里</a></p>
 <div class="edit-meta">
 Last updated on 29 Jun 2020
 
 
 <br>
-Published on 29 Jun 2020
+Published on 2 Jul 2020
 <br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/2-concetps/00-overview/03-working-with-objects/03-label-selectors.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/02-namespace/" title="名字空间(Namespaces)"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 名字空间(Namespaces)</a>
 <a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/" title="注解 (Annotations)">Next - 注解 (Annotations) <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
@@ -203,18 +230,6 @@ Published on 29 Jun 2020
   
 <ul class="sub-menu">
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/">Cluster Architecture<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/00-nodes/">节点</a></li>
-</ul>
-  
-</li>
-
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/">Containers</a>
-  
-</li>
-
 <li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/">概览<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
@@ -237,10 +252,53 @@ Published on 29 Jun 2020
   
 </li>
 
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/">Cluster Architecture<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/00-nodes/">节点</a></li>
+</ul>
+  
+</li>
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/">Containers</a>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/">Workloads<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/00-pods/">Pods<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/00-pods/01-pod/">Pods</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/01-controllers/">Controllers<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/01-controllers/01-replicationcontroller/">ReplicationController</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/">Policies<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/01-resource-quotas/">资源配额</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/">Scheduling and Eviction<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/02-assign-pod-node/">Assigning Pods to Nodes</a></li>
 </ul>
   
 </li>

@@ -17,7 +17,7 @@
       <pubDate>Tue, 17 Oct 2017 14:00:45 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/hello_world/</guid>
-      <description>title: weight: date: 2020-06-30 draft: true Hello world!</description>
+      <description>title: weight: date: 2020-07-02 draft: true Hello world!</description>
     </item>
     
     <item>
@@ -80,6 +80,15 @@
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/01-resource-quotas/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
+      <title>Assigning Pods to Nodes</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/02-assign-pod-node/</link>
+      <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/02-assign-pod-node/</guid>
       <description>TODO</description>
     </item>
     
@@ -170,6 +179,24 @@
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/00-service/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
+      <title>Pods</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/00-pods/01-pod/</link>
+      <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/00-pods/01-pod/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
+      <title>ReplicationController</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/01-controllers/01-replicationcontroller/</link>
+      <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/01-controllers/01-replicationcontroller/</guid>
       <description>TODO</description>
     </item>
     
