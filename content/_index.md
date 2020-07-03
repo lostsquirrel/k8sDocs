@@ -13,4 +13,8 @@ description: K8S 文档笔记，因为想加些私货，所以没法和官网同
 
 - 目录结构同官方文档结构
 
+## 不作翻译的词汇
+
+- Service
+- Pod
 ## Features
