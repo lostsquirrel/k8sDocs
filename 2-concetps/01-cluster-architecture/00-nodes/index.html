@@ -17,19 +17,19 @@
 :root {}
 </style>
 <meta property="og:title" content="节点" />
-<meta property="og:description" content="TODO" />
+<meta property="og:description" content="k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。 一" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/00-nodes/" />
 <meta property="article:published_time" content="2020-06-30T00:00:00+00:00" />
 <meta property="article:modified_time" content="2020-06-30T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="节点"/>
-<meta name="twitter:description" content="TODO"/>
+<meta name="twitter:description" content="k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。 一"/>
 <meta itemprop="name" content="节点">
-<meta itemprop="description" content="TODO">
+<meta itemprop="description" content="k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。 一">
 <meta itemprop="datePublished" content="2020-06-30T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-30T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1">
+<meta itemprop="wordCount" content="477">
 
 
 
@@ -55,7 +55,29 @@ var _hmt = _hmt || [];
 
 <div class="content-container">
 <main><h1>节点</h1>
-<p>TODO</p>
+<p>k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。
+一般情况下一个集群会有多个节点; 在资源受限或学习的环境，可能只有一个节点。
+每个节点包含的组件有 kubelet, 容器运行环境, kube-proxy</p>
+<h2 id="节点管理">节点管理</h2>
+<p>向 api-server 添加节点的方式有以下两种:</p>
+<ol>
+<li>节点上的 kubelet 服务自动注册到控制中心</li>
+<li>管理员用户手动添加节点对象</li>
+</ol>
+<p>当管理员用户创建节点对象或 kubelet 将节点自动注册，控制中心会检查新创建的新节点是否有效。例如，可以通过以下 JSON 创建一个新节点</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;kind&#34;</span>: <span style="color:#e6db74">&#34;Node&#34;</span>,
+  <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;v1&#34;</span>,
+  <span style="color:#f92672">&#34;metadata&#34;</span>: {
+    <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;10.240.79.157&#34;</span>,
+    <span style="color:#f92672">&#34;labels&#34;</span>: {
+      <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;my-first-k8s-node&#34;</span>
+    }
+  }
+}
+</code></pre></div><p>k8s 节点是内部创建的. k8s 检查通过 kubelet 注册到 api-server 的节点. 如果节点是健康的 (当所有必要的服务都正常运行), 这个节点就可以用来运行 Pod, 否则 这个节点状态在变为健康之前，这个节点会被所有集群活动忽略.</p>
+<p>注意: k8s 会一直保留无效的节点并持续检查这个节点是否变更为健康. 用户或控制器必须要显示的删除这个节点对象，这种检测才会停止。</p>
+<p>节点的名称必须要是一个有效的[DNS 子域名](../00-overview/03-working-with-objects/01-names#DNS 子域名)</p>
 <div class="edit-meta">
 Last updated on 30 Jun 2020
 

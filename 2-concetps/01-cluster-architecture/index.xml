@@ -17,7 +17,7 @@
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/00-nodes/</guid>
-      <description>TODO</description>
+      <description>k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。 一</description>
     </item>
     
   </channel>
