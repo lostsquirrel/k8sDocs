@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>Taints and Tolerations</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/01-taint-and-toleration/</link>
+      <pubDate>Tue, 07 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/01-taint-and-toleration/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
       <title>Assigning Pods to Nodes</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/02-assign-pod-node/</link>
       <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>

@@ -94,13 +94,18 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/01-taint-and-toleration/</loc>
+    <lastmod>2020-07-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/02-assign-pod-node/</loc>
     <lastmod>2020-07-02T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/</loc>
-    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
+    <lastmod>2020-07-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -116,6 +121,11 @@
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/</loc>
     <lastmod>2020-06-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/28-reserve-compute-resources/</loc>
+    <lastmod>2020-07-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>

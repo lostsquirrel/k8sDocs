@@ -29,7 +29,7 @@
 <meta itemprop="description" content="k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。 一">
 <meta itemprop="datePublished" content="2020-06-30T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-30T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1289">
+<meta itemprop="wordCount" content="2565">
 
 
 
@@ -158,6 +158,45 @@ var _hmt = _hmt || [];
 </li>
 </ul>
 <p>注意: 通过命令行工具打印清楚节点的详细信息中， 条件信息中包含 <code>SchedulingDisabled</code>， 但 SchedulingDisabled 不属于 k8s API, 而是节点被标记为不可调度</p>
+<p>节点的条件可以表现为JSON对象，如下是一个健康的节点的示例:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#e6db74">&#34;conditions&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> [
+  {
+    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Ready&#34;</span>,
+    <span style="color:#f92672">&#34;status&#34;</span>: <span style="color:#e6db74">&#34;True&#34;</span>,
+    <span style="color:#f92672">&#34;reason&#34;</span>: <span style="color:#e6db74">&#34;KubeletReady&#34;</span>,
+    <span style="color:#f92672">&#34;message&#34;</span>: <span style="color:#e6db74">&#34;kubelet is posting ready status&#34;</span>,
+    <span style="color:#f92672">&#34;lastHeartbeatTime&#34;</span>: <span style="color:#e6db74">&#34;2019-06-05T18:38:35Z&#34;</span>,
+    <span style="color:#f92672">&#34;lastTransitionTime&#34;</span>: <span style="color:#e6db74">&#34;2019-06-05T11:41:27Z&#34;</span>
+  }
+]
+
+</code></pre></div><p>如果 <code>Ready</code> 条件的状态为 <code>Unknown</code> 或 <code>False</code> 持续时间超过 <code>pod-eviction-timeout</code> (通过  kube-controller-manager 参数配置)， 这个节点上所以的 Pod 都会被节点控制器调度为删除。 默认的踢除的超时时间为5分钟。 在某些情况下，当一个节点不可达时，api-server 就不能与节点上的 kubelet 进行通信。 在 kubelet 与 api-server 重新建立连接之前对 Pod 的删除指令传达不到 kubelet. 在这段时间内这些被调度为删除的节点可以继续在分区节点上运行。</p>
+<p>节点控制器在确认 Pod 在集群中已经停止运行前是不会强制删除的。 所以可以会出现 Pod 运行在状态为  <code>Terminating</code> 或 <code>Unknown</code> 的不可达节点上。 有时候 k8s 不能在节点被永久移出集群后不能从基础设施自动的移除，需要管理员手动地删除对应的节点对象。从 k8s 中删除节点对象时，会同时从 api-server 中对应删除节点上运行的所有 Pod 对象，并释放其名称</p>
+<p>节点的生命周期管理器会自动创建代理节点状态的 <code>Taint</code>. 调度器在分配 Pod 到节点时会顾及节点上的 Taint. Pod 也可以配置容忍节点的某些 <code>Taint</code></p>
+<p>了解更多 Taint 相关信息见<a href="../../09-scheduling-eviction/01-taint-and-toleration.md">这里</a></p>
+<h3 id="容量和可分配状态">容量和可分配状态</h3>
+<p>表示节点上的可用资源: CPU, 内存， 节点可接受 Pod 数量的最大值
+容量(capacity)块下的字段表示节点资源总数
+可分配状态(allocatable)块下的字段表示可用于普通 Pod 的资源数</p>
+<p>了解更多关于 容量和可分配状态 的信息见<a href="../../../3-tasks/01-administer-cluster/28-reserve-compute-resources.md">这里</a></p>
+<h3 id="其它信息">其它信息</h3>
+<p>表示邛的通用信息，如 内核版本， k8s 版本(kubelet 和 kube-proxy 的版本)， Docker 版本， OS 名称。 这些信息都是节点上的 kubelet 生成的</p>
+<h3 id="节点控制器">节点控制器</h3>
+<p>节点控制器是 k8s 控制中心的组成部分，用于管理节点的各方面功能
+节点控制器在节点的生命周期类扮演多个角色。 第一个就是为节点分配 CIDR 段(当 CIDR 分配开启时)
+第二个是保持节点控制器内部的节点列表与云提供商提供的可用机器列表一致， 在运行在云环境时，当一个节点状态变为不健康时， 节点控制器会向云提供商查询该节点的虚拟机是否可用。 如果不可用就会从列表中删除该节点
+第三个是监控节点状态， 节点控制器负责在节点变得不可达时(如， 因为某些原因收不到心跳，比如节点宕机)，更新节点就绪状态为 <code>ConditionUnknown</code>， 如果节点持续不可达则踢出节点上所有的Pod(使用优雅终结方式)。设置就绪状态的不可达时间为 40s, 踢除 Pod 的时间为 5 分钟。节点控制器检查节点状态的时间由 <code>--node-monitor-period</code> 配置</p>
+<h4 id="心跳">心跳</h4>
+<p>心跳由k8s 节点发送，用于帮助判定节点是否可用
+心跳的形式有两种， 一个更新 <code>NodeStatus</code> 另一个为租约对象。每个节点在 kube-node-lease 名字空间中有一个关联的租约对象。 租约是一个轻量级资源， 用户在集群范围内改善心跳的性能
+由 kubelet 负责创建更新 <code>NodeStatus</code> 和 租约对象。</p>
+<ul>
+<li>kubelet  在状态发生改变或在配置的时间间隔内没有更新时更新 <code>NodeStatus</code>， <code>NodeStatus</code> 更新的默认的更新间隔为 5 分钟(比不可达节点默认超时的 40 秒长很多)</li>
+<li>kubelet 创建随后每隔10秒(默认时间间隔)更新租约对象。 租约对象的更新独立与 <code>NodeStatus</code> 更新。 如果租约更新失败， kubelet 使用从 200ms 到 7s 间的指数组补尝</li>
+</ul>
+<h4 id="可靠性">可靠性</h4>
+<p>大多数情况下， 节点控制器限制踢除速率由 <code>--node-eviction-rate</code>(每秒) 配置， 默认 <code>0.1</code>，即每10秒最多能踢除一个 Pod。
+节点的踢除行为会在节点所有的可用区变为不健康时发生改变。 节点控制器会检查区域内的</p>
 <div class="edit-meta">
 Last updated on 30 Jun 2020
 
@@ -268,6 +307,7 @@ Published on 30 Jun 2020
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/">Scheduling and Eviction<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/01-taint-and-toleration/">Taints and Tolerations</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/02-assign-pod-node/">Assigning Pods to Nodes</a></li>
 </ul>
   
@@ -301,6 +341,7 @@ Published on 30 Jun 2020
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/">Administer a Cluster<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/28-reserve-compute-resources/">Reserve Compute Resources for System Daemons</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/34-namespaces/">通过名字空间分享一个集群</a></li>
 </ul>
   

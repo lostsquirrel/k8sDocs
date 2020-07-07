@@ -17,7 +17,7 @@
       <pubDate>Tue, 17 Oct 2017 14:00:45 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/hello_world/</guid>
-      <description>title: weight: date: 2020-07-02 draft: true Hello world!</description>
+      <description>title: weight: date: 2020-07-07 draft: true Hello world!</description>
     </item>
     
     <item>
@@ -84,6 +84,15 @@
     </item>
     
     <item>
+      <title>Taints and Tolerations</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/01-taint-and-toleration/</link>
+      <pubDate>Tue, 07 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/01-taint-and-toleration/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
       <title>Assigning Pods to Nodes</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/02-assign-pod-node/</link>
       <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
@@ -99,6 +108,15 @@
       
       <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/00-install-kubectl/</guid>
       <description>kubectl 是 k8s 的命令行工具，用于通过命令管理k8s集群。 kubectl 可以用于部署应用，查看和管理集群资源，查看日志，具体使用明细请见 源地址 本站地址 准备 kubectl 版本与</description>
+    </item>
+    
+    <item>
+      <title>Reserve Compute Resources for System Daemons</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/28-reserve-compute-resources/</link>
+      <pubDate>Tue, 07 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/28-reserve-compute-resources/</guid>
+      <description>TODO</description>
     </item>
     
     <item>
