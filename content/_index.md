@@ -18,4 +18,5 @@ description: K8S 文档笔记，因为想加些私货，所以没法和官网同
 - Pod
 - Service
 - DaemonSet
+- Taint
 ## Features
