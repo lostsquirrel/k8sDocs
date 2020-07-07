@@ -113,3 +113,60 @@ conditions 字段描述的是 所有状态为 Running 的节点， 示例如下:
   - False 节点网络配置正常
 
 注意: 通过命令行工具打印清楚节点的详细信息中， 条件信息中包含 `SchedulingDisabled`， 但 SchedulingDisabled 不属于 k8s API, 而是节点被标记为不可调度
+
+节点的条件可以表现为JSON对象，如下是一个健康的节点的示例:
+```json
+"conditions": [
+  {
+    "type": "Ready",
+    "status": "True",
+    "reason": "KubeletReady",
+    "message": "kubelet is posting ready status",
+    "lastHeartbeatTime": "2019-06-05T18:38:35Z",
+    "lastTransitionTime": "2019-06-05T11:41:27Z"
+  }
+]
+
+```
+
+如果 `Ready` 条件的状态为 `Unknown` 或 `False` 持续时间超过 `pod-eviction-timeout` (通过  kube-controller-manager 参数配置)， 这个节点上所以的 Pod 都会被节点控制器调度为删除。 默认的踢除的超时时间为5分钟。 在某些情况下，当一个节点不可达时，api-server 就不能与节点上的 kubelet 进行通信。 在 kubelet 与 api-server 重新建立连接之前对 Pod 的删除指令传达不到 kubelet. 在这段时间内这些被调度为删除的节点可以继续在分区节点上运行。
+
+节点控制器在确认 Pod 在集群中已经停止运行前是不会强制删除的。 所以可以会出现 Pod 运行在状态为  `Terminating` 或 `Unknown` 的不可达节点上。 有时候 k8s 不能在节点被永久移出集群后不能从基础设施自动的移除，需要管理员手动地删除对应的节点对象。从 k8s 中删除节点对象时，会同时从 api-server 中对应删除节点上运行的所有 Pod 对象，并释放其名称
+
+节点的生命周期管理器会自动创建代理节点状态的 `Taint`. 调度器在分配 Pod 到节点时会顾及节点上的 Taint. Pod 也可以配置容忍节点的某些 `Taint`
+
+了解更多 Taint 相关信息见[这里](../../09-scheduling-eviction/01-taint-and-toleration.md)
+
+### 容量和可分配状态
+
+表示节点上的可用资源: CPU, 内存， 节点可接受 Pod 数量的最大值
+容量(capacity)块下的字段表示节点资源总数
+可分配状态(allocatable)块下的字段表示可用于普通 Pod 的资源数
+
+了解更多关于 容量和可分配状态 的信息见[这里](../../../3-tasks/01-administer-cluster/28-reserve-compute-resources.md)
+
+### 其它信息
+
+表示邛的通用信息，如 内核版本， k8s 版本(kubelet 和 kube-proxy 的版本)， Docker 版本， OS 名称。 这些信息都是节点上的 kubelet 生成的
+
+### 节点控制器
+
+节点控制器是 k8s 控制中心的组成部分，用于管理节点的各方面功能
+节点控制器在节点的生命周期类扮演多个角色。 第一个就是为节点分配 CIDR 段(当 CIDR 分配开启时)
+第二个是保持节点控制器内部的节点列表与云提供商提供的可用机器列表一致， 在运行在云环境时，当一个节点状态变为不健康时， 节点控制器会向云提供商查询该节点的虚拟机是否可用。 如果不可用就会从列表中删除该节点
+第三个是监控节点状态， 节点控制器负责在节点变得不可达时(如， 因为某些原因收不到心跳，比如节点宕机)，更新节点就绪状态为 `ConditionUnknown`， 如果节点持续不可达则踢出节点上所有的Pod(使用优雅终结方式)。设置就绪状态的不可达时间为 40s, 踢除 Pod 的时间为 5 分钟。节点控制器检查节点状态的时间由 `--node-monitor-period` 配置
+
+
+#### 心跳
+
+心跳由k8s 节点发送，用于帮助判定节点是否可用
+心跳的形式有两种， 一个更新 `NodeStatus` 另一个为租约对象。每个节点在 kube-node-lease 名字空间中有一个关联的租约对象。 租约是一个轻量级资源， 用户在集群范围内改善心跳的性能
+由 kubelet 负责创建更新 `NodeStatus` 和 租约对象。
+
+- kubelet  在状态发生改变或在配置的时间间隔内没有更新时更新 `NodeStatus`， `NodeStatus` 更新的默认的更新间隔为 5 分钟(比不可达节点默认超时的 40 秒长很多)
+- kubelet 创建随后每隔10秒(默认时间间隔)更新租约对象。 租约对象的更新独立与 `NodeStatus` 更新。 如果租约更新失败， kubelet 使用从 200ms 到 7s 间的指数组补尝
+
+#### 可靠性
+
+大多数情况下， 节点控制器限制踢除速率由 `--node-eviction-rate`(每秒) 配置， 默认 `0.1`，即每10秒最多能踢除一个 Pod。
+节点的踢除行为会在节点所有的可用区变为不健康时发生改变。 节点控制器会检查区域内的
