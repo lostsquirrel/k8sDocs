@@ -65,7 +65,7 @@ kubectl config view --minify | grep namespace:
 
 ## 那些不属于任何名字空间的对象
 
-大多数 k8s 资源( pod, service, replication controller 等)都会属于某一个名字空间。 而 名字空间 资源则不属于任何名字空间。 还有一个底层资源 比如 [节点](../../../01-cluster-architecture/00-nodes/)， persistentVolumes 也不属于任何名字空间
+大多数 k8s 资源( pod, service, replication controller 等)都会属于某一个名字空间。 而 名字空间 资源则不属于任何名字空间。 还有一个底层资源 比如 [节点](../../../01-architecture/00-nodes/)， persistentVolumes 也不属于任何名字空间
 
 以下命令可以查看资源是否属于名字空间:
 ```sh

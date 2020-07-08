@@ -1,4 +1,4 @@
 ---
 title: Tutorials
-weight: 40000
+weight: 4
 ---
