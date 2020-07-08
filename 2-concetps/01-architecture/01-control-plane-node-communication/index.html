@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>控制中心与节点的通信 - K8S 文档笔记</title>
+<meta name="description" content="test">
+<meta name="generator" content="Hugo 0.68.3" />
+<link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
+<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/01-control-plane-node-communication/">
+<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/theme.min.css">
+<script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/chroma.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.easing@1.4.1/jquery.easing.min.js"></script>
+<script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
+:root {}
+</style>
+<meta property="og:title" content="控制中心与节点的通信" />
+<meta property="og:description" content="本文主要介结控制中心(实际就是 api-server)与 k8s 集群通信的几种途径, 目的是使用户可以选择健壮的网络配置使集群可以运行在不受信的网络环" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/01-control-plane-node-communication/" />
+<meta property="article:published_time" content="2020-07-08T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-07-08T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="控制中心与节点的通信"/>
+<meta name="twitter:description" content="本文主要介结控制中心(实际就是 api-server)与 k8s 集群通信的几种途径, 目的是使用户可以选择健壮的网络配置使集群可以运行在不受信的网络环"/>
+<meta itemprop="name" content="控制中心与节点的通信">
+<meta itemprop="description" content="本文主要介结控制中心(实际就是 api-server)与 k8s 集群通信的几种途径, 目的是使用户可以选择健壮的网络配置使集群可以运行在不受信的网络环">
+<meta itemprop="datePublished" content="2020-07-08T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-07-08T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1311">
+
+
+
+<meta itemprop="keywords" content="" />
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?46e26ffc9d975f663dff0b89f1cf7931";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+<body><div class="container"><header>
+<h1>K8S 文档笔记</h1>
+
+ <span class="version">Version 0.0.1</span>
+
+<p class="description">test</p>
+
+</header>
+
+<div class="content-container">
+<main><h1>控制中心与节点的通信</h1>
+<p>本文主要介结控制中心(实际就是 api-server)与 k8s 集群通信的几种途径, 目的是使用户可以选择健壮的网络配置使集群可以运行在不受信的网络环境中(或在云提供商的公网IP上)</p>
+<h2 id="从节点到控制中心的通信">从节点到控制中心的通信</h2>
+<p>k8s 使用轴辐式(hub-and-spoke) API 模式，所有节点(包括节点上运行的Pod)使用到的API都指向 api-server(其它所有的组件在设计上就不提供远程服务)。api-server 配置成安全的HTTPS端口(通常是 443)来对外提供服务，并且开启一种或多种<a href="../../../5-reference/03-access-authn-authz/01-authentication/">认证</a>方式。还需要开启一种或多种<a href="../../../5-reference/03-access-authn-authz/07-authorization/">授权</a>方式， 特别是 匿名请求 或 service account tokens 可用(具体见认证相关部分)。
+每个节点上都需要有集群的公开根证书，这样节点才能通过有效的客户凭据安全的连接到 api-server. 例如， 在默认的 GKE 部署中， 客户端为 kubelet 提供的凭据格式为客户端证书， 自动化提供客户端证书的方式见<a href="../../../5-reference/06-command-line-tools-reference/08-kubelet-tls-bootstrapping/">这里</a>
+如果集群中的Pod想要连接到 api-server 可以借助<code>service account</code>实现安全连接， k8s 会在 Pod 启动时自动注入公开根谈不上和令牌.
+在每个名字空间下有一个叫 <code>kubernetes</code> 的 Service， 指向一个虚拟IP地址，并重写向(通过 kube-proxy)向 api-server 的HTTPS端口上。
+控制中心组件也是通过安全端口与集群的 api-server 通信。
+在默认的操作模式下，节点和节点上的Pod 与控制中心的连接默认就是安全的可以信赖于不受信的网络环境中</p>
+<h2 id="从控制中心向节点的通信">从控制中心向节点的通信</h2>
+<p>由控制中心(api-server)向节点的通信路径注要有两条， 第一条从 api-server 直接连接到集群中每个节点上的 kubelet 进程。 第二条是通过 api-server 的代理功能来实现 api-server 到任意节点， Pod， Service的连接</p>
+<h3 id="从-api-server-连接到-kubelet">从 api-server 连接到 kubelet</h3>
+<p>从 api-server 到 kubelet 通信主要有以下用途:</p>
+<ul>
+<li>摘取 Pod 日志</li>
+<li>通过 kubelet 终端连接到运行的Pod</li>
+<li>为 kubelet 提供端口转发功能</li>
+</ul>
+<p>连接指向的是 kubelet 的 HTTPS 端口， 默认 api-server 不验证 kubelet 提供的证书，这样会存在中间人攻击的风险，在不受网络环境中是不安全的。</p>
+<p>要验证这个连接，需要在 api-server 配置启动参数 <code>--kubelet-certificate-authority</code> 指向 根证书用于验证 kubelet 的服务证书。
+如果做不到， 则在非受信网络或公网中使用 SSH 遂道连接 api-server 和 kubelet.
+最后，需要开启 <a href="../../../5-reference/06-command-line-tools-reference/07-kubelet-authentication-authorization/">kubelet 认证和授权</a>，以保护 kubelet API 安全。</p>
+<h3 id="从-api-server-到-kubelet-节点-pod--service-的连接">从 api-server 到 kubelet, 节点, Pod,  Service 的连接</h3>
+<p>默认情况下 从 api-server 到 kubelet, 节点, Pod,  Service 的连接是通过 HTTP 明文，因此没有认证也没加密。在连接到 节点， Pod, Service 名称对应的 API URL时可以添加 https 前缀来使用 HTTPS 来建立安全连接，但不会验证HTTPS证书也不验证客户端提供的凭据。 因此也不能保证任何完整性。 所以目前这能连接都不能用于非受信网络或公网。</p>
+<h3 id="ssh-遂道">SSH 遂道</h3>
+<p>k8s 支持通过 SSH 遂道的方式来实现从 控制中心到节点的连接路径的安全。 在这个配置中， 由 api-server 来初始化 SSH 遂道连接到集群中每个节点(连接到ssh服务监听端口22)，并通过这个连接来传输 kubelet, 节点, Pod,  Service 所有流量， 这样可以使流量不会显露给节点运行的外部网络</p>
+<p>SSH 遂道连接方式当前已经被废弃，用户在开启该功能需要清楚为什么为开启。  Konnectivity 服务是替代方案</p>
+<h3 id="konnectivity-服务">Konnectivity 服务</h3>
+<p>功能特性状态: <code>Kubernetes v1.18 [beta]</code></p>
+<p>作为 SSH 遂道 的替代方案， Konnectivity 服务 通过提供 TCP 层的代理来实现 控制中心与集群之间的通信。 Konnectivity 服务主要由两部分组成， Konnectivity 服务端和Konnectivity 代理程序，分别运行在 控制中心网络和节点网络上。 Konnectivity 代理程序初始化并维护到服务端的连接。 在开启 Konnectivity 服务后，控制中心到节的所有连接都通过这些连接。
+在集群中开启 Konnectivity 服务见 <a href="../../../3-tasks/09-extend-kubernetes/01-setup-konnectivity/">这里</a></p>
+<div class="edit-meta">
+Last updated on 8 Jul 2020
+
+
+<br>
+Published on 8 Jul 2020
+<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/2-concetps/01-architecture/01-control-plane-node-communication.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/00-nodes/" title="节点"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 节点</a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/" title="Containers">Next - Containers <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+</nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
+</footer>
+</main><div class="sidebar">
+
+<nav class="slide-menu">
+<ul>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs">Home</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/">概念(Concepts)<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/">概览<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00-what-is-k8s/">k8s 是什么</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01-k8s-components/">k8s 组件</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02-k8s-api/">k8s API 说明</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/">k8s 对象管理<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/01-names/">对象命令与ID</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/03-label-selectors/">标签和标签选择器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/">注解 (Annotations)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/05-field-selectors/">字段选择器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/06-common-labels/">标签设置指导</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/">集群架构<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/00-nodes/">节点</a></li>
+<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/01-control-plane-node-communication/">控制中心与节点的通信</a></li>
+</ul>
+  
+</li>
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/">Containers</a>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/">Workloads<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/00-pods/">Pods<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/00-pods/01-pod/">Pods</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/01-controllers/">Controllers<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/01-controllers/01-replicationcontroller/">ReplicationController</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/">Services, Load Balancing, and Networking<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/00-service/">Service</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/">Policies<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/01-resource-quotas/">资源配额</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/">Scheduling and Eviction<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/01-taint-and-toleration/">Taints and Tolerations</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/02-assign-pod-node/">Assigning Pods to Nodes</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/">Tasks<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/">Extend Kubernetes<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/01-setup-konnectivity/">Set up Konnectivity service</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/">Install Tools<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/00-install-kubectl/">下载安装配置 kubectl</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/01-install-minikube/">安装 Minikube</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/">Administer a Cluster<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/14-topology-manager/">Control Topology Management Policies on a node</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/28-reserve-compute-resources/">Reserve Compute Resources for System Daemons</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/34-namespaces/">通过名字空间分享一个集群</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/">Configure Pod Containters<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/test21/">21</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/">Tutorials<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/00-hello-minikube/">Hello Minikube</a>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/">Reference<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/">Accessing the API<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/01-authentication/">Authenticating</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/07-authorization/">Authorization Overview</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/">Feature Gates<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/00-feature-gates/">Feature Gates</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/07-kubelet-authentication-authorization/">Kubelet authentication/authorization</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/08-kubelet-tls-bootstrapping/">TLS bootstrapping</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/07-kubectl/">kubectl CLI<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/07-kubectl/00-overview/">kubectl 概览</a></li>
+</ul>
+  
+</li>
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/10-drivers/">Minikube Drivers</a>
+  
+</li>
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/">Standardized Glossary</a>
+  
+</li>
+</ul>
+  
+</li>
+</ul>
+</nav>
+
+
+
+<div class="sidebar-footer"></div>
+</div>
+</div><a href="#" id="backtothetop-fixed" class="backtothetop"
+ data-backtothetop-duration="600"
+ data-backtothetop-easing="easeOutQuart"
+ data-backtothetop-fixed-fadeIn="1000"
+ data-backtothetop-fixed-fadeOut="1000"
+ data-backtothetop-fixed-bottom="10"
+ data-backtothetop-fixed-right="20">
+<span class="fa-layers fa-fw">
+<i class="fas fa-circle"></i>
+<i class="fas fa-arrow-circle-up"></i>
+</span></a>
+</div>
+</body>
+</html>

@@ -20,5 +20,23 @@
       <description></description>
     </item>
     
+    <item>
+      <title>Kubelet authentication/authorization</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/07-kubelet-authentication-authorization/</link>
+      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/07-kubelet-authentication-authorization/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
+      <title>TLS bootstrapping</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/08-kubelet-tls-bootstrapping/</link>
+      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/08-kubelet-tls-bootstrapping/</guid>
+      <description>TODO</description>
+    </item>
+    
   </channel>
 </rss>

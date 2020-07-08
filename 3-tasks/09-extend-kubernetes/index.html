@@ -3,11 +3,11 @@
 <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Cluster Architecture - K8S 文档笔记</title>
+<title>Extend Kubernetes - K8S 文档笔记</title>
 <meta name="description" content="test">
 <meta name="generator" content="Hugo 0.68.3" />
 <link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
-<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/">
+<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/">
 <link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/theme.min.css">
 <script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 <link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/chroma.min.css">
@@ -16,15 +16,15 @@
 <script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
 :root {}
 </style>
-<meta property="og:title" content="Cluster Architecture" />
+<meta property="og:title" content="Extend Kubernetes" />
 <meta property="og:description" content="test" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/" />
-<meta property="og:updated_time" content="2020-06-30T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/" />
+<meta property="og:updated_time" content="2020-07-08T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Cluster Architecture"/>
+<meta name="twitter:title" content="Extend Kubernetes"/>
 <meta name="twitter:description" content="test"/>
-<meta itemprop="name" content="Cluster Architecture">
+<meta itemprop="name" content="Extend Kubernetes">
 <meta itemprop="description" content="test">
 <script>
 var _hmt = _hmt || [];
@@ -46,12 +46,14 @@ var _hmt = _hmt || [];
 </header>
 
 <div class="content-container">
-<main><h1>Cluster Architecture</h1><div class="edit-meta">
-Last updated on 30 Jun 2020
+<main><h1>Extend Kubernetes</h1><div class="edit-meta">
+Last updated on 8 Jul 2020
 
 
-<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/2-concetps/01-cluster-architecture/_index.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/06-common-labels/" title="标签设置指导"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 标签设置指导</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/00-nodes/" title="节点">Next - 节点 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+<br>
+Published on 8 Jul 2020
+<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/3-tasks/09-extend-kubernetes/_index.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/3-tasks/" title="Tasks"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - Tasks</a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/01-setup-konnectivity/" title="Set up Konnectivity service">Next - Set up Konnectivity service <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -60,7 +62,27 @@ Last updated on 30 Jun 2020
 <ul>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs">Home</a></li>
 
-<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/">概念(Concepts)<span class="mark opened">-</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/">概念(Concepts)<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 
@@ -88,10 +110,11 @@ Last updated on 30 Jun 2020
   
 </li>
 
-<li class="parent active has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/">Cluster Architecture<span class="mark opened">-</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/">集群架构<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/00-nodes/">节点</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/00-nodes/">节点</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/01-control-plane-node-communication/">控制中心与节点的通信</a></li>
 </ul>
   
 </li>
@@ -152,29 +175,17 @@ Last updated on 30 Jun 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/">Tasks<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
 
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
+<li class="parent active has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/">Extend Kubernetes<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/01-setup-konnectivity/">Set up Konnectivity service</a></li>
 </ul>
   
 </li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/">Tasks<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
 
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/">Install Tools<span class="mark closed">+</span></a>
   
@@ -222,10 +233,21 @@ Last updated on 30 Jun 2020
   
 <ul class="sub-menu">
 
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/">Accessing the API<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/01-authentication/">Authenticating</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/07-authorization/">Authorization Overview</a></li>
+</ul>
+  
+</li>
+
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/">Feature Gates<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/00-feature-gates/">Feature Gates</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/07-kubelet-authentication-authorization/">Kubelet authentication/authorization</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/08-kubelet-tls-bootstrapping/">TLS bootstrapping</a></li>
 </ul>
   
 </li>

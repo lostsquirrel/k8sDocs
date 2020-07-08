@@ -147,6 +147,26 @@ k8s 也不仅仅是一个编排系统，实事上它消除了对编排的需求�
 <ul>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs">Home</a></li>
 
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
 <li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/">概念(Concepts)<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
@@ -175,10 +195,11 @@ k8s 也不仅仅是一个编排系统，实事上它消除了对编排的需求�
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/">Cluster Architecture<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/">集群架构<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/00-nodes/">节点</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/00-nodes/">节点</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/01-control-plane-node-communication/">控制中心与节点的通信</a></li>
 </ul>
   
 </li>
@@ -239,29 +260,17 @@ k8s 也不仅仅是一个编排系统，实事上它消除了对编排的需求�
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
-</ul>
-  
-</li>
-</ul>
-  
-</li>
-
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/">Tasks<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/">Extend Kubernetes<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/01-setup-konnectivity/">Set up Konnectivity service</a></li>
+</ul>
+  
+</li>
 
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/">Install Tools<span class="mark closed">+</span></a>
   
@@ -309,10 +318,21 @@ k8s 也不仅仅是一个编排系统，实事上它消除了对编排的需求�
   
 <ul class="sub-menu">
 
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/">Accessing the API<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/01-authentication/">Authenticating</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/07-authorization/">Authorization Overview</a></li>
+</ul>
+  
+</li>
+
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/">Feature Gates<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/00-feature-gates/">Feature Gates</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/07-kubelet-authentication-authorization/">Kubelet authentication/authorization</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/08-kubelet-tls-bootstrapping/">TLS bootstrapping</a></li>
 </ul>
   
 </li>
