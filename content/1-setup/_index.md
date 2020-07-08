@@ -1,6 +1,6 @@
 ---
 title: Getting started
-weight: 10100
+weight: 1
 ---
 
 ## 入门
