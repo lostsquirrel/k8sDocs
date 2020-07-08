@@ -20,16 +20,16 @@
 <meta property="og:description" content="k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。 一" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/00-nodes/" />
-<meta property="article:published_time" content="2020-06-30T00:00:00+00:00" />
+<meta property="article:published_time" content="2020-07-08T00:00:00+00:00" />
 <meta property="article:modified_time" content="2020-06-30T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="节点"/>
 <meta name="twitter:description" content="k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。 一"/>
 <meta itemprop="name" content="节点">
 <meta itemprop="description" content="k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。 一">
-<meta itemprop="datePublished" content="2020-06-30T00:00:00&#43;00:00" />
+<meta itemprop="datePublished" content="2020-07-08T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-30T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="2565">
+<meta itemprop="wordCount" content="3372">
 
 
 
@@ -196,13 +196,23 @@ var _hmt = _hmt || [];
 </ul>
 <h4 id="可靠性">可靠性</h4>
 <p>大多数情况下， 节点控制器限制踢除速率由 <code>--node-eviction-rate</code>(每秒) 配置， 默认 <code>0.1</code>，即每10秒最多能踢除一个 Pod。
-节点的踢除行为会在节点所有的可用区变为不健康时发生改变。 节点控制器会检查区域内的</p>
+节点的踢除行为会在节点所有的可用区变为不健康时发生改变。 节点控制器会检查区域内同一时间不健康(<code>NodeReady</code> 条件为 <code>ConditionUnknown</code> 或 <code>ConditionFalse</code>)节点的百分比。 如果不健康的节点比达达到 <code>--unhealthy-zone-threshold</code> (默认 0.55)时踢除速率会降低: 如果集群较小(不多于 <code>--large-cluster-size-threshold</code> 节点, 默认 50)，踢除行为停止。否则踢除速率降低至 <code>--secondary-node-eviction-rate</code> (默认 0.01)每秒。 这个策略会在每个分区实现因为这个可用区可能与集群分隔， 但其它部分仍正常连接。 如果集群不是分散在多个云提供商的可用区，则只有一个可用区(即整个集群)。</p>
+<p>将节点分散在不同可用区的主要原因就当一个可用区整体不可用时，可以将工作负载转移到另一个可用区。 如果一个可用区的节点都不可用时节点控制器使用正常踢除速率(<code>--node-eviction-rate</code>). 极限情况是当所有的可用区全部变得不可用时(整个集群每有一个健康节点)， 在这种情况下节点控制器认为主节点有连接问题并停止踢除行为直到连接恢复。</p>
+<p>节点控制器负责踢除包含 NoExecute Taint 节点运行的 Pod, 除了包含容忍该 Taint 的 Pod。 节点控制器会为有问题(如不可达或未就绪的节点)添加相应的 Taint, 也就是说调度器不会向不健康的节点放置 Pod.</p>
+<p>警告: <code>kubectl cordon</code> 命令标记一个节点为不可调度，而其作为是 服务控制器会将节点从所有负载列表中移除， 并再向该节点调度流量。</p>
+<h4 id="节点容量">节点容量</h4>
+<p>节点对象记录了节点的资源容量(如: 可用内存，CPU核心数)。 自动注册的节点在注册时会报告其容量，如果节点是手动添加，则需要在添加时提供对应容量信息。
+k8s 调度器保证节点有足够的资源运行分配到其上的 Pod， 调度器检测节点不所有容器请求的资源不大于节点的容量。 请求资源总和包括由kubelet 管理的所有容器， 但不包括直接由容器运行环境启动的容器。也不包括其它所有不被kubelet 控制的进程。
+注意: 如果需要为非 Pod 进程保留资源，见<a href="../../../3-tasks/01-administer-cluster/28-reserve-compute-resources/">为系统进程保留资源</a>,系统保留部分。</p>
+<h2 id="节点拓扑">节点拓扑</h2>
+<p>功能特性状态: Kubernetes v1.16 [alpha]
+如果通过<a href="../../../5-reference/06-command-line-tools-reference/00-feature-gates/">功能特性开关</a>，开启了 <code>TopologyManager</code>， kubelet 在作资源分配决策时会参考拓扑信息。更多信息， 见<a href="../../../3-tasks/01-administer-cluster/14-topology-manager/">节点拓扑控制管理策略</a></p>
 <div class="edit-meta">
 Last updated on 30 Jun 2020
 
 
 <br>
-Published on 30 Jun 2020
+Published on 8 Jul 2020
 <br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/2-concetps/01-cluster-architecture/00-nodes.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/" title="Cluster Architecture"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - Cluster Architecture</a>
 <a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/" title="Containers">Next - Containers <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
@@ -212,26 +222,6 @@ Published on 30 Jun 2020
 <nav class="slide-menu">
 <ul>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs">Home</a></li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
-</ul>
-  
-</li>
-</ul>
-  
-</li>
 
 <li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/">概念(Concepts)<span class="mark opened">-</span></a>
   
@@ -296,6 +286,15 @@ Published on 30 Jun 2020
   
 </li>
 
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/">Services, Load Balancing, and Networking<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/00-service/">Service</a></li>
+</ul>
+  
+</li>
+
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/">Policies<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
@@ -312,12 +311,23 @@ Published on 30 Jun 2020
 </ul>
   
 </li>
+</ul>
+  
+</li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/"><span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/00-service/">Service</a></li>
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
 </ul>
   
 </li>
@@ -341,6 +351,7 @@ Published on 30 Jun 2020
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/">Administer a Cluster<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/14-topology-manager/">Control Topology Management Policies on a node</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/28-reserve-compute-resources/">Reserve Compute Resources for System Daemons</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/34-namespaces/">通过名字空间分享一个集群</a></li>
 </ul>
@@ -374,6 +385,14 @@ Published on 30 Jun 2020
   
 <ul class="sub-menu">
 
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/">Feature Gates<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/00-feature-gates/">Feature Gates</a></li>
+</ul>
+  
+</li>
+
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/07-kubectl/">kubectl CLI<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
@@ -382,7 +401,7 @@ Published on 30 Jun 2020
   
 </li>
 
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/10_drivers/">Minikube Drivers</a>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/10-drivers/">Minikube Drivers</a>
   
 </li>
 

@@ -63,7 +63,7 @@ Last updated on 30 Jun 2020
 <br>
 Published on 30 Jun 2020
 <br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/2-concetps/04-services-networking/00-service.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/03-dns-pod-service/" title="DNS for Services and Pods"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - DNS for Services and Pods</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/3-tasks/" title="Tasks">Next - Tasks <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/" title="Policies">Next - Policies <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -71,26 +71,6 @@ Published on 30 Jun 2020
 <nav class="slide-menu">
 <ul>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs">Home</a></li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
-</ul>
-  
-</li>
-</ul>
-  
-</li>
 
 <li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/">概念(Concepts)<span class="mark opened">-</span></a>
   
@@ -155,6 +135,15 @@ Published on 30 Jun 2020
   
 </li>
 
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/">Services, Load Balancing, and Networking<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
+<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/00-service/">Service</a></li>
+</ul>
+  
+</li>
+
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/">Policies<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
@@ -171,12 +160,23 @@ Published on 30 Jun 2020
 </ul>
   
 </li>
+</ul>
+  
+</li>
 
-<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/"><span class="mark opened">-</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
-<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/00-service/">Service</a></li>
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
 </ul>
   
 </li>
@@ -200,6 +200,7 @@ Published on 30 Jun 2020
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/">Administer a Cluster<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/14-topology-manager/">Control Topology Management Policies on a node</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/28-reserve-compute-resources/">Reserve Compute Resources for System Daemons</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/34-namespaces/">通过名字空间分享一个集群</a></li>
 </ul>
@@ -233,6 +234,14 @@ Published on 30 Jun 2020
   
 <ul class="sub-menu">
 
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/">Feature Gates<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/00-feature-gates/">Feature Gates</a></li>
+</ul>
+  
+</li>
+
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/07-kubectl/">kubectl CLI<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
@@ -241,7 +250,7 @@ Published on 30 Jun 2020
   
 </li>
 
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/10_drivers/">Minikube Drivers</a>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/10-drivers/">Minikube Drivers</a>
   
 </li>
 

@@ -3,8 +3,47 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/hello_world/</loc>
-    <lastmod>2017-10-17T14:00:45+00:00</lastmod>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/</loc>
+    <lastmod>2020-06-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/</loc>
+    <lastmod>2020-07-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/</loc>
+    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/</loc>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/</loc>
+    <lastmod>2020-07-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/</loc>
+    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/</loc>
+    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/</loc>
+    <lastmod>2020-07-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/</loc>
+    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -31,16 +70,6 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/</loc>
-    <lastmod>2020-07-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/</loc>
-    <lastmod>2020-06-23T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00-what-is-k8s/</loc>
   </url>
   
@@ -60,37 +89,13 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/</loc>
-    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-cluster-architecture/00-nodes/</loc>
-    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/</loc>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/</loc>
-    <lastmod>2020-07-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/</loc>
     <lastmod>2020-06-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/01-resource-quotas/</loc>
     <lastmod>2020-06-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/</loc>
-    <lastmod>2020-07-02T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -105,7 +110,7 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/</loc>
-    <lastmod>2020-07-07T00:00:00+00:00</lastmod>
+    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -121,6 +126,11 @@
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/</loc>
     <lastmod>2020-06-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/14-topology-manager/</loc>
+    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -149,7 +159,12 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/</loc>
-    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
+    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/00-feature-gates/</loc>
+    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -163,7 +178,7 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/10_drivers/</loc>
+    <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/10-drivers/</loc>
   </url>
   
   <url>
@@ -227,8 +242,8 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/</loc>
-    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
+    <loc>https://lostsquirrel.github.io/k8sDocs/template/</loc>
+    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>

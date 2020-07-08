@@ -12,15 +12,6 @@
     
     
     <item>
-      <title>Hello world!</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/hello_world/</link>
-      <pubDate>Tue, 17 Oct 2017 14:00:45 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/hello_world/</guid>
-      <description>title: weight: date: 2020-07-07 draft: true Hello world!</description>
-    </item>
-    
-    <item>
       <title>使用 Minikube 搭建 K8s环境</title>
       <link>https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/</link>
       <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
@@ -111,6 +102,15 @@
     </item>
     
     <item>
+      <title>Control Topology Management Policies on a node</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/14-topology-manager/</link>
+      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/14-topology-manager/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
       <title>Reserve Compute Resources for System Daemons</title>
       <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/28-reserve-compute-resources/</link>
       <pubDate>Tue, 07 Jul 2020 00:00:00 +0000</pubDate>
@@ -135,6 +135,15 @@
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/03-dns-pod-service/</guid>
       <description>TODO</description>
+    </item>
+    
+    <item>
+      <title>Feature Gates</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/00-feature-gates/</link>
+      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/00-feature-gates/</guid>
+      <description></description>
     </item>
     
     <item>
@@ -233,6 +242,15 @@
       <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/01-controllers/01-replicationcontroller/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://lostsquirrel.github.io/k8sDocs/template/</link>
+      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/template/</guid>
       <description>TODO</description>
     </item>
     
