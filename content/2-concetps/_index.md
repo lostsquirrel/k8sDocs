@@ -1,6 +1,6 @@
 ---
 title: 概念(Concepts)
-weight: 20000
+weight: 2
 date: 2020-06-23
 ---
 
