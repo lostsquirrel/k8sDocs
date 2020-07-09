@@ -185,5 +185,6 @@ k8s 调度器保证节点有足够的资源运行分配到其上的 Pod， 调�
 
 ## 节点拓扑
 
-功能特性状态: Kubernetes v1.16 [alpha]
+{{< feature-state for_k8s_version="v1.16" state="alpha" >}}
+
 如果通过[功能特性开关](../../../5-reference/06-command-line-tools-reference/00-feature-gates/)，开启了 `TopologyManager`， kubelet 在作资源分配决策时会参考拓扑信息。更多信息， 见[节点拓扑控制管理策略](../../../3-tasks/01-administer-cluster/14-topology-manager/)
