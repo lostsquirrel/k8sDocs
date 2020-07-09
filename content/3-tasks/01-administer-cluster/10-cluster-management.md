@@ -5,3 +5,4 @@ draft: true
 weight:
 ---
 TODO
+### 集群自动扩容 {#cluster-autoscaling}

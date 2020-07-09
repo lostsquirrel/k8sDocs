@@ -44,7 +44,7 @@ SSH 遂道连接方式当前已经被废弃，用户在开启该功能需要清�
 
 ### Konnectivity 服务
 
-功能特性状态: `Kubernetes v1.18 [beta]`
+{{< feature-state for_k8s_version="v1.18" state="beta" >}}
 
 作为 SSH 遂道 的替代方案， Konnectivity 服务 通过提供 TCP 层的代理来实现 控制中心与集群之间的通信。 Konnectivity 服务主要由两部分组成， Konnectivity 服务端和Konnectivity 代理程序，分别运行在 控制中心网络和节点网络上。 Konnectivity 代理程序初始化并维护到服务端的连接。 在开启 Konnectivity 服务后，控制中心到节的所有连接都通过这些连接。
 在集群中开启 Konnectivity 服务见 [这里](../../../3-tasks/09-extend-kubernetes/01-setup-konnectivity/)
