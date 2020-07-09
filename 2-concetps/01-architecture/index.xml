@@ -6,7 +6,7 @@
     <description>Recent content in 集群架构 on K8S 文档笔记</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 08 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 09 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/index.xml" rel="self" type="application/rss+xml" />
     
@@ -27,6 +27,15 @@
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/01-control-plane-node-communication/</guid>
       <description>本文主要介结控制中心(实际就是 api-server)与 k8s 集群通信的几种途径, 目的是使用户可以选择健壮的网络配置使集群可以运行在不受信的网络环</description>
+    </item>
+    
+    <item>
+      <title>控制器</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/02-controller/</link>
+      <pubDate>Thu, 09 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/02-controller/</guid>
+      <description>在机器人技术和自动化领域，一个控制回路就是一个控制系统状态的无限循环。 以下为控制回路的一个示例: 房间内的温度控制器 当用户设定一个温度值时，就</description>
     </item>
     
   </channel>

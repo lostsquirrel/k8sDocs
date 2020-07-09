@@ -38,5 +38,14 @@
       <description>TODO</description>
     </item>
     
+    <item>
+      <title></title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/10-cluster-management/</link>
+      <pubDate>Thu, 09 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/10-cluster-management/</guid>
+      <description>TODO 集群自动扩容</description>
+    </item>
+    
   </channel>
 </rss>

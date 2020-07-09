@@ -205,8 +205,17 @@ var _hmt = _hmt || [];
 k8s 调度器保证节点有足够的资源运行分配到其上的 Pod， 调度器检测节点不所有容器请求的资源不大于节点的容量。 请求资源总和包括由kubelet 管理的所有容器， 但不包括直接由容器运行环境启动的容器。也不包括其它所有不被kubelet 控制的进程。
 注意: 如果需要为非 Pod 进程保留资源，见<a href="../../../3-tasks/01-administer-cluster/28-reserve-compute-resources/">为系统进程保留资源</a>,系统保留部分。</p>
 <h2 id="节点拓扑">节点拓扑</h2>
-<p>功能特性状态: Kubernetes v1.16 [alpha]
-如果通过<a href="../../../5-reference/06-command-line-tools-reference/00-feature-gates/">功能特性开关</a>，开启了 <code>TopologyManager</code>， kubelet 在作资源分配决策时会参考拓扑信息。更多信息， 见<a href="../../../3-tasks/01-administer-cluster/14-topology-manager/">节点拓扑控制管理策略</a></p>
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.16 [alpha]</code>
+</div>
+
+
+<p>如果通过<a href="../../../5-reference/06-command-line-tools-reference/00-feature-gates/">功能特性开关</a>，开启了 <code>TopologyManager</code>， kubelet 在作资源分配决策时会参考拓扑信息。更多信息， 见<a href="../../../3-tasks/01-administer-cluster/14-topology-manager/">节点拓扑控制管理策略</a></p>
 <div class="edit-meta">
 Last updated on 30 Jun 2020
 
@@ -276,6 +285,7 @@ Published on 8 Jul 2020
 <ul class="sub-menu">
 <li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/00-nodes/">节点</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/01-control-plane-node-communication/">控制中心与节点的通信</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/02-controller/">控制器</a></li>
 </ul>
   
 </li>
@@ -332,6 +342,14 @@ Published on 8 Jul 2020
 </ul>
   
 </li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/11-extend-kubernetes/">Extending Kubernetes<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/11-extend-kubernetes/00-extend-cluster/">Extending your Kubernetes Cluster</a></li>
+</ul>
+  
+</li>
 </ul>
   
 </li>
@@ -363,6 +381,7 @@ Published on 8 Jul 2020
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/14-topology-manager/">Control Topology Management Policies on a node</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/28-reserve-compute-resources/">Reserve Compute Resources for System Daemons</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/34-namespaces/">通过名字空间分享一个集群</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/10-cluster-management/"></a></li>
 </ul>
   
 </li>
