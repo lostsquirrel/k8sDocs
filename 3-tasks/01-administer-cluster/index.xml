@@ -12,12 +12,31 @@
     
     
     <item>
+      <title>Cloud Controller Manager Administration</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/09-running-cloud-controller/</link>
+      <pubDate>Fri, 17 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/09-running-cloud-controller/</guid>
+      <description>TODO
+Running cloud-controller-manager </description>
+    </item>
+    
+    <item>
       <title>Control Topology Management Policies on a node</title>
       <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/14-topology-manager/</link>
       <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/14-topology-manager/</guid>
       <description>TODO</description>
+    </item>
+    
+    <item>
+      <title>Developing Cloud Controller Manager</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/18-developing-cloud-controller-manager/</link>
+      <pubDate>Fri, 17 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/18-developing-cloud-controller-manager/</guid>
+      <description>TODO 这个整理优先级应该较低</description>
     </item>
     
     <item>

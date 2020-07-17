@@ -6,7 +6,7 @@
     <description>Recent content in 集群架构 on K8S 文档笔记</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 09 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 15 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/index.xml" rel="self" type="application/rss+xml" />
     
@@ -36,6 +36,15 @@
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/02-controller/</guid>
       <description>在机器人技术和自动化领域，一个控制回路就是一个控制系统状态的无限循环。 以下为控制回路的一个示例: 房间内的温度控制器 当用户设定一个温度值时，就</description>
+    </item>
+    
+    <item>
+      <title>Cloud Controller Manager</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/03-cloud-controller/</link>
+      <pubDate>Wed, 15 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/03-cloud-controller/</guid>
+      <description>功能特性状态: Kubernetes v1.11 [beta] 云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施 cloud-controller-manager 是集成了云提供商</description>
     </item>
     
   </channel>

@@ -84,6 +84,15 @@
     </item>
     
     <item>
+      <title>Cloud Controller Manager</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/03-cloud-controller/</link>
+      <pubDate>Wed, 15 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/03-cloud-controller/</guid>
+      <description>功能特性状态: Kubernetes v1.11 [beta] 云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施 cloud-controller-manager 是集成了云提供商</description>
+    </item>
+    
+    <item>
       <title>资源配额</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/01-resource-quotas/</link>
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
@@ -130,12 +139,31 @@ Extension Patterns </description>
     </item>
     
     <item>
+      <title>Cloud Controller Manager Administration</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/09-running-cloud-controller/</link>
+      <pubDate>Fri, 17 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/09-running-cloud-controller/</guid>
+      <description>TODO
+Running cloud-controller-manager </description>
+    </item>
+    
+    <item>
       <title>Control Topology Management Policies on a node</title>
       <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/14-topology-manager/</link>
       <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/14-topology-manager/</guid>
       <description>TODO</description>
+    </item>
+    
+    <item>
+      <title>Developing Cloud Controller Manager</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/18-developing-cloud-controller-manager/</link>
+      <pubDate>Fri, 17 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/18-developing-cloud-controller-manager/</guid>
+      <description>TODO 这个整理优先级应该较低</description>
     </item>
     
     <item>
@@ -311,20 +339,20 @@ Extension Patterns </description>
     
     <item>
       <title></title>
+      <link>https://lostsquirrel.github.io/k8sDocs/template/</link>
+      <pubDate>Fri, 17 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/template/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
+      <title></title>
       <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/10-cluster-management/</link>
       <pubDate>Thu, 09 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/10-cluster-management/</guid>
       <description>TODO 集群自动扩容</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://lostsquirrel.github.io/k8sDocs/template/</link>
-      <pubDate>Thu, 09 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/template/</guid>
-      <description>TODO</description>
     </item>
     
     <item>
