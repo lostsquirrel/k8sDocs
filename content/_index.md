@@ -16,11 +16,14 @@ description: K8S 文档笔记，因为想加些私货，所以没法和官网同
 ## 不作翻译的词汇
 
 ### 抽象概念
+
 - Pod
 - Service
+- Endpoint
 - DaemonSet
 - Taint
 - Job
+- ServiceAccount
 
 ### 工具或组件
 
