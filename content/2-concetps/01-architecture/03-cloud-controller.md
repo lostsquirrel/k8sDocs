@@ -1,7 +1,7 @@
 ---
 title: Cloud Controller Manager
 date: 2020-07-15
-draft: true
+publishdate: 2020-07-17
 weight: 20103
 ---
 {{< feature-state for_k8s_version="v1.11" state="beta" >}}
@@ -13,6 +13,8 @@ weight: 20103
 `cloud-controller-manager` 组件通过让 k8s 与底层云基础设施的交互逻辑解耦，使得云提供上功能发布的节奏与 k8s 项目功能发的节奏分离
 `cloud-controller-manager` 以插件结构的方便让不同的云提供与可以让其平台可以与 k8s 集成。
 
+## 设计
+
 以下为 `cloud-controller-manager` 在 k8s 架构中的位置：
 ![kubernetes architecture](https://d33wubrfki0l68.cloudfront.net/7016517375d10c702489167e704dcb99e570df85/7bb53/images/docs/components-of-kubernetes.png)
 
@@ -23,7 +25,19 @@ The cloud controller manager runs in the control plane as a replicated set of pr
 云提供商控制管理器通常以插件的方式运行而不是以控制中心组件的方式运行
 {{ </node> }}
 
+## 云提供商控制管理器的功用
 
+云提供商控制管理器包含如下控制器:
+
+### 节点控制器
+
+节点控制器当在云基础设施上创建服务器时负责创建圣训的节点对象。 节点控制器获取用户在云提供商所租赁的主机的信息。 节点控制器主要有以下功能：
+  1. 为控制器通过云提供商API发现的服务器初始化节点信息
+  2. 在节点对象上打上云提供商相关的注解和标签，例如 节点部署的区域，和可用资源(CPU, memory, 等)
+  3. 获取节点的主机名和网络地址
+  4. 验证节点的健康状况。 当一个节点不响应时，控制器会检查云提供商的 API， 确认服务器状态是否被修改为 停用/删除/终止。 如果发现节点已经被从云端删除则从 k8s 集群中删除对应的节点对象
+
+有些云提供商在实现时会将其分为两个独立的控制器，分别为节点控制器和节点生命周期控制器
 
 ### 路由控制器
 
