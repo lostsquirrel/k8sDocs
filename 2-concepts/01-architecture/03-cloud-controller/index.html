@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Cloud Controller Manager - K8S 文档笔记</title>
+<meta name="description" content="test">
+<meta name="generator" content="Hugo 0.68.3" />
+<link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
+<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/03-cloud-controller/">
+<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/theme.min.css">
+<script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/chroma.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.easing@1.4.1/jquery.easing.min.js"></script>
+<script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
+:root {}
+</style>
+<meta property="og:title" content="Cloud Controller Manager" />
+<meta property="og:description" content="功能特性状态: Kubernetes v1.11 [beta] 云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施 cloud-controller-manager 是集成了云提供商" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/03-cloud-controller/" />
+<meta property="article:published_time" content="2020-07-17T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-07-15T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Cloud Controller Manager"/>
+<meta name="twitter:description" content="功能特性状态: Kubernetes v1.11 [beta] 云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施 cloud-controller-manager 是集成了云提供商"/>
+<meta itemprop="name" content="Cloud Controller Manager">
+<meta itemprop="description" content="功能特性状态: Kubernetes v1.11 [beta] 云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施 cloud-controller-manager 是集成了云提供商">
+<meta itemprop="datePublished" content="2020-07-17T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-07-15T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1259">
+
+
+
+<meta itemprop="keywords" content="" />
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?46e26ffc9d975f663dff0b89f1cf7931";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+<body><div class="container"><header>
+<h1>K8S 文档笔记</h1>
+
+ <span class="version">Version 0.0.1</span>
+
+<p class="description">test</p>
+
+</header>
+
+<div class="content-container">
+<main><h1>Cloud Controller Manager</h1>
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.11 [beta]</code>
+</div>
+
+
+<p>云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施</p>
+<p><code>cloud-controller-manager</code> 是集成了云提供商控制逻辑的 k8s 控制中心组件。 云提供商控制管理器让集群与云提供商提供的 API 相关系并让与云平台交互的组件和与集群交互的组件分离。</p>
+<p><code>cloud-controller-manager</code> 组件通过让 k8s 与底层云基础设施的交互逻辑解耦，使得云提供上功能发布的节奏与 k8s 项目功能发的节奏分离
+<code>cloud-controller-manager</code> 以插件结构的方便让不同的云提供与可以让其平台可以与 k8s 集成。</p>
+<h2 id="设计">设计</h2>
+<p>以下为 <code>cloud-controller-manager</code> 在 k8s 架构中的位置：
+<img src="https://d33wubrfki0l68.cloudfront.net/7016517375d10c702489167e704dcb99e570df85/7bb53/images/docs/components-of-kubernetes.png" alt="kubernetes architecture"></p>
+<p>The cloud controller manager runs in the control plane as a replicated set of processes (usually, these are containers in Pods). Each cloud-controller-manager implements multiple controllers in a single process.
+云提供商控制管理器在控制中心中以副本集进程的形式运行(通常为 Pod 中的容器)。 每个 <code>cloud-controller-manager</code> 在一个进程中实现了多个控制器。</p>
+<p>{{ <!-- raw HTML omitted --> }}
+云提供商控制管理器通常以插件的方式运行而不是以控制中心组件的方式运行
+{{ <!-- raw HTML omitted --> }}</p>
+<h2 id="云提供商控制管理器的功用">云提供商控制管理器的功用</h2>
+<p>云提供商控制管理器包含如下控制器:</p>
+<h3 id="节点控制器">节点控制器</h3>
+<p>节点控制器当在云基础设施上创建服务器时负责创建圣训的节点对象。 节点控制器获取用户在云提供商所租赁的主机的信息。 节点控制器主要有以下功能：</p>
+<ol>
+<li>为控制器通过云提供商API发现的服务器初始化节点信息</li>
+<li>在节点对象上打上云提供商相关的注解和标签，例如 节点部署的区域，和可用资源(CPU, memory, 等)</li>
+<li>获取节点的主机名和网络地址</li>
+<li>验证节点的健康状况。 当一个节点不响应时，控制器会检查云提供商的 API， 确认服务器状态是否被修改为 停用/删除/终止。 如果发现节点已经被从云端删除则从 k8s 集群中删除对应的节点对象</li>
+</ol>
+<p>有些云提供商在实现时会将其分为两个独立的控制器，分别为节点控制器和节点生命周期控制器</p>
+<h3 id="路由控制器">路由控制器</h3>
+<p>路由控制器负责在云提供商配置适当的路由以实现不同节点之间的通信。
+根据云提供商的不同， 路由控制器还可能要为 Pod 网络申请一个IP段</p>
+<h3 id="service-控制器">Service 控制器</h3>
+<p>在云环境中 Service 会与一些云基础设施组件集群，比如负载均衡，IP地址， 网络包过滤，目标健康检测。 Service 控制器在创建 Service 时调用云提供商的API 设置 Service 需要的负载均衡和其它云基础设施组件</p>
+<h2 id="授权">授权</h2>
+<p>本节将分别说明云提供商管理器执行对应操作所需要访问的各种 API 对象的</p>
+<h3 id="节点控制器-1">节点控制器</h3>
+<p>节点控制器只需要访问节点对象。需要提供节点对的的读写权限</p>
+<p><code>v1/Node</code>:</p>
+<ul>
+<li>Get</li>
+<li>List</li>
+<li>Create</li>
+<li>Update</li>
+<li>Patch</li>
+<li>Watch</li>
+<li>Delete</li>
+</ul>
+<h3 id="路由控制器-1">路由控制器</h3>
+<p>路由控制器需要监听节点对象的创建来配置对应的路由。 所以需要节点对象的 <code>Get</code> 权限</p>
+<p><code>v1/Node</code>:</p>
+<ul>
+<li>Get</li>
+</ul>
+<h3 id="service-控制器-1">Service 控制器</h3>
+<p>Service 控制器监听 Service 对象的创建，更新，删除事件来配置对应的 Endpoint</p>
+<p>访问 Service 需要 List， Watch 权限
+更新 Service 需要 Patch， Update 权限
+设置 Service 对的 Endpoint 需要 Create, List, Get, Watch, Update
+最终需要如下：</p>
+<p><code>v1/Service</code>:</p>
+<ul>
+<li>List</li>
+<li>Get</li>
+<li>Watch</li>
+<li>Patch</li>
+<li>Update</li>
+</ul>
+<h3 id="其它权限需求">其它权限需求</h3>
+<p>云提供商控制管理器核心的实现中需要创建  Event 对象的权限。 为了设置安全操作，还需要创建 ServiceAccount 的权限</p>
+<p><code>v1/Event</code>:</p>
+<ul>
+<li>Create</li>
+<li>Patch</li>
+<li>Update</li>
+</ul>
+<p><code>v1/ServiceAccount</code>:</p>
+<ul>
+<li>Create</li>
+</ul>
+<p>最终云提供商控制管理器基于 RBAC ClusterRole 配置如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: rbac.authorization.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: ClusterRole
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: cloud-controller-manager
+<span style="color:#66d9ef">rules</span>:
+- <span style="color:#66d9ef">apiGroups</span>:
+  - <span style="color:#e6db74">&#34;&#34;</span>
+  <span style="color:#66d9ef">resources</span>:
+  - events
+  <span style="color:#66d9ef">verbs</span>:
+  - create
+  - patch
+  - update
+- <span style="color:#66d9ef">apiGroups</span>:
+  - <span style="color:#e6db74">&#34;&#34;</span>
+  <span style="color:#66d9ef">resources</span>:
+  - nodes
+  <span style="color:#66d9ef">verbs</span>:
+  - <span style="color:#e6db74">&#39;*&#39;</span>
+- <span style="color:#66d9ef">apiGroups</span>:
+  - <span style="color:#e6db74">&#34;&#34;</span>
+  <span style="color:#66d9ef">resources</span>:
+  - nodes/status
+  <span style="color:#66d9ef">verbs</span>:
+  - patch
+- <span style="color:#66d9ef">apiGroups</span>:
+  - <span style="color:#e6db74">&#34;&#34;</span>
+  <span style="color:#66d9ef">resources</span>:
+  - services
+  <span style="color:#66d9ef">verbs</span>:
+  - list
+  - patch
+  - update
+  - watch
+- <span style="color:#66d9ef">apiGroups</span>:
+  - <span style="color:#e6db74">&#34;&#34;</span>
+  <span style="color:#66d9ef">resources</span>:
+  - serviceaccounts
+  <span style="color:#66d9ef">verbs</span>:
+  - create
+- <span style="color:#66d9ef">apiGroups</span>:
+  - <span style="color:#e6db74">&#34;&#34;</span>
+  <span style="color:#66d9ef">resources</span>:
+  - persistentvolumes
+  <span style="color:#66d9ef">verbs</span>:
+  - get
+  - list
+  - update
+  - watch
+- <span style="color:#66d9ef">apiGroups</span>:
+  - <span style="color:#e6db74">&#34;&#34;</span>
+  <span style="color:#66d9ef">resources</span>:
+  - endpoints
+  <span style="color:#66d9ef">verbs</span>:
+  - create
+  - get
+  - list
+  - watch
+  - update
+</code></pre></div><h2 id="接下来应该看啥">接下来应该看啥</h2>
+<p>这篇讲怎么运行管理 云提供商控制管理器 <a href="../../../3-tasks/01-administer-cluster/09-running-cloud-controller/#cloud-controller-manager">云提供商控制管理器管理</a></p>
+<p>想要自己开发一个 云提供商控制管理器 <a href="../../../3-tasks/01-administer-cluster/18-developing-cloud-controller-manager/">云提供商控制管理器开发</a></p>
+<div class="edit-meta">
+Last updated on 15 Jul 2020
+
+
+<br>
+Published on 17 Jul 2020
+<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/2-concepts/01-architecture/03-cloud-controller.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/02-controller/" title="控制器"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 控制器</a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/" title="容器">Next - 容器 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+</nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
+</footer>
+</main><div class="sidebar">
+
+<nav class="slide-menu">
+<ul>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs">Home</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/">概念(Concepts)<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/">概览<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/00-what-is-k8s/">k8s 是什么</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/01-k8s-components/">k8s 组件</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/02-k8s-api/">k8s API 说明</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/">k8s 对象管理<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/01-names/">对象命令与ID</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/03-label-selectors/">标签和标签选择器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/04-annotation/">注解 (Annotations)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/05-field-selectors/">字段选择器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/06-common-labels/">标签设置指导</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/">集群架构<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/00-nodes/">节点</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/01-control-plane-node-communication/">控制中心与节点的通信</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/02-controller/">控制器</a></li>
+<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/03-cloud-controller/">Cloud Controller Manager</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/">容器<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/00-images/">镜像</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/">Workloads<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/">Pods<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/">Pods</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/01-controllers/">Controllers<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/01-controllers/01-replicationcontroller/">ReplicationController</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/04-services-networking/">Services, Load Balancing, and Networking<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/04-services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/04-services-networking/00-service/">Service</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/08-policy/">Policies<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/08-policy/01-resource-quotas/">资源配额</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/">Scheduling and Eviction<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/01-taint-and-toleration/">Taints and Tolerations</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/02-assign-pod-node/">Assigning Pods to Nodes</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/11-extend-kubernetes/">Extending Kubernetes<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/11-extend-kubernetes/00-extend-cluster/">Extending your Kubernetes Cluster</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/">Tasks<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/">Extend Kubernetes<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/01-setup-konnectivity/">Set up Konnectivity service</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/">Install Tools<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/00-install-kubectl/">下载安装配置 kubectl</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/00-tools/01-install-minikube/">安装 Minikube</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/">Administer a Cluster<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/09-running-cloud-controller/">Cloud Controller Manager Administration</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/14-topology-manager/">Control Topology Management Policies on a node</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/18-developing-cloud-controller-manager/">Developing Cloud Controller Manager</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/28-reserve-compute-resources/">Reserve Compute Resources for System Daemons</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/34-namespaces/">通过名字空间分享一个集群</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/01-administer-cluster/10-cluster-management/"></a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/">Configure Pod Containters<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/test21/">21</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/">Tutorials<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/00-hello-minikube/">Hello Minikube</a>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/">Reference<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/">Accessing the API<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/01-authentication/">Authenticating</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/04-admission-controllers/">Using Admission Controllers</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/07-authorization/">Authorization Overview</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/">Feature Gates<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/00-feature-gates/">Feature Gates</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/07-kubelet-authentication-authorization/">Kubelet authentication/authorization</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/08-kubelet-tls-bootstrapping/">TLS bootstrapping</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/07-kubectl/">kubectl CLI<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/07-kubectl/00-overview/">kubectl 概览</a></li>
+</ul>
+  
+</li>
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/10-drivers/">Minikube Drivers</a>
+  
+</li>
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/">Standardized Glossary</a>
+  
+</li>
+</ul>
+  
+</li>
+</ul>
+</nav>
+
+
+
+<div class="sidebar-footer"></div>
+</div>
+</div><a href="#" id="backtothetop-fixed" class="backtothetop"
+ data-backtothetop-duration="600"
+ data-backtothetop-easing="easeOutQuart"
+ data-backtothetop-fixed-fadeIn="1000"
+ data-backtothetop-fixed-fadeOut="1000"
+ data-backtothetop-fixed-bottom="10"
+ data-backtothetop-fixed-right="20">
+<span class="fa-layers fa-fw">
+<i class="fas fa-circle"></i>
+<i class="fas fa-arrow-circle-up"></i>
+</span></a>
+</div>
+</body>
+</html>

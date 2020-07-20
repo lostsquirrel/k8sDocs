@@ -31,109 +31,109 @@
     
     <item>
       <title>k8s 是什么</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00-what-is-k8s/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/00-what-is-k8s/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/00-what-is-k8s/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/00-what-is-k8s/</guid>
       <description>k8s 是一个可扩展，可移植的开源平台，用于管理容器化的工作负载和服务，帮助实现声明式配置与自动化，有一个区大且快速发展的生态系统 源自Google</description>
     </item>
     
     <item>
       <title>k8s 组件</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01-k8s-components/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/01-k8s-components/</link>
       <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/01-k8s-components/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/01-k8s-components/</guid>
       <description>当完成 k8s 部署后，用户就拥有一个 k8s 集群， 一个 k8s 一般包含多台工作机，称为节点，用于运行容器化应用。 每个集群至少包含一个节点。 在节点上运行应用工作</description>
     </item>
     
     <item>
       <title>k8s API 说明</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02-k8s-api/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/02-k8s-api/</link>
       <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/02-k8s-api/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/02-k8s-api/</guid>
       <description>k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这</description>
     </item>
     
     <item>
       <title>节点</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/00-nodes/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/00-nodes/</link>
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/00-nodes/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/00-nodes/</guid>
       <description>k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。 一</description>
     </item>
     
     <item>
       <title>控制中心与节点的通信</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/01-control-plane-node-communication/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/01-control-plane-node-communication/</link>
       <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/01-control-plane-node-communication/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/01-control-plane-node-communication/</guid>
       <description>本文主要介结控制中心(实际就是 api-server)与 k8s 集群通信的几种途径, 目的是使用户可以选择健壮的网络配置使集群可以运行在不受信的网络环</description>
     </item>
     
     <item>
       <title>控制器</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/02-controller/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/02-controller/</link>
       <pubDate>Thu, 09 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/02-controller/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/02-controller/</guid>
       <description>在机器人技术和自动化领域，一个控制回路就是一个控制系统状态的无限循环。 以下为控制回路的一个示例: 房间内的温度控制器 当用户设定一个温度值时，就</description>
     </item>
     
     <item>
       <title>Cloud Controller Manager</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/03-cloud-controller/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/03-cloud-controller/</link>
       <pubDate>Wed, 15 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/03-cloud-controller/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/03-cloud-controller/</guid>
       <description>功能特性状态: Kubernetes v1.11 [beta] 云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施 cloud-controller-manager 是集成了云提供商</description>
     </item>
     
     <item>
       <title>镜像</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/00-images/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/00-images/</link>
       <pubDate>Sun, 19 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/00-images/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/00-images/</guid>
       <description>一个容器镜像就是构建应用的二进制数据和应用所以需要的依赖。 容器镜像是一个可独立运行的可执行软件包，并定义了清楚的运行环境。 通常是用户创建一个</description>
     </item>
     
     <item>
       <title>资源配额</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/01-resource-quotas/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/08-policy/01-resource-quotas/</link>
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/01-resource-quotas/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/08-policy/01-resource-quotas/</guid>
       <description>TODO</description>
     </item>
     
     <item>
       <title>Taints and Tolerations</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/01-taint-and-toleration/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/01-taint-and-toleration/</link>
       <pubDate>Tue, 07 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/01-taint-and-toleration/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/01-taint-and-toleration/</guid>
       <description>TODO</description>
     </item>
     
     <item>
       <title>Assigning Pods to Nodes</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/02-assign-pod-node/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/02-assign-pod-node/</link>
       <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/09-scheduling-eviction/02-assign-pod-node/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/02-assign-pod-node/</guid>
       <description>TODO</description>
     </item>
     
     <item>
       <title>Extending your Kubernetes Cluster</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/11-extend-kubernetes/00-extend-cluster/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/11-extend-kubernetes/00-extend-cluster/</link>
       <pubDate>Thu, 09 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/11-extend-kubernetes/00-extend-cluster/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/11-extend-kubernetes/00-extend-cluster/</guid>
       <description>TODO
 Extension Patterns </description>
     </item>
@@ -195,10 +195,10 @@ Running cloud-controller-manager </description>
     
     <item>
       <title>DNS for Services and Pods</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/03-dns-pod-service/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/04-services-networking/03-dns-pod-service/</link>
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/03-dns-pod-service/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/04-services-networking/03-dns-pod-service/</guid>
       <description>TODO</description>
     </item>
     
@@ -209,6 +209,16 @@ Running cloud-controller-manager </description>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/01-authentication/</guid>
       <description>TODO</description>
+    </item>
+    
+    <item>
+      <title>Using Admission Controllers</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/04-admission-controllers/</link>
+      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/04-admission-controllers/</guid>
+      <description>TODO
+What does each admission controller do? AlwaysPullImages </description>
     </item>
     
     <item>
@@ -258,98 +268,98 @@ Running cloud-controller-manager </description>
     
     <item>
       <title>k8s 对象介绍</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/00-kubernetes-objects/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/00-kubernetes-objects/</link>
       <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/00-kubernetes-objects/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/00-kubernetes-objects/</guid>
       <description>本文介绍 k8s 对象 是怎么在 k8s API 中表示的，怎么以 .yaml 格式输出 k8s 对象 简介 k8s 对象是 k8s 系统中持久化的实体， k8s 使用这些实体来表示集群的状态，它们具体可以表示</description>
     </item>
     
     <item>
       <title>对象命令与ID</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/01-names/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/01-names/</link>
       <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/01-names/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/01-names/</guid>
       <description>在 k8s 的对象中，同一类型的对象名称唯一， 比如在一个 名字空间中只能有一个叫 myapp-1234 在 Pod， 但不同类型的资源可以有相同的名称，比如还可以定义一个叫 myapp-1234 在</description>
     </item>
     
     <item>
       <title>名字空间(Namespaces)</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/02-namespace/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/02-namespace/</link>
       <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/02-namespace/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/02-namespace/</guid>
       <description>k8s 可以在一个物理集群上创建多个虚拟集群, 每个名字空间就是一个虚拟集群 啥时候用名字空间 名字空间是为用户分散于有多个组或项目下的场景设计的。 如果</description>
     </item>
     
     <item>
       <title>标签和标签选择器</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/03-label-selectors/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/03-label-selectors/</link>
       <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/03-label-selectors/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/03-label-selectors/</guid>
       <description>标签是附加在对象上的键值对，应该与所在的对象有关且具有意义 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在对象创建后任何时</description>
     </item>
     
     <item>
       <title>注解 (Annotations)</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/04-annotation/</link>
       <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/04-annotation/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/04-annotation/</guid>
       <description>用户可以将任非标识符元素关联到对象上，其它库或工具可以读取这些元数据 关联元数据到对象 用户可以通过标签或注意的方式将元数据关联到对象上，标签用</description>
     </item>
     
     <item>
       <title>字段选择器</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/05-field-selectors/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/05-field-selectors/</link>
       <pubDate>Fri, 03 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/05-field-selectors/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/05-field-selectors/</guid>
       <description>用户可以通过字段选择器的以对象的一个或多个字段的值作为选择条件实现对 k8s 对象的选择。示例如下: metadata.name=my-service metadata.namespace!=default status.phase=Pending 以下 kubectl 命令通过选择器，选择 status.phase 字段值是 Running 的对</description>
     </item>
     
     <item>
       <title>标签设置指导</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/06-common-labels/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/06-common-labels/</link>
       <pubDate>Fri, 03 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/00-overview/03-working-with-objects/06-common-labels/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/06-common-labels/</guid>
       <description>用户可以使用 kubectl 和 dashboard 外的可视化管理工具。一些通用的描述对象信息的标签配置可以让这些工具更好地工作 为了工具能更好的使用这些标签，建议标签以方便查</description>
     </item>
     
     <item>
       <title>Service</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/00-service/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/04-services-networking/00-service/</link>
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/04-services-networking/00-service/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/04-services-networking/00-service/</guid>
       <description>TODO</description>
     </item>
     
     <item>
       <title>Pods</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/00-pods/01-pod/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/</link>
       <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/00-pods/01-pod/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/</guid>
       <description>TODO</description>
     </item>
     
     <item>
       <title>ReplicationController</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/01-controllers/01-replicationcontroller/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/01-controllers/01-replicationcontroller/</link>
       <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/01-controllers/01-replicationcontroller/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/01-controllers/01-replicationcontroller/</guid>
       <description>TODO</description>
     </item>
     
     <item>
       <title></title>
       <link>https://lostsquirrel.github.io/k8sDocs/template/</link>
-      <pubDate>Sun, 19 Jul 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/template/</guid>
       <description>TODO</description>
@@ -399,7 +409,7 @@ Running cloud-controller-manager </description>
       <guid>https://lostsquirrel.github.io/k8sDocs/about/</guid>
       <description>Hugo is a static site engine written in Go.
 It makes use of a variety of open source projects including:
- Cobra Viper J Walter Weatherman Cast  Learn more and contribute on GitHub.</description>
+ Cobra Viper J Walter Weatherman Cast  Learn more and contribute on GitHub. {{ }} {{ }}</description>
     </item>
     
     <item>

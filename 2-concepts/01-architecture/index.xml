@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>集群架构 on K8S 文档笔记</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/</link>
+    <description>Recent content in 集群架构 on K8S 文档笔记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 15 Jul 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>节点</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/00-nodes/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/00-nodes/</guid>
+      <description>k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。 一</description>
+    </item>
+    
+    <item>
+      <title>控制中心与节点的通信</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/01-control-plane-node-communication/</link>
+      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/01-control-plane-node-communication/</guid>
+      <description>本文主要介结控制中心(实际就是 api-server)与 k8s 集群通信的几种途径, 目的是使用户可以选择健壮的网络配置使集群可以运行在不受信的网络环</description>
+    </item>
+    
+    <item>
+      <title>控制器</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/02-controller/</link>
+      <pubDate>Thu, 09 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/02-controller/</guid>
+      <description>在机器人技术和自动化领域，一个控制回路就是一个控制系统状态的无限循环。 以下为控制回路的一个示例: 房间内的温度控制器 当用户设定一个温度值时，就</description>
+    </item>
+    
+    <item>
+      <title>Cloud Controller Manager</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/03-cloud-controller/</link>
+      <pubDate>Wed, 15 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/01-architecture/03-cloud-controller/</guid>
+      <description>功能特性状态: Kubernetes v1.11 [beta] 云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施 cloud-controller-manager 是集成了云提供商</description>
+    </item>
+    
+  </channel>
+</rss>

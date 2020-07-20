@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pods on K8S 文档笔记</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/</link>
+    <description>Recent content in Pods on K8S 文档笔记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 02 Jul 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Pods</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/</link>
+      <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/</guid>
+      <description>TODO</description>
+    </item>
+    
+  </channel>
+</rss>

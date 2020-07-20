@@ -21,6 +21,16 @@
     </item>
     
     <item>
+      <title>Using Admission Controllers</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/04-admission-controllers/</link>
+      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/04-admission-controllers/</guid>
+      <description>TODO
+What does each admission controller do? AlwaysPullImages </description>
+    </item>
+    
+    <item>
       <title>Authorization Overview</title>
       <link>https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/07-authorization/</link>
       <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
