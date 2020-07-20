@@ -93,6 +93,15 @@
     </item>
     
     <item>
+      <title>镜像</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/00-images/</link>
+      <pubDate>Sun, 19 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/00-images/</guid>
+      <description>一个容器镜像就是构建应用的二进制数据和应用所以需要的依赖。 容器镜像是一个可独立运行的可执行软件包，并定义了清楚的运行环境。 通常是用户创建一个</description>
+    </item>
+    
+    <item>
       <title>资源配额</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concetps/08-policy/01-resource-quotas/</link>
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
@@ -340,7 +349,7 @@ Running cloud-controller-manager </description>
     <item>
       <title></title>
       <link>https://lostsquirrel.github.io/k8sDocs/template/</link>
-      <pubDate>Fri, 17 Jul 2020 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 19 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/template/</guid>
       <description>TODO</description>

@@ -3,8 +3,8 @@
 <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Containers - K8S 文档笔记</title>
-<meta name="description" content="test">
+<title>容器 - K8S 文档笔记</title>
+<meta name="description" content="Technology for packaging an application along with its runtime dependencies.">
 <meta name="generator" content="Hugo 0.68.3" />
 <link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
 <link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/">
@@ -16,16 +16,16 @@
 <script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
 :root {}
 </style>
-<meta property="og:title" content="Containers" />
-<meta property="og:description" content="test" />
+<meta property="og:title" content="容器" />
+<meta property="og:description" content="Technology for packaging an application along with its runtime dependencies." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/" />
-<meta property="og:site_name" content="K8S 文档笔记" />
+<meta property="og:updated_time" content="2020-07-19T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Containers"/>
-<meta name="twitter:description" content="test"/>
-<meta itemprop="name" content="Containers">
-<meta itemprop="description" content="test">
+<meta name="twitter:title" content="容器"/>
+<meta name="twitter:description" content="Technology for packaging an application along with its runtime dependencies."/>
+<meta itemprop="name" content="容器">
+<meta itemprop="description" content="Technology for packaging an application along with its runtime dependencies.">
 <script>
 var _hmt = _hmt || [];
 (function() {
@@ -46,10 +46,34 @@ var _hmt = _hmt || [];
 </header>
 
 <div class="content-container">
-<main><h1>Containers</h1><div class="edit-meta">
+<main><h1>容器</h1><!-- raw HTML omitted -->
+<p>用户运行的每一个容器都是可重复的，标准中说明容器中包含的所需要的依赖，所以每次运行的行为都应该是一致的</p>
+<p>容器技术让应用与底层主机的基础设施解耦。这使在不去云环境或操作系统上的部署变得更容易。</p>
+<!-- raw HTML omitted -->
+<h2 id="容器镜像">容器镜像</h2>
+<p><a href="../images/">容器镜像</a> 是一个直接可以运行的软件包，其中含了这个应用运行所需要的一切: 应用程序和对应的运行环境，应用和系统的依赖库，必要配置的默认值</p>
+<p>在设计上一个容器是不可变更的：不能修改一个已经运行的窗口的代码(应用)。如果用户想对一个容器化的应用进行变更，需要构建一个包含这些变更的新镜像，并用这个新的镜像再创建一个新的容器代替原来的容器继续运行</p>
+<h2 id="容器运行时">容器运行时</h2>
+<p>容器运行时就是负责运行容器的软件， k8s 支持以下几种运行时:</p>
+<ul>
+<li>Docker</li>
+<li>containerd</li>
+<li>CRI-O</li>
+<li>任意实现 k8s CRI(Container Runtime Interface)的应用</li>
+</ul>
+<h2 id="接下来应该看啥">接下来应该看啥</h2>
+<ul>
+<li>看看 <a href="/docs/concepts/containers/images/">容器镜像</a></li>
+<li>看看 <a href="/k8sDoc/concepts/workloads/pods/">Pod</a></li>
+</ul>
+<div class="edit-meta">
+Last updated on 19 Jul 2020
 
+
+<br>
+Published on 19 Jul 2020
 <br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/2-concetps/02-containers/_index.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/01-architecture/03-cloud-controller/" title="Cloud Controller Manager"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - Cloud Controller Manager</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/03-workloads/" title="Workloads">Next - Workloads <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/00-images/" title="镜像">Next - 镜像 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -117,7 +141,11 @@ var _hmt = _hmt || [];
   
 </li>
 
-<li class="parent active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/">Containers</a>
+<li class="parent active has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/">容器<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concetps/02-containers/00-images/">镜像</a></li>
+</ul>
   
 </li>
 
