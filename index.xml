@@ -102,6 +102,26 @@
     </item>
     
     <item>
+      <title>Configure Service Accounts for Pods</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/10-configure-service-account/</link>
+      <pubDate>Fri, 24 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/10-configure-service-account/</guid>
+      <description>TODO
+Add ImagePullSecrets to a service account </description>
+    </item>
+    
+    <item>
+      <title>Pull an Image from a Private Registry</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/11-pull-image-private-registry/</link>
+      <pubDate>Fri, 24 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/11-pull-image-private-registry/</guid>
+      <description>TODO
+Create a Secret based on existing Docker credentials </description>
+    </item>
+    
+    <item>
       <title>资源配额</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/08-policy/01-resource-quotas/</link>
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
@@ -359,7 +379,7 @@ What does each admission controller do? AlwaysPullImages </description>
     <item>
       <title></title>
       <link>https://lostsquirrel.github.io/k8sDocs/template/</link>
-      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 24 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/template/</guid>
       <description>TODO</description>
