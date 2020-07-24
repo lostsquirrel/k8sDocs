@@ -1,7 +1,7 @@
 ---
 title: 镜像
 date: 2020-07-19
-draft: true
+publishdate: 2020-07-24
 weight: 20200
 ---
 <!-- overview -->
@@ -133,3 +133,95 @@ kubectl describe pods/private-image-test-1 | grep 'Failed'
 
 必须要保证所有节点都是使用的同一个 `.docker/config.json` 文件， 否则 Pod 可能在某些节点成功，某些节点则失败。 例如，在使用节点自动扩容时， 每个实例模板都需要包含 `.docker/config.json` 或挂载包含该文件的盘
 当私有仓库的凭据被添加到`.docker/config.json`后 所有的 Pod 都可以对其中配置的任意私有仓库中拉取镜像。
+
+
+### 预先拉取镜像
+
+{{ <note> }}
+这种方式适用于用于用户有权限对节点配置的情况，而且不适用于节点由云提供商管理且能够自动扩容的情况
+{{ </note> }}
+
+默认情况下， kubelet 会尝试从指定镜像仓库拉取每一个镜像， 但是在容器 imagePullPolicy 属性的值被设置为 `IfNotPresent` 或 `Never`时，则会使用本地镜像。 (preferentially or exclusively, respectively).
+
+如果想要用预先摘取的方式取代镜像仓库认证， 需要保证集群中所有节点上预先摘取到的所有镜像都必须一致。
+这种方式可用于预先取镜像来达到提速的目的或代替私有镜像仓库认证。
+所有的 Pod 都有权访问任意预先拉取的镜像
+
+### 在 Pod 上设置 `ImagePullSecrets`
+
+{{ <note> }}
+这是使用私有仓库镜像的推荐方式
+{{ </note> }}
+
+k8s 支持在 Pod 上配置私有镜像仓库凭据
+
+#### 创建带 Docker 配置的 Secret
+
+替换命令中的大写值为对应的配置，并运行此命令:
+```sh
+kubectl create secret docker-registry <name> --docker-server=DOCKER_REGISTRY_SERVER --docker-username=DOCKER_USER --docker-password=DOCKER_PASSWORD --docker-email=DOCKER_EMAIL
+```
+
+如果已经有 Docker 凭据，可以不用以上命令，直接使用凭据文件创建对应的 Secret.
+具体配置见[这里](../../../3-tasks/02-configure-pod-container/11-pull-image-private-registry/#registry-secret-existing-credentials)
+这种配置方式尤其适用有多个私有镜像仓库的情况，因为 `kubectl create secret docker-registry` 创建 Secret 的方式只适用于单个私有镜像仓库的情况。
+{{ <note> }}
+Pod 只能引用当前名字空间内的 `Secret` , 因此需要在每个名字空间都需要创建 `Secret`
+{{ </note> }}
+
+### 在 Pod 中使用 `imagePullSecrets`
+
+当 `Secret` 创建好后，可以配置 `imagePullSecrets` 使用该 `Secret`, 例如：
+```sh
+cat <<EOF > pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: foo
+  namespace: awesomeapps
+spec:
+  containers:
+    - name: foo
+      image: janedoe/awesomeapp:v1
+  imagePullSecrets:
+    - name: myregistrykey
+EOF
+
+cat <<EOF >> ./kustomization.yaml
+resources:
+- pod.yaml
+EOF
+```
+需要在每个用到私有镜像仓库的 Pod 都需要该配置。
+也可以在 `ServiceAccount` 设置 `imagePullSecrets` 可以使用对应的 Pod 自动添加该属性
+在 `ServiceAccount` 设置 `imagePullSecrets`具体见[这里](../../../3-tasks/02-configure-pod-container/10-configure-service-account/#add-imagepullsecrets-to-a-service-account)
+这个配置可与节点上的 `.docker/config.json` 配合使用，两个配置的凭据全合并到一起。
+
+
+## 应用场景
+
+配置私有仓库镜像的方式有多种，以下为常用应用场景和推荐方案。
+
+  1. 集群只使用开放(如：开源)镜像， 不需要私有仓库。
+    - 使用 Docker Hub 上的公有镜像
+      - 不需要配置
+      - 一些云提供商会自动缓存或镜像开放镜像， 可以提高可用性并减少拉取镜像的时间
+  2. 集群使用到的镜像对外私有，对内公开
+    - 使用自建私有镜像仓库
+      - 可以托管在 Docker Hub 或其它地方
+      - 使用上面介结的在每个节点配置 `.docker/config.json` 的方式
+    - 在内网运行一个开放的内部私有镜像仓库
+      - 不需要在 k8s 上做配置
+    - 使用一个有访问控制的镜像仓库
+      - 在节点自动扩容的场景下会比手动更佳
+    - 在节点配置不方便的集群中使用 `imagePullSecrets`
+  3. 镜像仓库需要更严格的访问控制
+    - 需要打开  [AlwaysPullImages](../../../5-reference/03-access-authn-authz/04-admission-controllers/#alwayspullimages) admission controller， 否则所有 Pod 默认对所有镜像有访问权限
+    - 将敏感数据放的 Secret 中， 还是是打在镜像中
+  4. 多租户集群，每个租户需要独立的私有镜像仓库
+    - 需要打开  [AlwaysPullImages](../../../5-reference/03-access-authn-authz/04-admission-controllers/#alwayspullimages) admission controller， 否则所有租户的所有 Pod 默认对所有镜像有访问权限
+    - 私有镜像仓库需要有认证系统
+    - 为每个租户生成私有镜像仓库凭据，并在每个租户的名字空间中创建对应 Secret.
+    - 各名字空间的租户将名称的 Secret 配置到 `imagePullSecrets`
+
+如果用到的多个私有镜像仓库， 可以对每个仓库创建一个 Secret, kubelet 会将所有 imagePullSecrets 合并到一个虚拟的 `.docker/config.json` 中。
