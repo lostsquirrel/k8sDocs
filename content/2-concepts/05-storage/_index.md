@@ -1,13 +1,9 @@
 ---
-title:
+title: Storage
 date: 2020-07-27
 draft: true
-weight:
+weight: 0205
 ---
 <!-- overview -->
 TODO
 <!-- body -->
-
-## {{% heading "whatsnext" %}}
-
-- []()
