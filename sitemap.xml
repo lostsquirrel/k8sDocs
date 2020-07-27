@@ -14,7 +14,7 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/</loc>
-    <lastmod>2020-07-24T00:00:00+00:00</lastmod>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -24,6 +24,11 @@
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/</loc>
     <lastmod>2020-07-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concepts/05-storage/</loc>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -67,6 +72,11 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/04-inject-data-application/</loc>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/</loc>
     <lastmod>2020-07-08T00:00:00+00:00</lastmod>
   </url>
@@ -79,6 +89,11 @@
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/</loc>
     <lastmod>2020-07-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concepts/05-storage/00-volumes/</loc>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -141,6 +156,16 @@
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/00-images/</loc>
     <lastmod>2020-07-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/01-container-environment/</loc>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/</loc>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -225,12 +250,22 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/</loc>
-    <lastmod>2020-07-24T00:00:00+00:00</lastmod>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/16-attach-handler-lifecycle-event/</loc>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/2-concepts/04-services-networking/03-dns-pod-service/</loc>
     <lastmod>2020-06-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/04-inject-data-application/04-downward-api-volume-expose-pod-information/</loc>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -329,7 +364,7 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/template/</loc>
-    <lastmod>2020-07-24T00:00:00+00:00</lastmod>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -360,10 +395,6 @@
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/about/</loc>
     <lastmod>2014-04-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/test21/</loc>
   </url>
   
   <url>

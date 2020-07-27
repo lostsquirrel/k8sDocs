@@ -3,11 +3,11 @@
 <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>21 - K8S 文档笔记</title>
+<title>Inject Data Into Applications - K8S 文档笔记</title>
 <meta name="description" content="test">
 <meta name="generator" content="Hugo 0.68.3" />
 <link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
-<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/test21/">
+<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/3-tasks/04-inject-data-application/">
 <link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/theme.min.css">
 <script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 <link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/chroma.min.css">
@@ -16,22 +16,16 @@
 <script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
 :root {}
 </style>
-<meta property="og:title" content="21" />
-<meta property="og:description" content="21 " />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/test21/" />
-<meta property="og:site_name" content="K8S 文档笔记" />
+<meta property="og:title" content="Inject Data Into Applications" />
+<meta property="og:description" content="test" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/3-tasks/04-inject-data-application/" />
+<meta property="og:updated_time" content="2020-07-27T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="21"/>
-<meta name="twitter:description" content="21 "/>
-<meta itemprop="name" content="21">
-<meta itemprop="description" content="21 ">
-
-<meta itemprop="wordCount" content="1">
-
-
-
-<meta itemprop="keywords" content="" />
+<meta name="twitter:title" content="Inject Data Into Applications"/>
+<meta name="twitter:description" content="test"/>
+<meta itemprop="name" content="Inject Data Into Applications">
+<meta itemprop="description" content="test">
 <script>
 var _hmt = _hmt || [];
 (function() {
@@ -52,12 +46,17 @@ var _hmt = _hmt || [];
 </header>
 
 <div class="content-container">
-<main><h1>21</h1>
-<h1 id="21">21</h1>
+<main><h1>Inject Data Into Applications</h1><!-- raw HTML omitted -->
+<p>TODO</p>
+<!-- raw HTML omitted -->
 <div class="edit-meta">
+Last updated on 27 Jul 2020
 
-<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/3-tasks/02-configure-pod-container/test21.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/" title="存活(liveness), 就绪(readiness), 启动(startup)探针配置"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 存活(liveness), 就绪(readiness), 启动(startup)探针配置</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/" title="Tutorials">Next - Tutorials <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+
+<br>
+Published on 27 Jul 2020
+<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/3-tasks/04-inject-data-application/_index.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/3-tasks/" title="Tasks"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - Tasks</a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/3-tasks/04-inject-data-application/04-downward-api-volume-expose-pod-information/" title="Expose Pod Information to Containers Through Files">Next - Expose Pod Information to Containers Through Files <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -89,6 +88,14 @@ var _hmt = _hmt || [];
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/">概念(Concepts)<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/05-storage/">Storage<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/05-storage/00-volumes/">Volumes</a></li>
+</ul>
+  
+</li>
 
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/">概览<span class="mark closed">+</span></a>
   
@@ -129,6 +136,8 @@ var _hmt = _hmt || [];
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/00-images/">镜像</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/01-container-environment/">容器环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/">Container Lifecycle Hooks</a></li>
 </ul>
   
 </li>
@@ -197,6 +206,14 @@ var _hmt = _hmt || [];
   
 <ul class="sub-menu">
 
+<li class="parent active has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/04-inject-data-application/">Inject Data Into Applications<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/04-inject-data-application/04-downward-api-volume-expose-pod-information/">Expose Pod Information to Containers Through Files</a></li>
+</ul>
+  
+</li>
+
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/">Extend Kubernetes<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
@@ -227,13 +244,13 @@ var _hmt = _hmt || [];
   
 </li>
 
-<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/">Configure Pod Containters<span class="mark opened">-</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/">Configure Pod Containters<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/10-configure-service-account/">Configure Service Accounts for Pods</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/11-pull-image-private-registry/">Pull an Image from a Private Registry</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/16-attach-handler-lifecycle-event/">Attach Handlers to Container Lifecycle Events</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
-<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/test21/">21</a></li>
 </ul>
   
 </li>

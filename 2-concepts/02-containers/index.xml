@@ -20,5 +20,24 @@
       <description>一个容器镜像就是构建应用的二进制数据和应用所以需要的依赖。 容器镜像是一个可独立运行的可执行软件包，并定义了清楚的运行环境。 通常是用户创建一个</description>
     </item>
     
+    <item>
+      <title>容器环境</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/01-container-environment/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/01-container-environment/</guid>
+      <description>本文主要介绍以环境提供容器的资源信息 容器内的环境变量 k8s 环境为容器提供了一些重要的资源信息： 一个包含镜像和一个或多个卷组合成的文件系统 关于容器</description>
+    </item>
+    
+    <item>
+      <title>Container Lifecycle Hooks</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/</guid>
+      <description>TODO
+接下来应该看啥 </description>
+    </item>
+    
   </channel>
 </rss>

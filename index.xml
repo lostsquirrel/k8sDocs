@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>Volumes</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/05-storage/00-volumes/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/05-storage/00-volumes/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
       <title>使用 Minikube 搭建 K8s环境</title>
       <link>https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/</link>
       <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
@@ -99,6 +108,25 @@
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/00-images/</guid>
       <description>一个容器镜像就是构建应用的二进制数据和应用所以需要的依赖。 容器镜像是一个可独立运行的可执行软件包，并定义了清楚的运行环境。 通常是用户创建一个</description>
+    </item>
+    
+    <item>
+      <title>容器环境</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/01-container-environment/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/01-container-environment/</guid>
+      <description>本文主要介绍以环境提供容器的资源信息 容器内的环境变量 k8s 环境为容器提供了一些重要的资源信息： 一个包含镜像和一个或多个卷组合成的文件系统 关于容器</description>
+    </item>
+    
+    <item>
+      <title>Container Lifecycle Hooks</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/</guid>
+      <description>TODO
+接下来应该看啥 </description>
     </item>
     
     <item>
@@ -214,12 +242,32 @@ Running cloud-controller-manager </description>
     </item>
     
     <item>
+      <title>Attach Handlers to Container Lifecycle Events</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/16-attach-handler-lifecycle-event/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/16-attach-handler-lifecycle-event/</guid>
+      <description>TODO
+接下来应该看啥    </description>
+    </item>
+    
+    <item>
       <title>DNS for Services and Pods</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/04-services-networking/03-dns-pod-service/</link>
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/04-services-networking/03-dns-pod-service/</guid>
       <description>TODO</description>
+    </item>
+    
+    <item>
+      <title>Expose Pod Information to Containers Through Files</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/04-inject-data-application/04-downward-api-volume-expose-pod-information/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/04-inject-data-application/04-downward-api-volume-expose-pod-information/</guid>
+      <description>TODO
+The Downward API </description>
     </item>
     
     <item>
@@ -379,10 +427,11 @@ What does each admission controller do? AlwaysPullImages </description>
     <item>
       <title></title>
       <link>https://lostsquirrel.github.io/k8sDocs/template/</link>
-      <pubDate>Fri, 24 Jul 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/template/</guid>
-      <description>TODO</description>
+      <description>TODO
+接下来应该看啥    </description>
     </item>
     
     <item>
@@ -430,15 +479,6 @@ What does each admission controller do? AlwaysPullImages </description>
       <description>Hugo is a static site engine written in Go.
 It makes use of a variety of open source projects including:
  Cobra Viper J Walter Weatherman Cast  Learn more and contribute on GitHub. {{ }} {{ }}</description>
-    </item>
-    
-    <item>
-      <title>21</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/test21/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/test21/</guid>
-      <description>21 </description>
     </item>
     
   </channel>
