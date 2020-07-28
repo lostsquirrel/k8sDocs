@@ -12,3 +12,5 @@ params:
   menu_style: slide-menu
   baidu_tongji_id: 46e26ffc9d975f663dff0b89f1cf7931
   github_doc_repository: https://github.com/lostsquirrel/k8sDocs
+  language_alternatives:
+    - en

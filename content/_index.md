@@ -24,6 +24,7 @@ description: K8S 文档笔记，因为想加些私货，所以没法和官网同
 - Taint
 - Job
 - ServiceAccount
+- RuntimeClass
 
 ### 工具或组件
 
@@ -31,5 +32,13 @@ description: K8S 文档笔记，因为想加些私货，所以没法和官网同
 - kubectl
 - api-server (API Server) 前者为实除运行的一个组件，后者为一个抽象集合
 
+### 其它
 
+- tolerations 耐受(借用医药用词，Taint 对应暂定为毒点)
+
+## 翻译词汇
+
+- namespace 名字空间
+- label 标签
+- annotation 注解
 ## Features
