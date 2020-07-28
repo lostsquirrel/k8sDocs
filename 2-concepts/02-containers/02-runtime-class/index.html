@@ -29,7 +29,7 @@
 <meta itemprop="description" content="功能特性状态: Kubernetes v1.14 [beta] 本文介绍 RuntimeClass 资源和运行时选择机制。 RuntimeClass 是一个选择容器运行时配置的特性。而容器运行时配置则用于运行 Pod 中的容器的。 Motivation 用户可以在不">
 <meta itemprop="datePublished" content="2020-07-28T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-07-27T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1679">
+<meta itemprop="wordCount" content="1678">
 
 
 
@@ -96,9 +96,10 @@ var _hmt = _hmt || [];
 </li>
 </ol>
 <p>基于 RuntimeClass 的配置因 容器运行时接口(CRI)具体实现的不同而不同。 具体配置文档见<a href="#cri-configuration">下面章节</a>
-{{ <!-- raw HTML omitted --> }}
-默认情况下 <code>RuntimeClass</code> 假定整个集群中所有节点的配置是相同的(也就是说所有节点针对容器运行时的配置是一样的)，为了支持这样的配置请见<a href="#scheduling">下面章节-调度</a>
-{{ <!-- raw HTML omitted --> }}
+<blockquote class="note">
+  <div><strong>注意: </strong> 默认情况下 <code>RuntimeClass</code> 假定整个集群中所有节点的配置是相同的(也就是说所有节点针对容器运行时的配置是一样的)，为了支持这样的配置请见<a href="#scheduling">下面章节-调度</a></div>
+</blockquote>
+
 配置上有一个想对应的 handler 的名称， 被 <code>RuntimeClass</code> 所引用。 这个字段的命名必须符合 DNS-1123 标签的标准(字母，数字，中划线(<code>-</code>)组成)</p>
 <ol start="2">
 <li>创建相应的 <code>RuntimeClass</code> 资源</li>
@@ -194,7 +195,7 @@ Last updated on 27 Jul 2020
 <br>
 Published on 28 Jul 2020
 <br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/2-concepts/02-containers/02-runtime-class.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/01-container-environment/" title="容器环境"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 容器环境</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/" title="Container Lifecycle Hooks">Next - Container Lifecycle Hooks <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/" title="容器生命周期钩子">Next - 容器生命周期钩子 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -284,7 +285,7 @@ Published on 28 Jul 2020
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/00-images/">镜像</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/01-container-environment/">容器环境</a></li>
 <li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/02-runtime-class/">Runtime Class</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/">Container Lifecycle Hooks</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/">容器生命周期钩子</a></li>
 </ul>
   
 </li>

@@ -39,13 +39,12 @@
     </item>
     
     <item>
-      <title>Container Lifecycle Hooks</title>
+      <title>容器生命周期钩子</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/</link>
       <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/</guid>
-      <description>TODO
-接下来应该看啥 </description>
+      <description>本文主要介绍如何使用容器生命周期钩子框架来实现由 kubelet 管理的容器通过在管理过程中的生命周期事件来触发代理运行。 概述 与许多编程语言的框架的组件有生</description>
     </item>
     
   </channel>
