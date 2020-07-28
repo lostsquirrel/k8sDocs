@@ -46,6 +46,16 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+
+
+
+
+<link rel="stylesheet" href=/k8sDocs/css/base_fonts.css>
+
+<link rel="stylesheet" href="/k8sDocs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/k8sDocs/css/callouts.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
+
 </head>
 <body><div class="container"><header>
 <h1>K8S 文档笔记</h1>
@@ -68,7 +78,7 @@ Last updated on 27 Jul 2020
 
 <br>
 Published on 27 Jul 2020
-<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/2-concepts/02-containers/03-container-lifecycle-hooks.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/01-container-environment/" title="容器环境"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 容器环境</a>
+<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/2-concepts/02-containers/03-container-lifecycle-hooks.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/02-runtime-class/" title="Runtime Class"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - Runtime Class</a>
 <a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/" title="Workloads">Next - Workloads <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
@@ -81,6 +91,14 @@ Published on 27 Jul 2020
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/">Production environment<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/00-container-runtimes/">Container runtimes</a></li>
+</ul>
+  
+</li>
 
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
   
@@ -150,6 +168,7 @@ Published on 27 Jul 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/00-images/">镜像</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/01-container-environment/">容器环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/02-runtime-class/">Runtime Class</a></li>
 <li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/">Container Lifecycle Hooks</a></li>
 </ul>
   
@@ -162,6 +181,7 @@ Published on 27 Jul 2020
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/">Pods<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/00-pod-lifecycle/">Pod Lifecycle</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/">Pods</a></li>
 </ul>
   
@@ -227,6 +247,14 @@ Published on 27 Jul 2020
   
 </li>
 
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/08-debug-application-cluster/">Monitoring, Logging, and Debugging<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/08-debug-application-cluster/00-debug-application-introspection/">Application Introspection and Debugging</a></li>
+</ul>
+  
+</li>
+
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/">Extend Kubernetes<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
@@ -285,6 +313,7 @@ Published on 27 Jul 2020
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/">Reference<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/">Standardized Glossary</a></li>
 
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/">Accessing the API<span class="mark closed">+</span></a>
   
@@ -315,10 +344,6 @@ Published on 27 Jul 2020
 </li>
 
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/10-drivers/">Minikube Drivers</a>
-  
-</li>
-
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/">Standardized Glossary</a>
   
 </li>
 </ul>

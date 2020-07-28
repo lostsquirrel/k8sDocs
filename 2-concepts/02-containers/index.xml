@@ -30,6 +30,15 @@
     </item>
     
     <item>
+      <title>Runtime Class</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/02-runtime-class/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/02-runtime-class/</guid>
+      <description>功能特性状态: Kubernetes v1.14 [beta] 本文介绍 RuntimeClass 资源和运行时选择机制。 RuntimeClass 是一个选择容器运行时配置的特性。而容器运行时配置则用于运行 Pod 中的容器的。 Motivation 用户可以在不</description>
+    </item>
+    
+    <item>
       <title>Container Lifecycle Hooks</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/</link>
       <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>

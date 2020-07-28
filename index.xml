@@ -12,12 +12,31 @@
     
     
     <item>
+      <title>Standardized Glossary</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Volumes</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/05-storage/00-volumes/</link>
       <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/05-storage/00-volumes/</guid>
       <description>TODO</description>
+    </item>
+    
+    <item>
+      <title>Container runtimes</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/00-container-runtimes/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/00-container-runtimes/</guid>
+      <description>TODO
+接下来应该看啥    </description>
     </item>
     
     <item>
@@ -117,6 +136,15 @@
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/01-container-environment/</guid>
       <description>本文主要介绍以环境提供容器的资源信息 容器内的环境变量 k8s 环境为容器提供了一些重要的资源信息： 一个包含镜像和一个或多个卷组合成的文件系统 关于容器</description>
+    </item>
+    
+    <item>
+      <title>Runtime Class</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/02-runtime-class/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/02-runtime-class/</guid>
+      <description>功能特性状态: Kubernetes v1.14 [beta] 本文介绍 RuntimeClass 资源和运行时选择机制。 RuntimeClass 是一个选择容器运行时配置的特性。而容器运行时配置则用于运行 Pod 中的容器的。 Motivation 用户可以在不</description>
     </item>
     
     <item>
@@ -271,6 +299,16 @@ The Downward API </description>
     </item>
     
     <item>
+      <title>Application Introspection and Debugging</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/08-debug-application-cluster/00-debug-application-introspection/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/08-debug-application-cluster/00-debug-application-introspection/</guid>
+      <description>TODO
+接下来应该看啥    </description>
+    </item>
+    
+    <item>
       <title>Authenticating</title>
       <link>https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/01-authentication/</link>
       <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
@@ -286,7 +324,7 @@ The Downward API </description>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/04-admission-controllers/</guid>
       <description>TODO
-What does each admission controller do? AlwaysPullImages </description>
+What does each admission controller do? AlwaysPullImages RuntimeClass </description>
     </item>
     
     <item>
@@ -304,7 +342,7 @@ What does each admission controller do? AlwaysPullImages </description>
       <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/5-reference/06-command-line-tools-reference/00-feature-gates/</guid>
-      <description></description>
+      <description>TODO</description>
     </item>
     
     <item>
@@ -407,6 +445,16 @@ What does each admission controller do? AlwaysPullImages </description>
     </item>
     
     <item>
+      <title>Pod Lifecycle</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/00-pod-lifecycle/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/00-pod-lifecycle/</guid>
+      <description>TODO
+Pod phase 接下来应该看啥    </description>
+    </item>
+    
+    <item>
       <title>Pods</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/</link>
       <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
@@ -430,8 +478,7 @@ What does each admission controller do? AlwaysPullImages </description>
       <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/template/</guid>
-      <description>TODO
-接下来应该看啥    </description>
+      <description>TODO:  为内链创建占位文件，逐步整理中  接下来应该看啥    </description>
     </item>
     
     <item>
@@ -478,7 +525,9 @@ What does each admission controller do? AlwaysPullImages </description>
       <guid>https://lostsquirrel.github.io/k8sDocs/about/</guid>
       <description>Hugo is a static site engine written in Go.
 It makes use of a variety of open source projects including:
- Cobra Viper J Walter Weatherman Cast  Learn more and contribute on GitHub. {{ }} {{ }}</description>
+ Cobra Viper J Walter Weatherman Cast  Learn more and contribute on GitHub.
+{{ }} {{ }}
+TODO:  说得不太清楚，需要实践理解后再考虑怎么修改  controllersA control loop that watches the shared state of the cluster through the apiserver and makes changes attempting to move the current state towards the desired state.  The cloud-controller-manager is a Kubernetes control planeThe container orchestration layer that exposes the API and interfaces to define, deploy, and manage the lifecycle of containers.</description>
     </item>
     
   </channel>

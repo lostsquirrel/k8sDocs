@@ -27,7 +27,7 @@
       
       <guid>https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/04-admission-controllers/</guid>
       <description>TODO
-What does each admission controller do? AlwaysPullImages </description>
+What does each admission controller do? AlwaysPullImages RuntimeClass </description>
     </item>
     
     <item>

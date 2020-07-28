@@ -35,6 +35,16 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+
+
+
+
+<link rel="stylesheet" href=/k8sDocs/css/base_fonts.css>
+
+<link rel="stylesheet" href="/k8sDocs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/k8sDocs/css/callouts.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
+
 </head>
 <body><div class="container"><header>
 <h1>K8S 文档笔记</h1>
@@ -61,12 +71,23 @@ var _hmt = _hmt || [];
 <li>Taint</li>
 <li>Job</li>
 <li>ServiceAccount</li>
+<li>RuntimeClass</li>
 </ul>
 <h3 id="工具或组件">工具或组件</h3>
 <ul>
 <li>kubelet</li>
 <li>kubectl</li>
 <li>api-server (API Server) 前者为实除运行的一个组件，后者为一个抽象集合</li>
+</ul>
+<h3 id="其它">其它</h3>
+<ul>
+<li>tolerations 耐受(借用医药用词，Taint 对应暂定为毒点)</li>
+</ul>
+<h2 id="翻译词汇">翻译词汇</h2>
+<ul>
+<li>namespace 名字空间</li>
+<li>label 标签</li>
+<li>annotation 注解</li>
 </ul>
 <h2 id="features">Features</h2>
 <nav class="pagination"><a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/1-setup/" title="Getting started">Next - Getting started <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
@@ -87,6 +108,14 @@ Published on 6 Jun 2020
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/">Production environment<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/00-container-runtimes/">Container runtimes</a></li>
+</ul>
+  
+</li>
 
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
   
@@ -156,6 +185,7 @@ Published on 6 Jun 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/00-images/">镜像</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/01-container-environment/">容器环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/02-runtime-class/">Runtime Class</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/">Container Lifecycle Hooks</a></li>
 </ul>
   
@@ -168,6 +198,7 @@ Published on 6 Jun 2020
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/">Pods<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/00-pod-lifecycle/">Pod Lifecycle</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/">Pods</a></li>
 </ul>
   
@@ -233,6 +264,14 @@ Published on 6 Jun 2020
   
 </li>
 
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/08-debug-application-cluster/">Monitoring, Logging, and Debugging<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/08-debug-application-cluster/00-debug-application-introspection/">Application Introspection and Debugging</a></li>
+</ul>
+  
+</li>
+
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/">Extend Kubernetes<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
@@ -291,6 +330,7 @@ Published on 6 Jun 2020
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/">Reference<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/">Standardized Glossary</a></li>
 
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/">Accessing the API<span class="mark closed">+</span></a>
   
@@ -321,10 +361,6 @@ Published on 6 Jun 2020
 </li>
 
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/10-drivers/">Minikube Drivers</a>
-  
-</li>
-
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/">Standardized Glossary</a>
   
 </li>
 </ul>

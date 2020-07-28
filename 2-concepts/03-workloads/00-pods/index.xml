@@ -12,6 +12,16 @@
     
     
     <item>
+      <title>Pod Lifecycle</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/00-pod-lifecycle/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/00-pod-lifecycle/</guid>
+      <description>TODO
+Pod phase 接下来应该看啥    </description>
+    </item>
+    
+    <item>
       <title>Pods</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/</link>
       <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>

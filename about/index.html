@@ -19,7 +19,9 @@
 <meta property="og:title" content="About Hugo123" />
 <meta property="og:description" content="Hugo is a static site engine written in Go.
 It makes use of a variety of open source projects including:
- Cobra Viper J Walter Weatherman Cast  Learn more and contribute on GitHub. {{ }} {{ }}" />
+ Cobra Viper J Walter Weatherman Cast  Learn more and contribute on GitHub.
+{{ }} {{ }}
+TODO:  说得不太清楚，需要实践理解后再考虑怎么修改  controllersA control loop that watches the shared state of the cluster through the apiserver and makes changes attempting to move the current state towards the desired state.  The cloud-controller-manager is a Kubernetes control planeThe container orchestration layer that exposes the API and interfaces to define, deploy, and manage the lifecycle of containers." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/about/" />
 <meta property="article:published_time" content="2014-04-09T00:00:00+00:00" />
@@ -28,14 +30,18 @@ It makes use of a variety of open source projects including:
 <meta name="twitter:title" content="About Hugo123"/>
 <meta name="twitter:description" content="Hugo is a static site engine written in Go.
 It makes use of a variety of open source projects including:
- Cobra Viper J Walter Weatherman Cast  Learn more and contribute on GitHub. {{ }} {{ }}"/>
+ Cobra Viper J Walter Weatherman Cast  Learn more and contribute on GitHub.
+{{ }} {{ }}
+TODO:  说得不太清楚，需要实践理解后再考虑怎么修改  controllersA control loop that watches the shared state of the cluster through the apiserver and makes changes attempting to move the current state towards the desired state.  The cloud-controller-manager is a Kubernetes control planeThe container orchestration layer that exposes the API and interfaces to define, deploy, and manage the lifecycle of containers."/>
 <meta itemprop="name" content="About Hugo123">
 <meta itemprop="description" content="Hugo is a static site engine written in Go.
 It makes use of a variety of open source projects including:
- Cobra Viper J Walter Weatherman Cast  Learn more and contribute on GitHub. {{ }} {{ }}">
+ Cobra Viper J Walter Weatherman Cast  Learn more and contribute on GitHub.
+{{ }} {{ }}
+TODO:  说得不太清楚，需要实践理解后再考虑怎么修改  controllersA control loop that watches the shared state of the cluster through the apiserver and makes changes attempting to move the current state towards the desired state.  The cloud-controller-manager is a Kubernetes control planeThe container orchestration layer that exposes the API and interfaces to define, deploy, and manage the lifecycle of containers.">
 <meta itemprop="datePublished" content="2014-04-09T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2014-04-09T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="36">
+<meta itemprop="wordCount" content="164">
 
 
 
@@ -49,6 +55,16 @@ var _hmt = _hmt || [];
   s.parentNode.insertBefore(hm, s);
 })();
 </script>
+
+
+
+
+<link rel="stylesheet" href=/k8sDocs/css/base_fonts.css>
+
+<link rel="stylesheet" href="/k8sDocs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/k8sDocs/css/callouts.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
+
 </head>
 <body><div class="container"><header>
 <h1>K8S 文档笔记</h1>
@@ -69,9 +85,33 @@ var _hmt = _hmt || [];
 <li><a href="https://github.com/spf13/jWalterWeatherman">J Walter Weatherman</a></li>
 <li><a href="https://github.com/spf13/cast">Cast</a></li>
 </ul>
-<p>Learn more and contribute on <a href="https://github.com/gohugoio">GitHub</a>.
-{{ <!-- raw HTML omitted --> }}
+<p>Learn more and contribute on <a href="https://github.com/gohugoio">GitHub</a>.</p>
+<p>{{ <!-- raw HTML omitted --> }}
 {{ <!-- raw HTML omitted --> }}</p>
+<blockquote class="note">
+  <div><strong>TODO: </strong> 说得不太清楚，需要实践理解后再考虑怎么修改</div>
+</blockquote>
+
+<a class='glossary-tooltip' href='/docs/concepts/architecture/controller/' target='_blank'>controllers<span class='tooltip-text'>A control loop that watches the shared state of the cluster through the apiserver and makes changes attempting to move the current state towards the desired state.</span>
+</a>
+<p><p>The cloud-controller-manager is a Kubernetes <a class='glossary-tooltip' href='/k8sDocs/docs/reference/glossary/?all=true#term-control-plane' target='_blank'>control plane<span class='tooltip-text'>The container orchestration layer that exposes the API and interfaces to define, deploy, and manage the lifecycle of containers.</span>
+</a> component
+that embeds cloud-specific control logic. The cloud controller manager lets you link your
+cluster into your cloud provider&rsquo;s API, and separates out the components that interact
+with that cloud platform from components that just interact with your cluster.</p></p>
+<p>By decoupling the interoperability logic between Kubernetes and the underlying cloud
+infrastructure, the cloud-controller-manager component enables cloud providers to release
+features at a different pace compared to the main Kubernetes project.</p>
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.14 [beta]</code>
+</div>
+
+
 <div class="edit-meta">
 Last updated on 9 Apr 2014
 
@@ -90,6 +130,14 @@ Published on 9 Apr 2014
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/">Production environment<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/00-container-runtimes/">Container runtimes</a></li>
+</ul>
+  
+</li>
 
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
   
@@ -159,6 +207,7 @@ Published on 9 Apr 2014
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/00-images/">镜像</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/01-container-environment/">容器环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/02-runtime-class/">Runtime Class</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/03-container-lifecycle-hooks/">Container Lifecycle Hooks</a></li>
 </ul>
   
@@ -171,6 +220,7 @@ Published on 9 Apr 2014
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/">Pods<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/00-pod-lifecycle/">Pod Lifecycle</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/">Pods</a></li>
 </ul>
   
@@ -236,6 +286,14 @@ Published on 9 Apr 2014
   
 </li>
 
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/08-debug-application-cluster/">Monitoring, Logging, and Debugging<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/08-debug-application-cluster/00-debug-application-introspection/">Application Introspection and Debugging</a></li>
+</ul>
+  
+</li>
+
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/">Extend Kubernetes<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
@@ -294,6 +352,7 @@ Published on 9 Apr 2014
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/">Reference<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/">Standardized Glossary</a></li>
 
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/">Accessing the API<span class="mark closed">+</span></a>
   
@@ -324,10 +383,6 @@ Published on 9 Apr 2014
 </li>
 
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/10-drivers/">Minikube Drivers</a>
-  
-</li>
-
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/">Standardized Glossary</a>
   
 </li>
 </ul>

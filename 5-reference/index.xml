@@ -11,5 +11,14 @@
 	<atom:link href="https://lostsquirrel.github.io/k8sDocs/5-reference/index.xml" rel="self" type="application/rss+xml" />
     
     
+    <item>
+      <title>Standardized Glossary</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>

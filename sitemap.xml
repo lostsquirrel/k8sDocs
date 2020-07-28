@@ -4,7 +4,7 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/</loc>
-    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -24,6 +24,15 @@
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/</loc>
     <lastmod>2020-07-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/</loc>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/</loc>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -77,6 +86,11 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/08-debug-application-cluster/</loc>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/09-extend-kubernetes/</loc>
     <lastmod>2020-07-08T00:00:00+00:00</lastmod>
   </url>
@@ -103,6 +117,11 @@
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/</loc>
     <lastmod>2020-06-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/00-container-runtimes/</loc>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -160,6 +179,11 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/01-container-environment/</loc>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concepts/02-containers/02-runtime-class/</loc>
     <lastmod>2020-07-27T00:00:00+00:00</lastmod>
   </url>
   
@@ -269,6 +293,11 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/3-tasks/08-debug-application-cluster/00-debug-application-introspection/</loc>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/03-access-authn-authz/01-authentication/</loc>
     <lastmod>2020-07-08T00:00:00+00:00</lastmod>
   </url>
@@ -353,6 +382,11 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/00-pod-lifecycle/</loc>
+    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/</loc>
     <lastmod>2020-07-02T00:00:00+00:00</lastmod>
   </url>
@@ -403,10 +437,6 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/4-tutorials/00-hello-minikube/</loc>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/5-reference/00-glossary/</loc>
   </url>
   
   <url>
