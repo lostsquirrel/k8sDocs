@@ -22,9 +22,9 @@ weight: 20202
 1. 配置节点上的 CRI 实现
 
 基于 RuntimeClass 的配置因 容器运行时接口(CRI)具体实现的不同而不同。 具体配置文档见[下面章节](#cri-configuration)
-{{ <note> }}
+{{<note>}}
 默认情况下 `RuntimeClass` 假定整个集群中所有节点的配置是相同的(也就是说所有节点针对容器运行时的配置是一样的)，为了支持这样的配置请见[下面章节-调度](#scheduling)
-{{ </note> }}
+{{</note>}}
 配置上有一个想对应的 handler 的名称， 被 `RuntimeClass` 所引用。 这个字段的命名必须符合 DNS-1123 标签的标准(字母，数字，中划线(`-`)组成)
 
 2. 创建相应的 `RuntimeClass` 资源
