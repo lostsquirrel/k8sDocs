@@ -15,7 +15,7 @@ publishdate: 2020-06-30
 
 以下是命令规范三类限制
 
-### DNS 子域名
+### DNS 子域名 {#dns-subdomain-names}
 
 多数类型的资源命令必须可以作为 DNS 子域名，定义在这里(https://tools.ietf.org/html/rfc1123), 总结如下:
 
