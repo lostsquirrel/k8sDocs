@@ -1,17 +1,15 @@
 ---
-title: Container Runtime
+title: 容器运行环境
 id: container-runtime
 date: 2019-06-05
 full_link: /docs/setup/production-environment/container-runtimes
-short_description: >
- The container runtime is the software that is responsible for running containers.
-
+short_description: 容器运行环境就是负责运行容器的软件
 aka:
 tags:
 - fundamental
 - workload
 ---
- The container runtime is the software that is responsible for running containers.
+ 容器运行环境就是负责运行容器的软件
 
 <!--more-->
 
