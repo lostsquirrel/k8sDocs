@@ -4,13 +4,12 @@ id: containerd
 date: 2019-05-14
 full_link: https://containerd.io/docs/
 short_description: >
-  A container runtime with an emphasis on simplicity, robustness and portability
-
+  一个专注于简单性，健壮性，可移植性的容器运行环境
 aka:
 tags:
 - tool
 ---
- A container runtime with an emphasis on simplicity, robustness and portability
+ 一个专注于简单性，健壮性，可移植性的容器运行环境
 
 <!--more-->
 

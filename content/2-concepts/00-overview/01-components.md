@@ -12,7 +12,7 @@ publishdate: 2020-06-28
 ![k8s components diagram](https://d33wubrfki0l68.cloudfront.net/7016517375d10c702489167e704dcb99e570df85/7bb53/images/docs/components-of-kubernetes.png) [来源 kubernetes.io](https://kubernetes.io/docs/concepts/overview/components/)
 
 
-## 控制中心 组件
+## 控制中心 组件 {#control-plane-components}
 
 控制中心负责整个集群的全局决策(例如，调度)，也包含侦听和响应集群事件(例如，当应用的副本数增加时启动一个新的 Pod)
 控制中心组件可以运行在集群的任意机器上。 但为了简单，创建脚本一般都会将组件放在同一个节点上，并不在这个节点上运行用户的容器。 更多示例参见

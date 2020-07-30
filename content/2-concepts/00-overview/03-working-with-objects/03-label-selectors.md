@@ -140,7 +140,7 @@ kubectl get pods -l 'environment,environment notin (frontend)'
 ```
 ### Set references in API objects 啥意思
 
-有些 k8s 对象，比如 [Service](../../../04-services-networking/00-service/) [ReplicationController](../../../03-workloads/01-controllers/01-replicationcontroller/) 也是通过标签选择器来限定被其管理的资源对象，比如 [Pod](../../../03-workloads/00-pods/01-pod/)
+有些 k8s 对象，比如 [Service](../../../04-services-networking/00-service/) [ReplicationController](../../../03-workloads/01-controllers/01-replicationcontroller/) 也是通过标签选择器来限定被其管理的资源对象，比如 [Pod](../../../03-workloads/00-pods/)
 
 ### `Service` 和 `ReplicationController` 对选择器的使用
 

@@ -1,18 +1,30 @@
 ---
+title: 镜像 Pod
+id: mirror-pod
+date: 2019-08-06
+short_description: >
+  用于追踪 kubelet 监管的静态 Pod，存在于 api-server 中的对象
+
+aka:
+tags:
+- fundamental
+---
+<!--
 title: Mirror Pod
 id: mirror-pod
 date: 2019-08-06
 short_description: >
   An object in the API server that tracks a static pod on a kubelet.
+ -->
 
-aka: 
-tags:
-- fundamental
----
+ <!--
  A {{< glossary_tooltip text="pod" term_id="pod" >}} object that a kubelet uses
  to represent a {{< glossary_tooltip text="static pod" term_id="static-pod" >}}
 
-<!--more--> 
+ -->
+ 一个 kubelet 用于表示 {{< glossary_tooltip text="static pod" term_id="static-pod" >}}
+ 的一个 {{< glossary_tooltip text="pod" term_id="pod" >}} 对象
+<!--more-->
 
 When the kubelet finds a static pod in its configuration, it automatically tries to
 create a Pod object on the Kubernetes API server for it. This means that the pod
