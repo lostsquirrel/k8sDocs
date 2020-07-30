@@ -6,7 +6,7 @@
     <description>Recent content in Configure Pod Containters on K8S 文档笔记</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 27 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 30 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/index.xml" rel="self" type="application/rss+xml" />
     
@@ -32,12 +32,21 @@ Create a Secret based on existing Docker credentials </description>
     </item>
     
     <item>
+      <title>Configure a Security Context for a Pod or Container</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/09-security-context/</link>
+      <pubDate>Thu, 30 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/09-security-context/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+    </item>
+    
+    <item>
       <title>Attach Handlers to Container Lifecycle Events</title>
       <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/16-attach-handler-lifecycle-event/</link>
       <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/16-attach-handler-lifecycle-event/</guid>
-      <description>TODO:  为内链创建占位文件，逐步整理中  接下来应该看啥    </description>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
     </item>
     
     <item>

@@ -56,10 +56,10 @@ var _hmt = _hmt || [];
 </header>
 
 <div class="content-container">
-<main><h1>容器</h1><!-- raw HTML omitted -->
+<main><h1>容器</h1><!-- overview -->
 <p>用户运行的每一个容器都是可重复的，标准中说明容器中包含的所需要的依赖，所以每次运行的行为都应该是一致的</p>
-<p>容器技术让应用与底层主机的基础设施解耦。这使在不去云环境或操作系统上的部署变得更容易。</p>
-<!-- raw HTML omitted -->
+<p>容器技术让应用与底层主机的基础设施解耦。这使在不同云环境或操作系统上的部署变得更容易。</p>
+<!-- body -->
 <h2 id="容器镜像">容器镜像</h2>
 <p><a href="./00-images/">容器镜像</a> 是一个直接可以运行的软件包，其中含了这个应用运行所需要的一切: 应用程序和对应的运行环境，应用和系统的依赖库，必要配置的默认值</p>
 <p>在设计上一个容器是不可变更的：不能修改一个已经运行的窗口的代码(应用)。如果用户想对一个容器化的应用进行变更，需要构建一个包含这些变更的新镜像，并用这个新的镜像再创建一个新的容器代替原来的容器继续运行</p>
@@ -71,7 +71,7 @@ var _hmt = _hmt || [];
 <li>CRI-O</li>
 <li>任意实现 k8s CRI(Container Runtime Interface)的应用</li>
 </ul>
-<h2 id="接下来应该看啥">接下来应该看啥</h2>
+<h2 id="相关资料">相关资料</h2>
 <ul>
 <li>看看 <a href="./00-images/">容器镜像</a></li>
 <li>看看 <a href="/k8sDocs/2-concepts/03-workloads/00-pods/">Pod</a></li>
@@ -136,7 +136,7 @@ Published on 19 Jul 2020
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/00-what-is-k8s/">k8s 是什么</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/01-k8s-components/">k8s 组件</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/01-components/">k8s 组件</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/02-k8s-api/">k8s API 说明</a></li>
 
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/">k8s 对象管理<span class="mark closed">+</span></a>
@@ -186,7 +186,11 @@ Published on 19 Jul 2020
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/00-pod-lifecycle/">Pod Lifecycle</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/">Pods</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-init-containers/">Init Containers</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/02-pod-topology-spread-constraints/">Pod Topology Spread Constraints</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/03-pod-preset/">Pod Presets</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/04-disruptions/">Disruptions</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/05-ephemeral-containers/">Ephemeral Containers</a></li>
 </ul>
   
 </li>
@@ -215,6 +219,7 @@ Published on 19 Jul 2020
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/08-policy/01-resource-quotas/">资源配额</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/08-policy/02-pod-security-policy/">Pod Security Policies</a></li>
 </ul>
   
 </li>
@@ -224,6 +229,14 @@ Published on 19 Jul 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/01-taint-and-toleration/">Taints and Tolerations</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/02-assign-pod-node/">Assigning Pods to Nodes</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/10-cluster-administration/">Cluster Administration<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/10-cluster-administration/03-networking/">Cluster Networking</a></li>
 </ul>
   
 </li>
@@ -294,6 +307,7 @@ Published on 19 Jul 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/10-configure-service-account/">Configure Service Accounts for Pods</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/11-pull-image-private-registry/">Pull an Image from a Private Registry</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/09-security-context/">Configure a Security Context for a Pod or Container</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/16-attach-handler-lifecycle-event/">Attach Handlers to Container Lifecycle Events</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
 </ul>

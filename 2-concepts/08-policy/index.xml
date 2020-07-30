@@ -20,5 +20,14 @@
       <description>TODO</description>
     </item>
     
+    <item>
+      <title>Pod Security Policies</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/08-policy/02-pod-security-policy/</link>
+      <pubDate>Thu, 30 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/08-policy/02-pod-security-policy/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+    </item>
+    
   </channel>
 </rss>

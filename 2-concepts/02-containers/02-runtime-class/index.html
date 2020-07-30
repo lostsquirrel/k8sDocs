@@ -29,7 +29,7 @@
 <meta itemprop="description" content="功能特性状态: Kubernetes v1.14 [beta] 本文介绍 RuntimeClass 资源和运行时选择机制。 RuntimeClass 是一个选择容器运行时配置的特性。而容器运行时配置则用于运行 Pod 中的容器的。 Motivation 用户可以在不">
 <meta itemprop="datePublished" content="2020-07-28T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-07-27T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1678">
+<meta itemprop="wordCount" content="1675">
 
 
 
@@ -65,7 +65,7 @@ var _hmt = _hmt || [];
 
 <div class="content-container">
 <main><h1>Runtime Class</h1>
-<!-- raw HTML omitted -->
+<!-- overview -->
 <p>
 
 
@@ -78,7 +78,7 @@ var _hmt = _hmt || [];
 
 本文介绍 <code>RuntimeClass</code> 资源和运行时选择机制。
 <code>RuntimeClass</code> 是一个选择容器运行时配置的特性。而容器运行时配置则用于运行 Pod 中的容器的。</p>
-<!-- raw HTML omitted -->
+<!-- body -->
 <h2 id="motivation">Motivation</h2>
 <p>用户可以在不同的 Pod 上配置不同的 <code>RuntimeClass</code> 以达成性能与安全之间的平衡。 例如，有一部分工作负载需要一个高级别的信息安全保降。这时就需要选择装 Pod 调度到运行在物理虚拟化的容器运行时。 这样才有相对其它运行时更高的隔离级别同时也会有额外的资源开销。
 <code>RuntimeClass</code> 也可以用于在同一个运行时上，对不同的 Pod 使用不同的配置。</p>
@@ -97,7 +97,7 @@ var _hmt = _hmt || [];
 </ol>
 <p>基于 RuntimeClass 的配置因 容器运行时接口(CRI)具体实现的不同而不同。 具体配置文档见<a href="#cri-configuration">下面章节</a>
 <blockquote class="note">
-  <div><strong>注意: </strong> 默认情况下 <code>RuntimeClass</code> 假定整个集群中所有节点的配置是相同的(也就是说所有节点针对容器运行时的配置是一样的)，为了支持这样的配置请见<a href="#scheduling">下面章节-调度</a></div>
+  <div><strong>说明：</strong> 默认情况下 <code>RuntimeClass</code> 假定整个集群中所有节点的配置是相同的(也就是说所有节点针对容器运行时的配置是一样的)，为了支持这样的配置请见<a href="#scheduling">下面章节-调度</a></div>
 </blockquote>
 
 配置上有一个想对应的 handler 的名称， 被 <code>RuntimeClass</code> 所引用。 这个字段的命名必须符合 DNS-1123 标签的标准(字母，数字，中划线(<code>-</code>)组成)</p>
@@ -114,7 +114,7 @@ var _hmt = _hmt || [];
 <span style="color:#66d9ef">handler</span>: myconfiguration  <span style="color:#75715e"># The name of the corresponding CRI configuration</span>
 </code></pre></div><p><code>RuntimeClass</code> 对象命名必须是一个有效的 <a href="../../00-overview/03-working-with-objects/01-names/#dns-subdomain-names">DNS 子域名格式</a>
 <blockquote class="note">
-  <div><strong>注意: </strong> 建议只有集群管理员对 <code>RuntimeClass</code> 对象有写权限(create/update/patch/delete). 一般情况这是默认配置。 更多信息见 <a href="../../../5-reference/03-access-authn-authz/07-authorization/">授权概览</a></div>
+  <div><strong>说明：</strong> 建议只有集群管理员对 <code>RuntimeClass</code> 对象有写权限(create/update/patch/delete). 一般情况这是默认配置。 更多信息见 <a href="../../../5-reference/03-access-authn-authz/07-authorization/">授权概览</a></div>
 </blockquote>
 </p>
 <h2 id="使用说明">使用说明</h2>
@@ -154,7 +154,7 @@ var _hmt = _hmt || [];
 
 <p>k8s v1.16， RuntimeClass 通过 scheduling 字段实现了对异构系统集群的支持. 通过对这些字段的配置实现让带有对应 RuntimeClass Pod 被调度到受到支持的节点上。而要实现支持这个调度，需要开启 <a href="../../../5-reference/03-access-authn-authz/04-admission-controllers/#runtimeclass">RuntimeClass 准入控制器</a>(k8s v1.16 默认开启)</p>
 <p>为了保证 Pod 会落到 RuntimeClass 指定的节点上，需要要在节点上设置通用标签，让 <code>runtimeclass.scheduling.nodeSelector</code> 可以选择到对应的节点。RuntimeClass 的节点选择器与 Pod 的节点选择器的交集会作为最终的节点选择条件。 如果两都有冲突，则 Pod 会被拒绝。
-<blockquote class="note">
+<blockquote>
   <div><strong>TODO: </strong> 说得不太清楚，需要实践理解后再考虑怎么修改</div>
 </blockquote>
 
@@ -177,11 +177,11 @@ var _hmt = _hmt || [];
 用户可以在 Pod 上配置 <code>overhead</code> 进行资源限制。 声明 <code>overhead</code> 可以让集群(包括调度器)在调度 Pod 时计算合适的资源。
 要使用 Pod <code>overhead</code> 需要打开功<a href="../../../5-reference/06-command-line-tools-reference/00-feature-gates/">能特性开关</a>(默认开启) PodOverhead
 Pod <code>overhead</code> 是通过 RuntimeClass 的 overhead 字段进行定义的， 用户可以利用 RuntimeClass 来设置正在运行的 Pod的 <code>overhead</code>， 并保证k8s 能够计算到这些 <code>overhead</code>
-<blockquote class="note">
+<blockquote>
   <div><strong>TODO: </strong> 说得不太清楚，需要实践理解后再考虑怎么修改</div>
 </blockquote>
 </p>
-<h2 id="接下来应该看啥">接下来应该看啥</h2>
+<h2 id="相关资料">相关资料</h2>
 <ul>
 <li><a href="https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/runtime-class.md">RuntimeClass Design</a></li>
 <li><a href="https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/runtime-class-scheduling.md">RuntimeClass Scheduling Design</a></li>
@@ -248,7 +248,7 @@ Published on 28 Jul 2020
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/00-what-is-k8s/">k8s 是什么</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/01-k8s-components/">k8s 组件</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/01-components/">k8s 组件</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/02-k8s-api/">k8s API 说明</a></li>
 
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/">k8s 对象管理<span class="mark closed">+</span></a>
@@ -298,7 +298,11 @@ Published on 28 Jul 2020
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/00-pod-lifecycle/">Pod Lifecycle</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/">Pods</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-init-containers/">Init Containers</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/02-pod-topology-spread-constraints/">Pod Topology Spread Constraints</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/03-pod-preset/">Pod Presets</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/04-disruptions/">Disruptions</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/05-ephemeral-containers/">Ephemeral Containers</a></li>
 </ul>
   
 </li>
@@ -327,6 +331,7 @@ Published on 28 Jul 2020
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/08-policy/01-resource-quotas/">资源配额</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/08-policy/02-pod-security-policy/">Pod Security Policies</a></li>
 </ul>
   
 </li>
@@ -336,6 +341,14 @@ Published on 28 Jul 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/01-taint-and-toleration/">Taints and Tolerations</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/02-assign-pod-node/">Assigning Pods to Nodes</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/10-cluster-administration/">Cluster Administration<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/10-cluster-administration/03-networking/">Cluster Networking</a></li>
 </ul>
   
 </li>
@@ -406,6 +419,7 @@ Published on 28 Jul 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/10-configure-service-account/">Configure Service Accounts for Pods</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/11-pull-image-private-registry/">Pull an Image from a Private Registry</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/09-security-context/">Configure a Security Context for a Pod or Container</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/16-attach-handler-lifecycle-event/">Attach Handlers to Container Lifecycle Events</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
 </ul>

@@ -18,7 +18,7 @@
 </style>
 <meta property="og:title" content="Application Introspection and Debugging" />
 <meta property="og:description" content="TODO
-接下来应该看啥    " />
+相关资料    " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/3-tasks/08-debug-application-cluster/00-debug-application-introspection/" />
 <meta property="article:published_time" content="2020-07-27T00:00:00+00:00" />
@@ -26,10 +26,10 @@
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Application Introspection and Debugging"/>
 <meta name="twitter:description" content="TODO
-接下来应该看啥    "/>
+相关资料    "/>
 <meta itemprop="name" content="Application Introspection and Debugging">
 <meta itemprop="description" content="TODO
-接下来应该看啥    ">
+相关资料    ">
 <meta itemprop="datePublished" content="2020-07-27T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-07-27T00:00:00&#43;00:00" />
 <meta itemprop="wordCount" content="2">
@@ -68,10 +68,10 @@ var _hmt = _hmt || [];
 
 <div class="content-container">
 <main><h1>Application Introspection and Debugging</h1>
-<!-- raw HTML omitted -->
+<!-- overview -->
 <p>TODO</p>
-<!-- raw HTML omitted -->
-<h2 id="接下来应该看啥">接下来应该看啥</h2>
+<!-- body -->
+<h2 id="相关资料">相关资料</h2>
 <ul>
 <li><a href=""></a></li>
 </ul>
@@ -135,7 +135,7 @@ Published on 27 Jul 2020
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/00-what-is-k8s/">k8s 是什么</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/01-k8s-components/">k8s 组件</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/01-components/">k8s 组件</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/02-k8s-api/">k8s API 说明</a></li>
 
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/">k8s 对象管理<span class="mark closed">+</span></a>
@@ -185,7 +185,11 @@ Published on 27 Jul 2020
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/00-pod-lifecycle/">Pod Lifecycle</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/">Pods</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-init-containers/">Init Containers</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/02-pod-topology-spread-constraints/">Pod Topology Spread Constraints</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/03-pod-preset/">Pod Presets</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/04-disruptions/">Disruptions</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/05-ephemeral-containers/">Ephemeral Containers</a></li>
 </ul>
   
 </li>
@@ -214,6 +218,7 @@ Published on 27 Jul 2020
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/08-policy/01-resource-quotas/">资源配额</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/08-policy/02-pod-security-policy/">Pod Security Policies</a></li>
 </ul>
   
 </li>
@@ -223,6 +228,14 @@ Published on 27 Jul 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/01-taint-and-toleration/">Taints and Tolerations</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/02-assign-pod-node/">Assigning Pods to Nodes</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/10-cluster-administration/">Cluster Administration<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/10-cluster-administration/03-networking/">Cluster Networking</a></li>
 </ul>
   
 </li>
@@ -293,6 +306,7 @@ Published on 27 Jul 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/10-configure-service-account/">Configure Service Accounts for Pods</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/11-pull-image-private-registry/">Pull an Image from a Private Registry</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/09-security-context/">Configure a Security Context for a Pod or Container</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/16-attach-handler-lifecycle-event/">Attach Handlers to Container Lifecycle Events</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
 </ul>

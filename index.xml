@@ -36,7 +36,7 @@
       
       <guid>https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/00-container-runtimes/</guid>
       <description>TODO
-接下来应该看啥    </description>
+相关资料    </description>
     </item>
     
     <item>
@@ -68,10 +68,10 @@
     
     <item>
       <title>k8s 组件</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/01-k8s-components/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/01-components/</link>
       <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/01-k8s-components/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/01-components/</guid>
       <description>当完成 k8s 部署后，用户就拥有一个 k8s 集群， 一个 k8s 一般包含多台工作机，称为节点，用于运行容器化应用。 每个集群至少包含一个节点。 在节点上运行应用工作</description>
     </item>
     
@@ -186,6 +186,15 @@ Create a Secret based on existing Docker credentials </description>
     </item>
     
     <item>
+      <title>Pod Security Policies</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/08-policy/02-pod-security-policy/</link>
+      <pubDate>Thu, 30 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/08-policy/02-pod-security-policy/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+    </item>
+    
+    <item>
       <title>Taints and Tolerations</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/01-taint-and-toleration/</link>
       <pubDate>Tue, 07 Jul 2020 00:00:00 +0000</pubDate>
@@ -201,6 +210,15 @@ Create a Secret based on existing Docker credentials </description>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/02-assign-pod-node/</guid>
       <description>TODO</description>
+    </item>
+    
+    <item>
+      <title>Cluster Networking</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/10-cluster-administration/03-networking/</link>
+      <pubDate>Thu, 30 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/10-cluster-administration/03-networking/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
     </item>
     
     <item>
@@ -269,12 +287,21 @@ Running cloud-controller-manager </description>
     </item>
     
     <item>
+      <title>Configure a Security Context for a Pod or Container</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/09-security-context/</link>
+      <pubDate>Thu, 30 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/09-security-context/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+    </item>
+    
+    <item>
       <title>Attach Handlers to Container Lifecycle Events</title>
       <link>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/16-attach-handler-lifecycle-event/</link>
       <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/02-configure-pod-container/16-attach-handler-lifecycle-event/</guid>
-      <description>TODO:  为内链创建占位文件，逐步整理中  接下来应该看啥    </description>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
     </item>
     
     <item>
@@ -303,7 +330,7 @@ The Downward API </description>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/3-tasks/08-debug-application-cluster/00-debug-application-introspection/</guid>
       <description>TODO
-接下来应该看啥    </description>
+相关资料    </description>
     </item>
     
     <item>
@@ -449,16 +476,52 @@ What does each admission controller do? AlwaysPullImages RuntimeClass </descript
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/00-pod-lifecycle/</guid>
       <description>TODO
-Pod phase 接下来应该看啥    </description>
+Pod phase 相关资料    </description>
     </item>
     
     <item>
-      <title>Pods</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/</link>
-      <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
+      <title>Init Containers</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-init-containers/</link>
+      <pubDate>Wed, 29 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-pod/</guid>
-      <description>TODO</description>
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/01-init-containers/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  </description>
+    </item>
+    
+    <item>
+      <title>Pod Topology Spread Constraints</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/02-pod-topology-spread-constraints/</link>
+      <pubDate>Wed, 29 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/02-pod-topology-spread-constraints/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+    </item>
+    
+    <item>
+      <title>Pod Presets</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/03-pod-preset/</link>
+      <pubDate>Tue, 28 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/03-pod-preset/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+    </item>
+    
+    <item>
+      <title>Disruptions</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/04-disruptions/</link>
+      <pubDate>Wed, 29 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/04-disruptions/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+    </item>
+    
+    <item>
+      <title>Ephemeral Containers</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/05-ephemeral-containers/</link>
+      <pubDate>Wed, 29 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/05-ephemeral-containers/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
     </item>
     
     <item>
@@ -473,10 +536,10 @@ Pod phase 接下来应该看啥    </description>
     <item>
       <title></title>
       <link>https://lostsquirrel.github.io/k8sDocs/template/</link>
-      <pubDate>Tue, 28 Jul 2020 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 30 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/template/</guid>
-      <description>TODO:  为内链创建占位文件，逐步整理中  接下来应该看啥    </description>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
     </item>
     
     <item>
@@ -524,8 +587,8 @@ Pod phase 接下来应该看啥    </description>
       <description>Hugo is a static site engine written in Go.
 It makes use of a variety of open source projects including:
  Cobra Viper J Walter Weatherman Cast  Learn more and contribute on GitHub.
-{{ }} {{ }}
-TODO:  说得不太清楚，需要实践理解后再考虑怎么修改  controllersA control loop that watches the shared state of the cluster through the apiserver and makes changes attempting to move the current state towards the desired state.  The cloud-controller-manager is a Kubernetes control planeThe container orchestration layer that exposes the API and interfaces to define, deploy, and manage the lifecycle of containers.</description>
+{{  }} {{  }}
+ TODO:  说得不太清楚，需要实践理解后再考虑怎么修改  controllers一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移  The cloud-controller-manager is a Kubernetes control planeThe container orchestration layer that exposes the API and interfaces to define, deploy, and manage the lifecycle of containers.</description>
     </item>
     
   </channel>
