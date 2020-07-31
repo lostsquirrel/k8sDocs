@@ -17,8 +17,7 @@
       <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/00-pod-lifecycle/</guid>
-      <description>TODO
-Pod phase 相关资料    </description>
+      <description>本文介经 Pod 的生命周期。 Pod 有一个既定的生命周期，开启后进行 Pending 阶段， 当其中至少有一个主要容器正常启动后变更为 Running 阶段， 如果所有容器全部正常启动则进</description>
     </item>
     
     <item>

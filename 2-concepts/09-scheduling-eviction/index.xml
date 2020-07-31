@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>Kubernetes Scheduler</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/00-kube-scheduler/</link>
+      <pubDate>Thu, 30 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/00-kube-scheduler/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+    </item>
+    
+    <item>
       <title>Taints and Tolerations</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/01-taint-and-toleration/</link>
       <pubDate>Tue, 07 Jul 2020 00:00:00 +0000</pubDate>

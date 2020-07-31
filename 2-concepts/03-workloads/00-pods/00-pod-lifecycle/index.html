@@ -17,22 +17,19 @@
 :root {}
 </style>
 <meta property="og:title" content="Pod Lifecycle" />
-<meta property="og:description" content="TODO
-Pod phase 相关资料    " />
+<meta property="og:description" content="本文介经 Pod 的生命周期。 Pod 有一个既定的生命周期，开启后进行 Pending 阶段， 当其中至少有一个主要容器正常启动后变更为 Running 阶段， 如果所有容器全部正常启动则进" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/00-pod-lifecycle/" />
 <meta property="article:published_time" content="2020-07-27T00:00:00+00:00" />
 <meta property="article:modified_time" content="2020-07-27T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Pod Lifecycle"/>
-<meta name="twitter:description" content="TODO
-Pod phase 相关资料    "/>
+<meta name="twitter:description" content="本文介经 Pod 的生命周期。 Pod 有一个既定的生命周期，开启后进行 Pending 阶段， 当其中至少有一个主要容器正常启动后变更为 Running 阶段， 如果所有容器全部正常启动则进"/>
 <meta itemprop="name" content="Pod Lifecycle">
-<meta itemprop="description" content="TODO
-Pod phase 相关资料    ">
+<meta itemprop="description" content="本文介经 Pod 的生命周期。 Pod 有一个既定的生命周期，开启后进行 Pending 阶段， 当其中至少有一个主要容器正常启动后变更为 Running 阶段， 如果所有容器全部正常启动则进">
 <meta itemprop="datePublished" content="2020-07-27T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-07-27T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="4">
+<meta itemprop="wordCount" content="4815">
 
 
 
@@ -68,13 +65,651 @@ var _hmt = _hmt || [];
 
 <div class="content-container">
 <main><h1>Pod Lifecycle</h1>
+<!--
+---
+title: Pod Lifecycle
+content_type: concept
+weight: 30
+---
+ -->
 <!-- overview -->
-<p>TODO</p>
+<!--
+This page describes the lifecycle of a Pod. Pods follow a defined lifecycle, starting
+in the `Pending` [phase](#pod-phase), moving through `Running` if at least one
+of its primary containers starts OK, and then through either the `Succeeded` or
+`Failed` phases depending on whether any container in the Pod terminated in failure.
+
+Whilst a Pod is running, the kubelet is able to restart containers to handle some
+kind of faults. Within a Pod, Kubernetes tracks different container
+[states](#container-states) and handles
+
+In the Kubernetes API, Pods have both a specification and an actual status. The
+status for a Pod object consists of a set of [Pod conditions](#pod-conditions).
+You can also inject [custom readiness information](#pod-readiness-gate) into the
+condition data for a Pod, if that is useful to your application.
+
+Pods are only [scheduled](/docs/concepts/scheduling-eviction/) once in their lifetime.
+Once a Pod is scheduled (assigned) to a Node, the Pod runs on that Node until it stops
+or is [terminated](#pod-termination).
+
+
+ -->
+<p>本文介经 Pod 的生命周期。 Pod 有一个既定的生命周期，开启后进行 <code>Pending</code> <a href="#pod-phase">阶段</a>，
+当其中至少有一个主要容器正常启动后变更为 <code>Running</code> 阶段， 如果所有容器全部正常启动则进入 <code>Succeeded</code> 阶段，
+如果有任意容器启动失败则进行 <code>Failed</code> 阶段。</p>
+<p>当一个 Pod 在运行中， kubelet 可以在某些情况下容器挂掉后将其重启。 在 Pod 中， k8s 会跟踪和处理容器的 <a href="#container-states">状态</a></p>
+<p>在 k8s 的 API 对象中， Pod 对象拥有定义明细和实时状态。 Pod 对象的状态上包含一系列 <a href="#pod-conditions">Pod 条件</a>
+如果应用有需要，可以向 Pod 中加入 <a href="#pod-readiness-gate">自定义就绪信息</a> 到条件子对象。</p>
+<p>在 Pod 的整个生命周期中只会被<a href="../../09-scheduling-eviction/">调度</a>一次，
+当一个 Pod 被调度(分配)到一个节点后，就会一直运行在这个节点上，直接被停止或被<a href="#pod-termination">终止</a></p>
 <!-- body -->
-<h2 id="pod-phase">Pod phase</h2>
+<!--
+## Pod lifetime
+
+Like individual application containers, Pods are considered to be relatively
+ephemeral (rather than durable) entities. Pods are created, assigned a unique
+ID ([UID](/docs/concepts/overview/working-with-objects/names/#uids)), and scheduled
+to nodes where they remain until termination (according to restart policy) or
+deletion.  
+If a <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/00-nodes/' target='_blank'>节点<span class='tooltip-text'>一个节点就是 k8s 中的一个工作机</span>
+</a> dies, the Pods scheduled to that node
+are [scheduled for deletion](#pod-garbage-collection) after a timeout period.
+
+Pods do not, by themselves, self-heal. If a Pod is scheduled to a
+<a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/00-nodes/' target='_blank'>node<span class='tooltip-text'>一个节点就是 k8s 中的一个工作机</span>
+</a> that then fails,
+or if the scheduling operation itself fails, the Pod is deleted; likewise, a Pod won't
+survive an eviction due to a lack of resources or Node maintenance. Kubernetes uses a
+higher-level abstraction, called a
+<a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/02-controller/' target='_blank'>controller<span class='tooltip-text'>一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移</span>
+</a>, that handles the work of
+managing the relatively disposable Pod instances.
+
+A given Pod (as defined by a UID) is never "rescheduled" to a different node; instead,
+that Pod can be replaced by a new, near-identical Pod, with even the same name i
+desired, but with a different UID.
+
+When something is said to have the same lifetime as a Pod, such as a
+<a class='glossary-tooltip' href='/docs/concepts/storage/volumes/' target='_blank'>volume<span class='tooltip-text'>A directory containing data, accessible to the containers in a pod.</span>
+</a>,
+that means that the thing exists as long as that specific Pod (with that exact UID)
+exists. If that Pod is deleted for any reason, and even if an identical replacement
+is created, the related thing (a volume, in this example) is also destroyed and
+created anew.
+
+<figure>
+    <img src="/images/docs/pod.svg" width="50%"/> <figcaption>
+            <h4>Pod diagram</h4>
+        </figcaption>
+</figure>
+
+
+*A multi-container Pod that contains a file puller and a
+web server that uses a persistent volume for shared storage between the containers.*
+
+ -->
+<h2 id="pod-的一生">Pod 的一生</h2>
+<p>与单独使用应用容器一样, Pod 可以被认为是一个相对临时(而不是长期存在)的实体. Pod 在创建时会被分配
+一个唯一的 ID(<a href="/docs/concepts/overview/working-with-objects/names/#uids">UID</a>),
+然后被到一个 <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/00-nodes/' target='_blank'>node<span class='tooltip-text'>一个节点就是 k8s 中的一个工作机</span>
+</a> 上,直到被终止(依照重启策略)或者被删除.
+如果一个 <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/00-nodes/' target='_blank'>node<span class='tooltip-text'>一个节点就是 k8s 中的一个工作机</span>
+</a> 挂了, 这个节点上的 Pod 会在超时后
+<a href="#pod-garbage-collection">因删除被调度</a>.</p>
+<p>Pod 并不能独自实现自愈. 如果 Pod 被调度的 <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/00-nodes/' target='_blank'>node<span class='tooltip-text'>一个节点就是 k8s 中的一个工作机</span>
+</a> 挂了,
+或者是调度操作本身失败, Pod 就被删除了, Pod 也不会在因为资源不足或 <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/00-nodes/' target='_blank'>node<span class='tooltip-text'>一个节点就是 k8s 中的一个工作机</span>
+</a> 节点被驱逐中幸存.
+k8s 通过一个叫 <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/02-controller/' target='_blank'>控制器<span class='tooltip-text'>一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移</span>
+</a> 的更高层级的抽象,来处理这些相对来说是一次的的 Pod 实例的管理工作.</p>
+<p>某个 Pod(拥有特定 UID) 是永远不会被重新调度到另一个节点上; 而是被一个基本相同, 甚至可以名称也相同,但 UID 不同的 Pod 所取代.</p>
+<p>当某些对象(如 <a class='glossary-tooltip' href='/docs/concepts/storage/volumes/' target='_blank'>volume<span class='tooltip-text'>A directory containing data, accessible to the containers in a pod.</span>
+</a>) 被描述为与 Pod 拥有一致的生命期,
+表示这些对象会与指定的 (拥有那个 UID 的) <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+</a> 同时存在,
+如果那个 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+</a> 因为某些原为被删除, 即便同样的代替 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+</a> 已经被创建,
+相关的对象(如 <a class='glossary-tooltip' href='/docs/concepts/storage/volumes/' target='_blank'>Volume<span class='tooltip-text'>A directory containing data, accessible to the containers in a pod.</span>
+</a> 也会被随同 Pod 一起被销毁重建).</p>
+<p><figure>
+    <img src="https://d33wubrfki0l68.cloudfront.net/aecab1f649bc640ebef1f05581bfcc91a48038c4/728d6/images/docs/pod.svg"
+         alt="Pod diagram" width="50%"/> 
+</figure>
+
+<em>有一个容器作为 web 服务，为共享数据卷的文件提供访问服务，另一个独立的容器作为 边车，负责从远程的源更新这些文件</em></p>
+<!--  
+## Pod phase
+
+A Pod's `status` field is a
+[PodStatus](/docs/reference/generated/kubernetes-api/0.0.1/#podstatus-v1-core)
+object, which has a `phase` field.
+
+The phase of a Pod is a simple, high-level summary of where the Pod is in its
+lifecycle. The phase is not intended to be a comprehensive rollup of observations
+of container or Pod state, nor is it intended to be a comprehensive state machine.
+
+The number and meanings of Pod phase values are tightly guarded.
+Other than what is documented here, nothing should be assumed about Pods that
+have a given `phase` value.
+
+Here are the possible values for `phase`:
+
+Value | Description
+:-----|:-----------
+`Pending` | The Pod has been accepted by the Kubernetes cluster, but one or more of the containers has not been set up and made ready to run. This includes time a Pod spends waiting to bescheduled as well as the time spent downloading container images over the network.
+`Running` | The Pod has been bound to a node, and all of the containers have been created. At least one container is still running, or is in the process of starting or restarting.
+`Succeeded` | All containers in the Pod have terminated in success, and will not be restarted.
+`Failed` | All containers in the Pod have terminated, and at least one container has terminated in failure. That is, the container either exited with non-zero status or was terminated by the system.
+`Unknown` | For some reason the state of the Pod could not be obtained. This phase typically occurs due to an error in communicating with the node where the Pod should be running.
+
+If a node dies or is disconnected from the rest of the cluster, Kubernetes
+applies a policy for setting the `phase` of all Pods on the lost node to Failed.
+-->
+<h2 id="pod-的人生阶段">Pod 的人生阶段</h2>
+<p>在 Pod 的 <code>status</code> 字段是一个 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/0.0.1/#podstatus-v1-core">PodStatus</a>
+对象, 上面有一个 <code>phase</code> 字段.</p>
+<p>Pod 的人生阶段是对 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+</a> 生命周期的调度总结.
+Pod 的人生阶段并不是对容器或 Pod 状态的容易理解的总结, 也不是一个容易理解的状态机.</p>
+<p>Pod 的人生阶段的数量与意义与其值都是很有限的. 除了以下对各阶段的说明, Pod 不会有其它的阶段.
+以下为 <code>phase</code> 字段的可能值:</p>
+<table>
+<thead>
+<tr>
+<th align="left">字段值</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>Pending</code></td>
+<td align="left">Pod 已经被集群确立， 但是其中的一个或多个容器还没有完成配置并准备就绪。 包括 Pod 等调度的时间和从网上下载容器镜像的时间</td>
+</tr>
+<tr>
+<td align="left"><code>Running</code></td>
+<td align="left">Pod 已经在节点上，并且其中的所有容器已经完成创建，至少有一个容器正在运行，或在启动或重启的过程中</td>
+</tr>
+<tr>
+<td align="left"><code>Succeeded</code></td>
+<td align="left">Pod 中所有的容器都已经成功运行完成并终止，并且不会再被重启</td>
+</tr>
+<tr>
+<td align="left"><code>Failed</code></td>
+<td align="left">Pod 中所有的容器被终止，且至少有一个容器是因为失败而被终止的。 容器失败的原因可能是因返回非零而退出或被系统终止</td>
+</tr>
+<tr>
+<td align="left"><code>Unknown</code></td>
+<td align="left">因为某些原因导至无法获取 Pod 的状态。 这个阶段一般是因为与 Pod 所在的节点无法通信。</td>
+</tr>
+</tbody>
+</table>
+<p>如果一个节点挂了或者与集群失联， k8s 会执行一个策略，让节点上所有的 Pod 的 <code>phase</code> 字段设置为 <code>Failed</code>。</p>
+<!--
+## Container states
+
+As well as the [phase](#pod-phase) of the Pod overall, Kubernetes tracks the state of
+each container inside a Pod. You can use
+[container lifecycle hooks](/docs/concepts/containers/container-lifecycle-hooks/) to
+trigger events to run at certain points in a container's lifecycle.
+
+Once the <a class='glossary-tooltip' href='/docs/reference/generated/kube-scheduler/' target='_blank'>scheduler<span class='tooltip-text'>Control plane component that watches for newly created pods with no assigned node, and selects a node for them to run on.</span>
+</a>
+assigns a Pod to a Node, the kubelet starts creating containers for that Pod
+using a <a class='glossary-tooltip' href='/docs/setup/production-environment/container-runtimes' target='_blank'>container runtime<span class='tooltip-text'>容器运行环境就是负责运行容器的软件</span>
+</a>.
+There are three possible container states: `Waiting`, `Running`, and `Terminated`.
+
+To the check state of a Pod's containers, you can use
+`kubectl describe pod <name-of-pod>`. The output shows the state for each container
+within that Pod.
+
+Each state has a specific meaning:
+
+ -->
+<h2 id="容器的状态">容器的状态</h2>
+<p>与 Pod 存在几个<a href="#pod-phase">阶段</a>一个样，k8s 也会跟踪 Pod 内的容器的状态。 用户可以通过
+<a href="../../02-containers/03-container-lifecycle-hooks/">容器的生命周期钩子</a>
+来以容器生命周期事件来触发一些需要工作的运行</p>
+<p>当一个 <a class='glossary-tooltip' href='/docs/reference/generated/kube-scheduler/' target='_blank'>kube-scheduler<span class='tooltip-text'>Control plane component that watches for newly created pods with no assigned node, and selects a node for them to run on.</span>
+</a>
+将一个 Pod 调度到一个节点时， kubelet 就会通过 <a class='glossary-tooltip' href='/docs/setup/production-environment/container-runtimes' target='_blank'>容器运行环境<span class='tooltip-text'>容器运行环境就是负责运行容器的软件</span>
+</a>
+为该 Pod 创建对应的容器。 容器可能存在三种状态 <code>Waiting</code>, <code>Running</code>, <code>Terminated</code>.</p>
+<p>用户可以通过命令 <code>kubectl describe pod &lt;name-of-pod&gt;</code> 查看 Pod 中容器的状态。
+命令输出结果会包含其中所有容器的状态。
+接下来介绍每一种状的具体含义</p>
+<h3 id="container-state-waiting"><code>Waiting</code></h3>
+<!--
+If a container is not in either the `Running` or `Terminated` state, it `Waiting`.
+A container in the `Waiting` state is still running the operations it requires in
+order to complete start up: for example, pulling the container image from a container
+image registry, or applying <a class='glossary-tooltip' href='/docs/concepts/configuration/secret/' target='_blank'>Secret<span class='tooltip-text'>Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.</span>
+</a>
+data.
+When you use `kubectl` to query a Pod with a container that is `Waiting`, you also see
+a Reason field to summarize why the container is in that state.
+ -->
+<p>当一个容器的状不是 <code>Running</code> 或 <code>Terminated</code> 就是 <code>Waiting</code>。当一个容器状态为 <code>Waiting</code>
+表示容器正在进行启动需要的前置操作: 如， 从镜像仓库拉取容器所需要的镜像， 或配置
+<a class='glossary-tooltip' href='/docs/concepts/configuration/secret/' target='_blank'>Secret<span class='tooltip-text'>Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.</span>
+</a> 数据。</p>
+<p>当 <a class='glossary-tooltip' href='/docs/reference/generated/kubelet' target='_blank'>Kubelet<span class='tooltip-text'>An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.</span>
+</a> 查询到Pod中的状是 <code>Waiting</code>， 同时也会看到
+一个 <code>Reason</code> 字段，其值是对容器保持在该状态原因的总结</p>
+<h3 id="container-state-running"><code>Running</code></h3>
+<!--
+The `Running` status indicates that a container is executing without issues. If there
+was a `postStart` hook configured, it has already executed and executed. When you use
+`kubectl` to query a Pod with a container that is `Running`, you also see information
+about when the container entered the `Running` state.
+
+ -->
+<p><code>Running</code> 状态表示容器正在欢快地运行，没啥毛病。 如果配置了钩子 <code>postStart</code>， 这个钩子的处理器也
+已经执行而且成功完成。 当使用 <code>kubectl</code> 查询容器为 <code>Running</code> 的 Pod 时，同时可以看到容器进入
+<code>Running</code> 状态的时长。</p>
+<h3 id="container-state-terminated"><code>Terminated</code></h3>
+<!--
+A container in the `Terminated` state has begin execution and has then either run to
+completion or has failed for some reason. When you use `kubectl` to query a Pod with
+a container that is `Terminated`, you see a reason, and exit code, and the start and
+finish time for that container's period of execution.
+
+If a container has a `preStop` hook configured, that runs before the container enters
+the `Terminated` state.
+ -->
+<p>当一个容器状态为 <code>Terminated</code> 时，表示任务已经执行了，要么执行完成，要么因为某些原因失败了。
+当使用 <code>kubectl</code> 查看容器为 <code>Terminated</code> 状态的 Pod 时， 可以看到原因和退出码， 还有
+容器内任务执行的开始和结束时间。</p>
+<p>如果一个容器配置了钩子 <code>preStop</code>， 那么钩子对应的处理器会在容器进行<code>Terminated</code> 状态之前执行。</p>
+<!--
+## Container restart policy {#restart-policy}
+
+The `spec` of a Pod has a `restartPolicy` field with possible values Always, OnFailure,
+and Never. The default value is Always.
+
+The `restartPolicy` applies to all containers in the Pod. `restartPolicy` only
+refers to restarts of the containers by the kubelet on the same node. After containers
+in a Pod exit, the kubelet restarts them with an exponential back-off delay (10s, 20s,
+40s, …), that is capped at five minutes. Once a container has executed with no problems
+for 10 minutes without any problems, the kubelet resets the restart backoff timer for
+that container.
+ -->
+<h2 id="restart-policy">容器的重启策略</h2>
+<p>在 Pod 的 <code>spec</code> 子对象上有一个 <code>restartPolicy</code> 字段，可能的值有 <code>Always</code>, <code>OnFailure</code>, <code>Never</code>
+默认为 <code>Always</code>。</p>
+<p><code>restartPolicy</code> 适用于 Pod 中的所有容器。 <code>restartPolicy</code> 只能让一个节点上的 <a class='glossary-tooltip' href='/docs/reference/generated/kubelet' target='_blank'>Kubelet<span class='tooltip-text'>An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.</span>
+</a>
+来重启其上的容器。 当 Pod 中的容器退出后， <a class='glossary-tooltip' href='/docs/reference/generated/kubelet' target='_blank'>Kubelet<span class='tooltip-text'>An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.</span>
+</a>
+会以指数延迟(10s, 20s, 40s, …)补偿机制来重启容器，延迟时间最长为 5 分钟。 当一个容器正常运行 10 分钟
+后，  <a class='glossary-tooltip' href='/docs/reference/generated/kubelet' target='_blank'>Kubelet<span class='tooltip-text'>An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.</span>
+</a> 才会重置该容器的补偿时钟。</p>
+<!--
+## Pod conditions
+
+A Pod has a PodStatus, which has an array of
+[PodConditions](https://kubernetes.io/docs/reference/generated/kubernetes-api/0.0.1/#podcondition-v1-core)
+through which the Pod has or has not passed:
+
+* `PodScheduled`: the Pod has been scheduled to a node.
+* `ContainersReady`: all containers in the Pod are ready.
+* `Initialized`: all [init containers](/docs/concepts/workloads/pods/init-containers/)
+  have started successfully.
+* `Ready`: the Pod is able to serve requests and should be added to the load
+  balancing pools of all matching Services.
+
+Field name           | Description
+:--------------------|:-----------
+`type`               | Name of this Pod condition.
+`status`             | Indicates whether that condition is applicable, with possible values "`True`", "`False`", or "`Unknown`".
+`lastProbeTime`      | Timestamp of when the Pod condition was last probed.
+`lastTransitionTime` | Timestamp for when the Pod last transitioned from one status to another.
+`reason`             | Machine-readable, UpperCamelCase text indicating the reason for the condition's last transition.
+`message`            | Human-readable message indicating details about the last status transition.
+ -->
+<h2 id="pod-的条件">Pod 的条件</h2>
+<p>在 Pod 上面有一个 <code>PodStatus</code> 子对象，其中包含一个
+<a href="/docs/reference/generated/kubernetes-api/0.0.1/#podcondition-v1-core">PodConditions</a>
+的数组。表示这个 Pod 有没有通过这些条件， 具体如下:</p>
+<ul>
+<li><code>PodScheduled</code>: Pod 已经被调度到节点上.</li>
+<li><code>ContainersReady</code>: Pod 中所有的容器都已经就绪.</li>
+<li><code>Initialized</code>: 所有 <a href="../01-init-containers/">初始化容器</a>
+都启动成功.</li>
+<li><code>Ready</code>: Pod 已经能够处理请求，应该被加入对应 Service 的负载均衡池中。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">字段名称</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>type</code></td>
+<td align="left">这个 Pod 条件的名称</td>
+</tr>
+<tr>
+<td align="left"><code>status</code></td>
+<td align="left">表示这个条件的达成情况， 可能的值有 &ldquo;<code>True</code>&rdquo;, &ldquo;<code>False</code>&rdquo;, 或 &ldquo;<code>Unknown</code>&rdquo;.</td>
+</tr>
+<tr>
+<td align="left"><code>lastProbeTime</code></td>
+<td align="left">该条件上次探测的时间戳</td>
+</tr>
+<tr>
+<td align="left"><code>lastTransitionTime</code></td>
+<td align="left">该条件的值最近发生变更的时间戳</td>
+</tr>
+<tr>
+<td align="left"><code>reason</code></td>
+<td align="left">机器可读, 大写驼峰的文本，说明最近一次值变化的原因</td>
+</tr>
+<tr>
+<td align="left"><code>message</code></td>
+<td align="left">人类可读的消息，详细说明最近一次值变化的原因</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pod-readiness-gate">Pod readiness</h3>
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.14 [stable]</code>
+</div>
+
+
+<p>Your application can inject extra feedback or signals into PodStatus:
+<em>Pod readiness</em>. To use this, set <code>readinessGates</code> in the Pod&rsquo;s <code>spec</code> to
+specify a list of additional conditions that the kubelet evaluates for Pod readiness.</p>
+<p>Readiness gates are determined by the current state of <code>status.condition</code>
+fields for the Pod. If Kubernetes cannot find such a condition in the
+<code>status.conditions</code> field of a Pod, the status of the condition
+is defaulted to &ldquo;<code>False</code>&rdquo;.</p>
+<p>Here is an example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">kind</span>: Pod
+...
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">readinessGates</span>:
+    - <span style="color:#66d9ef">conditionType</span>: <span style="color:#e6db74">&#34;www.example.com/feature-1&#34;</span>
+<span style="color:#66d9ef">status</span>:
+  <span style="color:#66d9ef">conditions</span>:
+    - <span style="color:#66d9ef">type</span>: Ready                              <span style="color:#75715e"># a built in PodCondition</span>
+      <span style="color:#66d9ef">status</span>: <span style="color:#e6db74">&#34;False&#34;</span>
+      <span style="color:#66d9ef">lastProbeTime</span>: <span style="color:#66d9ef">null</span>
+      <span style="color:#66d9ef">lastTransitionTime</span>: <span style="color:#e6db74">2018-01-01T00:00:00Z</span>
+    - <span style="color:#66d9ef">type</span>: <span style="color:#e6db74">&#34;www.example.com/feature-1&#34;</span>        <span style="color:#75715e"># an extra PodCondition</span>
+      <span style="color:#66d9ef">status</span>: <span style="color:#e6db74">&#34;False&#34;</span>
+      <span style="color:#66d9ef">lastProbeTime</span>: <span style="color:#66d9ef">null</span>
+      <span style="color:#66d9ef">lastTransitionTime</span>: <span style="color:#e6db74">2018-01-01T00:00:00Z</span>
+  <span style="color:#66d9ef">containerStatuses</span>:
+    - <span style="color:#66d9ef">containerID</span>: docker://abcd...
+      <span style="color:#66d9ef">ready</span>: <span style="color:#66d9ef">true</span>
+...
+</code></pre></div><p>The Pod conditions you add must have names that meet the Kubernetes <a href="/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set">label key format</a>.</p>
+<h3 id="pod-readiness-gate">Pod 的就绪阀</h3>
+<h3 id="pod-readiness-status">Status for Pod readiness</h3>
+<p>The <code>kubectl patch</code> command does not support patching object status.
+To set these <code>status.conditions</code> for the pod, applications and
+<a class='glossary-tooltip' href='/docs/concepts/extend-kubernetes/operator/' target='_blank'>operators<span class='tooltip-text'>A specialized controller used to manage a custom resource</span>
+</a> should use
+the <code>PATCH</code> action.
+You can use a <a href="/docs/reference/using-api/client-libraries/">Kubernetes client library</a> to
+write code that sets custom Pod conditions for Pod readiness.</p>
+<p>For a Pod that uses custom conditions, that Pod is evaluated to be ready <strong>only</strong>
+when both the following statements apply:</p>
+<ul>
+<li>All containers in the Pod are ready.</li>
+<li>All conditions specified in <code>readinessGates</code> are <code>True</code>.</li>
+</ul>
+<p>When a Pod&rsquo;s containers are Ready but at least one custom condition is missing or
+<code>False</code>, the kubelet sets the Pod&rsquo;s <a href="#pod-condition">condition</a> to <code>ContainersReady</code>.</p>
+<h2 id="container-probes">Container probes</h2>
+<p>A <a href="/docs/reference/generated/kubernetes-api/0.0.1/#probe-v1-core">Probe</a> is a diagnostic
+performed periodically by the <a href="/docs/admin/kubelet/">kubelet</a>
+on a Container. To perform a diagnostic,
+the kubelet calls a
+<a href="/docs/reference/generated/kubernetes-api/0.0.1/#handler-v1-core">Handler</a> implemented by
+the container. There are three types of handlers:</p>
+<ul>
+<li>
+<p><a href="/docs/reference/generated/kubernetes-api/0.0.1/#execaction-v1-core">ExecAction</a>:
+Executes a specified command inside the container. The diagnostic
+is considered successful if the command exits with a status code of 0.</p>
+</li>
+<li>
+<p><a href="/docs/reference/generated/kubernetes-api/0.0.1/#tcpsocketaction-v1-core">TCPSocketAction</a>:
+Performs a TCP check against the Pod&rsquo;s IP address on
+a specified port. The diagnostic is considered successful if the port is open.</p>
+</li>
+<li>
+<p><a href="/docs/reference/generated/kubernetes-api/0.0.1/#httpgetaction-v1-core">HTTPGetAction</a>:
+Performs an HTTP <code>GET</code> request against the Pod&rsquo;s IP
+address on a specified port and path. The diagnostic is considered successful
+if the response has a status code greater than or equal to 200 and less than 400.</p>
+</li>
+</ul>
+<p>Each probe has one of three results:</p>
+<ul>
+<li><code>Success</code>: The container passed the diagnostic.</li>
+<li><code>Failure</code>: The container failed the diagnostic.</li>
+<li><code>Unknown</code>: The diagnostic failed, so no action should be taken.</li>
+</ul>
+<p>The kubelet can optionally perform and react to three kinds of probes on running
+containers:</p>
+<ul>
+<li>
+<p><code>livenessProbe</code>: Indicates whether the container is running. If
+the liveness probe fails, the kubelet kills the container, and the container
+is subjected to its <a href="#restart-policy">restart policy</a>. If a Container does not
+provide a liveness probe, the default state is <code>Success</code>.</p>
+</li>
+<li>
+<p><code>readinessProbe</code>: Indicates whether the container is ready to respond to requests.
+If the readiness probe fails, the endpoints controller removes the Pod&rsquo;s IP
+address from the endpoints of all Services that match the Pod. The default
+state of readiness before the initial delay is <code>Failure</code>. If a Container does
+not provide a readiness probe, the default state is <code>Success</code>.</p>
+</li>
+<li>
+<p><code>startupProbe</code>: Indicates whether the application within the container is started.
+All other probes are disabled if a startup probe is provided, until it succeeds.
+If the startup probe fails, the kubelet kills the container, and the container
+is subjected to its <a href="#restart-policy">restart policy</a>. If a Container does not
+provide a startup probe, the default state is <code>Success</code>.</p>
+</li>
+</ul>
+<p>For more information about how to set up a liveness, readiness, or startup probe,
+see <a href="/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">Configure Liveness, Readiness and Startup Probes</a>.</p>
+<h3 id="when-should-you-use-a-liveness-probe">When should you use a liveness probe?</h3>
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.0 [stable]</code>
+</div>
+
+
+<p>If the process in your container is able to crash on its own whenever it
+encounters an issue or becomes unhealthy, you do not necessarily need a liveness
+probe; the kubelet will automatically perform the correct action in accordance
+with the Pod&rsquo;s <code>restartPolicy</code>.</p>
+<p>If you&rsquo;d like your container to be killed and restarted if a probe fails, then
+specify a liveness probe, and specify a <code>restartPolicy</code> of Always or OnFailure.</p>
+<h3 id="when-should-you-use-a-readiness-probe">When should you use a readiness probe?</h3>
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.0 [stable]</code>
+</div>
+
+
+<p>If you&rsquo;d like to start sending traffic to a Pod only when a probe succeeds,
+specify a readiness probe. In this case, the readiness probe might be the same
+as the liveness probe, but the existence of the readiness probe in the spec means
+that the Pod will start without receiving any traffic and only start receiving
+traffic after the probe starts succeeding.
+If your container needs to work on loading large data, configuration files, or
+migrations during startup, specify a readiness probe.</p>
+<p>If you want your container to be able to take itself down for maintenance, you
+can specify a readiness probe that checks an endpoint specific to readiness that
+is different from the liveness probe.</p>
+<blockquote class="note">
+  <div><strong>说明：</strong> If you just want to be able to drain requests when the Pod is deleted, you do not
+necessarily need a readiness probe; on deletion, the Pod automatically puts itself
+into an unready state regardless of whether the readiness probe exists.
+The Pod remains in the unready state while it waits for the containers in the Pod
+to stop.</div>
+</blockquote>
+
+<h3 id="when-should-you-use-a-startup-probe">When should you use a startup probe?</h3>
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.16 [alpha]</code>
+</div>
+
+
+<p>Startup probes are useful for Pods that have containers that take a long time to
+come into service. Rather than set a long liveness interval, you can configure
+a separate configuration for probing the container as it starts up, allowing
+a time longer than the liveness interval would allow.</p>
+<p>If your container usually starts in more than
+<code>initialDelaySeconds + failureThreshold × periodSeconds</code>, you should specify a
+startup probe that checks the same endpoint as the liveness probe. The default for
+<code>periodSeconds</code> is 30s. You should then set its <code>failureThreshold</code> high enough to
+allow the container to start, without changing the default values of the liveness
+probe. This helps to protect against deadlocks.</p>
+<h2 id="pod-termination">Termination of Pods</h2>
+<p>Because Pods represent processes running on nodes in the cluster, it is important to
+allow those processes to gracefully terminate when they are no longer needed (rather
+than being abruptly stopped with a <code>KILL</code> signal and having no chance to clean up).</p>
+<p>The design aim is for you to be able to request deletion and know when processes
+terminate, but also be able to ensure that deletes eventually complete.
+When you request deletion of a Pod, the cluster records and tracks the intended grace period
+before the Pod is allowed to be forcefully killed. With that forceful shutdown tracking in
+place, the <a class='glossary-tooltip' href='/docs/reference/generated/kubelet' target='_blank'>kubelet<span class='tooltip-text'>An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.</span>
+</a> attempts graceful
+shutdown.</p>
+<p>Typically, the container runtime sends a a TERM signal is sent to the main process in each
+container. Once the grace period has expired, the KILL signal is sent to any remainig
+processes, and the Pod is then deleted from the
+<a class='glossary-tooltip' href='/docs/reference/generated/kube-apiserver/' target='_blank'>API Server<span class='tooltip-text'>Control plane component that serves the Kubernetes API.</span>
+</a>. If the kubelet or the
+container runtime&rsquo;s management service is restarted while waiting for processes to terminate, the
+cluster retries from the start including the full original grace period.</p>
+<p>An example flow:</p>
+<ol>
+<li>You use the <code>kubectl</code> tool to manually delete a specific Pod, with the default grace period
+(30 seconds).</li>
+<li>The Pod in the API server is updated with the time beyond which the Pod is considered &ldquo;dead&rdquo;
+along with the grace period.<br>
+If you use <code>kubectl describe</code> to check on the Pod you&rsquo;re deleting, that Pod shows up as
+&ldquo;Terminating&rdquo;.<br>
+On the node where the Pod is running: as soon as the kubelet sees that a Pod has been marked
+as terminating (a graceful shutdown duration has been set), the kubelet begins the local Pod
+shutdown process.
+<ol>
+<li>If one of the Pod&rsquo;s containers has defined a <code>preStop</code>
+<a href="/docs/concepts/containers/container-lifecycle-hooks/#hook-details">hook</a>, the kubelet
+runs that hook inside of the container. If the <code>preStop</code> hook is still running after the
+grace period expires, the kubelet requests a small, one-off grace period extension of 2
+seconds.
+<blockquote class="note">
+  <div><strong>说明：</strong> If the <code>preStop</code> hook needs longer to complete than the default grace period allows,
+you must modify <code>terminationGracePeriodSeconds</code> to suit this.</div>
+</blockquote>
+</li>
+<li>The kubelet triggers the container runtime to send a TERM signal to process 1 inside each
+container.
+<blockquote class="note">
+  <div><strong>说明：</strong> The containers in the Pod receive the TERM signal at different times and in an arbitrary
+order. If the order of shutdowns matters, consider using a <code>preStop</code> hook to synchronize.</div>
+</blockquote>
+</li>
+</ol>
+</li>
+<li>At the same time as the kubelet is starting graceful shutdown, the control plane removes that
+shutting-down Pod from Endpoints (and, if enabled, EndpointSlice) objects where these represent
+a <a class='glossary-tooltip' href='/docs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>A way to expose an application running on a set of Pods as a network service.</span>
+</a> with a configured
+<a class='glossary-tooltip' href='/docs/concepts/overview/working-with-objects/labels/' target='_blank'>selector<span class='tooltip-text'>Allows users to filter a list of resources based on labels.</span>
+</a>.
+<a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/replicaset/' target='_blank'>ReplicaSets<span class='tooltip-text'>ReplicaSet ensures that a specified number of Pod replicas are running at one time</span>
+</a> and other workload resources
+no longer treat the shutting-down Pod as a valid, in-service replica. Pods that shut down slowly
+cannot continue to serve traffic as load balancers (like the service proxy) remove the Pod from
+the list of endpoints as soon as the termination grace period <em>begins</em>.</li>
+<li>When the grace period expires, the kubelet triggers forcible shutdown. The container runtime sends
+<code>SIGKILL</code> to any processes still running in any container in the Pod.
+The kubelet also cleans up a hidden <code>pause</code> container if that container runtime uses one.</li>
+<li>The kubelet triggers forcible removal of Pod object from the API server, by setting grace period
+to 0 (immediate deletion).</li>
+<li>The API server deletes the Pod&rsquo;s API object, which is then no longer visible from any client.</li>
+</ol>
+<h3 id="pod-termination-forced">Forced Pod termination</h3>
+<blockquote class="caution">
+  <div><strong>注意：</strong> Forced deletions can be potentially disruptiove for some workloads and their Pods.</div>
+</blockquote>
+
+<p>By default, all deletes are graceful within 30 seconds. The <code>kubectl delete</code> command supports
+the <code>--grace-period=&lt;seconds&gt;</code> option which allows you to override the default and specify your
+own value.</p>
+<p>Setting the grace period to <code>0</code> forcibly and immediately deletes the Pod from the API
+server. If the pod was still running on a node, that forcible deletion triggers the kubelet to
+begin immediate cleanup.</p>
+<blockquote class="note">
+  <div><strong>说明：</strong> You must specify an additional flag <code>--force</code> along with <code>--grace-period=0</code> in order to perform force deletions.</div>
+</blockquote>
+
+<p>When a force deletion is performed, the API server does not wait for confirmation
+from the kubelet that the Pod has been terminated on the node it was running on. It
+removes the Pod in the API immediately so a new Pod can be created with the same
+name. On the node, Pods that are set to terminate immediately will still be given
+a small grace period before being force killed.</p>
+<p>If you need to force-delete Pods that are part of a StatefulSet, refer to the task
+documentation for
+<a href="/docs/tasks/run-application/force-delete-stateful-set-pod/">deleting Pods from a StatefulSet</a>.</p>
+<h3 id="pod-garbage-collection">Garbage collection of failed Pods</h3>
+<p>For failed Pods, the API objects remain in the cluster&rsquo;s API until a human or
+<a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/02-controller/' target='_blank'>controller<span class='tooltip-text'>一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移</span>
+</a> process
+explicitly removes them.</p>
+<p>The control plane cleans up terminated Pods (with a phase of <code>Succeeded</code> or
+<code>Failed</code>), when the number of Pods exceeds the configured threshold
+(determined by <code>terminated-pod-gc-threshold</code> in the kube-controller-manager).
+This avoids a resource leak as Pods are created and terminated over time.</p>
 <h2 id="相关资料">相关资料</h2>
 <ul>
-<li><a href=""></a></li>
+<li>
+<p>Get hands-on experience
+<a href="/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/">attaching handlers to Container lifecycle events</a>.</p>
+</li>
+<li>
+<p>Get hands-on experience
+<a href="/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">configuring Liveness, Readiness and Startup Probes</a>.</p>
+</li>
+<li>
+<p>Learn more about <a href="/docs/concepts/containers/container-lifecycle-hooks/">container lifecycle hooks</a>.</p>
+</li>
+<li>
+<p>For detailed information about Pod / Container status in the API, see <a href="/docs/reference/generated/kubernetes-api/0.0.1/#podstatus-v1-core">PodStatus</a>
+and
+<a href="/docs/reference/generated/kubernetes-api/0.0.1/#containerstatus-v1-core">ContainerStatus</a>.</p>
+</li>
 </ul>
 <div class="edit-meta">
 Last updated on 27 Jul 2020
@@ -227,6 +862,7 @@ Published on 27 Jul 2020
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/">Scheduling and Eviction<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/00-kube-scheduler/">Kubernetes Scheduler</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/01-taint-and-toleration/">Taints and Tolerations</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/02-assign-pod-node/">Assigning Pods to Nodes</a></li>
 </ul>

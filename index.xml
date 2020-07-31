@@ -195,6 +195,15 @@ Create a Secret based on existing Docker credentials </description>
     </item>
     
     <item>
+      <title>Kubernetes Scheduler</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/00-kube-scheduler/</link>
+      <pubDate>Thu, 30 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/00-kube-scheduler/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+    </item>
+    
+    <item>
       <title>Taints and Tolerations</title>
       <link>https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/01-taint-and-toleration/</link>
       <pubDate>Tue, 07 Jul 2020 00:00:00 +0000</pubDate>
@@ -475,8 +484,7 @@ What does each admission controller do? AlwaysPullImages RuntimeClass </descript
       <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/2-concepts/03-workloads/00-pods/00-pod-lifecycle/</guid>
-      <description>TODO
-Pod phase 相关资料    </description>
+      <description>本文介经 Pod 的生命周期。 Pod 有一个既定的生命周期，开启后进行 Pending 阶段， 当其中至少有一个主要容器正常启动后变更为 Running 阶段， 如果所有容器全部正常启动则进</description>
     </item>
     
     <item>

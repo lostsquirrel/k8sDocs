@@ -3,11 +3,11 @@
 <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>注解 (Annotations) - K8S 文档笔记</title>
+<title>Kubernetes Scheduler - K8S 文档笔记</title>
 <meta name="description" content="test">
 <meta name="generator" content="Hugo 0.68.3" />
 <link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
-<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/04-annotation/">
+<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/00-kube-scheduler/">
 <link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/theme.min.css">
 <script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 <link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/chroma.min.css">
@@ -16,20 +16,20 @@
 <script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
 :root {}
 </style>
-<meta property="og:title" content="注解 (Annotations)" />
-<meta property="og:description" content="用户可以将任非标识符元素关联到对象上，其它库或工具可以读取这些元数据 关联元数据到对象 用户可以通过标签或注意的方式将元数据关联到对象上，标签用" />
+<meta property="og:title" content="Kubernetes Scheduler" />
+<meta property="og:description" content="TODO:  为内链创建占位文件，逐步整理中  相关资料    " />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/04-annotation/" />
-<meta property="article:published_time" content="2020-07-02T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-06-29T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/00-kube-scheduler/" />
+<meta property="article:published_time" content="2020-07-30T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-07-30T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="注解 (Annotations)"/>
-<meta name="twitter:description" content="用户可以将任非标识符元素关联到对象上，其它库或工具可以读取这些元数据 关联元数据到对象 用户可以通过标签或注意的方式将元数据关联到对象上，标签用"/>
-<meta itemprop="name" content="注解 (Annotations)">
-<meta itemprop="description" content="用户可以将任非标识符元素关联到对象上，其它库或工具可以读取这些元数据 关联元数据到对象 用户可以通过标签或注意的方式将元数据关联到对象上，标签用">
-<meta itemprop="datePublished" content="2020-07-02T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-06-29T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="798">
+<meta name="twitter:title" content="Kubernetes Scheduler"/>
+<meta name="twitter:description" content="TODO:  为内链创建占位文件，逐步整理中  相关资料    "/>
+<meta itemprop="name" content="Kubernetes Scheduler">
+<meta itemprop="description" content="TODO:  为内链创建占位文件，逐步整理中  相关资料    ">
+<meta itemprop="datePublished" content="2020-07-30T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-07-30T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="3">
 
 
 
@@ -64,55 +64,25 @@ var _hmt = _hmt || [];
 </header>
 
 <div class="content-container">
-<main><h1>注解 (Annotations)</h1>
-<p>用户可以将任非标识符元素关联到对象上，其它库或工具可以读取这些元数据</p>
-<h2 id="关联元数据到对象">关联元数据到对象</h2>
-<p>用户可以通过标签或注意的方式将元数据关联到对象上，标签用于选择或查找符合条件的对象， 而在注解中的元数据则不是用于选择或查找对象的，其中的内容可以很小也可以很大，可以是结构化数据也可以是非结构化数据，还可以使用标签不允许的字符
-注解与标签类似，也是键值对形式的字典，例如:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#e6db74">&#34;metadata&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> {
-  <span style="color:#f92672">&#34;annotations&#34;</span>: {
-    <span style="color:#f92672">&#34;key1&#34;</span> : <span style="color:#e6db74">&#34;value1&#34;</span>,
-    <span style="color:#f92672">&#34;key2&#34;</span> : <span style="color:#e6db74">&#34;value2&#34;</span>
-  }
-}
-</code></pre></div><p>可以用注解存储的常见数据示例：</p>
+<main><h1>Kubernetes Scheduler</h1>
+<!-- overview -->
+<blockquote class="note">
+  <div><strong>TODO: </strong> 为内链创建占位文件，逐步整理中</div>
+</blockquote>
+
+<!-- body -->
+<h2 id="相关资料">相关资料</h2>
 <ul>
-<li>由声明式配置层管理的字段. 把这些字段作为注解关联到对象是为能与诸如以下字段做区分: 由客户端或服务端设置的默认值; 由自动扩容系统自动生成的字段</li>
-<li>构建，发布，镜像相关信息如 时间戳，发布编号，git 分支，PR 编号，镜像 hash, 镜像库地址</li>
-<li>日志, 监控, 分析, 审计仓库的信息.</li>
-<li>关于客户端库或工具可用于调试目的的信息 例如：名称, 版本, 构建信息.</li>
-<li>来自用户或 工具/系统 信息, 例如 对象在外部系统中的URLs地址</li>
-<li>轻量级回滚帮助信息， 例如, 配置或检查点.</li>
-<li>对使用对象的用户提供修改指导或非标准特性的使用说明</li>
+<li><a href=""></a></li>
 </ul>
-<p>当然这些信息可以保存在外部的数据库或系统中，但这样制作部署，管理，自省的工具库就不那么容易了</p>
-<h2 id="语法和字符集">语法和字符集</h2>
-<p>标签由 键值对组成。 合法的键可以由两上部分组成， 一个可选的前级加上本身的名称中间用斜线(<code>/</code>)分隔。
-名称部分 不得多于63个字符，必须以字母或数字 ([a-z0-9A-Z])开头和结束，中间部分可以包含中划线(<code>-</code>)，下划线 <code>(_)</code>，点 (<code>.</code>),字母,数字。
-如果要使用前缀， 前端必须是一个合法的 DNS 字域名，由多个 DNS 标签组成，中间由点(<code>.</code>)分隔， 总长度不超过 253 个字符</p>
-<p>如果一个标签键没有前缀则假定它是属于用于私有的，
-由系统自动化组件(e.g. <code>kube-scheduler</code>, <code>kube-controller-manager</code>, <code>kube-apiserver</code>, <code>kubectl</code>, 或其它第三方自动化工具), 在给用户对象加标签时必须加前缀， <code>kubernetes.io/</code>和 <code>k8s.io/</code> 为 k8s 核心组件保留前缀</p>
-<p>以下示例一个包含一个注解 <code>imageregistry: https://hub.docker.com/</code> 的 Pod</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
-<span style="color:#66d9ef">kind</span>: Pod
-metadata:
-  <span style="color:#66d9ef">name</span>: annotations-demo
-  annotations:
-    <span style="color:#66d9ef">imageregistry</span>: <span style="color:#e6db74">&#34;https://hub.docker.com/&#34;</span>
-spec:
-  containers:
-  - <span style="color:#66d9ef">name</span>: nginx
-    <span style="color:#66d9ef">image</span>: nginx:<span style="color:#ae81ff">1.14.2</span>
-    ports:
-    - <span style="color:#66d9ef">containerPort</span>: <span style="color:#ae81ff">80</span>
-</code></pre></div><div class="edit-meta">
-Last updated on 29 Jun 2020
+<div class="edit-meta">
+Last updated on 30 Jul 2020
 
 
 <br>
-Published on 2 Jul 2020
-<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/2-concepts/00-overview/03-working-with-objects/04-annotation.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/03-label-selectors/" title="标签和标签选择器"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 标签和标签选择器</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/05-field-selectors/" title="字段选择器">Next - 字段选择器 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+Published on 30 Jul 2020
+<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/2-concepts/09-scheduling-eviction/00-kube-scheduler.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/" title="Scheduling and Eviction"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - Scheduling and Eviction</a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/01-taint-and-toleration/" title="Taints and Tolerations">Next - Taints and Tolerations <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -161,21 +131,21 @@ Published on 2 Jul 2020
   
 </li>
 
-<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/">概览<span class="mark opened">-</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/">概览<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/00-what-is-k8s/">k8s 是什么</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/01-components/">k8s 组件</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/02-k8s-api/">k8s API 说明</a></li>
 
-<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/">k8s 对象管理<span class="mark opened">-</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/">k8s 对象管理<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/01-names/">对象命令与ID</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/03-label-selectors/">标签和标签选择器</a></li>
-<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/04-annotation/">注解 (Annotations)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/04-annotation/">注解 (Annotations)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/05-field-selectors/">字段选择器</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/00-overview/03-working-with-objects/06-common-labels/">标签设置指导</a></li>
 </ul>
@@ -253,10 +223,10 @@ Published on 2 Jul 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/">Scheduling and Eviction<span class="mark closed">+</span></a>
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/">Scheduling and Eviction<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/00-kube-scheduler/">Kubernetes Scheduler</a></li>
+<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/00-kube-scheduler/">Kubernetes Scheduler</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/01-taint-and-toleration/">Taints and Tolerations</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/2-concepts/09-scheduling-eviction/02-assign-pod-node/">Assigning Pods to Nodes</a></li>
 </ul>
