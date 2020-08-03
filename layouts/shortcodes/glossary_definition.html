@@ -2,7 +2,7 @@
 {{- $id := .Get "term_id" -}}
 {{- $length := .Get "length" -}}
 {{- $prepend := .Get "prepend" }}
-{{- $glossaryBundle := site.GetPage "page" "5-reference/00-glossary" -}}
+{{- $glossaryBundle := site.GetPage "page" "reference/glossary" -}}
 {{- $glossaryItems :=  $glossaryBundle.Resources.ByType "page" -}}
 {{- $term_info := $glossaryItems.GetMatch (printf "%s*" $id ) -}}
 {{- if not $term_info -}}
