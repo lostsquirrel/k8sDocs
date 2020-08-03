@@ -1,4 +1,4 @@
-{{ $glossaryBundle := site.GetPage "page" "5-reference/00-glossary" }}
+{{ $glossaryBundle := site.GetPage "page" "reference/glossary" }}
 {{- if $glossaryBundle -}}
   {{ $pages := $glossaryBundle.Resources.ByType "page" }}
   {{- $.Scratch.Set "glossary_items"  $pages -}}
