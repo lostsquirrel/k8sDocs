@@ -1,7 +1,7 @@
 ---
 title: Pod 生命周期
 date: 2020-07-27
-draft: true
+publishdate: 2020-08-04
 weight: 1
 ---
 <!--
@@ -42,7 +42,7 @@ or is [terminated](#pod-termination).
 在 k8s 的 API 对象中， Pod 对象拥有定义明细和实时状态。 Pod 对象的状态上包含一系列 [Pod 条件](#pod-conditions)
 如果应用有需要，可以向 Pod 中加入 [自定义就绪信息](#pod-readiness-gate) 到条件子对象。
 
-在 Pod 的整个生命周期中只会被[调度](../../09-scheduling-eviction/)一次，
+在 Pod 的整个生命周期中只会被[调度](../../../scheduling-eviction/)一次，
 当一个 Pod 被调度(分配)到一个节点后，就会一直运行在这个节点上，直接被停止或被[终止](#pod-termination)
 <!-- body -->
 <!--
@@ -176,7 +176,7 @@ Each state has a specific meaning:
 ## 容器的状态
 
 与 Pod 存在几个[阶段](#pod-phase)一个样，k8s 也会跟踪 Pod 内的容器的状态。 用户可以通过
-[容器的生命周期钩子](../../02-containers/03-container-lifecycle-hooks/)
+[容器的生命周期钩子](../../../containers/container-lifecycle-hooks/)
 来以容器生命周期事件来触发一些需要工作的运行
 
 当一个 {{< glossary_tooltip term_id="kube-scheduler" >}}
@@ -283,7 +283,7 @@ Field name           | Description
 
 * `PodScheduled`: Pod 已经被调度到节点上.
 * `ContainersReady`: Pod 中所有的容器都已经就绪.
-* `Initialized`: 所有 [初始化容器](../01-init-containers/)
+* `Initialized`: 所有 [初始化容器](../init-containers/)
   都启动成功.
 * `Ready`: Pod 已经能够处理请求，应该被加入对应 Service 的负载均衡池中。
 
@@ -676,7 +676,7 @@ kubelet 或 {{< glossary_tooltip term_id="container-runtime">}} 发生重启， 
       {{< /note >}}
 3. 在 kubelet 开始平滑关闭 Pod 的进程的同时， 控制中心将正在删除的 Pod 从 对应配置选择的 {{< glossary_tooltip term_id="service">}}
     所代表的 {{< glossary_tooltip term_id="endpoint">}} (如果开启也可能是 EndpointSlice)中移出。
-    {{< glossary_tooltip term_id="replicaset">}} 和其它的工作负载资源都会将该Pod认作是失效的，对于那些半天关不掉又不能提供服务的Pod
+    {{< glossary_tooltip term_id="replica-set">}} 和其它的工作负载资源都会将该Pod认作是失效的，对于那些半天关不掉又不能提供服务的Pod
     负载均衡(如 service proxy)会在删除预期时间开始时就从 {{< glossary_tooltip term_id="endpoint">}} 列表中移出。
 4. 当预期时间用完后，就会触发 kubelet 强制删除。 {{< glossary_tooltip term_id="container-runtime">}}
   会向所有剩余的进程发送 `SIGKILL` 信号。 如果容器用到了隐藏的 `pause` 容器 kubelet 也会一起清理
