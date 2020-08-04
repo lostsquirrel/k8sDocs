@@ -3,11 +3,11 @@
 <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Extend Kubernetes - K8S 文档笔记</title>
+<title>K8S 文档笔记</title>
 <meta name="description" content="test">
 <meta name="generator" content="Hugo 0.68.3" />
 <link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
-<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/tasks/extend-kubernetes/">
+<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-pod-initialization/">
 <link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/theme.min.css">
 <script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 <link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/chroma.min.css">
@@ -16,16 +16,24 @@
 <script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
 :root {}
 </style>
-<meta property="og:title" content="Extend Kubernetes" />
-<meta property="og:description" content="test" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/tasks/extend-kubernetes/" />
-<meta property="og:updated_time" content="2020-07-08T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
+<meta property="og:title" content="" />
+<meta property="og:description" content="TODO:  为内链创建占位文件，逐步整理中  Create a Pod that has an Init Container 相关资料    " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-pod-initialization/" />
+<meta property="article:published_time" content="2020-08-04T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-08-04T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Extend Kubernetes"/>
-<meta name="twitter:description" content="test"/>
-<meta itemprop="name" content="Extend Kubernetes">
-<meta itemprop="description" content="test">
+<meta name="twitter:title" content=""/>
+<meta name="twitter:description" content="TODO:  为内链创建占位文件，逐步整理中  Create a Pod that has an Init Container 相关资料    "/>
+<meta itemprop="name" content="">
+<meta itemprop="description" content="TODO:  为内链创建占位文件，逐步整理中  Create a Pod that has an Init Container 相关资料    ">
+<meta itemprop="datePublished" content="2020-08-04T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-08-04T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="11">
+
+
+
+<meta itemprop="keywords" content="" />
 <script>
 var _hmt = _hmt || [];
 (function() {
@@ -57,14 +65,26 @@ var _hmt = _hmt || [];
 </header>
 
 <div class="content-container">
-<main><h1>Extend Kubernetes</h1><div class="edit-meta">
-Last updated on 8 Jul 2020
+<main><h1></h1>
+<!-- overview -->
+<blockquote class="note">
+  <div><strong>TODO: </strong> 为内链创建占位文件，逐步整理中</div>
+</blockquote>
+
+<!-- body -->
+<h2 id="create-a-pod-that-has-an-init-container">Create a Pod that has an Init Container</h2>
+<h2 id="相关资料">相关资料</h2>
+<ul>
+<li><a href=""></a></li>
+</ul>
+<div class="edit-meta">
+Last updated on 4 Aug 2020
 
 
 <br>
-Published on 8 Jul 2020
-<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/tasks/extend-kubernetes/_index.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/debug-init-containers/" title="Debug Init Containers"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - Debug Init Containers</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/tasks/extend-kubernetes/01-setup-konnectivity/" title="Set up Konnectivity service">Next - Set up Konnectivity service <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+Published on 4 Aug 2020
+<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/tasks/configure-pod-container/configure-pod-initialization.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/09-security-context/" title="Configure a Security Context for a Pod or Container"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - Configure a Security Context for a Pod or Container</a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/attach-handler-lifecycle-event/" title="Attach Handlers to Container Lifecycle Events">Next - Attach Handlers to Container Lifecycle Events <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -260,13 +280,13 @@ Published on 8 Jul 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/">Configure Pod Containters<span class="mark closed">+</span></a>
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/">Configure Pod Containters<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/10-configure-service-account/">Configure Service Accounts for Pods</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/11-pull-image-private-registry/">Pull an Image from a Private Registry</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/09-security-context/">Configure a Security Context for a Pod or Container</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-pod-initialization/"></a></li>
+<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-pod-initialization/"></a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/attach-handler-lifecycle-event/">Attach Handlers to Container Lifecycle Events</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
 </ul>
@@ -298,7 +318,7 @@ Published on 8 Jul 2020
   
 </li>
 
-<li class="parent active has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/extend-kubernetes/">Extend Kubernetes<span class="mark opened">-</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/extend-kubernetes/">Extend Kubernetes<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/extend-kubernetes/01-setup-konnectivity/">Set up Konnectivity service</a></li>

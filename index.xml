@@ -314,6 +314,15 @@ Running cloud-controller-manager </description>
     </item>
     
     <item>
+      <title></title>
+      <link>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-pod-initialization/</link>
+      <pubDate>Tue, 04 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-pod-initialization/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  Create a Pod that has an Init Container 相关资料    </description>
+    </item>
+    
+    <item>
       <title>Attach Handlers to Container Lifecycle Events</title>
       <link>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/attach-handler-lifecycle-event/</link>
       <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
@@ -358,6 +367,15 @@ The Downward API </description>
       <guid>https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/00-debug-application-introspection/</guid>
       <description>TODO
 相关资料    </description>
+    </item>
+    
+    <item>
+      <title>Debug Init Containers</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/debug-init-containers/</link>
+      <pubDate>Tue, 04 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/debug-init-containers/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
     </item>
     
     <item>
@@ -506,12 +524,12 @@ What does each admission controller do? AlwaysPullImages RuntimeClass </descript
     </item>
     
     <item>
-      <title>Init Containers</title>
+      <title>初始化容器</title>
       <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/init-containers/</link>
       <pubDate>Wed, 29 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/init-containers/</guid>
-      <description>TODO:  为内链创建占位文件，逐步整理中  </description>
+      <description>PodPod 表示集群中运行的一组容器的集合 . Init containers can contain utilities or setup scripts not present in an app image. You can specify init containers in the Pod specification alongside the `containers` array (which describes app containers). -- 本文主要介绍初始化容器: 一种在 Pod 中在应用容</description>
     </item>
     
     <item>

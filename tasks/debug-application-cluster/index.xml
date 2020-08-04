@@ -21,5 +21,14 @@
 相关资料    </description>
     </item>
     
+    <item>
+      <title>Debug Init Containers</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/debug-init-containers/</link>
+      <pubDate>Tue, 04 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/debug-init-containers/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+    </item>
+    
   </channel>
 </rss>

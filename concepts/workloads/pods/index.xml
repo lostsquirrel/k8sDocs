@@ -21,12 +21,12 @@
     </item>
     
     <item>
-      <title>Init Containers</title>
+      <title>初始化容器</title>
       <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/init-containers/</link>
       <pubDate>Wed, 29 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/init-containers/</guid>
-      <description>TODO:  为内链创建占位文件，逐步整理中  </description>
+      <description>PodPod 表示集群中运行的一组容器的集合 . Init containers can contain utilities or setup scripts not present in an app image. You can specify init containers in the Pod specification alongside the `containers` array (which describes app containers). -- 本文主要介绍初始化容器: 一种在 Pod 中在应用容</description>
     </item>
     
     <item>
