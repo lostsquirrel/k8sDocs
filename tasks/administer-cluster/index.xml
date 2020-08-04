@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Administer a Cluster on K8S 文档笔记</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/</link>
+    <description>Recent content in Administer a Cluster on K8S 文档笔记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 30 Jun 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Cloud Controller Manager Administration</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/09-running-cloud-controller/</link>
+      <pubDate>Fri, 17 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/09-running-cloud-controller/</guid>
+      <description>TODO
+Running cloud-controller-manager </description>
+    </item>
+    
+    <item>
+      <title>Control Topology Management Policies on a node</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/14-topology-manager/</link>
+      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/14-topology-manager/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
+      <title>Developing Cloud Controller Manager</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/18-developing-cloud-controller-manager/</link>
+      <pubDate>Fri, 17 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/18-developing-cloud-controller-manager/</guid>
+      <description>TODO 这个整理优先级应该较低</description>
+    </item>
+    
+    <item>
+      <title>Reserve Compute Resources for System Daemons</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/28-reserve-compute-resources/</link>
+      <pubDate>Tue, 07 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/28-reserve-compute-resources/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
+      <title>通过名字空间分享一个集群</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/34-namespaces/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/34-namespaces/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/10-cluster-management/</link>
+      <pubDate>Thu, 09 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/10-cluster-management/</guid>
+      <description>TODO 集群自动扩容</description>
+    </item>
+    
+  </channel>
+</rss>

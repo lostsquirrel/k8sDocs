@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Install Tools on K8S 文档笔记</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/tasks/tools/</link>
+    <description>Recent content in Install Tools on K8S 文档笔记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 11 Jun 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>下载安装配置 kubectl</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/tasks/tools/00-install-kubectl/</link>
+      <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/tools/00-install-kubectl/</guid>
+      <description>kubectl 是 k8s 的命令行工具，用于通过命令管理k8s集群。 kubectl 可以用于部署应用，查看和管理集群资源，查看日志，具体使用明细请见 源地址 本站地址 准备 kubectl 版本与</description>
+    </item>
+    
+    <item>
+      <title>安装 Minikube</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/tasks/tools/01-install-minikube/</link>
+      <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/tools/01-install-minikube/</guid>
+      <description>本文介结 Minikube 安装， Minikube 是一个创建运行在虚拟机的的本地单节点 k8s 集群的工具 环境准备 检查本机虚拟化支持 grep -E --color &#39;vmx|svm&#39; /proc/cpuinfo 安装 虚拟机管理程序(以下选择一个) VirtualBox KVM</description>
+    </item>
+    
+  </channel>
+</rss>

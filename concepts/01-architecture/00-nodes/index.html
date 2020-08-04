@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>节点 - K8S 文档笔记</title>
+<meta name="description" content="test">
+<meta name="generator" content="Hugo 0.68.3" />
+<link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
+<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/00-nodes/">
+<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/theme.min.css">
+<script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/chroma.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.easing@1.4.1/jquery.easing.min.js"></script>
+<script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
+:root {}
+</style>
+<meta property="og:title" content="节点" />
+<meta property="og:description" content="k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。 一" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/00-nodes/" />
+<meta property="article:published_time" content="2020-07-08T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-06-30T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="节点"/>
+<meta name="twitter:description" content="k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。 一"/>
+<meta itemprop="name" content="节点">
+<meta itemprop="description" content="k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。 一">
+<meta itemprop="datePublished" content="2020-07-08T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-06-30T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="3372">
+
+
+
+<meta itemprop="keywords" content="" />
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?46e26ffc9d975f663dff0b89f1cf7931";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href=/k8sDocs/css/base_fonts.css>
+
+<link rel="stylesheet" href="/k8sDocs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/k8sDocs/css/callouts.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
+
+</head>
+<body><div class="container"><header>
+<h1>K8S 文档笔记</h1>
+
+ <span class="version">Version 0.0.1</span>
+
+<p class="description">test</p>
+
+</header>
+
+<div class="content-container">
+<main><h1>节点</h1>
+<p>k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。
+一般情况下一个集群会有多个节点; 在资源受限或学习的环境，可能只有一个节点。
+每个节点包含的组件有 kubelet, 容器运行环境, kube-proxy</p>
+<h2 id="节点管理">节点管理</h2>
+<p>向 api-server 添加节点的方式有以下两种:</p>
+<ol>
+<li>节点上的 kubelet 服务自动注册到控制中心</li>
+<li>管理员用户手动添加节点对象</li>
+</ol>
+<p>当管理员用户创建节点对象或 kubelet 将节点自动注册，控制中心会检查新创建的新节点是否有效。例如，可以通过以下 JSON 创建一个新节点</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;kind&#34;</span>: <span style="color:#e6db74">&#34;Node&#34;</span>,
+  <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;v1&#34;</span>,
+  <span style="color:#f92672">&#34;metadata&#34;</span>: {
+    <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;10.240.79.157&#34;</span>,
+    <span style="color:#f92672">&#34;labels&#34;</span>: {
+      <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;my-first-k8s-node&#34;</span>
+    }
+  }
+}
+</code></pre></div><p>k8s 节点是内部创建的. k8s 检查通过 kubelet 注册到 api-server 的节点. 如果节点是健康的 (当所有必要的服务都正常运行), 这个节点就可以用来运行 Pod, 否则 这个节点状态在变为健康之前，这个节点会被所有集群活动忽略.</p>
+<p>注意: k8s 会一直保留无效的节点并持续检查这个节点是否变更为健康. 用户或控制器必须要显示的删除这个节点对象，这种检测才会停止。</p>
+<p>节点的名称必须要是一个有效的<a href="../../00-overview/03-working-with-objects/01-names/#DNS%20%E5%AD%90%E5%9F%9F%E5%90%8D">DNS 子域名</a></p>
+<h3 id="节点的自注册">节点的自注册</h3>
+<p>当 kubelet 参数 <code>--register-node</code> 设置为 <code>true</code> 时(默认值)， kubelet 会自动把所在节点注册到 api-server. 这是首选的配置方式，被多数集群搭建工具使用。</p>
+<p>对于自注册的节点， kubelet 需要以下配置参数:</p>
+<ul>
+<li><code>--kubeconfig</code>  节点在 api-server 认证凭据所在目录</li>
+<li><code>--cloud-provider</code> 怎么从云提供商获取节点元数据</li>
+<li><code>--register-node</code> 自动注册到 api-server</li>
+<li><code>--register-with-taints</code> 为注册节点添加 taints (格式为 <key>=<value>:<effect>，多个由逗号分隔)，如果 register-node 值设置为 false 则，该配置无操作</li>
+<li><code>--node-ip</code> 节点的 IP 地址</li>
+<li><code>-node-labels</code> 当节点注册是，添加到节点上的标签</li>
+<li><code>--node-status-update-frequency</code> kubectl 向控制中心报告状态的频率</li>
+</ul>
+<p>当 <a href="https://kubernetes.io/docs/reference/access-authn-authz/node/">Node authorization mode</a> 和 <a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#noderestriction">NodeRestriction admission</a> 插件打开进, kubelet 只被授权创建/修改自己的节点资源</p>
+<h3 id="节点手动管理">节点手动管理</h3>
+<p>用户可以通过 kubectl 创建和修改节点对象
+当用户需要手动创建一个节点对象时，需要 kubelet 设置参数  <code>--register-node=false</code>
+也可修改节点配置忽略 <code>--register-node</code> 配置。 例如可以在存在的节点上设置标签或将节点标记为不可调度
+可以通过节点的标签和Pod的节点标签选择器来控制调度。 例如， 限制某个 Pod 只能在某些节点上运行
+标记一个节点为不可调度后，就会阻止调度器再向这个节点调度新的 Pod ， 但不会影响到节点上已经在运行的 Pod。 以下命令将标记指定节点为不可调度:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl cordon $NODENAME
+</code></pre></div><p>注意: 属于 DaemonSet 的 Pod 会运行在不可调度的节点上， 因为 <code>DaemonSets</code> 通常提供节点本地服务，所以即使节点被清空应用工作负载也应该运行在节点</p>
+<h2 id="节点状态">节点状态</h2>
+<p>节点状态包含以下信息:</p>
+<ul>
+<li>地址</li>
+<li>条件</li>
+<li>容量和可分配状态</li>
+<li>其它信息</li>
+</ul>
+<p>可以通过以命令查看节点状态与其它更多信息:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl describe node &lt;insert-node-name-here&gt;
+</code></pre></div><p>每个部分详细信息</p>
+<h3 id="地址">地址</h3>
+<p>这些字段会根据节点是云提供或裸金属和等的不同而不同</p>
+<ul>
+<li>主机名: 由节点的内核提供，可以通过 kubelet 的 &ndash;hostname-override 覆盖</li>
+<li>外部IP: 在外部网络(集群之外)路由可达的IP地址</li>
+<li>内部IP: 只在集群内部路由可达的IP地址</li>
+</ul>
+<h3 id="条件">条件</h3>
+<p>conditions 字段描述的是 所有状态为 Running 的节点， 示例如下:</p>
+<ul>
+<li>
+<p>Ready</p>
+<ul>
+<li>True 则表示节点健康，可以接收调度 Pod</li>
+<li>False 则表示节点状不健康，不可接收 Pod</li>
+<li>Unknown node 控制器在最近一个 <code>node-monitor-grace-period</code> 内(默认40s)没有收到节点的心跳</li>
+</ul>
+</li>
+<li>
+<p>DiskPressure</p>
+<ul>
+<li>True 磁盘存储剩余空间紧张</li>
+<li>False 磁盘存储剩余空间充足</li>
+</ul>
+</li>
+<li>
+<p>MemoryPressure</p>
+<ul>
+<li>True 节点内存紧张</li>
+<li>False 节点内存充足</li>
+</ul>
+</li>
+<li>
+<p>PIDPressure</p>
+<ul>
+<li>True 节点上的进程太多了</li>
+<li>False 节点上进程数量适度</li>
+</ul>
+</li>
+<li>
+<p>NetworkUnavailable</p>
+<ul>
+<li>True 节点网络配置错误</li>
+<li>False 节点网络配置正常</li>
+</ul>
+</li>
+</ul>
+<p>注意: 通过命令行工具打印清楚节点的详细信息中， 条件信息中包含 <code>SchedulingDisabled</code>， 但 SchedulingDisabled 不属于 k8s API, 而是节点被标记为不可调度</p>
+<p>节点的条件可以表现为JSON对象，如下是一个健康的节点的示例:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#e6db74">&#34;conditions&#34;</span><span style="color:#960050;background-color:#1e0010">:</span> [
+  {
+    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Ready&#34;</span>,
+    <span style="color:#f92672">&#34;status&#34;</span>: <span style="color:#e6db74">&#34;True&#34;</span>,
+    <span style="color:#f92672">&#34;reason&#34;</span>: <span style="color:#e6db74">&#34;KubeletReady&#34;</span>,
+    <span style="color:#f92672">&#34;message&#34;</span>: <span style="color:#e6db74">&#34;kubelet is posting ready status&#34;</span>,
+    <span style="color:#f92672">&#34;lastHeartbeatTime&#34;</span>: <span style="color:#e6db74">&#34;2019-06-05T18:38:35Z&#34;</span>,
+    <span style="color:#f92672">&#34;lastTransitionTime&#34;</span>: <span style="color:#e6db74">&#34;2019-06-05T11:41:27Z&#34;</span>
+  }
+]
+
+</code></pre></div><p>如果 <code>Ready</code> 条件的状态为 <code>Unknown</code> 或 <code>False</code> 持续时间超过 <code>pod-eviction-timeout</code> (通过  kube-controller-manager 参数配置)， 这个节点上所以的 Pod 都会被节点控制器调度为删除。 默认的踢除的超时时间为5分钟。 在某些情况下，当一个节点不可达时，api-server 就不能与节点上的 kubelet 进行通信。 在 kubelet 与 api-server 重新建立连接之前对 Pod 的删除指令传达不到 kubelet. 在这段时间内这些被调度为删除的节点可以继续在分区节点上运行。</p>
+<p>节点控制器在确认 Pod 在集群中已经停止运行前是不会强制删除的。 所以可以会出现 Pod 运行在状态为  <code>Terminating</code> 或 <code>Unknown</code> 的不可达节点上。 有时候 k8s 不能在节点被永久移出集群后不能从基础设施自动的移除，需要管理员手动地删除对应的节点对象。从 k8s 中删除节点对象时，会同时从 api-server 中对应删除节点上运行的所有 Pod 对象，并释放其名称</p>
+<p>节点的生命周期管理器会自动创建代理节点状态的 <code>Taint</code>. 调度器在分配 Pod 到节点时会顾及节点上的 Taint. Pod 也可以配置容忍节点的某些 <code>Taint</code></p>
+<p>了解更多 Taint 相关信息见<a href="../../09-scheduling-eviction/01-taint-and-toleration.md">这里</a></p>
+<h3 id="容量和可分配状态">容量和可分配状态</h3>
+<p>表示节点上的可用资源: CPU, 内存， 节点可接受 Pod 数量的最大值
+容量(capacity)块下的字段表示节点资源总数
+可分配状态(allocatable)块下的字段表示可用于普通 Pod 的资源数</p>
+<p>了解更多关于 容量和可分配状态 的信息见<a href="../../../3-tasks/01-administer-cluster/28-reserve-compute-resources.md">这里</a></p>
+<h3 id="其它信息">其它信息</h3>
+<p>表示邛的通用信息，如 内核版本， k8s 版本(kubelet 和 kube-proxy 的版本)， Docker 版本， OS 名称。 这些信息都是节点上的 kubelet 生成的</p>
+<h3 id="节点控制器">节点控制器</h3>
+<p>节点控制器是 k8s 控制中心的组成部分，用于管理节点的各方面功能
+节点控制器在节点的生命周期类扮演多个角色。 第一个就是为节点分配 CIDR 段(当 CIDR 分配开启时)
+第二个是保持节点控制器内部的节点列表与云提供商提供的可用机器列表一致， 在运行在云环境时，当一个节点状态变为不健康时， 节点控制器会向云提供商查询该节点的虚拟机是否可用。 如果不可用就会从列表中删除该节点
+第三个是监控节点状态， 节点控制器负责在节点变得不可达时(如， 因为某些原因收不到心跳，比如节点宕机)，更新节点就绪状态为 <code>ConditionUnknown</code>， 如果节点持续不可达则踢出节点上所有的Pod(使用优雅终结方式)。设置就绪状态的不可达时间为 40s, 踢除 Pod 的时间为 5 分钟。节点控制器检查节点状态的时间由 <code>--node-monitor-period</code> 配置</p>
+<h4 id="心跳">心跳</h4>
+<p>心跳由k8s 节点发送，用于帮助判定节点是否可用
+心跳的形式有两种， 一个更新 <code>NodeStatus</code> 另一个为租约对象。每个节点在 kube-node-lease 名字空间中有一个关联的租约对象。 租约是一个轻量级资源， 用户在集群范围内改善心跳的性能
+由 kubelet 负责创建更新 <code>NodeStatus</code> 和 租约对象。</p>
+<ul>
+<li>kubelet  在状态发生改变或在配置的时间间隔内没有更新时更新 <code>NodeStatus</code>， <code>NodeStatus</code> 更新的默认的更新间隔为 5 分钟(比不可达节点默认超时的 40 秒长很多)</li>
+<li>kubelet 创建随后每隔10秒(默认时间间隔)更新租约对象。 租约对象的更新独立与 <code>NodeStatus</code> 更新。 如果租约更新失败， kubelet 使用从 200ms 到 7s 间的指数组补尝</li>
+</ul>
+<h4 id="可靠性">可靠性</h4>
+<p>大多数情况下， 节点控制器限制踢除速率由 <code>--node-eviction-rate</code>(每秒) 配置， 默认 <code>0.1</code>，即每10秒最多能踢除一个 Pod。
+节点的踢除行为会在节点所有的可用区变为不健康时发生改变。 节点控制器会检查区域内同一时间不健康(<code>NodeReady</code> 条件为 <code>ConditionUnknown</code> 或 <code>ConditionFalse</code>)节点的百分比。 如果不健康的节点比达达到 <code>--unhealthy-zone-threshold</code> (默认 0.55)时踢除速率会降低: 如果集群较小(不多于 <code>--large-cluster-size-threshold</code> 节点, 默认 50)，踢除行为停止。否则踢除速率降低至 <code>--secondary-node-eviction-rate</code> (默认 0.01)每秒。 这个策略会在每个分区实现因为这个可用区可能与集群分隔， 但其它部分仍正常连接。 如果集群不是分散在多个云提供商的可用区，则只有一个可用区(即整个集群)。</p>
+<p>将节点分散在不同可用区的主要原因就当一个可用区整体不可用时，可以将工作负载转移到另一个可用区。 如果一个可用区的节点都不可用时节点控制器使用正常踢除速率(<code>--node-eviction-rate</code>). 极限情况是当所有的可用区全部变得不可用时(整个集群每有一个健康节点)， 在这种情况下节点控制器认为主节点有连接问题并停止踢除行为直到连接恢复。</p>
+<p>节点控制器负责踢除包含 NoExecute Taint 节点运行的 Pod, 除了包含容忍该 Taint 的 Pod。 节点控制器会为有问题(如不可达或未就绪的节点)添加相应的 Taint, 也就是说调度器不会向不健康的节点放置 Pod.</p>
+<p>警告: <code>kubectl cordon</code> 命令标记一个节点为不可调度，而其作为是 服务控制器会将节点从所有负载列表中移除， 并再向该节点调度流量。</p>
+<h4 id="节点容量">节点容量</h4>
+<p>节点对象记录了节点的资源容量(如: 可用内存，CPU核心数)。 自动注册的节点在注册时会报告其容量，如果节点是手动添加，则需要在添加时提供对应容量信息。
+k8s 调度器保证节点有足够的资源运行分配到其上的 Pod， 调度器检测节点不所有容器请求的资源不大于节点的容量。 请求资源总和包括由kubelet 管理的所有容器， 但不包括直接由容器运行环境启动的容器。也不包括其它所有不被kubelet 控制的进程。
+注意: 如果需要为非 Pod 进程保留资源，见<a href="../../../3-tasks/01-administer-cluster/28-reserve-compute-resources/">为系统进程保留资源</a>,系统保留部分。</p>
+<h2 id="节点拓扑">节点拓扑</h2>
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.16 [alpha]</code>
+</div>
+
+
+<p>如果通过<a href="../../../5-reference/06-command-line-tools-reference/00-feature-gates/">功能特性开关</a>，开启了 <code>TopologyManager</code>， kubelet 在作资源分配决策时会参考拓扑信息。更多信息， 见<a href="../../../3-tasks/01-administer-cluster/14-topology-manager/">节点拓扑控制管理策略</a></p>
+<div class="edit-meta">
+Last updated on 30 Jun 2020
+
+
+<br>
+Published on 8 Jul 2020
+<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/concepts/01-architecture/00-nodes.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/" title="集群架构"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 集群架构</a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/01-control-plane-node-communication/" title="控制中心与节点的通信">Next - 控制中心与节点的通信 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+</nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
+</footer>
+</main><div class="sidebar">
+
+<nav class="slide-menu">
+<ul>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs">Home</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/">Production environment<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/00-container-runtimes/">Container runtimes</a></li>
+</ul>
+  
+</li>
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/">概念(Concepts)<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/05-storage/">Storage<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/05-storage/00-volumes/">Volumes</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/">概览<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/00-what-is-k8s/">k8s 是什么</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/01-components/">k8s 组件</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/02-k8s-api/">k8s API 说明</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/">k8s 对象管理<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/">集群架构<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/00-nodes/">节点</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/01-control-plane-node-communication/">控制中心与节点的通信</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/02-controller/">控制器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/03-cloud-controller/">Cloud Controller Manager</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/">容器<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/00-images/">镜像</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/01-container-environment/">容器环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/02-runtime-class/">Runtime Class</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/container-lifecycle-hooks/">容器生命周期钩子</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/">Workloads<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/">Pods<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/init-containers/">Init Containers</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/02-pod-topology-spread-constraints/">Pod Topology Spread Constraints</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/03-pod-preset/">Pod Presets</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/04-disruptions/">Disruptions</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/05-ephemeral-containers/">Ephemeral Containers</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/01-controllers/">Controllers<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/01-controllers/01-replicationcontroller/">ReplicationController</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/">Services, Load Balancing, and Networking<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/00-service/">Service</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/">Policies<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/01-resource-quotas/">资源配额</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/02-pod-security-policy/">Pod Security Policies</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/">Scheduling and Eviction<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/00-kube-scheduler/">Kubernetes Scheduler</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/01-taint-and-toleration/">Taints and Tolerations</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/02-assign-pod-node/">Assigning Pods to Nodes</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/10-cluster-administration/">Cluster Administration<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/10-cluster-administration/03-networking/">Cluster Networking</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/11-extend-kubernetes/">Extending Kubernetes<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/11-extend-kubernetes/00-extend-cluster/">Extending your Kubernetes Cluster</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/">Tasks<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/">Install Tools<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/00-install-kubectl/">下载安装配置 kubectl</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/01-install-minikube/">安装 Minikube</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/">Administer a Cluster<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/09-running-cloud-controller/">Cloud Controller Manager Administration</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/14-topology-manager/">Control Topology Management Policies on a node</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/18-developing-cloud-controller-manager/">Developing Cloud Controller Manager</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/28-reserve-compute-resources/">Reserve Compute Resources for System Daemons</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/34-namespaces/">通过名字空间分享一个集群</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/10-cluster-management/"></a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/">Configure Pod Containters<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/10-configure-service-account/">Configure Service Accounts for Pods</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/11-pull-image-private-registry/">Pull an Image from a Private Registry</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/09-security-context/">Configure a Security Context for a Pod or Container</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/attach-handler-lifecycle-event/">Attach Handlers to Container Lifecycle Events</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/inject-data-application/">Inject Data Into Applications<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/inject-data-application/04-downward-api-volume-expose-pod-information/">Expose Pod Information to Containers Through Files</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/run-application/"><span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/run-application/force-delete-stateful-set-pod/">Force Delete StatefulSet Pods</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/">Monitoring, Logging, and Debugging<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/00-debug-application-introspection/">Application Introspection and Debugging</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/extend-kubernetes/">Extend Kubernetes<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/extend-kubernetes/01-setup-konnectivity/">Set up Konnectivity service</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/">Tutorials<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/00-hello-minikube/">Hello Minikube</a>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/">Reference<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/glossary/">Standardized Glossary</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/using-api/">Using the Kubernetes API<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/using-api/client-libraries/">Client Libraries</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/">Accessing the API<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/01-authentication/">Authenticating</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/04-admission-controllers/">Using Admission Controllers</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/07-authorization/">Authorization Overview</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/06-command-line-tools-reference/">Feature Gates<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/06-command-line-tools-reference/00-feature-gates/">Feature Gates</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/06-command-line-tools-reference/07-kubelet-authentication-authorization/">Kubelet authentication/authorization</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/06-command-line-tools-reference/08-kubelet-tls-bootstrapping/">TLS bootstrapping</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/">kubectl CLI<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/00-overview/">kubectl 概览</a></li>
+</ul>
+  
+</li>
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/10-drivers/">Minikube Drivers</a>
+  
+</li>
+</ul>
+  
+</li>
+</ul>
+</nav>
+
+
+
+<div class="sidebar-footer"></div>
+</div>
+</div><a href="#" id="backtothetop-fixed" class="backtothetop"
+ data-backtothetop-duration="600"
+ data-backtothetop-easing="easeOutQuart"
+ data-backtothetop-fixed-fadeIn="1000"
+ data-backtothetop-fixed-fadeOut="1000"
+ data-backtothetop-fixed-bottom="10"
+ data-backtothetop-fixed-right="20">
+<span class="fa-layers fa-fw">
+<i class="fas fa-circle"></i>
+<i class="fas fa-arrow-circle-up"></i>
+</span></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>k8s 对象管理 on K8S 文档笔记</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/</link>
+    <description>Recent content in k8s 对象管理 on K8S 文档笔记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Fri, 03 Jul 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>k8s 对象介绍</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/</guid>
+      <description>本文介绍 k8s 对象 是怎么在 k8s API 中表示的，怎么以 .yaml 格式输出 k8s 对象 简介 k8s 对象是 k8s 系统中持久化的实体， k8s 使用这些实体来表示集群的状态，它们具体可以表示</description>
+    </item>
+    
+    <item>
+      <title>对象命令与ID</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/</guid>
+      <description>在 k8s 的对象中，同一类型的对象名称唯一， 比如在一个 名字空间中只能有一个叫 myapp-1234 在 Pod， 但不同类型的资源可以有相同的名称，比如还可以定义一个叫 myapp-1234 在</description>
+    </item>
+    
+    <item>
+      <title>名字空间(Namespaces)</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/</guid>
+      <description>k8s 可以在一个物理集群上创建多个虚拟集群, 每个名字空间就是一个虚拟集群 啥时候用名字空间 名字空间是为用户分散于有多个组或项目下的场景设计的。 如果</description>
+    </item>
+    
+    <item>
+      <title>标签和标签选择器</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/</guid>
+      <description>标签是附加在对象上的键值对，应该与所在的对象有关且具有意义 标签可以用于组织和筛选一组对象 标签可以在对象创建时就定义，也可以在对象创建后任何时</description>
+    </item>
+    
+    <item>
+      <title>注解 (Annotations)</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/</guid>
+      <description>用户可以将任非标识符元素关联到对象上，其它库或工具可以读取这些元数据 关联元数据到对象 用户可以通过标签或注意的方式将元数据关联到对象上，标签用</description>
+    </item>
+    
+    <item>
+      <title>字段选择器</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/</link>
+      <pubDate>Fri, 03 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/</guid>
+      <description>用户可以通过字段选择器的以对象的一个或多个字段的值作为选择条件实现对 k8s 对象的选择。示例如下: metadata.name=my-service metadata.namespace!=default status.phase=Pending 以下 kubectl 命令通过选择器，选择 status.phase 字段值是 Running 的对</description>
+    </item>
+    
+    <item>
+      <title>标签设置指导</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/06-common-labels/</link>
+      <pubDate>Fri, 03 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/06-common-labels/</guid>
+      <description>用户可以使用 kubectl 和 dashboard 外的可视化管理工具。一些通用的描述对象信息的标签配置可以让这些工具更好地工作 为了工具能更好的使用这些标签，建议标签以方便查</description>
+    </item>
+    
+  </channel>
+</rss>

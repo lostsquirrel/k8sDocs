@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Reference on K8S 文档笔记</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/reference/</link>
+    <description>Recent content in Reference on K8S 文档笔记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 30 Jul 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://lostsquirrel.github.io/k8sDocs/reference/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Standardized Glossary</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/reference/glossary/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/reference/glossary/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

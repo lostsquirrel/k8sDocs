@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Monitoring, Logging, and Debugging on K8S 文档笔记</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/</link>
+    <description>Recent content in Monitoring, Logging, and Debugging on K8S 文档笔记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 27 Jul 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Application Introspection and Debugging</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/00-debug-application-introspection/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/00-debug-application-introspection/</guid>
+      <description>TODO
+相关资料    </description>
+    </item>
+    
+  </channel>
+</rss>
