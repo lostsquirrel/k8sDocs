@@ -14,6 +14,14 @@ params:
   github_doc_repository: https://github.com/lostsquirrel/k8sDocs
   language_alternatives:
     - en
+languages:
+  zh:
+    title: "Kubernetes"
+    description: "生产级别的容器编排系统"
+    languageName: "中文 Chinese"
+    weight: 2
+    contentDir: "content/zh"
+    languagedirection: "ltr"
 markup:
   goldmark:
     renderer:
