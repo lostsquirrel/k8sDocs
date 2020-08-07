@@ -49,11 +49,11 @@
     
     <item>
       <title>Disruptions</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/04-disruptions/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/disruptions/</link>
       <pubDate>Wed, 29 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/04-disruptions/</guid>
-      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/disruptions/</guid>
+      <description>本文主要给 那些需要构建高可用应用的应用所属者，需要理解 Pod 可能遇到哪些类型的故障 也适用于那些需要实现自动集群操作，如升级或集群自动扩容的集群管</description>
     </item>
     
     <item>
