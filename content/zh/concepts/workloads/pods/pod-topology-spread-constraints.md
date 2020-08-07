@@ -429,7 +429,7 @@ using default constraints for `PodTopologySpread`.
   {{<glossary_tooltip term_id="service">}}
   {{<glossary_tooltip term_id="replication-controller">}}
   {{<glossary_tooltip term_id="replica-set">}}
-  {{<glossary_tooltip term_id="stateful-set">}} 之一
+  {{<glossary_tooltip term_id="statefulset">}} 之一
 
 默认的约束条件可以作为 [scheduling profile](/k8sDocs/reference/scheduling/profiles)
 中 `PodTopologySpread` 插件参数的一部分。 这些约束条件可以能过同 [API](#api) 一样设置，
@@ -437,7 +437,7 @@ using default constraints for `PodTopologySpread`.
 {{<glossary_tooltip term_id="service">}}
 {{<glossary_tooltip term_id="replication-controller">}}
 {{<glossary_tooltip term_id="replica-set">}}
-{{<glossary_tooltip term_id="stateful-set">}}
+{{<glossary_tooltip term_id="statefulset">}}
 计算得出。
 
 以下为示例:
