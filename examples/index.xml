@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Examples on Kubernetes</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/examples/</link>
+    <description>Recent content in Examples on Kubernetes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	<atom:link href="https://lostsquirrel.github.io/k8sDocs/examples/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title></title>
+      <link>https://lostsquirrel.github.io/k8sDocs/examples/readme/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/examples/readme/</guid>
+      <description>To run the tests for a localization, use the following command:
+go test k8s.io/website/content/&amp;lt;lang&amp;gt;/examples where &amp;lt;lang&amp;gt; is the two character representation of a language. For example:
+go test k8s.io/website/content/en/examples </description>
+    </item>
+    
+  </channel>
+</rss>

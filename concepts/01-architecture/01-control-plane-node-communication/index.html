@@ -3,8 +3,8 @@
 <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>控制中心与节点的通信 - K8S 文档笔记</title>
-<meta name="description" content="test">
+<title>控制中心与节点的通信 - Kubernetes</title>
+<meta name="description" content="生产级别的容器编排系统">
 <meta name="generator" content="Hugo 0.68.3" />
 <link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
 <link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/01-control-plane-node-communication/">
@@ -21,7 +21,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/01-control-plane-node-communication/" />
 <meta property="article:published_time" content="2020-07-08T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-07-08T00:00:00+00:00" /><meta property="og:site_name" content="K8S 文档笔记" />
+<meta property="article:modified_time" content="2020-07-08T00:00:00+00:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="控制中心与节点的通信"/>
 <meta name="twitter:description" content="本文主要介结控制中心(实际就是 api-server)与 k8s 集群通信的几种途径, 目的是使用户可以选择健壮的网络配置使集群可以运行在不受信的网络环"/>
@@ -56,11 +56,11 @@ var _hmt = _hmt || [];
 
 </head>
 <body><div class="container"><header>
-<h1>K8S 文档笔记</h1>
+<h1>Kubernetes</h1>
 
  <span class="version">Version 0.0.1</span>
 
-<p class="description">test</p>
+<p class="description">生产级别的容器编排系统</p>
 
 </header>
 
@@ -68,8 +68,8 @@ var _hmt = _hmt || [];
 <main><h1>控制中心与节点的通信</h1>
 <p>本文主要介结控制中心(实际就是 api-server)与 k8s 集群通信的几种途径, 目的是使用户可以选择健壮的网络配置使集群可以运行在不受信的网络环境中(或在云提供商的公网IP上)</p>
 <h2 id="从节点到控制中心的通信">从节点到控制中心的通信</h2>
-<p>k8s 使用轴辐式(hub-and-spoke) API 模式，所有节点(包括节点上运行的Pod)使用到的API都指向 api-server(其它所有的组件在设计上就不提供远程服务)。api-server 配置成安全的HTTPS端口(通常是 443)来对外提供服务，并且开启一种或多种<a href="../../../5-reference/03-access-authn-authz/01-authentication/">认证</a>方式。还需要开启一种或多种<a href="../../../5-reference/03-access-authn-authz/07-authorization/">授权</a>方式， 特别是 匿名请求 或 service account tokens 可用(具体见认证相关部分)。
-每个节点上都需要有集群的公开根证书，这样节点才能通过有效的客户凭据安全的连接到 api-server. 例如， 在默认的 GKE 部署中， 客户端为 kubelet 提供的凭据格式为客户端证书， 自动化提供客户端证书的方式见<a href="../../../5-reference/06-command-line-tools-reference/08-kubelet-tls-bootstrapping/">这里</a>
+<p>k8s 使用轴辐式(hub-and-spoke) API 模式，所有节点(包括节点上运行的Pod)使用到的API都指向 api-server(其它所有的组件在设计上就不提供远程服务)。api-server 配置成安全的HTTPS端口(通常是 443)来对外提供服务，并且开启一种或多种<a href="../../../reference/03-access-authn-authz/01-authentication/">认证</a>方式。还需要开启一种或多种<a href="../../../reference/03-access-authn-authz/07-authorization/">授权</a>方式， 特别是 匿名请求 或 service account tokens 可用(具体见认证相关部分)。
+每个节点上都需要有集群的公开根证书，这样节点才能通过有效的客户凭据安全的连接到 api-server. 例如， 在默认的 GKE 部署中， 客户端为 kubelet 提供的凭据格式为客户端证书， 自动化提供客户端证书的方式见<a href="../../../reference/command-line-tools-reference/08-kubelet-tls-bootstrapping/">这里</a>
 如果集群中的Pod想要连接到 api-server 可以借助<code>service account</code>实现安全连接， k8s 会在 Pod 启动时自动注入公开根谈不上和令牌.
 在每个名字空间下有一个叫 <code>kubernetes</code> 的 Service， 指向一个虚拟IP地址，并重写向(通过 kube-proxy)向 api-server 的HTTPS端口上。
 控制中心组件也是通过安全端口与集群的 api-server 通信。
@@ -86,7 +86,7 @@ var _hmt = _hmt || [];
 <p>连接指向的是 kubelet 的 HTTPS 端口， 默认 api-server 不验证 kubelet 提供的证书，这样会存在中间人攻击的风险，在不受网络环境中是不安全的。</p>
 <p>要验证这个连接，需要在 api-server 配置启动参数 <code>--kubelet-certificate-authority</code> 指向 根证书用于验证 kubelet 的服务证书。
 如果做不到， 则在非受信网络或公网中使用 SSH 遂道连接 api-server 和 kubelet.
-最后，需要开启 <a href="../../../5-reference/06-command-line-tools-reference/07-kubelet-authentication-authorization/">kubelet 认证和授权</a>，以保护 kubelet API 安全。</p>
+最后，需要开启 <a href="../../../reference/command-line-tools-reference/07-kubelet-authentication-authorization/">kubelet 认证和授权</a>，以保护 kubelet API 安全。</p>
 <h3 id="从-api-server-到-kubelet-节点-pod--service-的连接">从 api-server 到 kubelet, 节点, Pod,  Service 的连接</h3>
 <p>默认情况下 从 api-server 到 kubelet, 节点, Pod,  Service 的连接是通过 HTTP 明文，因此没有认证也没加密。在连接到 节点， Pod, Service 名称对应的 API URL时可以添加 https 前缀来使用 HTTPS 来建立安全连接，但不会验证HTTPS证书也不验证客户端提供的凭据。 因此也不能保证任何完整性。 所以目前这能连接都不能用于非受信网络或公网。</p>
 <h3 id="ssh-遂道">SSH 遂道</h3>
@@ -121,27 +121,27 @@ Published on 8 Jul 2020
 <ul>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs">Home</a></li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/">Getting started<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/setup/">Getting started<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/">Production environment<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/setup/02-production-environment/">Production environment<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/00-container-runtimes/">Container runtimes</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/setup/02-production-environment/00-container-runtimes/">Container runtimes</a></li>
 </ul>
   
 </li>
 
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/00-release/">Release notes and version skew</a>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/setup/00-release/">Release notes and version skew</a>
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
 </ul>
   
 </li>
@@ -216,8 +216,8 @@ Published on 8 Jul 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/init-containers/">初始化容器</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/02-pod-topology-spread-constraints/">Pod Topology Spread Constraints</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/03-pod-preset/">Pod Presets</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑分布约束条件</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/podpreset/">Pod 预设信息</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/04-disruptions/">Disruptions</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/05-ephemeral-containers/">Ephemeral Containers</a></li>
 </ul>
@@ -357,11 +357,11 @@ Published on 8 Jul 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/">Tutorials<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tutorials/">Tutorials<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/4-tutorials/00-hello-minikube/">Hello Minikube</a>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tutorials/00-hello-minikube/">Hello Minikube</a>
   
 </li>
 </ul>
@@ -391,12 +391,28 @@ Published on 8 Jul 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/06-command-line-tools-reference/">Feature Gates<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/kubernetes-api/">API Reference<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/06-command-line-tools-reference/00-feature-gates/">Feature Gates</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/06-command-line-tools-reference/07-kubelet-authentication-authorization/">Kubelet authentication/authorization</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/06-command-line-tools-reference/08-kubelet-tls-bootstrapping/">TLS bootstrapping</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/kubernetes-api/labels-annotations-taints/">Well-Known Labels, Annotations and Taints</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/">Feature Gates<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/feature-gates/">Feature Gates</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/07-kubelet-authentication-authorization/">Kubelet authentication/authorization</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/08-kubelet-tls-bootstrapping/">TLS bootstrapping</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/scheduling/"><span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/scheduling/profiles/">Scheduling Profiles</a></li>
 </ul>
   
 </li>
@@ -412,6 +428,14 @@ Published on 8 Jul 2020
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/10-drivers/">Minikube Drivers</a>
   
 </li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/examples/">Examples<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/examples/readme/"></a></li>
 </ul>
   
 </li>

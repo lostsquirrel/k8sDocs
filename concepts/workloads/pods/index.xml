@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Pods on K8S 文档笔记</title>
+    <title>Pods on Kubernetes</title>
     <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/</link>
-    <description>Recent content in Pods on K8S 文档笔记</description>
+    <description>Recent content in Pods on Kubernetes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Thu, 02 Jul 2020 00:00:00 +0000</lastBuildDate>
@@ -30,21 +30,21 @@
     </item>
     
     <item>
-      <title>Pod Topology Spread Constraints</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/02-pod-topology-spread-constraints/</link>
+      <title>Pod 拓扑分布约束条件</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-topology-spread-constraints/</link>
       <pubDate>Wed, 29 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/02-pod-topology-spread-constraints/</guid>
-      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-topology-spread-constraints/</guid>
+      <description>功能特性状态: Kubernetes v1.18 [beta] You can use _topology spread constraints_ to control how PodsPod 表示集群中运行的一组容器的集合 are spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains. This can help to achieve high availability as well as efficient resource utilization. -- 功能特性</description>
     </item>
     
     <item>
-      <title>Pod Presets</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/03-pod-preset/</link>
+      <title>Pod 预设信息</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/podpreset/</link>
       <pubDate>Tue, 28 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/03-pod-preset/</guid>
-      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/podpreset/</guid>
+      <description>功能特性状态: Kubernetes v1.6 [alpha] This page provides an overview of PodPresets, which are objects for injecting certain information into pods at creation time. The information can include secrets, volumes, volume mounts, and environment variables. 功能特性状态: Kubernetes v1.6 [alpha] 本文简单介绍 PodPreset， 一个用于</description>
     </item>
     
     <item>

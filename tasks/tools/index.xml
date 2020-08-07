@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Install Tools on K8S 文档笔记</title>
+    <title>Install Tools on Kubernetes</title>
     <link>https://lostsquirrel.github.io/k8sDocs/tasks/tools/</link>
-    <description>Recent content in Install Tools on K8S 文档笔记</description>
+    <description>Recent content in Install Tools on Kubernetes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Thu, 11 Jun 2020 00:00:00 +0000</lastBuildDate>

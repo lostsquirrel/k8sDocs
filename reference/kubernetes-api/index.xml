@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>API Reference on Kubernetes</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/reference/kubernetes-api/</link>
+    <description>Recent content in API Reference on Kubernetes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 05 Aug 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://lostsquirrel.github.io/k8sDocs/reference/kubernetes-api/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Well-Known Labels, Annotations and Taints</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/reference/kubernetes-api/labels-annotations-taints/</link>
+      <pubDate>Wed, 05 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/reference/kubernetes-api/labels-annotations-taints/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+    </item>
+    
+  </channel>
+</rss>

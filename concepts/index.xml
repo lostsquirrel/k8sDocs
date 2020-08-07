@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>概念(Concepts) on K8S 文档笔记</title>
+    <title>概念(Concepts) on Kubernetes</title>
     <link>https://lostsquirrel.github.io/k8sDocs/concepts/</link>
-    <description>Recent content in 概念(Concepts) on K8S 文档笔记</description>
+    <description>Recent content in 概念(Concepts) on Kubernetes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Tue, 23 Jun 2020 00:00:00 +0000</lastBuildDate>

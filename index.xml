@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>K8S 文档笔记</title>
+    <title>K8S 文档笔记 on Kubernetes</title>
     <link>https://lostsquirrel.github.io/k8sDocs/</link>
-    <description>Recent content on K8S 文档笔记</description>
+    <description>Recent content in K8S 文档笔记 on Kubernetes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Sat, 06 Jun 2020 15:26:15 +0000</lastBuildDate>
@@ -40,29 +40,29 @@
     
     <item>
       <title>Container runtimes</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/00-container-runtimes/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/setup/02-production-environment/00-container-runtimes/</link>
       <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/1-setup/02-production-environment/00-container-runtimes/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/setup/02-production-environment/00-container-runtimes/</guid>
       <description>TODO
 相关资料    </description>
     </item>
     
     <item>
       <title>使用 Minikube 搭建 K8s环境</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/00-minikube/</link>
       <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/00-minikube/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/00-minikube/</guid>
       <description>特点 一个用于创建易于部署，运行在虚拟机的的本地单节点 k8s 集群的工具 适用场景 尝试与学习 k8s 日常开发 功能特性 DNS NodePorts ConfigMaps and Secrets Dashboards Container Runtime: Docker, CRI-O, and containerd Enabling CNI (Container Network Interface) Ingress 安装</description>
     </item>
     
     <item>
       <title>使用 Kind 搭建 K8s环境</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/01-kind/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/1-setup/01-learning-environment/01-kind/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/01-kind/</guid>
       <description>整理中</description>
     </item>
     
@@ -416,29 +416,38 @@ What does each admission controller do? AlwaysPullImages RuntimeClass </descript
     </item>
     
     <item>
+      <title>Well-Known Labels, Annotations and Taints</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/reference/kubernetes-api/labels-annotations-taints/</link>
+      <pubDate>Wed, 05 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/reference/kubernetes-api/labels-annotations-taints/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+    </item>
+    
+    <item>
       <title>Feature Gates</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/reference/06-command-line-tools-reference/00-feature-gates/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/feature-gates/</link>
       <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/reference/06-command-line-tools-reference/00-feature-gates/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/feature-gates/</guid>
       <description>TODO</description>
     </item>
     
     <item>
       <title>Kubelet authentication/authorization</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/reference/06-command-line-tools-reference/07-kubelet-authentication-authorization/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/07-kubelet-authentication-authorization/</link>
       <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/reference/06-command-line-tools-reference/07-kubelet-authentication-authorization/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/07-kubelet-authentication-authorization/</guid>
       <description>TODO</description>
     </item>
     
     <item>
       <title>TLS bootstrapping</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/reference/06-command-line-tools-reference/08-kubelet-tls-bootstrapping/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/08-kubelet-tls-bootstrapping/</link>
       <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/reference/06-command-line-tools-reference/08-kubelet-tls-bootstrapping/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/08-kubelet-tls-bootstrapping/</guid>
       <description>TODO</description>
     </item>
     
@@ -449,6 +458,15 @@ What does each admission controller do? AlwaysPullImages RuntimeClass </descript
       
       <guid>https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/00-overview/</guid>
       <description>working in progress</description>
+    </item>
+    
+    <item>
+      <title>Scheduling Profiles</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/reference/scheduling/profiles/</link>
+      <pubDate>Wed, 05 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/reference/scheduling/profiles/</guid>
+      <description>TODO:  为内链创建占位文件，逐步整理中  Scheduling plugins 相关资料    </description>
     </item>
     
     <item>
@@ -533,21 +551,21 @@ What does each admission controller do? AlwaysPullImages RuntimeClass </descript
     </item>
     
     <item>
-      <title>Pod Topology Spread Constraints</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/02-pod-topology-spread-constraints/</link>
+      <title>Pod 拓扑分布约束条件</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-topology-spread-constraints/</link>
       <pubDate>Wed, 29 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/02-pod-topology-spread-constraints/</guid>
-      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-topology-spread-constraints/</guid>
+      <description>功能特性状态: Kubernetes v1.18 [beta] You can use _topology spread constraints_ to control how PodsPod 表示集群中运行的一组容器的集合 are spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains. This can help to achieve high availability as well as efficient resource utilization. -- 功能特性</description>
     </item>
     
     <item>
-      <title>Pod Presets</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/03-pod-preset/</link>
+      <title>Pod 预设信息</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/podpreset/</link>
       <pubDate>Tue, 28 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/03-pod-preset/</guid>
-      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/podpreset/</guid>
+      <description>功能特性状态: Kubernetes v1.6 [alpha] This page provides an overview of PodPresets, which are objects for injecting certain information into pods at creation time. The information can include secrets, volumes, volume mounts, and environment variables. 功能特性状态: Kubernetes v1.6 [alpha] 本文简单介绍 PodPreset， 一个用于</description>
     </item>
     
     <item>
@@ -575,15 +593,6 @@ What does each admission controller do? AlwaysPullImages RuntimeClass </descript
       
       <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/01-controllers/01-replicationcontroller/</guid>
       <description>TODO</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://lostsquirrel.github.io/k8sDocs/template/</link>
-      <pubDate>Tue, 04 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/template/</guid>
-      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
     </item>
     
     <item>
@@ -623,16 +632,14 @@ What does each admission controller do? AlwaysPullImages RuntimeClass </descript
     </item>
     
     <item>
-      <title>About Hugo123</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/about/</link>
-      <pubDate>Wed, 09 Apr 2014 00:00:00 +0000</pubDate>
+      <title></title>
+      <link>https://lostsquirrel.github.io/k8sDocs/examples/readme/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/about/</guid>
-      <description>Hugo is a static site engine written in Go.
-It makes use of a variety of open source projects including:
- Cobra Viper J Walter Weatherman Cast  Learn more and contribute on GitHub.
-{{  }} {{  }}
- TODO:  说得不太清楚，需要实践理解后再考虑怎么修改  controllers一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移  The cloud-controller-manager is a Kubernetes control planeThe container orchestration layer that exposes the API and interfaces to define, deploy, and manage the lifecycle of containers.</description>
+      <guid>https://lostsquirrel.github.io/k8sDocs/examples/readme/</guid>
+      <description>To run the tests for a localization, use the following command:
+go test k8s.io/website/content/&amp;lt;lang&amp;gt;/examples where &amp;lt;lang&amp;gt; is the two character representation of a language. For example:
+go test k8s.io/website/content/en/examples </description>
     </item>
     
   </channel>
