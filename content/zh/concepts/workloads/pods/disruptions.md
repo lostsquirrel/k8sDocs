@@ -1,7 +1,7 @@
 ---
 title: Disruptions
 date: 2020-07-29
-draft: true
+publishdate: 2020-08-10
 weight: 2030004
 ---
 <!--
@@ -148,6 +148,7 @@ disruptions, if any, to expect.
   通过 [anti-affinity](/k8sDocs/user-guide/node-selection/#inter-pod-affinity-and-anti-affinity-beta-feature)
   ) 或 不同的区域(
   如果使用 [多区域集群](/k8sDocs/setup/multiple-zones))
+<!--
 ## Pod disruption budgets
 
 {{< feature-state for_k8s_version="v1.5" state="beta" >}}
@@ -197,7 +198,46 @@ during application updates is configured in the spec for the specific workload r
 When a pod is evicted using the eviction API, it is gracefully
 [terminated](/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination), honoring the
 `terminationGracePeriodSeconds` setting in its [PodSpec](/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#podspec-v1-core).)
+ -->
+## Pod 故障预算
 
+{{< feature-state for_k8s_version="v1.5" state="beta" >}}
+
+k8s 提供了即便在频繁有计划内故障的情况下依然可以运行高可用应用的特性。
+
+作为一个应用所有者，用户可以为每个应用创建一个 `PodDisruptionBudget` (PDB)，
+PDB 会限制在计划内故障时应用副本的 Pod 同时挂掉的数量。例如，一个基于选举的应用，就必须要保证
+运行的副本数不能少于选举所需要的数量。 一个WEB前端可能需要保证提供服务的副本数量不能少于某个百分比
+
+集群管理器和主机提供都应该使用工具来调用遵循 `PodDisruptionBudget` 的
+[Eviction API](/k8sDocs/tasks/administer-cluster/safely-drain-node/#the-eviction-api)
+而不是直接删除 Pod 或 Deployment.
+
+例如，`kubectl drain` 命令将节点标签为即将停止服务。 当运行 `kubectl drain` 后，
+工具将尝试将停止服务的节点上所有的 Pod 驱逐掉。 由 kubelet 发起的驱逐请求可能会临时被拒绝，
+所以工具会对失败的请求周期性重试直到节点上所有的 Pod 被终止或最终超时(超时时间可配置)。
+
+PDB 指定一个应用可以接受的最少同时正常运行的副本数量。 例如，一个 Deployment 上定义为 `.spec.replicas: 5`
+也就是任意时间都要有5个正常运行的副本。 如果它的 PDB 允许同时至少要有 4 个副本， 则 驱逐 API
+允许故同一时间内的计划内障数为一(不是二)
+
+而应用是通过特定标签选择器匹配到的 Pod 组成的， 与应用的控制器(deployment, stateful-set,等)一样
+
+Pod 的预期数量是通过管理这些 Pod 的工作负载资源上的 `.spec.replicas` 计算等到的。
+控制中心通过 Pod 上的 `.metadata.ownerReferences` 来查看它的拥有者。
+
+PDB 不能阻止 [计划内故障](#voluntary-and-involuntary-disruptions)的发生，
+但可以让它发生在预算控制内。
+
+由应用滚动更新造成的 Pod 删除或不可用是遵照故障预算的， 但工作负载(如 Deployment 和 StatefulSet)
+的滚动更新则不受 PDB 限制。 而是由工作负载中的配置来处理更新失败的。
+
+当一个 Pod 因使用 驱逐 API而被驱逐， 会平滑地被 [终止](/k8sDocs/concepts/workloads/pods/pod-lifecycle/#pod-termination)
+或  [PodSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#podspec-v1-core).)
+中配置的 `terminationGracePeriodSeconds` 后被杀死。
+
+{{<todo-optimize>}}
+<!--
 ## PodDisruptionBudget example {#pdb-example}
 
 Consider a cluster with 3 nodes, `node-1` through `node-3`.
@@ -284,7 +324,83 @@ can happen, according to:
 - how long it takes a new instance to start up
 - the type of controller
 - the cluster's resource capacity
+ -->
+## PodDisruptionBudget 使用示例
 
+假设有一个三个节点的集群，节点名称依次为 `node-1` 到 `node-3`, 集群中运行了多个应用。
+其中一个应用包含三个副本， 初始叫 `pod-a`, `pod-a`, `pod-c`. 还有一个不相关的 Pod 不包含 PDB
+叫 pod-x,初始分布如下:
+
+|       node-1         |       node-2        |       node-3       |
+|:--------------------:|:-------------------:|:------------------:|
+| pod-a  *available*   | pod-b *available*   | pod-c *available*  |
+| pod-x  *available*   |                     |                    |
+
+三个Pod 都属于一个 Deployment, 且共同拥有一个PDB，要求3个中至少有2个 Pod 始终可用。
+
+例如， 假设集群管理员想要更新内核版本以修复一个 bug, 所以需要重启。
+集群管理员第一步通过 `kubectl drain` 命令 尝试对 node-1 清场。
+这时会尝试驱逐 `pod-a` 和 `pod-x`。 这步操作应该立即能成功。 两个 Pod 都会同时进入 `terminating` 状态。
+集群状态变更为:
+
+|   node-1 *draining*  |       node-2        |       node-3       |
+|:--------------------:|:-------------------:|:------------------:|
+| pod-a  *terminating* | pod-b *available*   | pod-c *available*  |
+| pod-x  *terminating* |                     |                    |
+
+Deployment 发现它有一个 Pod 正在被终止， 所以它会创建一个替代 Pod 叫 `pod-d`,
+因为 node-1 不可用， 所以会被调度到其它节点上。 其它某个控制器或工具也会创建一个 `pod-y` 替代 `pod-x`
+
+{{<note>}}
+对于一个 StatefulSet， pod-a 对应的名称应该是 pod-0, 且需要被替换的 Pod 完全终止后，才会创建替代的 Pod 仍叫 pod-0, 但 UID 不一样。
+如此这样，这个示例也对 StatefulSet 适用。
+{{</note>}}
+
+集群状态再次变更为:
+
+|   node-1 *draining*  |       node-2        |       node-3       |
+|:--------------------:|:-------------------:|:------------------:|
+| pod-a  *terminating* | pod-b *available*   | pod-c *available*  |
+| pod-x  *terminating* | pod-d *starting*    | pod-y              |
+
+一段时间后， Pod 被终止，集群状态变更为:
+
+|    node-1 *drained*  |       node-2        |       node-3       |
+|:--------------------:|:-------------------:|:------------------:|
+|                      | pod-b *available*   | pod-c *available*  |
+|                      | pod-d *starting*    | pod-y              |
+
+这时如果遇到一个急躁的集群管理尝试去对 `node-2` 或 `node-3` 进行清场， 则清场命令会被阻塞，
+因为 Deployment 只有两个可用的 Pod， 而 PDB 要求至少要两个。 一段时间之后， `pod-d` 状态变更为可用
+
+集群状态变更为:
+
+|    node-1 *drained*  |       node-2        |       node-3       |
+|:--------------------:|:-------------------:|:------------------:|
+|                      | pod-b *available*   | pod-c *available*  |
+|                      | pod-d *available*   | pod-y              |
+
+此时，假设集群管理员清场的是 node-2. 清场命令会以某个顺序驱逐这两个 Pod， 假设先是 pod-b, 然后是 pod-d.
+对 pod-b 的驱逐会成功， 但是对 pod-d 的驱逐会被拒绝，因为如果 pod-d 被终止， Deployment 就只剩下一个可用 Pod。
+
+Deployment 会创建一个叫 pod-e 来替代 pod-b. 因为集群中没有足够的资源来让 pod-e 被调度， 清场命令会再次被阻塞。
+最终集群的状态为成为这样:
+
+|    node-1 *drained*  |       node-2        |       node-3       | *no node*          |
+|:--------------------:|:-------------------:|:------------------:|:------------------:|
+|                      | pod-b *terminating* | pod-c *available*  | pod-e *pending*    |
+|                      | pod-d *available*   | pod-y              |                    |
+
+至些， 集群管理员需要把完成升级的节点加入到集群中。
+
+k8s 可以接受的各种故障可能发生的频次，由如下因素决定:
+
+- 应用必须要多少个副本
+- 一个实例平滑关闭所需要的时间
+- 一个新实例启动需要多少时间
+- 控制器的类型
+- 集群资源的容量
+<!--
 ## Separating Cluster Owner and Application Owner Roles
 
 Often, it is useful to think of the Cluster Manager
@@ -301,7 +417,21 @@ interface between the roles.
 
 If you do not have such a separation of responsibilities in your organization,
 you may not need to use Pod Disruption Budgets.
+ -->
+## 集群管理员和应用管理员的角色划分
 
+通常，将集群管理员和应用管理当作不同的角色，是很有用的。
+对责任和区分在以下场景很有意义：
+
+- 当集群中有多个应用团队共同使用该集群， 只预置的角色。
+- 当第三方工作或服务对集群进行自动化管理
+
+Pod 故障预算通过角色之间的接口来实现对角色区分的支持
+
+如果用户组织中没有对责任区分的需求，则可能不震要使用 Pod 故障预算
+
+{{<todo-optimize>}}
+<!--
 ## How to perform Disruptive Actions on your Cluster
 
 If you are a Cluster Administrator, and you need to perform a disruptive action on all
@@ -318,16 +448,33 @@ the nodes in your cluster, such as a node or system software upgrade, here are s
    - Writing disruption-tolerant applications is tricky, but the work to tolerate voluntary
      disruptions largely overlaps with work to support autoscaling and tolerating
      involuntary disruptions.
+ -->
 
+## 怎么在集群中执行干扰操作
 
+如果用户为集群管理员，需要对集群中的所有节点执行干扰操作, 使用对节点或系统软件升级， 以下为一些选项：
 
+- 可以接收升级期间停止服务
+- 故障转移到另一个完整的副本集群
+  - 没有宕机时间， 但可能需要双倍的节点和运行人员来实现精细的切换
+- 编写可忍受干扰的应用并使用 PDB。
+  - 没有宕机时间
+  - 最少资源重复
+  - 允许更多集群自动化管理
+  - 编写可忍受干扰的应用是相当难的。但实现对计划内故障的忍受，则能够很大程度上覆盖了支持自动伸缩容量和忍受计划外故障的工作内容
 
+{{<todo-optimize>}}
 ## {{% heading "whatsnext" %}}
 
-
+<!--
 * Follow steps to protect your application by [configuring a Pod Disruption Budget](/docs/tasks/run-application/configure-pdb/).
 
 * Learn more about [draining nodes](/docs/tasks/administer-cluster/safely-drain-node/)
 
 * Learn about [updating a deployment](/docs/concepts/workloads/controllers/deployment/#updating-a-deployment)
   including steps to maintain its availability during the rollout.
+ -->
+- 实践 [配置 PodDisruptionBudget](/k8sDocs/tasks/run-application/configure-pdb/).
+- 实践 [节点清场](/k8sDocs/tasks/administer-cluster/safely-drain-node/)
+- 了解 [更新 Deployment](/k8sDocs/concepts/workloads/controllers/deployment/#updating-a-deployment)
+  包括在回滚时用哪些步骤保持其可用性
