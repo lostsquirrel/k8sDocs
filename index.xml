@@ -587,11 +587,20 @@ What does each admission controller do? AlwaysPullImages RuntimeClass </descript
     </item>
     
     <item>
+      <title>ReplicaSet</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/</link>
+      <pubDate>Thu, 13 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/</guid>
+      <description>ReplicaSet 的作用是在任意时间内维持一个稳定的 Pod 副本集。因此它经常被用来保证特定 Pod 在指定的数量以提供可用性。 控制器一个控制回路，负责通过 apiserver 监控集群的共</description>
+    </item>
+    
+    <item>
       <title>ReplicationController</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/01-controllers/01-replicationcontroller/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/</link>
       <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/01-controllers/01-replicationcontroller/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/</guid>
       <description>TODO</description>
     </item>
     

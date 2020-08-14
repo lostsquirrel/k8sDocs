@@ -18,4 +18,4 @@ spec:
     spec:
       containers:
       - name: php-redis
-        image: gcr.io/google_samples/gb-frontend:v3
+        image: registry.cn-hangzhou.aliyuncs.com/lisong/gb-frontend:v3-google_samples

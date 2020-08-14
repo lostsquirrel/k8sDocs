@@ -253,7 +253,7 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/01-controllers/</loc>
+    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/</loc>
     <lastmod>2020-07-02T00:00:00+00:00</lastmod>
   </url>
   
@@ -487,7 +487,12 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/01-controllers/01-replicationcontroller/</loc>
+    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/</loc>
+    <lastmod>2020-08-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/</loc>
     <lastmod>2020-07-02T00:00:00+00:00</lastmod>
   </url>
   
