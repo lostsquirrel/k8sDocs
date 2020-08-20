@@ -29,7 +29,7 @@
 <meta itemprop="description" content="功能特性状态: Kubernetes v1.16 [alpha] This page provides an overview of ephemeral containers: a special type of container that runs temporarily in an existing PodPod 表示集群中运行的一组容器的集合 to accomplish user-initiated actions such as troubleshooting. You use ephemeral containers to inspect services rather than to build applications. 警告： Ephemeral containers are">
 <meta itemprop="datePublished" content="2020-08-12T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-07-29T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1591">
+<meta itemprop="wordCount" content="1624">
 
 
 
@@ -130,7 +130,7 @@ significantly in the future or be removed entirely.</div>
 block of Kubernetes applications. Since Pods are intended to be disposable and
 replaceable, you cannot add a container to a Pod once it has been created.
 Instead, you usually delete and replace Pods in a controlled fashion using
-<a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/deployment/' target='_blank'>deployments<span class='tooltip-text'>Manages a replicated application on your cluster.</span>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>deployments<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a>.
 
 Sometimes it's necessary to inspect the state of an existing Pod, however, for
@@ -142,7 +142,7 @@ arbitrary commands.
 <p><a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a> 是 k8s 应用构建的基石. 但在 Pod 的设计理念上它就是一个
 一次性的可替换的组件，所以就不能在 Pod 创建后再往里面塞容器了。 如果要做变更通常就是通过
-<a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>Manages a replicated application on your cluster.</span>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a> 这种删除替换的套路。</p>
 <p>但是有时候又需要查看已经存在 Pod 内的某些状太，比如找一个很难重现的虫。 在这种情况下就可以在已经
 存在的 Pod 里面塞一个临时容器然后在里面使劲折腾了。</p>
@@ -523,6 +523,7 @@ Published on 12 Aug 2020
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/">Controllers<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/deployment/">Deployment</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/">ReplicaSet</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a></li>
 </ul>

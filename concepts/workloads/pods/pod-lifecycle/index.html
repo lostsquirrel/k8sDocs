@@ -29,7 +29,7 @@
 <meta itemprop="description" content="本文介经 Pod 的生命周期。 Pod 有一个既定的生命周期，开启后进行 Pending 阶段， 当其中至少有一个主要容器正常启动后变更为 Running 阶段， 如果所有容器全部正常启动则进">
 <meta itemprop="datePublished" content="2020-08-04T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-07-27T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="7621">
+<meta itemprop="wordCount" content="7639">
 
 
 
@@ -816,7 +816,7 @@ order. If the order of shutdowns matters, consider using a <code>preStop</code> 
 </a> with a configured
    <a class='glossary-tooltip' href='/docs/concepts/overview/working-with-objects/labels/' target='_blank'>selector<span class='tooltip-text'>Allows users to filter a list of resources based on labels.</span>
 </a>.
-   <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/replicaset/' target='_blank'>ReplicaSets<span class='tooltip-text'>ReplicaSet ensures that a specified number of Pod replicas are running at one time</span>
+   <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/replicaset/' target='_blank'>ReplicaSets<span class='tooltip-text'>ReplicaSet 保证在任意时间点上某个 Pod 有指定数量副本在运行</span>
 </a> and other workload resources
    no longer treat the shutting-down Pod as a valid, in-service replica. Pods that shut down slowly
    cannot continue to serve traffic as load balancers (like the service proxy) remove the Pod from
@@ -869,7 +869,7 @@ kubelet 会在对应容器中执行这个钩子。 如果在预期时间到达�
 </a>
 所代表的 <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-endpoint' target='_blank'>Endpoints<span class='tooltip-text'>Endpoints track the IP addresses of Pods with matching Service selectors.</span>
 </a> (如果开启也可能是 EndpointSlice)中移出。
-<a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/replicaset/' target='_blank'>ReplicaSet<span class='tooltip-text'>ReplicaSet ensures that a specified number of Pod replicas are running at one time</span>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/replicaset/' target='_blank'>ReplicaSet<span class='tooltip-text'>ReplicaSet 保证在任意时间点上某个 Pod 有指定数量副本在运行</span>
 </a> 和其它的工作负载资源都会将该Pod认作是失效的，对于那些半天关不掉又不能提供服务的Pod
 负载均衡(如 service proxy)会在删除预期时间开始时就从 <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-endpoint' target='_blank'>Endpoints<span class='tooltip-text'>Endpoints track the IP addresses of Pods with matching Service selectors.</span>
 </a> 列表中移出。</li>
@@ -1093,6 +1093,7 @@ Published on 4 Aug 2020
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/">Controllers<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/deployment/">Deployment</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/">ReplicaSet</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a></li>
 </ul>

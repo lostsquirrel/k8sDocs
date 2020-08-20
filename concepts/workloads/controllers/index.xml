@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>Deployment</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/deployment/</link>
+      <pubDate>Fri, 14 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/deployment/</guid>
+      <description>Kubernetes progressively rolls out changes to your application or its configuration, while monitoring application health to ensure it doesn&#39;t kill all your instances at the same time. If something goes wrong, Kubernetes will rollback the change for you. Take advantage of a growing ecosystem of deployment solutions. content_type: concept weight: 10 --- -- PodsPod 表示集群中运行的一组容器的集合 ReplicaSetsReplicaSet</description>
+    </item>
+    
+    <item>
       <title>ReplicaSet</title>
       <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/</link>
       <pubDate>Thu, 13 Aug 2020 00:00:00 +0000</pubDate>

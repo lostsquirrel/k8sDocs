@@ -29,7 +29,7 @@
 <meta itemprop="description" content="功能特性状态: Kubernetes v1.18 [beta] You can use _topology spread constraints_ to control how PodsPod 表示集群中运行的一组容器的集合 are spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains. This can help to achieve high availability as well as efficient resource utilization. -- 功能特性">
 <meta itemprop="datePublished" content="2020-08-05T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-07-29T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="4056">
+<meta itemprop="wordCount" content="4136">
 
 
 
@@ -829,9 +829,9 @@ using default constraints for <code>PodTopologySpread</code>.</div>
 <li>Pod 属于
 <a class='glossary-tooltip' href='/docs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>A way to expose an application running on a set of Pods as a network service.</span>
 </a>
-<a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-replication-controller' target='_blank'>ReplicationController<span class='tooltip-text'>A (deprecated) API object that manages a replicated application.</span>
+<a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-replication-controller' target='_blank'>ReplicationController<span class='tooltip-text'>一个 (废弃的) API 对象用于管理多副本应用</span>
 </a>
-<a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/replicaset/' target='_blank'>ReplicaSet<span class='tooltip-text'>ReplicaSet ensures that a specified number of Pod replicas are running at one time</span>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/replicaset/' target='_blank'>ReplicaSet<span class='tooltip-text'>ReplicaSet 保证在任意时间点上某个 Pod 有指定数量副本在运行</span>
 </a>
 <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>Manages deployment and scaling of a set of Pods, with durable storage and persistent identifiers for each Pod.</span>
 </a> 之一</li>
@@ -841,9 +841,9 @@ using default constraints for <code>PodTopologySpread</code>.</div>
 除了 <code>labelSelector</code> 必须为空。 选择器通过 Pod 所属的<br>
 <a class='glossary-tooltip' href='/docs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>A way to expose an application running on a set of Pods as a network service.</span>
 </a>
-<a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-replication-controller' target='_blank'>ReplicationController<span class='tooltip-text'>A (deprecated) API object that manages a replicated application.</span>
+<a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-replication-controller' target='_blank'>ReplicationController<span class='tooltip-text'>一个 (废弃的) API 对象用于管理多副本应用</span>
 </a>
-<a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/replicaset/' target='_blank'>ReplicaSet<span class='tooltip-text'>ReplicaSet ensures that a specified number of Pod replicas are running at one time</span>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/replicaset/' target='_blank'>ReplicaSet<span class='tooltip-text'>ReplicaSet 保证在任意时间点上某个 Pod 有指定数量副本在运行</span>
 </a>
 <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>Manages deployment and scaling of a set of Pods, with durable storage and persistent identifiers for each Pod.</span>
 </a>
@@ -1026,6 +1026,7 @@ Published on 5 Aug 2020
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/">Controllers<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/deployment/">Deployment</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/">ReplicaSet</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a></li>
 </ul>

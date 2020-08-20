@@ -111,14 +111,14 @@ with shared namespaces and shared filesystem volumes.
 <p>以 Docker 的概念上来说， 一个 Pod 与 一组共享 namespaces 和文件系统卷的容器相似。</p>
 <h2 id="pod-怎么用">Pod 怎么用</h2>
 <!--
-Usually you don't need to create Pods directly, even singleton Pods. Instead, create them using workload resources such as <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>Manages a replicated application on your cluster.</span>
+Usually you don't need to create Pods directly, even singleton Pods. Instead, create them using workload resources such as <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a> or <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/job/' target='_blank'>Job<span class='tooltip-text'>A finite or batch task that runs to completion.</span>
 </a>.
 If your Pods need to track state, consider the
 <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>Manages deployment and scaling of a set of Pods, with durable storage and persistent identifiers for each Pod.</span>
 </a> resource.
 -->
-<p>通常用户不需要直接创建 Pod， 即使是单例 Pod(?啥玩意儿). 而是通过创建类似 <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>Manages a replicated application on your cluster.</span>
+<p>通常用户不需要直接创建 Pod， 即使是单例 Pod(?啥玩意儿). 而是通过创建类似 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a> 或 <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/job/' target='_blank'>Job<span class='tooltip-text'>A finite or batch task that runs to completion.</span>
 </a> 的工作负载资源间接创建 Pod。如果 Pod 需要跟踪状态(目前理解是包含持久化数据)，可以考虑使用 <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>Manages deployment and scaling of a set of Pods, with durable storage and persistent identifiers for each Pod.</span>
 </a> 资源。</p>
@@ -256,7 +256,7 @@ replacement Pod onto a healthy Node.
 
 Here are some examples of workload resources that manage one or more Pods:
 
-* <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>Manages a replicated application on your cluster.</span>
+* <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a>
 * <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>Manages deployment and scaling of a set of Pods, with durable storage and persistent identifiers for each Pod.</span>
 </a>
@@ -268,7 +268,7 @@ Here are some examples of workload resources that manage one or more Pods:
 然后调度器将这些替代 Pod 放到健康的节点上。
 以下为常见的可以管理一个或多个 Pod 的工作负载示例:</p>
 <ul>
-<li><a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>Manages a replicated application on your cluster.</span>
+<li><a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a></li>
 <li><a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>Manages deployment and scaling of a set of Pods, with durable storage and persistent identifiers for each Pod.</span>
 </a></li>
@@ -356,10 +356,10 @@ changing existing code.
 
  -->
 <p>修改 Pod 模板甚至替换为新的模板都不会对已经存在的 Pod 有任何影响。 Pod 不接收直接的模板更新，而是基于新的模板创建一个新的 Pod。
-例如， <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>Manages a replicated application on your cluster.</span>
-</a> 控制器会保证每个 <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>Manages a replicated application on your cluster.</span>
+例如， <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
+</a> 控制器会保证每个 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a> 对象对应的 Pod 与其械反定义是一致的.
-如果 <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>Manages a replicated application on your cluster.</span>
+如果 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a> Pod 模板有更新，就对移除旧模板对应的 Pod，并以新模板创建新的 Pod。 每个工作负载资源都实现了一个自己的模板更新处理方式。</p>
 <p>在节点上， <a class='glossary-tooltip' href='/docs/reference/generated/kubelet' target='_blank'>kubelet<span class='tooltip-text'>An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.</span>
 </a> 并不会直接监测或管理 Pod 模板的详情或更新；这些详情都已经被抽象剥离。
@@ -454,7 +454,7 @@ without the <a class='glossary-tooltip' href='/docs/reference/generated/kube-api
 </a>
 observing them.
 Whereas most Pods are managed by the control plane (for example, a
-<a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>Manages a replicated application on your cluster.</span>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a>), for static
 Pods, the kubelet directly supervises each static Pod (and restarts it if it fails).
 
@@ -473,7 +473,7 @@ but cannot be controlled from there.
 <h2 id="静态-pod">静态 Pod</h2>
 <p><em>静态 Pod</em> 是由节点上的 kubelet 直接管理的 Pod， 并不被 <a class='glossary-tooltip' href='/docs/reference/generated/kube-apiserver/' target='_blank'>API server<span class='tooltip-text'>Control plane component that serves the Kubernetes API.</span>
 </a>
-监控。 然而多数 Pod 都是受控制中心管理(例，<a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>Manages a replicated application on your cluster.</span>
+监控。 然而多数 Pod 都是受控制中心管理(例，<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a>)，
 静态 Pod 则是直接由 kubelet 监控和管理(如果挂也是由 kubelet 来重启)。
 静态 Pod 总是与节点上的 <a class='glossary-tooltip' href='/docs/reference/generated/kubelet' target='_blank'>Kubelet<span class='tooltip-text'>An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.</span>
@@ -500,7 +500,7 @@ but cannot be controlled from there.
 * [The Distributed System Toolkit: Patterns for Composite Containers](https://kubernetes.io/blog/2015/06/the-distributed-system-toolkit-patterns) explains common layouts for Pods with more than one container.
 
 To understand the context for why Kubernetes wraps a common Pod API in other resources (such as <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSets<span class='tooltip-text'>Manages deployment and scaling of a set of Pods, with durable storage and persistent identifiers for each Pod.</span>
-</a> or <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/deployment/' target='_blank'>Deployments<span class='tooltip-text'>Manages a replicated application on your cluster.</span>
+</a> or <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployments<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a>, you can read about the prior art, including:
   * [Aurora](http://aurora.apache.org/documentation/latest/reference/configuration/#job-schema)
   * [Borg](https://research.google.com/pubs/pub43438.html)
@@ -520,7 +520,7 @@ To understand the context for why Kubernetes wraps a common Pod API in other res
 <li><a href="https://kubernetes.io/blog/2015/06/the-distributed-system-toolkit-patterns">The Distributed System Toolkit: Patterns for Composite Containers</a> 介绍多容器 Pod 的常用布局</li>
 </ul>
 <p>要理解为啥k8s 要把 Pod 包在其它(如 <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSets<span class='tooltip-text'>Manages deployment and scaling of a set of Pods, with durable storage and persistent identifiers for each Pod.</span>
-</a> 或 <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/deployment/' target='_blank'>Deployments<span class='tooltip-text'>Manages a replicated application on your cluster.</span>
+</a> 或 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployments<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a>)的资源中，请阅读以下先前技术(prior art)：</p>
 <ul>
 <li><a href="http://aurora.apache.org/documentation/latest/reference/configuration/#job-schema">Aurora</a></li>
@@ -651,6 +651,7 @@ Published on 30 Jul 2020
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/">Controllers<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/deployment/">Deployment</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/">ReplicaSet</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a></li>
 </ul>

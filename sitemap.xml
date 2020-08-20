@@ -487,6 +487,11 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/deployment/</loc>
+    <lastmod>2020-08-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/</loc>
     <lastmod>2020-08-13T00:00:00+00:00</lastmod>
   </url>
