@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Controllers on Kubernetes</title>
+    <title>控制器 on Kubernetes</title>
     <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/</link>
-    <description>Recent content in Controllers on Kubernetes</description>
+    <description>Recent content in 控制器 on Kubernetes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Thu, 02 Jul 2020 00:00:00 +0000</lastBuildDate>
@@ -27,6 +27,15 @@
       
       <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/</guid>
       <description>ReplicaSet 的作用是在任意时间内维持一个稳定的 Pod 副本集。因此它经常被用来保证特定 Pod 在指定的数量以提供可用性。 控制器一个控制回路，负责通过 apiserver 监控集群的共</description>
+    </item>
+    
+    <item>
+      <title>StatefulSet</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/</link>
+      <pubDate>Fri, 14 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/</guid>
+      <description>管理一个 PodPod 表示集群中运行的一组容器的集合 集合的部署与容量伸缩，并提供了顺序的一致性和唯一性 与 Deployment管理集群中的一个多副本应用 类</description>
     </item>
     
     <item>

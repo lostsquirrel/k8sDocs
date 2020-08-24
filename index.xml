@@ -605,6 +605,15 @@ What does each admission controller do? AlwaysPullImages RuntimeClass </descript
     </item>
     
     <item>
+      <title>StatefulSet</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/</link>
+      <pubDate>Fri, 14 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/</guid>
+      <description>管理一个 PodPod 表示集群中运行的一组容器的集合 集合的部署与容量伸缩，并提供了顺序的一致性和唯一性 与 Deployment管理集群中的一个多副本应用 类</description>
+    </item>
+    
+    <item>
       <title>ReplicationController</title>
       <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/</link>
       <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>

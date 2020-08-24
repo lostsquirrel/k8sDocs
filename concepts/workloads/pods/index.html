@@ -3,7 +3,7 @@
 <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Pods - Kubernetes</title>
+<title>Pod - Kubernetes</title>
 <meta name="description" content="生产级别的容器编排系统">
 <meta name="generator" content="Hugo 0.68.3" />
 <link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
@@ -16,15 +16,15 @@
 <script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
 :root {}
 </style>
-<meta property="og:title" content="Pods" />
+<meta property="og:title" content="Pod" />
 <meta property="og:description" content="生产级别的容器编排系统" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/" />
 <meta property="og:updated_time" content="2020-07-02T00:00:00+00:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Pods"/>
+<meta name="twitter:title" content="Pod"/>
 <meta name="twitter:description" content="生产级别的容器编排系统"/>
-<meta itemprop="name" content="Pods">
+<meta itemprop="name" content="Pod">
 <meta itemprop="description" content="生产级别的容器编排系统">
 <script>
 var _hmt = _hmt || [];
@@ -50,14 +50,14 @@ var _hmt = _hmt || [];
 <body><div class="container"><header>
 <h1>Kubernetes</h1>
 
- <span class="version">Version 0.0.1</span>
+ <span class="version">Version v1.18</span>
 
 <p class="description">生产级别的容器编排系统</p>
 
 </header>
 
 <div class="content-container">
-<main><h1>Pods</h1><!-- overview -->
+<main><h1>Pod</h1><!-- overview -->
 <!--
 _Pods_ are the smallest deployable units of computing that you can create and manage in Kubernetes.
 
@@ -115,12 +115,12 @@ Usually you don't need to create Pods directly, even singleton Pods. Instead, cr
 </a> or <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/job/' target='_blank'>Job<span class='tooltip-text'>A finite or batch task that runs to completion.</span>
 </a>.
 If your Pods need to track state, consider the
-<a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>Manages deployment and scaling of a set of Pods, with durable storage and persistent identifiers for each Pod.</span>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
 </a> resource.
 -->
 <p>通常用户不需要直接创建 Pod， 即使是单例 Pod(?啥玩意儿). 而是通过创建类似 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a> 或 <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/job/' target='_blank'>Job<span class='tooltip-text'>A finite or batch task that runs to completion.</span>
-</a> 的工作负载资源间接创建 Pod。如果 Pod 需要跟踪状态(目前理解是包含持久化数据)，可以考虑使用 <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>Manages deployment and scaling of a set of Pods, with durable storage and persistent identifiers for each Pod.</span>
+</a> 的工作负载资源间接创建 Pod。如果 Pod 需要跟踪状态(目前理解是包含持久化数据)，可以考虑使用 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
 </a> 资源。</p>
 <!--
 Pods in a Kubernetes cluster are used in two main ways:
@@ -244,7 +244,7 @@ When you create the manifest for a Pod object, make sure the name specified is a
 </blockquote>
 
 <p>在创建 Pod 对象的定义文件时， 名称必须是一个有效的 <a href="../../../00-overview/03-working-with-objects/01-names/#dns-subdomain-names">DNS 子域名</a></p>
-<h3 id="hahahugoshortcode-s28-hbhb-和-hahahugoshortcode-s29-hbhb"><a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+<h3 id="hahahugoshortcode-s28-hbhb-和-hahahugoshortcode-s29-hbhb"><a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a> 和 <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/02-controller/' target='_blank'>控制器<span class='tooltip-text'>一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移</span>
 </a></h3>
 <!--
@@ -258,7 +258,7 @@ Here are some examples of workload resources that manage one or more Pods:
 
 * <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a>
-* <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>Manages deployment and scaling of a set of Pods, with durable storage and persistent identifiers for each Pod.</span>
+* <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
 </a>
 * <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/daemonset' target='_blank'>DaemonSet<span class='tooltip-text'>Ensures a copy of a Pod is running across a set of nodes in a cluster.</span>
 </a>
@@ -270,7 +270,7 @@ Here are some examples of workload resources that manage one or more Pods:
 <ul>
 <li><a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a></li>
-<li><a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>Manages deployment and scaling of a set of Pods, with durable storage and persistent identifiers for each Pod.</span>
+<li><a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
 </a></li>
 <li><a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/daemonset' target='_blank'>DaemonSet<span class='tooltip-text'>Ensures a copy of a Pod is running across a set of nodes in a cluster.</span>
 </a></li>
@@ -495,11 +495,11 @@ but cannot be controlled from there.
 * Read about [Pod topology spread constraints](/docs/concepts/workloads/pods/pod-topology-spread-constraints/).
 * Read about [PodDisruptionBudget](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/) and how you can use it to manage application availability during disruptions.
 * Pod is a top-level resource in the Kubernetes REST API.  
-  The [Pod](/docs/reference/generated/kubernetes-api/0.0.1/#pod-v1-core)
+  The [Pod](/docs/reference/generated/kubernetes-api/v1.18/#pod-v1-core)
   object definition describes the object in detail.
 * [The Distributed System Toolkit: Patterns for Composite Containers](https://kubernetes.io/blog/2015/06/the-distributed-system-toolkit-patterns) explains common layouts for Pods with more than one container.
 
-To understand the context for why Kubernetes wraps a common Pod API in other resources (such as <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSets<span class='tooltip-text'>Manages deployment and scaling of a set of Pods, with durable storage and persistent identifiers for each Pod.</span>
+To understand the context for why Kubernetes wraps a common Pod API in other resources (such as <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSets<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
 </a> or <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployments<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a>, you can read about the prior art, including:
   * [Aurora](http://aurora.apache.org/documentation/latest/reference/configuration/#job-schema)
@@ -515,11 +515,11 @@ To understand the context for why Kubernetes wraps a common Pod API in other res
 <li>了解 <a href="../02-pod-topology-spread-constraints/">Pod topology spread constraints</a>.</li>
 <li>了解 <a href="https://kubernetes.io/docs/concepts/workloads/pods/disruptions/">PodDisruptionBudget</a> 并用它来在干扰时管理应用的可用性</li>
 <li>Pod k8s REST API 中顶级资源.<br>
-这里是 <a href="/docs/reference/generated/kubernetes-api/0.0.1/#pod-v1-core">Pod</a>
+这里是 <a href="/docs/reference/generated/kubernetes-api/v1.18/#pod-v1-core">Pod</a>
 对象文档</li>
 <li><a href="https://kubernetes.io/blog/2015/06/the-distributed-system-toolkit-patterns">The Distributed System Toolkit: Patterns for Composite Containers</a> 介绍多容器 Pod 的常用布局</li>
 </ul>
-<p>要理解为啥k8s 要把 Pod 包在其它(如 <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSets<span class='tooltip-text'>Manages deployment and scaling of a set of Pods, with durable storage and persistent identifiers for each Pod.</span>
+<p>要理解为啥k8s 要把 Pod 包在其它(如 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSets<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
 </a> 或 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployments<span class='tooltip-text'>管理集群中的一个多副本应用</span>
 </a>)的资源中，请阅读以下先前技术(prior art)：</p>
 <ul>
@@ -535,7 +535,7 @@ Last updated on 2 Jul 2020
 
 <br>
 Published on 30 Jul 2020
-<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/concepts/workloads/pods/_index.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/" title="Workloads"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - Workloads</a>
+<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/concepts/workloads/pods/_index.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/" title="工作负载(Workload)"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 工作负载(Workload)</a>
 <a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-lifecycle/" title="Pod 生命周期">Next - Pod 生命周期 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
@@ -631,11 +631,11 @@ Published on 30 Jul 2020
   
 </li>
 
-<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/">Workloads<span class="mark opened">-</span></a>
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/">工作负载(Workload)<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
 
-<li class="parent active has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/">Pods<span class="mark opened">-</span></a>
+<li class="parent active has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/">Pod<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a></li>
@@ -648,11 +648,12 @@ Published on 30 Jul 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/">Controllers<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/">控制器<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/deployment/">Deployment</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/">ReplicaSet</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/">StatefulSet</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a></li>
 </ul>
   

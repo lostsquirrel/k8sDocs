@@ -58,7 +58,7 @@ var _hmt = _hmt || [];
 <body><div class="container"><header>
 <h1>Kubernetes</h1>
 
- <span class="version">Version 0.0.1</span>
+ <span class="version">Version v1.18</span>
 
 <p class="description">生产级别的容器编排系统</p>
 
@@ -78,7 +78,7 @@ weight: 40
 <!-- overview -->
 <!--
 This page provides an overview of init containers: specialized containers that run
-before app containers in a <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+before app containers in a <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a>.
 Init containers can contain utilities or setup scripts not present in an app image.
 
@@ -92,7 +92,7 @@ array (which describes app containers).
 <!--
 ## Understanding init containers
 
-A <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+A <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a> can have multiple containers
 running apps within it, but it can also have one or more init containers, which are run
 before the app containers are started.
@@ -107,14 +107,14 @@ succeeds. However, if the Pod has a `restartPolicy` of Never, Kubernetes does no
 
 To specify an init container for a Pod, add the `initContainers` field into
 the Pod specification, as an array of objects of type
-[Container](/docs/reference/generated/kubernetes-api/0.0.1/#container-v1-core),
+[Container](/docs/reference/generated/kubernetes-api/v1.18/#container-v1-core),
 alongside the app `containers` array.
 The status of the init containers is returned in `.status.initContainerStatuses`
 field as an array of the container statuses (similar to the `.status.containerStatuses`
 field).
  -->
 <h2 id="理解初始化容器是做什么的">理解初始化容器是做什么的</h2>
-<p>一个 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+<p>一个 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a> 中可以饮上多个应用容器，同时还可以
 有一个或多个初始化容器，这些初始化容器会在应用容器之前运行并结束。</p>
 <p>初始化容器与普通容器并无太多不同，除了以下：</p>
@@ -125,7 +125,7 @@ field).
 <p>如果 Pod 的初始化容器挂了， k8s 会不停重启该 Pod 直至初始化容器成功运行完成。
 但如果 Pod 的 <code>restartPolicy</code> 值为 <code>Never</code>， 则 k8s 不会重启该 Pod。</p>
 <p>要为一个 Pod 配置初始化容器， 需要在配置中添加 <code>initContainers</code> 字段， 字段值为一个类型为
-<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/0.0.1/#container-v1-core">Container</a>
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#container-v1-core">Container</a>
 的对象数组， 与 <code>containers</code> 字段相邻。
 初始化容器返回的状态存放于 <code>.status.initContainerStatuses</code> 字段，是一个与容器状态字段(<code>.status.containerStatuses</code>)类似的数组</p>
 <!--
@@ -716,11 +716,11 @@ Published on 4 Aug 2020
   
 </li>
 
-<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/">Workloads<span class="mark opened">-</span></a>
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/">工作负载(Workload)<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
 
-<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/">Pods<span class="mark opened">-</span></a>
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/">Pod<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a></li>
@@ -733,11 +733,12 @@ Published on 4 Aug 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/">Controllers<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/">控制器<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/deployment/">Deployment</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/">ReplicaSet</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/">StatefulSet</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a></li>
 </ul>
   

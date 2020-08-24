@@ -58,7 +58,7 @@ var _hmt = _hmt || [];
 <body><div class="container"><header>
 <h1>Kubernetes</h1>
 
- <span class="version">Version 0.0.1</span>
+ <span class="version">Version v1.18</span>
 
 <p class="description">生产级别的容器编排系统</p>
 
@@ -90,7 +90,7 @@ weight: 80
 
 
 This page provides an overview of ephemeral containers: a special type of container
-that runs temporarily in an existing <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+that runs temporarily in an existing <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a> to
 accomplish user-initiated actions such as troubleshooting. You use ephemeral
 containers to inspect services rather than to build applications.
@@ -113,7 +113,7 @@ significantly in the future or be removed entirely.</div>
 </div>
 
 
-本文主要简述临时容器: 一个特殊类型的容器，用来实现如应用调试而临时运行在一个已经存在的 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+本文主要简述临时容器: 一个特殊类型的容器，用来实现如应用调试而临时运行在一个已经存在的 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a>
 中的容器。用户应该仅使用它来调试服务而不是用来构建应用</p>
 <blockquote class="warning">
@@ -125,7 +125,7 @@ significantly in the future or be removed entirely.</div>
 <!--  
 ## Understanding ephemeral containers
 
-<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pods<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pods<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a> are the fundamental building
 block of Kubernetes applications. Since Pods are intended to be disposable and
 replaceable, you cannot add a container to a Pod once it has been created.
@@ -139,7 +139,7 @@ an ephemeral container in an existing Pod to inspect its state and run
 arbitrary commands.
 -->
 <h2 id="临时容器是啥东西">临时容器是啥东西</h2>
-<p><a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+<p><a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a> 是 k8s 应用构建的基石. 但在 Pod 的设计理念上它就是一个
 一次性的可替换的组件，所以就不能在 Pod 创建后再往里面塞容器了。 如果要做变更通常就是通过
 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
@@ -159,7 +159,7 @@ are incompatible and disallowed for ephemeral containers.
   `livenessProbe`, `readinessProbe` are disallowed.
 - Pod resource allocations are immutable, so setting `resources` is disallowed.
 - For a complete list of allowed fields, see the [EphemeralContainer reference
-  documentation](/docs/reference/generated/kubernetes-api/0.0.1/#ephemeralcontainer-v1-core).
+  documentation](/docs/reference/generated/kubernetes-api/v1.18/#ephemeralcontainer-v1-core).
 
 Ephemeral containers are created using a special `ephemeralcontainers` handler
 in the API rather than by adding them directly to `pod.spec`, so it's not
@@ -174,7 +174,7 @@ after you have added it to a Pod.
 <ul>
 <li>临时容器不能有端口，所以与端口相关的 <code>ports</code>, <code>livenessProbe</code>, <code>readinessProbe</code> 都是不能用的。</li>
 <li>Pod 分配的资源是不可变的，所以也不能设置 <code>resources</code>。</li>
-<li>所以可用字段列表见 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/0.0.1/#ephemeralcontainer-v1-core">EphemeralContainer 参考文档</a></li>
+<li>所以可用字段列表见 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#ephemeralcontainer-v1-core">EphemeralContainer 参考文档</a></li>
 </ul>
 <p>临时容器是用一个在 API 叫 <code>ephemeralcontainers</code> 的特殊处理器创建的， 并不能通过直接添加 <code>pod.spec</code> 来创建。
 所以也不能通过 <code>kubectl edit</code> 来向 Pod 中添加一个临时容器。</p>
@@ -408,7 +408,7 @@ Last updated on 29 Jul 2020
 <br>
 Published on 12 Aug 2020
 <br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/concepts/workloads/pods/ephemeral-containers.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/disruptions/" title="Disruptions"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - Disruptions</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/" title="Controllers">Next - Controllers <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/" title="控制器">Next - 控制器 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -503,11 +503,11 @@ Published on 12 Aug 2020
   
 </li>
 
-<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/">Workloads<span class="mark opened">-</span></a>
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/">工作负载(Workload)<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
 
-<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/">Pods<span class="mark opened">-</span></a>
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/">Pod<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a></li>
@@ -520,11 +520,12 @@ Published on 12 Aug 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/">Controllers<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/">控制器<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/deployment/">Deployment</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/">ReplicaSet</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/">StatefulSet</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a></li>
 </ul>
   

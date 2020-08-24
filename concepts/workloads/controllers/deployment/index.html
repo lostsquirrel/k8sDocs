@@ -58,7 +58,7 @@ var _hmt = _hmt || [];
 <body><div class="container"><header>
 <h1>Kubernetes</h1>
 
- <span class="version">Version 0.0.1</span>
+ <span class="version">Version v1.18</span>
 
 <p class="description">生产级别的容器编排系统</p>
 
@@ -82,7 +82,7 @@ weight: 10
  -->
 <!-- overview -->
 <!--
-A _Deployment_ provides declarative updates for <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pods<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+A _Deployment_ provides declarative updates for <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pods<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a>
 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/replicaset/' target='_blank'>ReplicaSets<span class='tooltip-text'>ReplicaSet 保证在任意时间点上某个 Pod 有指定数量副本在运行</span>
 </a>.
@@ -96,7 +96,7 @@ You describe a _desired state_ in a Deployment, and the Deployment <a class='glo
 
  -->
 <p><em>Deployment</em> 为 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/replicaset/' target='_blank'>ReplicaSets<span class='tooltip-text'>ReplicaSet 保证在任意时间点上某个 Pod 有指定数量副本在运行</span>
-</a> 管理的 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pods<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+</a> 管理的 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pods<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a>
 提供了声明式的更新。</p>
 <p>用户在 Deployment 中描述了一个 <em>期望状态</em>， 然后这个 Deployment <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/02-controller/' target='_blank'>控制器<span class='tooltip-text'>一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移</span>
@@ -2019,7 +2019,7 @@ Deployment 对象的名称必须是一个有效的 <a href="/k8sDocs/concepts/ov
 
 The `.spec.template` and `.spec.selector` are the only required field of the `.spec`.
 
-The `.spec.template` is a [Pod template](/docs/concepts/workloads/pods/#pod-templates). It has exactly the same schema as a <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+The `.spec.template` is a [Pod template](/docs/concepts/workloads/pods/#pod-templates). It has exactly the same schema as a <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a>, except it is nested and does not have an `apiVersion` or `kind`.
 
 In addition to required fields for a Pod, a Pod template in a Deployment must specify appropriate
@@ -2030,7 +2030,7 @@ allowed, which is the default if not specified.
  -->
 <h3 id="pod-模板">Pod 模板</h3>
 <p><code>.spec</code> 的必要字段仅有 <code>.spec.template</code> 和 <code>.spec.selector</code>两个。</p>
-<p><code>.spec.template</code> 字段就是一个 <a href="/k8sDocs/concepts/workloads/pods/#pod-templates">Pod 模板</a>对象。定义规范与 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/pod-overview/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+<p><code>.spec.template</code> 字段就是一个 <a href="/k8sDocs/concepts/workloads/pods/#pod-templates">Pod 模板</a>对象。定义规范与 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a>
 完全一样， 除了因为它嵌套的 Deployment 中所以没 <code>apiVersion</code> 或 <code>kind</code> 字段。</p>
 <p>相对裸 Pod 所以需要的字段， Deployment 中的 Pod 模板需要指定适当的标签和重启策略。 对于标签定义，需要注意不要与其它的控制器重叠了。 见 <a href="#selector">selector</a></p>
@@ -2223,7 +2223,7 @@ Last updated on 14 Aug 2020
 
 <br>
 Published on 20 Aug 2020
-<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/concepts/workloads/controllers/deployment.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/" title="Controllers"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - Controllers</a>
+<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/concepts/workloads/controllers/deployment.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/" title="控制器"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 控制器</a>
 <a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/" title="ReplicaSet">Next - ReplicaSet <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
@@ -2319,11 +2319,11 @@ Published on 20 Aug 2020
   
 </li>
 
-<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/">Workloads<span class="mark opened">-</span></a>
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/">工作负载(Workload)<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/">Pods<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/">Pod<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a></li>
@@ -2336,11 +2336,12 @@ Published on 20 Aug 2020
   
 </li>
 
-<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/">Controllers<span class="mark opened">-</span></a>
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/">控制器<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
 <li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/deployment/">Deployment</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/">ReplicaSet</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/">StatefulSet</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a></li>
 </ul>
   
