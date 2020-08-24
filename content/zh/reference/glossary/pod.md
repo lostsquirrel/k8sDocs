@@ -2,7 +2,7 @@
 title: Pod
 id: pod
 date: 2018-04-12
-full_link: /k8sDocs/concepts/workloads/pods/pod-overview/
+full_link: /k8sDocs/concepts/workloads/pods/
 short_description: >
   Pod 表示集群中运行的一组容器的集合
 

@@ -1,5 +1,5 @@
 ---
-title: Pods
+title: Pod
 weight: 20300
 date: 2020-07-02
 publishdate: 2020-07-30
