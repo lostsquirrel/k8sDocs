@@ -17,11 +17,13 @@ spec:
       tolerations:
       # this toleration is to have the daemonset runnable on master nodes
       # remove it if your masters can't run pods
+      # 该耐受表示在主控节点上运行 DaemonSet,如果用户的主控节点不能运行 Pod，请移除
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
       containers:
       - name: fluentd-elasticsearch
-        image: quay.io/fluentd_elasticsearch/fluentd:v2.5.2
+      # quay.io/fluentd_elasticsearch/fluentd:v2.5.2
+        image: registry.cn-hangzhou.aliyuncs.com/lisong/fluentd:v2.5.2-fluentd_elasticsearch
         resources:
           limits:
             memory: 200Mi

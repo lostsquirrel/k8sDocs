@@ -606,6 +606,15 @@ What does each admission controller do? AlwaysPullImages RuntimeClass </descript
     
     <item>
       <title>StatefulSet</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/daemonset/</link>
+      <pubDate>Mon, 24 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/daemonset/</guid>
+      <description>DaemonSet 确保所以(或部分)节点上都会运行一个副本的 Pod。 当有节点加入到集群时，这个 Pod 也会自动加到该节点上。 当节点从集群移除时， 这些 Pod 也会被垃圾清</description>
+    </item>
+    
+    <item>
+      <title>StatefulSet</title>
       <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/</link>
       <pubDate>Fri, 14 Aug 2020 00:00:00 +0000</pubDate>
       

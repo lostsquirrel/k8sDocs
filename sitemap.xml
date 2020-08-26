@@ -497,6 +497,11 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/daemonset/</loc>
+    <lastmod>2020-08-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/</loc>
     <lastmod>2020-08-14T00:00:00+00:00</lastmod>
   </url>
