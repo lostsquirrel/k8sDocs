@@ -29,7 +29,7 @@
 <meta itemprop="description" content="DaemonSet 确保所以(或部分)节点上都会运行一个副本的 Pod。 当有节点加入到集群时，这个 Pod 也会自动加到该节点上。 当节点从集群移除时， 这些 Pod 也会被垃圾清">
 <meta itemprop="datePublished" content="2020-08-25T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-08-24T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="3393">
+<meta itemprop="wordCount" content="3412">
 
 
 
@@ -493,7 +493,7 @@ the related features.
 | `node.kubernetes.io/unschedulable`       | NoSchedule | 1.12+   | DaemonSet pods tolerate unschedulable attributes by default scheduler. |
 | `node.kubernetes.io/network-unavailable` | NoSchedule | 1.12+   | DaemonSet pods, who uses host network, tolerate network-unavailable attributes by default scheduler. |
  -->
-<h3 id="毒点与耐受">毒点与耐受</h3>
+<h3 id="毒点taint与耐受toleration">毒点(Taint)与耐受(Toleration)</h3>
 <p>尽管 DaemonSet 的 Pod 是遵守 <a href="/k8sDocs/concepts/scheduling-eviction/taint-and-toleration/">毒点与耐受</a>的,
 但以下耐受会根据相关的特性自动添加到 DaemonSet 的 Pod 上。</p>
 <table>
@@ -660,8 +660,8 @@ Last updated on 24 Aug 2020
 
 <br>
 Published on 25 Aug 2020
-<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/concepts/workloads/controllers/daemonset.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/" title="ReplicaSet"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - ReplicaSet</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/" title="StatefulSet">Next - StatefulSet <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/concepts/workloads/controllers/daemonset.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/" title="StatefulSet"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - StatefulSet</a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/" title="ReplicationController">Next - ReplicationController <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -778,8 +778,8 @@ Published on 25 Aug 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/deployment/">Deployment</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/">ReplicaSet</a></li>
-<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/daemonset/">DaemonSet</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/">StatefulSet</a></li>
+<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/daemonset/">DaemonSet</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a></li>
 </ul>
   
