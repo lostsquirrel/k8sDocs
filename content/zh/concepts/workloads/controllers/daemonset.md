@@ -2,7 +2,7 @@
 title: DaemonSet
 date: 2020-08-24
 publishdate: 2020-08-25
-weight: 2030102
+weight: 2030103
 ---
 <!--
 ---
@@ -278,7 +278,7 @@ the related features.
 | `node.kubernetes.io/unschedulable`       | NoSchedule | 1.12+   | DaemonSet pods tolerate unschedulable attributes by default scheduler. |
 | `node.kubernetes.io/network-unavailable` | NoSchedule | 1.12+   | DaemonSet pods, who uses host network, tolerate network-unavailable attributes by default scheduler. |
  -->
-### 毒点与耐受
+### 毒点(Taint)与耐受(Toleration)
 
 尽管 DaemonSet 的 Pod 是遵守 [毒点与耐受](/k8sDocs/concepts/scheduling-eviction/taint-and-toleration/)的,
 但以下耐受会根据相关的特性自动添加到 DaemonSet 的 Pod 上。
