@@ -112,14 +112,14 @@ with shared namespaces and shared filesystem volumes.
 <h2 id="pod-怎么用">Pod 怎么用</h2>
 <!--
 Usually you don't need to create Pods directly, even singleton Pods. Instead, create them using workload resources such as <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
-</a> or <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/job/' target='_blank'>Job<span class='tooltip-text'>A finite or batch task that runs to completion.</span>
+</a> or <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/job/' target='_blank'>Job<span class='tooltip-text'>一个运行后即结束的有限或批量任务</span>
 </a>.
 If your Pods need to track state, consider the
 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
 </a> resource.
 -->
 <p>通常用户不需要直接创建 Pod， 即使是单例 Pod(?啥玩意儿). 而是通过创建类似 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
-</a> 或 <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/job/' target='_blank'>Job<span class='tooltip-text'>A finite or batch task that runs to completion.</span>
+</a> 或 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/job/' target='_blank'>Job<span class='tooltip-text'>一个运行后即结束的有限或批量任务</span>
 </a> 的工作负载资源间接创建 Pod。如果 Pod 需要跟踪状态(目前理解是包含持久化数据)，可以考虑使用 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
 </a> 资源。</p>
 <!--
@@ -320,7 +320,7 @@ spec:
     # The pod template ends here
 ```
  -->
-<p>以下为一个简单 <a class='glossary-tooltip' href='/docs/concepts/workloads/controllers/job/' target='_blank'>Job<span class='tooltip-text'>A finite or batch task that runs to completion.</span>
+<p>以下为一个简单 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/job/' target='_blank'>Job<span class='tooltip-text'>一个运行后即结束的有限或批量任务</span>
 </a> 的定义文件，其中 <code>template</code> 定义会启动一个容器。
 Pod 中的这个容器会打包一条信息，然后睡一个小时(3600秒)</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: batch/v1
@@ -655,6 +655,7 @@ Published on 30 Jul 2020
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/">ReplicaSet</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/">StatefulSet</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/daemonset/">DaemonSet</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/job/">Job</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a></li>
 </ul>
   

@@ -48,6 +48,15 @@
     </item>
     
     <item>
+      <title>Job</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/job/</link>
+      <pubDate>Wed, 26 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/job/</guid>
+      <description>In addition to services, Kubernetes can manage your batch and CI workloads, replacing containers that fail, if desired. weight: 50 --- -- 一个 Job 会创建一个或多个 Pod 并保证这些 Pod 中指定数量的最终执行完成并终止。 当一个 Pod 成功完成时， Job 跟踪这</description>
+    </item>
+    
+    <item>
       <title>ReplicationController</title>
       <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/</link>
       <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
