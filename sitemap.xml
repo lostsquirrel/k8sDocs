@@ -512,6 +512,11 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/garbage-collection/</loc>
+    <lastmod>2020-08-31T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/</loc>
     <lastmod>2020-07-02T00:00:00+00:00</lastmod>
   </url>

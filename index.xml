@@ -632,6 +632,15 @@ What does each admission controller do? AlwaysPullImages RuntimeClass </descript
     </item>
     
     <item>
+      <title>垃圾回收</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/garbage-collection/</link>
+      <pubDate>Mon, 31 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/garbage-collection/</guid>
+      <description>在 k8s 中垃圾回收的作用就是删除那些曾经有所有者，现在没有的对象。 controllers/replicaset.yaml apiVersion: apps/v1 kind: ReplicaSet metadata: name: my-repset spec: replicas: 3 selector: matchLabels: pod-is-for: garbage-collection-example template: metadata: labels: pod-is-for: garbage-collection-example spec: containers: - name: nginx image: nginx If you create the ReplicaSet and then view the Pod metadata, you</description>
+    </item>
+    
+    <item>
       <title>ReplicationController</title>
       <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/</link>
       <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
