@@ -641,6 +641,15 @@ What does each admission controller do? AlwaysPullImages RuntimeClass </descript
     </item>
     
     <item>
+      <title>用于已完成资源的 TTL 控制器</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/ttlafterfinished/</link>
+      <pubDate>Mon, 31 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/ttlafterfinished/</guid>
+      <description>功能特性状态: Kubernetes v1.12 [alpha] The TTL controller provides a TTL (time to live) mechanism to limit the lifetime of resource objects that have finished execution. TTL controller only handles Jobs一个运行后即结束的有限或批量任务 for now, and may be expanded to handle other resources that will finish execution, such</description>
+    </item>
+    
+    <item>
       <title>ReplicationController</title>
       <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/</link>
       <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
