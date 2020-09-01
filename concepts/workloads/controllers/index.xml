@@ -75,6 +75,15 @@
     </item>
     
     <item>
+      <title>CronJob</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/cron-jobs/</link>
+      <pubDate>Tue, 01 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/cron-jobs/</guid>
+      <description>功能特性状态: Kubernetes v1.8 [beta] A _CronJob_ creates Jobs一个运行后即结束的有限或批量任务 on a repeating schedule. One CronJob object is like one line of a _crontab_ (cron table) file. It runs a job periodically on a given schedule, written in [Cron](https://en.wikipedia.org/wiki/Cron) format. 注意： All CronJob schedule: times</description>
+    </item>
+    
+    <item>
       <title>ReplicationController</title>
       <link>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/</link>
       <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
