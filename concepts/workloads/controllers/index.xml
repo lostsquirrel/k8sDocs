@@ -89,7 +89,7 @@
       <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/</guid>
-      <description>TODO</description>
+      <description>Restarts containers that fail, replaces and reschedules containers when nodes die, kills containers that don&#39;t respond to your user-defined health check, and doesn&#39;t advertise them to clients until they are ready to serve. content_type: concept weight: 90 --- -- 说明： A Deployment that configures a ReplicaSet is now the recommended way to set up replication. A _ReplicationController_ ensures that a specified number of pod replicas are running at</description>
     </item>
     
   </channel>
