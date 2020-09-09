@@ -1,6 +1,6 @@
 ---
 title: Service
-weight: 20401
+weight: 10
 date: 2020-06-30
 publishdate: 2020-09-09
 ---
@@ -2302,6 +2302,6 @@ SCTP 多重连接的 NAT 需要在对应的逻辑模块中有特殊逻辑
 ## {{% heading "whatsnext" %}}
 
 
-* 概念 [通过 Service 连接应用](/docs/concepts/services-networking/connect-applications-service/)
-* 概念 [Ingress](/docs/concepts/services-networking/ingress/)
-* 概念 [EndpointSlices](/docs/concepts/services-networking/endpoint-slices/)
+* 概念 [通过 Service 连接应用](/k8sDocs/concepts/services-networking/connect-applications-service/)
+* 概念 [Ingress](/k8sDocs/concepts/services-networking/ingress/)
+* 概念 [EndpointSlices](/k8sDocs/concepts/services-networking/endpoint-slices/)
