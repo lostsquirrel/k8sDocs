@@ -1,3 +1,5 @@
+{{- $text := .Get "text" -}}
+{{- $text := $text | default "说得不太清楚" -}}
 <blockquote>
-  <div><strong>TODO: </strong> 说得不太清楚，需要实践理解后再考虑怎么修改</div>
+  <div><strong>TODO: </strong> {{- $text -}}，需要实践理解后再考虑怎么修改</div>
 </blockquote>

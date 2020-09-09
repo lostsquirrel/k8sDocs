@@ -1,18 +1,17 @@
 ---
-title: Selector
+title: 选择器
 id: selector
 date: 2018-04-12
-full_link: /docs/concepts/overview/working-with-objects/labels/
+full_link: /k8sDocs/concepts/overview/working-with-objects/labels/
 short_description: >
-  Allows users to filter a list of resources based on labels.
-
-aka: 
+  允许用户基于标签过滤资源列表
+aka:
 tags:
 - fundamental
 ---
- Allows users to filter a list of resources based on {{< glossary_tooltip text="labels" term_id="label" >}}.
+允许用户基于
+{{< glossary_tooltip term_id="label" >}}
+过滤资源列表
+<!--more-->
 
-<!--more--> 
-
-Selectors are applied when querying lists of resources to filter them by labels.
-
+选择器用于在查询资源列表时通过标签来过虑资源
