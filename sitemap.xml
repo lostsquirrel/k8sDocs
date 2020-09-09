@@ -36,6 +36,21 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/</loc>
+    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service-topology/</loc>
+    <lastmod>2020-09-09T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dns-pod-service/</loc>
+    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/setup/02-production-environment/</loc>
     <lastmod>2020-07-27T00:00:00+00:00</lastmod>
   </url>
@@ -258,11 +273,6 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/</loc>
-    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/01-resource-quotas/</loc>
     <lastmod>2020-06-30T00:00:00+00:00</lastmod>
   </url>
@@ -340,11 +350,6 @@
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/attach-handler-lifecycle-event/</loc>
     <lastmod>2020-07-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/03-dns-pod-service/</loc>
-    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>

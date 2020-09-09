@@ -30,6 +30,33 @@
     </item>
     
     <item>
+      <title>Service</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/</guid>
+      <description>No need to modify your application to use an unfamiliar service discovery mechanism. Kubernetes gives Pods their own IP addresses and a single DNS name for a set of Pods, and can load-balance across them. content_type: concept weight: 10 --- -- 以网络服务的方式让一个由一组 PodPod 表示集群中运行的一组容器的集</description>
+    </item>
+    
+    <item>
+      <title>Service Topology</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service-topology/</link>
+      <pubDate>Wed, 09 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service-topology/</guid>
+      <description>Routing of service traffic based upon cluster topology. content_type: concept weight: 10 --- -- 功能特性状态: Kubernetes v1.17 [alpha] _Service Topology_ enables a service to route traffic based upon the Node topology of the cluster. For example, a service can specify that traffic be preferentially routed to endpoints that are on the same Node as the client, or in the same availability zone. -- 功</description>
+    </item>
+    
+    <item>
+      <title>DNS for Services and Pods</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dns-pod-service/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dns-pod-service/</guid>
+      <description>TODO</description>
+    </item>
+    
+    <item>
       <title>Volumes</title>
       <link>https://lostsquirrel.github.io/k8sDocs/concepts/05-storage/00-volumes/</link>
       <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
@@ -186,15 +213,6 @@ Create a Secret based on existing Docker credentials </description>
     </item>
     
     <item>
-      <title>Service</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/</link>
-      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/</guid>
-      <description>No need to modify your application to use an unfamiliar service discovery mechanism. Kubernetes gives Pods their own IP addresses and a single DNS name for a set of Pods, and can load-balance across them. content_type: concept weight: 10 --- -- 以网络服务的方式让一个由一组 PodPod 表示集群中运行的一组容器的集</description>
-    </item>
-    
-    <item>
       <title>资源配额</title>
       <link>https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/01-resource-quotas/</link>
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
@@ -338,15 +356,6 @@ Running cloud-controller-manager </description>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/attach-handler-lifecycle-event/</guid>
       <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
-    </item>
-    
-    <item>
-      <title>DNS for Services and Pods</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/03-dns-pod-service/</link>
-      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/03-dns-pod-service/</guid>
-      <description>TODO</description>
     </item>
     
     <item>
