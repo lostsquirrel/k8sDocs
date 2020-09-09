@@ -66,7 +66,7 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/</loc>
+    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/</loc>
     <lastmod>2020-06-30T00:00:00+00:00</lastmod>
   </url>
   
@@ -258,6 +258,11 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/</loc>
+    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/01-resource-quotas/</loc>
     <lastmod>2020-06-30T00:00:00+00:00</lastmod>
   </url>
@@ -338,7 +343,7 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/03-dns-pod-service/</loc>
+    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/03-dns-pod-service/</loc>
     <lastmod>2020-06-30T00:00:00+00:00</lastmod>
   </url>
   
@@ -454,11 +459,6 @@
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/06-common-labels/</loc>
     <lastmod>2020-07-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/00-service/</loc>
-    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>

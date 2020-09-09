@@ -58,7 +58,7 @@ var _hmt = _hmt || [];
 <body><div class="container"><header>
 <h1>Kubernetes</h1>
 
- <span class="version">Version v1.18</span>
+ <span class="version">Version v1.19</span>
 
 <p class="description">生产级别的容器编排系统</p>
 
@@ -103,7 +103,7 @@ kubectl get pods --namespace<span style="color:#f92672">=</span>&lt;insert-names
 <span style="color:#75715e"># Validate it</span>
 kubectl config view --minify | grep namespace:
 </code></pre></div><h3 id="名字空间与dns的关系">名字空间与DNS的关系</h3>
-<p>当用户创建 <a href="../../../04-services-networking/00-service/">Service</a> 时会对应生成一条 <a href="../../../04-services-networking/03-dns-pod-service/">DNS 记录</a>, 而这条记录中的格式为 <code>&lt;service-name&gt;.&lt;namespace-name&gt;.svc.cluster.local</code> 也就是说 通过 <code>&lt;service-name&gt;</code> 只能解析到本名字空间的服务，这在不同名字空间使用同一套配置时相关有用，比如开发，演示，生产等不同环境。如果跨名字空间访问 Service 需要使用全限定名(FQDN)，一般来说只需要 <code>&lt;service-name&gt;.&lt;namespace-name&gt;</code> 也是可以的</p>
+<p>当用户创建 <a href="../../../services-networking/service/">Service</a> 时会对应生成一条 <a href="../../../services-networking/03-dns-pod-service/">DNS 记录</a>, 而这条记录中的格式为 <code>&lt;service-name&gt;.&lt;namespace-name&gt;.svc.cluster.local</code> 也就是说 通过 <code>&lt;service-name&gt;</code> 只能解析到本名字空间的服务，这在不同名字空间使用同一套配置时相关有用，比如开发，演示，生产等不同环境。如果跨名字空间访问 Service 需要使用全限定名(FQDN)，一般来说只需要 <code>&lt;service-name&gt;.&lt;namespace-name&gt;</code> 也是可以的</p>
 <h2 id="那些不属于任何名字空间的对象">那些不属于任何名字空间的对象</h2>
 <p>大多数 k8s 资源( pod, service, replication controller 等)都会属于某一个名字空间。 而 名字空间 资源则不属于任何名字空间。 还有一个底层资源 比如 <a href="../../../01-architecture/00-nodes/">节点</a>， persistentVolumes 也不属于任何名字空间</p>
 <p>以下命令可以查看资源是否属于名字空间:</p>
@@ -256,11 +256,11 @@ Published on 30 Jun 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/">Services, Load Balancing, and Networking<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/">Service, 负载均衡, 网络<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/00-service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
 </ul>
   
 </li>

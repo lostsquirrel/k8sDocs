@@ -29,7 +29,7 @@
 <meta itemprop="description" content="PodPod 表示集群中运行的一组容器的集合 . Init containers can contain utilities or setup scripts not present in an app image. You can specify init containers in the Pod specification alongside the `containers` array (which describes app containers). -- 本文主要介绍初始化容器: 一种在 Pod 中在应用容">
 <meta itemprop="datePublished" content="2020-08-04T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-07-29T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="3239">
+<meta itemprop="wordCount" content="3359">
 
 
 
@@ -58,7 +58,7 @@ var _hmt = _hmt || [];
 <body><div class="container"><header>
 <h1>Kubernetes</h1>
 
- <span class="version">Version v1.18</span>
+ <span class="version">Version v1.19</span>
 
 <p class="description">生产级别的容器编排系统</p>
 
@@ -107,7 +107,7 @@ succeeds. However, if the Pod has a `restartPolicy` of Never, Kubernetes does no
 
 To specify an init container for a Pod, add the `initContainers` field into
 the Pod specification, as an array of objects of type
-[Container](/docs/reference/generated/kubernetes-api/v1.18/#container-v1-core),
+[Container](/docs/reference/generated/kubernetes-api/v1.19/#container-v1-core),
 alongside the app `containers` array.
 The status of the init containers is returned in `.status.initContainerStatuses`
 field as an array of the container statuses (similar to the `.status.containerStatuses`
@@ -125,7 +125,7 @@ field).
 <p>如果 Pod 的初始化容器挂了， k8s 会不停重启该 Pod 直至初始化容器成功运行完成。
 但如果 Pod 的 <code>restartPolicy</code> 值为 <code>Never</code>， 则 k8s 不会重启该 Pod。</p>
 <p>要为一个 Pod 配置初始化容器， 需要在配置中添加 <code>initContainers</code> 字段， 字段值为一个类型为
-<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#container-v1-core">Container</a>
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#container-v1-core">Container</a>
 的对象数组， 与 <code>containers</code> 字段相邻。
 初始化容器返回的状态存放于 <code>.status.initContainerStatuses</code> 字段，是一个与容器状态字段(<code>.status.containerStatuses</code>)类似的数组</p>
 <!--
@@ -193,7 +193,7 @@ have some advantages for start-up related code:
 ### Examples
 Here are some ideas for how to use init containers:
 
-* Wait for a <a class='glossary-tooltip' href='/docs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>A way to expose an application running on a set of Pods as a network service.</span>
+* Wait for a <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
 </a> to
   be created, using a shell one-line command like:
   ```shell
@@ -221,7 +221,7 @@ Here are some ideas for how to use init containers:
 <h3 id="示例">示例</h3>
 <p>以下为几个怎么用初始化容器的点子:</p>
 <ul>
-<li>等待一个 <a class='glossary-tooltip' href='/docs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>A way to expose an application running on a set of Pods as a network service.</span>
+<li>等待一个 <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
 </a> 创建完成，
 使用以下 shell 命令:
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#66d9ef">for</span> i in <span style="color:#f92672">{</span>1..100<span style="color:#f92672">}</span>; <span style="color:#66d9ef">do</span> sleep 1; <span style="color:#66d9ef">if</span> dig myservice; <span style="color:#66d9ef">then</span> exit 0; <span style="color:#66d9ef">fi</span>; <span style="color:#66d9ef">done</span>; exit <span style="color:#ae81ff">1</span>
@@ -448,9 +448,9 @@ Events:
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl logs myapp-pod -c init-myservice <span style="color:#75715e"># 查看第一个初始化容器</span>
 kubectl logs myapp-pod -c init-mydb      <span style="color:#75715e"># 查看第二个初始化容器</span>
 </code></pre></div><p>此时，这两个初始化容器都分别在等待 <code>myservice</code> 和 <code>mydb</code> 两个
-<a class='glossary-tooltip' href='/docs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>A way to expose an application running on a set of Pods as a network service.</span>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
 </a> 被创建
-以下为创建所需要 <a class='glossary-tooltip' href='/docs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>A way to expose an application running on a set of Pods as a network service.</span>
+以下为创建所需要 <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
 </a> 的定义文件</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">---
 <span style="color:#66d9ef">apiVersion</span>: v1
@@ -473,7 +473,7 @@ kubectl logs myapp-pod -c init-mydb      <span style="color:#75715e"># 查看第
     <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">80</span>
     <span style="color:#66d9ef">targetPort</span>: <span style="color:#ae81ff">9377</span>
 </code></pre></div><p>通过以下命令创建 <code>myservice</code> 和 <code>mydb</code> 两个
-<a class='glossary-tooltip' href='/docs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>A way to expose an application running on a set of Pods as a network service.</span>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
 </a></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl apply -f services.yaml
 </code></pre></div><p>输出</p>
@@ -578,7 +578,7 @@ limit, the same as the scheduler.
 <p>配额和限制都是基于有效 Pod 下限/上限执行。</p>
 <p>Pod 级别的控制组(cgroups)基于 有效 Pod 下限/上限， 与调度器一致</p>
 <blockquote>
-  <div><strong>TODO: </strong> 说得不太清楚，需要实践理解后再考虑怎么修改</div>
+  <div><strong>TODO: </strong>说得不太清楚，需要实践理解后再考虑怎么修改</div>
 </blockquote>
 
 <!--
@@ -752,11 +752,11 @@ Published on 4 Aug 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/">Services, Load Balancing, and Networking<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/">Service, 负载均衡, 网络<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/00-service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
 </ul>
   
 </li>

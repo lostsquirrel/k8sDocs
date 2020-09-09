@@ -58,7 +58,7 @@ var _hmt = _hmt || [];
 <body><div class="container"><header>
 <h1>Kubernetes</h1>
 
- <span class="version">Version v1.18</span>
+ <span class="version">Version v1.19</span>
 
 <p class="description">生产级别的容器编排系统</p>
 
@@ -265,7 +265,7 @@ during application updates is configured in the spec for the specific workload r
 
 When a pod is evicted using the eviction API, it is gracefully
 [terminated](/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination), honoring the
-`terminationGracePeriodSeconds` setting in its [PodSpec](/docs/reference/generated/kubernetes-api/v1.18/#podspec-v1-core).)
+`terminationGracePeriodSeconds` setting in its [PodSpec](/docs/reference/generated/kubernetes-api/v1.19/#podspec-v1-core).)
  -->
 <h2 id="pod-故障预算">Pod 故障预算</h2>
 
@@ -299,10 +299,10 @@ PDB 会限制在计划内故障时应用副本的 Pod 同时挂掉的数量。�
 <p>由应用滚动更新造成的 Pod 删除或不可用是遵照故障预算的， 但工作负载(如 Deployment 和 StatefulSet)
 的滚动更新则不受 PDB 限制。 而是由工作负载中的配置来处理更新失败的。</p>
 <p>当一个 Pod 因使用 驱逐 API而被驱逐， 会平滑地被 <a href="/k8sDocs/concepts/workloads/pods/pod-lifecycle/#pod-termination">终止</a>
-或  <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podspec-v1-core">PodSpec</a>.)
+或  <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podspec-v1-core">PodSpec</a>.)
 中配置的 <code>terminationGracePeriodSeconds</code> 后被杀死。</p>
 <blockquote>
-  <div><strong>TODO: </strong> 说得不太清楚，需要实践理解后再考虑怎么修改</div>
+  <div><strong>TODO: </strong>说得不太清楚，需要实践理解后再考虑怎么修改</div>
 </blockquote>
 
 <!--
@@ -584,7 +584,7 @@ you may not need to use Pod Disruption Budgets.
 <p>Pod 故障预算通过角色之间的接口来实现对角色区分的支持</p>
 <p>如果用户组织中没有对责任区分的需求，则可能不震要使用 Pod 故障预算</p>
 <blockquote>
-  <div><strong>TODO: </strong> 说得不太清楚，需要实践理解后再考虑怎么修改</div>
+  <div><strong>TODO: </strong>说得不太清楚，需要实践理解后再考虑怎么修改</div>
 </blockquote>
 
 <!--
@@ -624,7 +624,7 @@ the nodes in your cluster, such as a node or system software upgrade, here are s
 </li>
 </ul>
 <blockquote>
-  <div><strong>TODO: </strong> 说得不太清楚，需要实践理解后再考虑怎么修改</div>
+  <div><strong>TODO: </strong>说得不太清楚，需要实践理解后再考虑怎么修改</div>
 </blockquote>
 
 <h2 id="相关资料">相关资料</h2>
@@ -780,11 +780,11 @@ Published on 10 Aug 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/">Services, Load Balancing, and Networking<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/">Service, 负载均衡, 网络<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/00-service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
 </ul>
   
 </li>

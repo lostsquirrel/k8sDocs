@@ -186,6 +186,15 @@ Create a Secret based on existing Docker credentials </description>
     </item>
     
     <item>
+      <title>Service</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/</guid>
+      <description>No need to modify your application to use an unfamiliar service discovery mechanism. Kubernetes gives Pods their own IP addresses and a single DNS name for a set of Pods, and can load-balance across them. content_type: concept weight: 10 --- -- 以网络服务的方式让一个由一组 PodPod 表示集群中运行的一组容器的集</description>
+    </item>
+    
+    <item>
       <title>资源配额</title>
       <link>https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/01-resource-quotas/</link>
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
@@ -333,10 +342,10 @@ Running cloud-controller-manager </description>
     
     <item>
       <title>DNS for Services and Pods</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/03-dns-pod-service/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/03-dns-pod-service/</link>
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/03-dns-pod-service/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/03-dns-pod-service/</guid>
       <description>TODO</description>
     </item>
     
@@ -530,15 +539,6 @@ What does each admission controller do? AlwaysPullImages RuntimeClass </descript
       
       <guid>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/06-common-labels/</guid>
       <description>用户可以使用 kubectl 和 dashboard 外的可视化管理工具。一些通用的描述对象信息的标签配置可以让这些工具更好地工作 为了工具能更好的使用这些标签，建议标签以方便查</description>
-    </item>
-    
-    <item>
-      <title>Service</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/00-service/</link>
-      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/00-service/</guid>
-      <description>TODO</description>
     </item>
     
     <item>

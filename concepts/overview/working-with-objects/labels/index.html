@@ -58,7 +58,7 @@ var _hmt = _hmt || [];
 <body><div class="container"><header>
 <h1>Kubernetes</h1>
 
- <span class="version">Version v1.18</span>
+ <span class="version">Version v1.19</span>
 
 <p class="description">生产级别的容器编排系统</p>
 
@@ -167,7 +167,7 @@ partition,environment notin (qa) # 筛选 存在键为 partition 且 environment
 </code></pre></div><p>逻辑否的效果</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl get pods -l <span style="color:#e6db74">&#39;environment,environment notin (frontend)&#39;</span>
 </code></pre></div><h3 id="set-references-in-api-objects-啥意思">Set references in API objects 啥意思</h3>
-<p>有些 k8s 对象，比如 <a href="../../../04-services-networking/00-service/">Service</a> <a href="../../../03-workloads/01-controllers/01-replicationcontroller/">ReplicationController</a> 也是通过标签选择器来限定被其管理的资源对象，比如 <a href="../../../03-workloads/00-pods/">Pod</a></p>
+<p>有些 k8s 对象，比如 <a href="../../../services-networking/service/">Service</a> <a href="../../../03-workloads/01-controllers/01-replicationcontroller/">ReplicationController</a> 也是通过标签选择器来限定被其管理的资源对象，比如 <a href="../../../03-workloads/00-pods/">Pod</a></p>
 <h3 id="service-和-replicationcontroller-对选择器的使用"><code>Service</code> 和 <code>ReplicationController</code> 对选择器的使用</h3>
 <p>Service 通过标签选择器来指定负载均衡的 Pod
 ReplicationController 也是通过标签选择器来指定被其管理的 Pod</p>
@@ -339,11 +339,11 @@ Published on 2 Jul 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/">Services, Load Balancing, and Networking<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/">Service, 负载均衡, 网络<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/00-service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
 </ul>
   
 </li>

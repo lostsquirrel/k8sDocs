@@ -58,7 +58,7 @@ var _hmt = _hmt || [];
 <body><div class="container"><header>
 <h1>Kubernetes</h1>
 
- <span class="version">Version v1.18</span>
+ <span class="version">Version v1.19</span>
 
 <p class="description">生产级别的容器编排系统</p>
 
@@ -159,7 +159,7 @@ are incompatible and disallowed for ephemeral containers.
   `livenessProbe`, `readinessProbe` are disallowed.
 - Pod resource allocations are immutable, so setting `resources` is disallowed.
 - For a complete list of allowed fields, see the [EphemeralContainer reference
-  documentation](/docs/reference/generated/kubernetes-api/v1.18/#ephemeralcontainer-v1-core).
+  documentation](/docs/reference/generated/kubernetes-api/v1.19/#ephemeralcontainer-v1-core).
 
 Ephemeral containers are created using a special `ephemeralcontainers` handler
 in the API rather than by adding them directly to `pod.spec`, so it's not
@@ -174,7 +174,7 @@ after you have added it to a Pod.
 <ul>
 <li>临时容器不能有端口，所以与端口相关的 <code>ports</code>, <code>livenessProbe</code>, <code>readinessProbe</code> 都是不能用的。</li>
 <li>Pod 分配的资源是不可变的，所以也不能设置 <code>resources</code>。</li>
-<li>所以可用字段列表见 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#ephemeralcontainer-v1-core">EphemeralContainer 参考文档</a></li>
+<li>所以可用字段列表见 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#ephemeralcontainer-v1-core">EphemeralContainer 参考文档</a></li>
 </ul>
 <p>临时容器是用一个在 API 叫 <code>ephemeralcontainers</code> 的特殊处理器创建的， 并不能通过直接添加 <code>pod.spec</code> 来创建。
 所以也不能通过 <code>kubectl edit</code> 来向 Pod 中添加一个临时容器。</p>
@@ -539,11 +539,11 @@ Published on 12 Aug 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/">Services, Load Balancing, and Networking<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/">Service, 负载均衡, 网络<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/00-service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
 </ul>
   
 </li>

@@ -29,7 +29,7 @@
 <meta itemprop="description" content="本文介经 Pod 的生命周期。 Pod 有一个既定的生命周期，开启后进行 Pending 阶段， 当其中至少有一个主要容器正常启动后变更为 Running 阶段， 如果所有容器全部正常启动则进">
 <meta itemprop="datePublished" content="2020-08-04T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-07-27T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="7639">
+<meta itemprop="wordCount" content="7738">
 
 
 
@@ -58,7 +58,7 @@ var _hmt = _hmt || [];
 <body><div class="container"><header>
 <h1>Kubernetes</h1>
 
- <span class="version">Version v1.18</span>
+ <span class="version">Version v1.19</span>
 
 <p class="description">生产级别的容器编排系统</p>
 
@@ -183,7 +183,7 @@ k8s 通过一个叫 <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-arc
 ## Pod phase
 
 A Pod's `status` field is a
-[PodStatus](/k8sDocs/reference/generated/kubernetes-api/v1.18/#podstatus-v1-core)
+[PodStatus](/k8sDocs/reference/generated/kubernetes-api/v1.19/#podstatus-v1-core)
 object, which has a `phase` field.
 
 The phase of a Pod is a simple, high-level summary of where the Pod is in its
@@ -208,7 +208,7 @@ If a node dies or is disconnected from the rest of the cluster, Kubernetes
 applies a policy for setting the `phase` of all Pods on the lost node to Failed.
 -->
 <h2 id="pod-的人生阶段">Pod 的人生阶段</h2>
-<p>在 Pod 的 <code>status</code> 字段是一个 <a href="https://kubernetes.io/k8sDocs/reference/generated/kubernetes-api/v1.18/#podstatus-v1-core">PodStatus</a>
+<p>在 Pod 的 <code>status</code> 字段是一个 <a href="https://kubernetes.io/k8sDocs/reference/generated/kubernetes-api/v1.19/#podstatus-v1-core">PodStatus</a>
 对象, 上面有一个 <code>phase</code> 字段.</p>
 <p>Pod 的人生阶段是对 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a> 生命周期的调度总结.
@@ -350,7 +350,7 @@ that container.
 ## Pod conditions
 
 A Pod has a PodStatus, which has an array of
-[PodConditions](https://kubernetes.io/k8sDocs/reference/generated/kubernetes-api/v1.18/#podcondition-v1-core)
+[PodConditions](https://kubernetes.io/k8sDocs/reference/generated/kubernetes-api/v1.19/#podcondition-v1-core)
 through which the Pod has or has not passed:
 
 * `PodScheduled`: the Pod has been scheduled to a node.
@@ -371,7 +371,7 @@ Field name           | Description
  -->
 <h2 id="pod-的就绪条件">Pod 的就绪条件</h2>
 <p>在 Pod 上面有一个 <code>PodStatus</code> 子对象，其中包含一个
-<a href="/k8sDocs/reference/generated/kubernetes-api/v1.18/#podcondition-v1-core">PodConditions</a>
+<a href="/k8sDocs/reference/generated/kubernetes-api/v1.19/#podcondition-v1-core">PodConditions</a>
 的数组。表示这个 Pod 有没有通过这些条件， 具体如下:</p>
 <ul>
 <li><code>PodScheduled</code>: Pod 已经被调度到节点上.</li>
@@ -521,22 +521,22 @@ kubelet 会将 Pod 的<a href="#pod-condition">就绪条件</a>值设置为 <cod
 <!--
 ## Container probes
 
-A [Probe](/k8sDocs/reference/generated/kubernetes-api/v1.18/#probe-v1-core) is a diagnostic
+A [Probe](/k8sDocs/reference/generated/kubernetes-api/v1.19/#probe-v1-core) is a diagnostic
 performed periodically by the [kubelet](/k8sDocs/admin/kubelet/)
 on a Container. To perform a diagnostic,
 the kubelet calls a
-[Handler](/k8sDocs/reference/generated/kubernetes-api/v1.18/#handler-v1-core) implemented by
+[Handler](/k8sDocs/reference/generated/kubernetes-api/v1.19/#handler-v1-core) implemented by
 the container. There are three types of handlers:
 
-* [ExecAction](/k8sDocs/reference/generated/kubernetes-api/v1.18/#execaction-v1-core):
+* [ExecAction](/k8sDocs/reference/generated/kubernetes-api/v1.19/#execaction-v1-core):
   Executes a specified command inside the container. The diagnostic
   is considered successful if the command exits with a status code of 0.
 
-* [TCPSocketAction](/k8sDocs/reference/generated/kubernetes-api/v1.18/#tcpsocketaction-v1-core):
+* [TCPSocketAction](/k8sDocs/reference/generated/kubernetes-api/v1.19/#tcpsocketaction-v1-core):
   Performs a TCP check against the Pod's IP address on
   a specified port. The diagnostic is considered successful if the port is open.
 
-* [HTTPGetAction](/k8sDocs/reference/generated/kubernetes-api/v1.18/#httpgetaction-v1-core):
+* [HTTPGetAction](/k8sDocs/reference/generated/kubernetes-api/v1.19/#httpgetaction-v1-core):
   Performs an HTTP `GET` request against the Pod's IP
   address on a specified port and path. The diagnostic is considered successful
   if the response has a status code greater than or equal to 200 and less than 400.
@@ -571,22 +571,22 @@ For more information about how to set up a liveness, readiness, or startup probe
 see [Configure Liveness, Readiness and Startup Probes](/k8sDocs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/).
  -->
 <h2 id="容器探针">容器探针</h2>
-<p><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#probe-v1-core">探针</a>
+<p><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#probe-v1-core">探针</a>
 就是由 <a href="/k8sDocs/admin/kubelet/">kubelet</a> 定时对容器进行诊断操作，
 诊断操作则是由 kubelet 调用一个由容器实现的
-<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#handler-v1-core">处理器</a>。
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#handler-v1-core">处理器</a>。
 有以下三种类型处理器:</p>
 <ul>
 <li>
-<p><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#execaction-v1-core">ExecAction</a>:
+<p><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#execaction-v1-core">ExecAction</a>:
 在容器内执行一个指定命令. 如果命令执行结束代码为 0 则表示诊断结果为成功</p>
 </li>
 <li>
-<p><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#tcpsocketaction-v1-core">TCPSocketAction</a>:
+<p><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#tcpsocketaction-v1-core">TCPSocketAction</a>:
 向指定 IP 地址和端口发起 TCP 请求。 如果成功打开端口，表示诊断结果为成功</p>
 </li>
 <li>
-<p><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#httpgetaction-v1-core">HTTPGetAction</a>:
+<p><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#httpgetaction-v1-core">HTTPGetAction</a>:
 向指定IP 地址，端口和路径发起 HTTP <code>GET</code> 请求。如果响应码在 200 &lt;= code &lt; 400
 表示诊断结果为成功</p>
 </li>
@@ -606,11 +606,11 @@ see [Configure Liveness, Readiness and Startup Probes](/k8sDocs/tasks/configure-
 </li>
 <li>
 <p><code>readinessProbe</code>(就绪探针): 指示容器是否可以响应请求
-如果就绪探针的诊断结果为未通过， 则 <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-endpoint' target='_blank'>Endpoints<span class='tooltip-text'>Endpoints track the IP addresses of Pods with matching Service selectors.</span>
+如果就绪探针的诊断结果为未通过， 则 <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-endpoint' target='_blank'>Endpoints<span class='tooltip-text'>Endpoint 跟踪匹配 Service 选择器的 Pod 的 IP 地址</span>
 </a> 控制器
-就会把该 Pod 从所有配置该 Pod 的 <a class='glossary-tooltip' href='/docs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>A way to expose an application running on a set of Pods as a network service.</span>
+就会把该 Pod 从所有配置该 Pod 的 <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
 </a> 的
-<a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-endpoint' target='_blank'>Endpoints<span class='tooltip-text'>Endpoints track the IP addresses of Pods with matching Service selectors.</span>
+<a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-endpoint' target='_blank'>Endpoints<span class='tooltip-text'>Endpoint 跟踪匹配 Service 选择器的 Pod 的 IP 地址</span>
 </a> 中移出。
 如果容器没有配置就绪探针，则默认状态为成功。</p>
 </li>
@@ -812,9 +812,9 @@ order. If the order of shutdowns matters, consider using a <code>preStop</code> 
 
 1. At the same time as the kubelet is starting graceful shutdown, the control plane removes that
    shutting-down Pod from Endpoints (and, if enabled, EndpointSlice) objects where these represent
-   a <a class='glossary-tooltip' href='/docs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>A way to expose an application running on a set of Pods as a network service.</span>
+   a <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
 </a> with a configured
-   <a class='glossary-tooltip' href='/docs/concepts/overview/working-with-objects/labels/' target='_blank'>selector<span class='tooltip-text'>Allows users to filter a list of resources based on labels.</span>
+   <a class='glossary-tooltip' href='/k8sDocs/concepts/overview/working-with-objects/labels/' target='_blank'>selector<span class='tooltip-text'>允许用户基于标签过滤资源列表</span>
 </a>.
    <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/replicaset/' target='_blank'>ReplicaSets<span class='tooltip-text'>ReplicaSet 保证在任意时间点上某个 Pod 有指定数量副本在运行</span>
 </a> and other workload resources
@@ -865,13 +865,13 @@ kubelet 会在对应容器中执行这个钩子。 如果在预期时间到达�
 </li>
 </ol>
 </li>
-<li>在 kubelet 开始平滑关闭 Pod 的进程的同时， 控制中心将正在删除的 Pod 从 对应配置选择的 <a class='glossary-tooltip' href='/docs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>A way to expose an application running on a set of Pods as a network service.</span>
+<li>在 kubelet 开始平滑关闭 Pod 的进程的同时， 控制中心将正在删除的 Pod 从 对应配置选择的 <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
 </a>
-所代表的 <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-endpoint' target='_blank'>Endpoints<span class='tooltip-text'>Endpoints track the IP addresses of Pods with matching Service selectors.</span>
+所代表的 <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-endpoint' target='_blank'>Endpoints<span class='tooltip-text'>Endpoint 跟踪匹配 Service 选择器的 Pod 的 IP 地址</span>
 </a> (如果开启也可能是 EndpointSlice)中移出。
 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/replicaset/' target='_blank'>ReplicaSet<span class='tooltip-text'>ReplicaSet 保证在任意时间点上某个 Pod 有指定数量副本在运行</span>
 </a> 和其它的工作负载资源都会将该Pod认作是失效的，对于那些半天关不掉又不能提供服务的Pod
-负载均衡(如 service proxy)会在删除预期时间开始时就从 <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-endpoint' target='_blank'>Endpoints<span class='tooltip-text'>Endpoints track the IP addresses of Pods with matching Service selectors.</span>
+负载均衡(如 service proxy)会在删除预期时间开始时就从 <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-endpoint' target='_blank'>Endpoints<span class='tooltip-text'>Endpoint 跟踪匹配 Service 选择器的 Pod 的 IP 地址</span>
 </a> 列表中移出。</li>
 <li>当预期时间用完后，就会触发 kubelet 强制删除。 <a class='glossary-tooltip' href='/docs/setup/production-environment/container-runtimes' target='_blank'>容器运行环境<span class='tooltip-text'>容器运行环境就是负责运行容器的软件</span>
 </a>
@@ -967,8 +967,8 @@ This avoids a resource leak as Pods are created and terminated over time.
 <p>了解<a href="/k8sDocs/concepts/containers/container-lifecycle-hooks/">container lifecycle hooks</a>.</p>
 </li>
 <li>
-<p>更多关于 Pod / Container 状态的 API, 见 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podstatus-v1-core">PodStatus</a>,
-<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#containerstatus-v1-core">ContainerStatus</a>.</p>
+<p>更多关于 Pod / Container 状态的 API, 见 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podstatus-v1-core">PodStatus</a>,
+<a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#containerstatus-v1-core">ContainerStatus</a>.</p>
 </li>
 </ul>
 <div class="edit-meta">
@@ -1109,11 +1109,11 @@ Published on 4 Aug 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/">Services, Load Balancing, and Networking<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/">Service, 负载均衡, 网络<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/00-service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
 </ul>
   
 </li>

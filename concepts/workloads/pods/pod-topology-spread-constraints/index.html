@@ -29,7 +29,7 @@
 <meta itemprop="description" content="功能特性状态: Kubernetes v1.18 [beta] You can use _topology spread constraints_ to control how PodsPod 表示集群中运行的一组容器的集合 are spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains. This can help to achieve high availability as well as efficient resource utilization. -- 功能特性">
 <meta itemprop="datePublished" content="2020-08-05T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-07-29T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="4266">
+<meta itemprop="wordCount" content="4314">
 
 
 
@@ -58,7 +58,7 @@ var _hmt = _hmt || [];
 <body><div class="container"><header>
 <h1>Kubernetes</h1>
 
- <span class="version">Version v1.18</span>
+ <span class="version">Version v1.19</span>
 
 <p class="description">生产级别的容器编排系统</p>
 
@@ -827,7 +827,7 @@ using default constraints for <code>PodTopologySpread</code>.</div>
 <ul>
 <li>Pod 没有在 <code>.spec.topologySpreadConstraints</code> 中定义任何约束条件</li>
 <li>Pod 属于
-<a class='glossary-tooltip' href='/docs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>A way to expose an application running on a set of Pods as a network service.</span>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
 </a>
 <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-replication-controller' target='_blank'>ReplicationController<span class='tooltip-text'>一个 (废弃的) API 对象用于管理多副本应用</span>
 </a>
@@ -839,7 +839,7 @@ using default constraints for <code>PodTopologySpread</code>.</div>
 <p>默认的约束条件可以作为 <a href="/k8sDocs/reference/scheduling/profiles">scheduling profile</a>
 中 <code>PodTopologySpread</code> 插件参数的一部分。 这些约束条件可以能过同 <a href="#api">API</a> 一样设置，
 除了 <code>labelSelector</code> 必须为空。 选择器通过 Pod 所属的<br>
-<a class='glossary-tooltip' href='/docs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>A way to expose an application running on a set of Pods as a network service.</span>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
 </a>
 <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-replication-controller' target='_blank'>ReplicationController<span class='tooltip-text'>一个 (废弃的) API 对象用于管理多副本应用</span>
 </a>
@@ -1042,11 +1042,11 @@ Published on 5 Aug 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/">Services, Load Balancing, and Networking<span class="mark closed">+</span></a>
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/">Service, 负载均衡, 网络<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/04-services-networking/00-service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/03-dns-pod-service/">DNS for Services and Pods</a></li>
 </ul>
   
 </li>
