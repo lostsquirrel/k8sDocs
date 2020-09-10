@@ -37,7 +37,7 @@ Create a Secret based on existing Docker credentials </description>
       <pubDate>Thu, 30 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/09-security-context/</guid>
-      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+      <description>TODO: 为内链创建占位文件，逐步整理中  相关资料    </description>
     </item>
     
     <item>
@@ -46,7 +46,7 @@ Create a Secret based on existing Docker credentials </description>
       <pubDate>Tue, 04 Aug 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-pod-initialization/</guid>
-      <description>TODO:  为内链创建占位文件，逐步整理中  Create a Pod that has an Init Container 相关资料    </description>
+      <description>TODO: 为内链创建占位文件，逐步整理中  Create a Pod that has an Init Container 相关资料    </description>
     </item>
     
     <item>
@@ -55,7 +55,7 @@ Create a Secret based on existing Docker credentials </description>
       <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/attach-handler-lifecycle-event/</guid>
-      <description>TODO:  为内链创建占位文件，逐步整理中  相关资料    </description>
+      <description>TODO: 为内链创建占位文件，逐步整理中  相关资料    </description>
     </item>
     
     <item>

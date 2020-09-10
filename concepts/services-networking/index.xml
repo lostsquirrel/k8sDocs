@@ -30,12 +30,12 @@
     </item>
     
     <item>
-      <title>DNS for Services and Pods</title>
+      <title>Service 和 Pod 的 DNS</title>
       <link>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dns-pod-service/</link>
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dns-pod-service/</guid>
-      <description>TODO</description>
+      <description>本文简述 k8s 对 DNS 的支持 介绍 k8s DNS 先在集群中部署了一个 DNS 的 Pod 和 Service， 并配置 kubelet 让每一个容器都使用 DNS Service 的 IP 来解析 DNS 名称。 啥东西会有 DNS 名称? 集</description>
     </item>
     
   </channel>
