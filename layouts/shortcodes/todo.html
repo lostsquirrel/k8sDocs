@@ -1,3 +1,5 @@
+{{- $text := .Get "text" -}}
+{{- $text := $text | default "为内链创建占位文件，逐步整理中" -}}
 <blockquote class="note">
-  <div><strong>TODO: </strong> 为内链创建占位文件，逐步整理中</div>
+  <div><strong>TODO: </strong>{{ $text }}</div>
 </blockquote>
