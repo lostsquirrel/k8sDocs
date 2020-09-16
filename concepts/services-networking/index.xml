@@ -38,5 +38,14 @@
       <description>本文简述 k8s 对 DNS 的支持 介绍 k8s DNS 先在集群中部署了一个 DNS 的 Pod 和 Service， 并配置 kubelet 让每一个容器都使用 DNS Service 的 IP 来解析 DNS 名称。 啥东西会有 DNS 名称? 集</description>
     </item>
     
+    <item>
+      <title>通过 Service 连接应用</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/connect-applications-service/</link>
+      <pubDate>Mon, 14 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/connect-applications-service/</guid>
+      <description>连接到容器的 k8s 模型 到目前为止我们有一个持续运行的多副本应用，我们可以把它暴露到一个网络中。 在讨论 k8s 的网络实现前， 值得花点时间来看看 Docker 中普通的</description>
+    </item>
+    
   </channel>
 </rss>
