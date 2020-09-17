@@ -66,6 +66,15 @@
     </item>
     
     <item>
+      <title>EndpointSlice</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/endpoint-slices/</link>
+      <pubDate>Thu, 17 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/endpoint-slices/</guid>
+      <description>功能特性状态: Kubernetes v1.17 [beta] _EndpointSlices_ provide a simple way to track network endpoints within a Kubernetes cluster. They offer a more scalable and extensible alternative to Endpoints. -- 功能特性状态: Kubernetes v1.17 [beta] EndpointSlice 提供了一种简单的方式来在 k8s 集群跟踪网络端点。 它提供</description>
+    </item>
+    
+    <item>
       <title>Volumes</title>
       <link>https://lostsquirrel.github.io/k8sDocs/concepts/05-storage/00-volumes/</link>
       <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
