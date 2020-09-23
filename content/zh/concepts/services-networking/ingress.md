@@ -1008,6 +1008,6 @@ You can expose a Service in multiple ways that don't directly involve the Ingres
 
 ## {{% heading "whatsnext" %}}
 
-* 查阅 [Ingress API](/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#ingress-v1beta1-networking-k8s-io)
-* 概念 [Ingress 控制器](/docs/concepts/services-networking/ingress-controllers/)
-* 实践 [使用 NGINX 控制器在 Minikube 上设置 Ingress](/docs/tasks/access-application-cluster/ingress-minikube/)
+* 查阅 [Ingress API](https://kubernetes.io/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#ingress-v1beta1-networking-k8s-io)
+* 概念 [Ingress 控制器](/k8sDocs/concepts/services-networking/ingress-controllers/)
+* 实践 [使用 NGINX 控制器在 Minikube 上设置 Ingress](/k8sDocs/tasks/access-application-cluster/ingress-minikube/)
