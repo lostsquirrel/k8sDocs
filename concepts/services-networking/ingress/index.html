@@ -1,0 +1,2416 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Ingress - Kubernetes</title>
+<meta name="description" content="生产级别的容器编排系统">
+<meta name="generator" content="Hugo 0.68.3" />
+<link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
+<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress/">
+<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/theme.min.css">
+<script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/chroma.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.easing@1.4.1/jquery.easing.min.js"></script>
+<script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
+:root {}
+</style>
+<meta property="og:title" content="Ingress" />
+<meta property="og:description" content="功能特性状态: Kubernetes v1.19 [stable] 一个用于管理外部访问集群内 Service 的 API 对象，通常是 HTTP。 Ingress 还可以提供负载均衡，SSL 和基于名称的虚拟主机。 Service以" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress/" />
+<meta property="article:published_time" content="2020-09-23T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-09-21T00:00:00+00:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Ingress"/>
+<meta name="twitter:description" content="功能特性状态: Kubernetes v1.19 [stable] 一个用于管理外部访问集群内 Service 的 API 对象，通常是 HTTP。 Ingress 还可以提供负载均衡，SSL 和基于名称的虚拟主机。 Service以"/>
+<meta itemprop="name" content="Ingress">
+<meta itemprop="description" content="功能特性状态: Kubernetes v1.19 [stable] 一个用于管理外部访问集群内 Service 的 API 对象，通常是 HTTP。 Ingress 还可以提供负载均衡，SSL 和基于名称的虚拟主机。 Service以">
+<meta itemprop="datePublished" content="2020-09-23T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-09-21T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="6124">
+
+
+
+<meta itemprop="keywords" content="" />
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?46e26ffc9d975f663dff0b89f1cf7931";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href=/k8sDocs/css/base_fonts.css>
+
+<link rel="stylesheet" href="/k8sDocs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/k8sDocs/css/callouts.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
+
+</head>
+<body><div class="container"><header>
+<h1>Kubernetes</h1>
+
+ <span class="version">Version v1.19</span>
+
+<p class="description">生产级别的容器编排系统</p>
+
+</header>
+
+<div class="content-container">
+<main><h1>Ingress</h1>
+<!--
+---
+reviewers:
+- bprashanth
+title: Ingress
+content_type: concept
+weight: 40
+--- -->
+<!-- overview -->
+<p>
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.19 [stable]</code>
+</div>
+
+
+<p>一个用于管理外部访问集群内 Service 的 API 对象，通常是 HTTP。</p>
+<p>Ingress 还可以提供负载均衡，SSL 和基于名称的虚拟主机。</p></p>
+<!-- body -->
+<!--
+## Terminology
+
+For clarity, this guide defines the following terms:
+
+* Node: A worker machine in Kubernetes, part of a cluster.
+* Cluster: A set of Nodes that run containerized applications managed by Kubernetes. For this example, and in most common Kubernetes deployments, nodes in the cluster are not part of the public internet.
+* Edge router: A router that enforces the firewall policy for your cluster. This could be a gateway managed by a cloud provider or a physical piece of hardware.
+* Cluster network: A set of links, logical or physical, that facilitate communication within a cluster according to the Kubernetes [networking model](/docs/concepts/cluster-administration/networking/).
+* Service: A Kubernetes <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
+</a> that identifies a set of Pods using <a class='glossary-tooltip' href='/k8sDocs/concepts/overview/working-with-objects/labels' target='_blank'>label<span class='tooltip-text'>在对象上标上对用户有意义和有关联的属性</span>
+</a> selectors. Unless mentioned otherwise, Services are assumed to have virtual IPs only routable within the cluster network.
+ -->
+<h2 id="术语">术语</h2>
+<p>为了明确，本文定义了如下术语:</p>
+<ul>
+<li>节点(Node): k8s 中的一个工作机，集群的一部分。</li>
+<li>集群(Cluster): 一组由运行由 k8s 管理的容器化应用的节点集合。在本例和大多数常用的 k8s 部署
+中，集群中的节点是不在公网上的。</li>
+<li>边缘路由: 一个为集群执行防火墙策略的路由。 可以是由云提供商管理的网关或一个物理硬件。</li>
+<li>集群网络: 一组逻辑的或物理的连接，这些连接根据 k8s
+<a href="/k8sDocs/concepts/cluster-administration/networking/">网络模型</a>简化集群内的通信</li>
+<li>Service: 一个 k8s <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
+</a> 就是使用
+<a class='glossary-tooltip' href='/k8sDocs/concepts/overview/working-with-objects/labels' target='_blank'>标签<span class='tooltip-text'>在对象上标上对用户有意义和有关联的属性</span>
+</a> 选择器区分一组 Pod 的抽象概念。 如果没有特别
+说明， Service 假定是有一个只能在集群内路由的虚拟 IP 的。</li>
+</ul>
+<!--
+## What is Ingress?
+
+[Ingress](/docs/reference/generated/kubernetes-api/v1.19/#ingress-v1-networking-k8s-io) exposes HTTP and HTTPS routes from outside the cluster to
+<a href="/docs/concepts/services-networking/service/" target="_blank">services</a> within the cluster.
+Traffic routing is controlled by rules defined on the Ingress resource.
+
+```none
+    internet
+        |
+   [ Ingress ]
+   --|-----|--
+   [ Services ]
+```
+
+An Ingress may be configured to give Services externally-reachable URLs, load balance traffic, terminate SSL / TLS, and offer name-based virtual hosting. An [Ingress controller](/docs/concepts/services-networking/ingress-controllers) is responsible for fulfilling the Ingress, usually with a load balancer, though it may also configure your edge router or additional frontends to help handle the traffic.
+
+An Ingress does not expose arbitrary ports or protocols. Exposing services other than HTTP and HTTPS to the internet typically
+uses a service of type [Service.Type=NodePort](/docs/concepts/services-networking/service/#nodeport) or
+[Service.Type=LoadBalancer](/docs/concepts/services-networking/service/#loadbalancer).
+ -->
+<h2 id="ingress-是什么">Ingress 是什么?</h2>
+<p><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#ingress-v1-networking-k8s-io">Ingress</a>
+将集群内部的
+<a href="/k8sDocs/concepts/services-networking/service/" target="_blank">Service</a>
+通过 HTTP 和 HTTPS 路由暴露到集群外部。
+流量路由由 Ingress 资源内部定义的规则控制。</p>
+<pre><code class="language-none" data-lang="none">    internet
+        |
+   [ Ingress ]
+   --|-----|--
+   [ Services ]
+</code></pre><p>可以配置一个 Ingress 为 Service 提供外部可以访问的 URL, 负载均衡，SSL / TLS, 提供基于名称的
+虚拟主机名。
+<a href="/k8sDocs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>将负责
+实现 Ingress， 通常是通过负载均衡器，也可能是通过配置边缘路由或额外的前端组件来帮助处理流量。</p>
+<p>Ingress 不是暴露任意的端口或协议。 要暴露非 HTTP / HTTPS 的 Service 通常使用
+<a href="/k8sDocs/concepts/services-networking/service/#nodeport">Service.Type=NodePort</a>
+或
+<a href="/k8sDocs/concepts/services-networking/service/#loadbalancer">Service.Type=LoadBalancer</a>.</p>
+<!--
+## Prerequisites
+
+You must have an [Ingress controller](/docs/concepts/services-networking/ingress-controllers) to satisfy an Ingress. Only creating an Ingress resource has no effect.
+
+You may need to deploy an Ingress controller such as [ingress-nginx](https://kubernetes.github.io/ingress-nginx/deploy/). You can choose from a number of
+[Ingress controllers](/docs/concepts/services-networking/ingress-controllers).
+
+Ideally, all Ingress controllers should fit the reference specification. In reality, the various Ingress
+controllers operate slightly differently.
+
+<blockquote class="note">
+  <div><strong>说明：</strong> Make sure you review your Ingress controller&rsquo;s documentation to understand the caveats of choosing it.</div>
+</blockquote>
+
+ -->
+<h2 id="前置条件">前置条件</h2>
+<p>要使用 Ingress 首先得有一个
+<a href="/k8sDocs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>。
+不然只创建一个 Ingress 资源是没有效果的。</p>
+<p>需要部署一个 Ingress 控制器，例如
+<a href="https://kubernetes.github.io/ingress-nginx/deploy/">ingress-nginx</a>.
+也可以从
+<a href="/k8sDocs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>
+中选几个.</p>
+<p>理想情况下，所有的 Ingress 控制器都应该是符合参考规格说明的。 实际上，不同的 Ingress 运转方式
+各自都有点不同。
+<blockquote class="note">
+  <div><strong>说明：</strong> 在选择 Ingress 控制器前请仔细阅读相关文档，确定理解了相关注意事项。</div>
+</blockquote>
+</p>
+<!--
+## The Ingress resource
+
+A minimal Ingress resource example:
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingminimal-ingressyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/minimal-ingress.yaml" download="service/networking/minimal-ingress.yaml">
+                    <code>service/networking/minimal-ingress.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingminimal-ingressyaml')" title="Copy service/networking/minimal-ingress.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: minimal-ingress
+  <span style="color:#66d9ef">annotations</span>:
+    <span style="color:#66d9ef">nginx.ingress.kubernetes.io/rewrite-target</span>: /
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">path</span>: /testpath
+        <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: test
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+As with all other Kubernetes resources, an Ingress needs `apiVersion`, `kind`, and `metadata` fields.
+The name of an Ingress object must be a valid
+[DNS subdomain name](/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+For general information about working with config files, see [deploying applications](/docs/tasks/run-application/run-stateless-application-deployment/), [configuring containers](/docs/tasks/configure-pod-container/configure-pod-configmap/), [managing resources](/docs/concepts/cluster-administration/manage-deployment/).
+ Ingress frequently uses annotations to configure some options depending on the Ingress controller, an example of which
+ is the [rewrite-target annotation](https://github.com/kubernetes/ingress-nginx/blob/master/docs/examples/rewrite/README.md).
+Different [Ingress controller](/docs/concepts/services-networking/ingress-controllers) support different annotations. Review the documentation for
+ your choice of Ingress controller to learn which annotations are supported.
+
+The Ingress [spec](https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status)
+has all the information needed to configure a load balancer or proxy server. Most importantly, it
+contains a list of rules matched against all incoming requests. Ingress resource only supports rules
+for directing HTTP(S) traffic.
+ -->
+<h2 id="ingress-资源">Ingress 资源</h2>
+<p>一个最小化 Ingress 资源的示例:
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingminimal-ingressyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/minimal-ingress.yaml" download="service/networking/minimal-ingress.yaml">
+                    <code>service/networking/minimal-ingress.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingminimal-ingressyaml')" title="Copy service/networking/minimal-ingress.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: minimal-ingress
+  <span style="color:#66d9ef">annotations</span>:
+    <span style="color:#66d9ef">nginx.ingress.kubernetes.io/rewrite-target</span>: /
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">path</span>: /testpath
+        <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: test
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+</p>
+<p>与所有其它的 k8s 资源一样， 一个 Ingress 的必要字段有 <code>apiVersion</code>, <code>kind</code>, <code>metadata</code>。
+Ingress 对象的名称必须是一个有效的
+<a href="/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.
+关于配置文件的通用信息见
+<a href="/k8sDocs/tasks/run-application/run-stateless-application-deployment/">部署应用</a>,
+<a href="/k8sDocs/tasks/configure-pod-container/configure-pod-configmap/">配置容器</a>,
+<a href="/k8sDocs/concepts/cluster-administration/manage-deployment/">管理资源</a>.
+Ingress 经常使用注解(annotation) 来配置一些基于 Ingress 控制器的可选配置，这里有一个例子
+<a href="https://github.com/kubernetes/ingress-nginx/blob/master/docs/examples/rewrite/README.md">rewrite-target 注解</a>.
+不同的
+<a href="/docs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>
+会支持不同的注解。 查看对应的控制文档了解其支持的注解(annotation)。</p>
+<p>Ingress <a href="https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status">spec</a>
+中包含了配置负载均衡器或代理服务器的所有信息。 最重要的是它包含了一个匹配进入请求的规则列表。
+Ingress 资源只支持对 HTTP(S) 流量的转发。</p>
+<!--
+### Ingress rules
+
+Each HTTP rule contains the following information:
+
+* An optional host. In this example, no host is specified, so the rule applies to all inbound
+  HTTP traffic through the IP address specified. If a host is provided (for example,
+  foo.bar.com), the rules apply to that host.
+* A list of paths (for example, `/testpath`), each of which has an associated
+  backend defined with a `service.name` and a `service.port.name` or
+  `service.port.number`. Both the host and path must match the content of an
+  incoming request before the load balancer directs traffic to the referenced
+  Service.
+* A backend is a combination of Service and port names as described in the
+  [Service doc](/docs/concepts/services-networking/service/) or a [custom resource backend](#resource-backend) by way of a <a class='glossary-tooltip' href='/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/' target='_blank'>CRD<span class='tooltip-text'>Custom code that defines a resource to add to your Kubernetes API server without building a complete custom server.</span>
+</a>. HTTP (and HTTPS) requests to the
+  Ingress that matches the host and path of the rule are sent to the listed backend.
+
+A `defaultBackend` is often configured in an Ingress controller to service any requests that do not
+match a path in the spec.
+ -->
+<h3 id="ingress-rules">Ingress 规则</h3>
+<p>每个 HTTP 规则包含以下信息:</p>
+<ul>
+<li>一个可选的主机名。 在这个例子中就没有配，所以这个规则应用于所有通过指定 IP 的流量。如果主机名
+有设置(例如，foo.bar.com), 这个规则就应用于这个主机名。</li>
+<li>一个路径列表(如例子中的 <code>/testpath</code>)， 每个路径都与一个后台通过一个 <code>service.name</code> 和
+一个 <code>service.port.name</code> 或 <code>service.port.number</code> 相关联。 必须要主机名和路径都匹配的
+进入请求才会重定向到相应的 Service</li>
+<li>一个后端就是一个 Service 和 端口名称的组合，就如
+<a href="/docs/concepts/services-networking/service/">Service</a>
+或
+<a href="#resource-backend">自定义资源后端</a>通过
+<a class='glossary-tooltip' href='/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/' target='_blank'>CRD<span class='tooltip-text'>Custom code that defines a resource to add to your Kubernetes API server without building a complete custom server.</span>
+</a>
+方式中所描述的一样。
+到达 Ingress 的 HTTP (和 HTTPS) 请求匹配到对应规则的主机名和路径就会发送到列举的后端。</li>
+</ul>
+<p>一个 <code>defaultBackend</code> 通常是配置在一个 Ingress 控制器中，用于接收所有没有匹配到任何配置中的
+路径的请求。</p>
+<!--
+### DefaultBackend {#default-backend}
+
+An Ingress with no rules sends all traffic to a single default backend. The `defaultBackend` is conventionally a configuration option
+of the [Ingress controller](/docs/concepts/services-networking/ingress-controllers) and is not specified in your Ingress resources.
+
+If none of the hosts or paths match the HTTP request in the Ingress objects, the traffic is
+routed to your default backend.
+ -->
+<h3 id="default-backend">默认后端(DefaultBackend)</h3>
+<p>一个没有任何规则的 Ingress 会将所有的流量发送到一个默认的后端。 <code>defaultBackend</code> 是一个很方便
+的配置在  <a href="/k8sDocs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>
+并不需要在 Ingress 中配置。</p>
+<p>如果没有一个 Ingress 中的主机名或路径匹配到的 HTTP 请求，这些请求就会路由到默认后端</p>
+<!--
+### Resource backends {#resource-backend}
+
+A `Resource` backend is an ObjectRef to another Kubernetes resource within the
+same namespace as the Ingress object. A `Resource` is a mutually exclusive
+setting with Service, and will fail validation if both are specified. A common
+usage for a `Resource` backend is to ingress data to an object storage backend
+with static assets.
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingingress-resource-backendyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/ingress-resource-backend.yaml" download="service/networking/ingress-resource-backend.yaml">
+                    <code>service/networking/ingress-resource-backend.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingingress-resource-backendyaml')" title="Copy service/networking/ingress-resource-backend.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: ingress-resource-backend
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">defaultBackend</span>:
+    <span style="color:#66d9ef">resource</span>:
+      <span style="color:#66d9ef">apiGroup</span>: k8s.example.com
+      <span style="color:#66d9ef">kind</span>: StorageBucket
+      <span style="color:#66d9ef">name</span>: static-assets
+  <span style="color:#66d9ef">rules</span>:
+    - <span style="color:#66d9ef">http</span>:
+        <span style="color:#66d9ef">paths</span>:
+          - <span style="color:#66d9ef">path</span>: /icons
+            <span style="color:#66d9ef">pathType</span>: ImplementationSpecific
+            <span style="color:#66d9ef">backend</span>:
+              <span style="color:#66d9ef">resource</span>:
+                <span style="color:#66d9ef">apiGroup</span>: k8s.example.com
+                <span style="color:#66d9ef">kind</span>: StorageBucket
+                <span style="color:#66d9ef">name</span>: icon-assets
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+After creating the Ingress above, you can view it with the following command:
+
+```bash
+kubectl describe ingress ingress-resource-backend
+```
+
+```
+Name:             ingress-resource-backend
+Namespace:        default
+Address:
+Default backend:  APIGroup: k8s.example.com, Kind: StorageBucket, Name: static-assets
+Rules:
+  Host        Path  Backends
+  ----        ----  --------
+  *
+              /icons   APIGroup: k8s.example.com, Kind: StorageBucket, Name: icon-assets
+Annotations:  <none>
+Events:       <none>
+```
+ -->
+<h3 id="resource-backend">资源(Resource) 后端</h3>
+<p>一个 <code>Resource</code> 后端是一个与 Ingress 对象在同一个名字空间的另一个 k8s 资源的引用。
+<code>Resource</code> 与 Service 是互斥的，如果同时配置了两者，则不会通过验证。 <code>Resource</code> 的一个常见
+应用场景是进入一个存放静态资源的对象存储后端。</p>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingingress-resource-backendyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/ingress-resource-backend.yaml" download="service/networking/ingress-resource-backend.yaml">
+                    <code>service/networking/ingress-resource-backend.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingingress-resource-backendyaml')" title="Copy service/networking/ingress-resource-backend.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: ingress-resource-backend
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">defaultBackend</span>:
+    <span style="color:#66d9ef">resource</span>:
+      <span style="color:#66d9ef">apiGroup</span>: k8s.example.com
+      <span style="color:#66d9ef">kind</span>: StorageBucket
+      <span style="color:#66d9ef">name</span>: static-assets
+  <span style="color:#66d9ef">rules</span>:
+    - <span style="color:#66d9ef">http</span>:
+        <span style="color:#66d9ef">paths</span>:
+          - <span style="color:#66d9ef">path</span>: /icons
+            <span style="color:#66d9ef">pathType</span>: ImplementationSpecific
+            <span style="color:#66d9ef">backend</span>:
+              <span style="color:#66d9ef">resource</span>:
+                <span style="color:#66d9ef">apiGroup</span>: k8s.example.com
+                <span style="color:#66d9ef">kind</span>: StorageBucket
+                <span style="color:#66d9ef">name</span>: icon-assets
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<p>在创建以上定义的 Ingress 后，可以通过以下命令查看:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl describe ingress ingress-resource-backend
+</code></pre></div><pre><code>Name:             ingress-resource-backend
+Namespace:        default
+Address:
+Default backend:  APIGroup: k8s.example.com, Kind: StorageBucket, Name: static-assets
+Rules:
+  Host        Path  Backends
+  ----        ----  --------
+  *
+              /icons   APIGroup: k8s.example.com, Kind: StorageBucket, Name: icon-assets
+Annotations:  &lt;none&gt;
+Events:       &lt;none&gt;
+</code></pre><!--
+### Path types
+
+Each path in an Ingress is required to have a corresponding path type. Paths
+that do not include an explicit `pathType` will fail validation. There are three
+supported path types:
+
+* `ImplementationSpecific`: With this path type, matching is up to the
+  IngressClass. Implementations can treat this as a separate `pathType` or treat
+  it identically to `Prefix` or `Exact` path types.
+
+* `Exact`: Matches the URL path exactly and with case sensitivity.
+
+* `Prefix`: Matches based on a URL path prefix split by `/`. Matching is case
+  sensitive and done on a path element by element basis. A path element refers
+  to the list of labels in the path split by the `/` separator. A request is a
+  match for path _p_ if every _p_ is an element-wise prefix of _p_ of the
+  request path.
+
+  <blockquote class="note">
+  <div><strong>说明：</strong> If the last element of the path is a substring of the last
+element in request path, it is not a match (for example: <code>/foo/bar</code>
+matches<code>/foo/bar/baz</code>, but does not match <code>/foo/barbaz</code>).</div>
+</blockquote>
+
+ -->
+<h3 id="路径path类型">路径(Path)类型</h3>
+<p>Ingress 中的每一个路径都需要有一个相应的路径类型。 没有显示设置 <code>pathType</code> 是没办法通过验证的。
+有以下三种支持的路径类型:</p>
+<ul>
+<li>
+<p><code>ImplementationSpecific</code>: 这个路径类型的匹配是由 IngressClass 决定。 具体实现可以将其认为是
+独立的 <code>pathType</code> 或认为是 <code>Prefix</code> 或 <code>Exact</code> 路径类型。</p>
+</li>
+<li>
+<p><code>Exact</code>:  完全匹配路径，区分大小写。</p>
+</li>
+<li>
+<p><code>Prefix</code>: 基于由 <code>/</code> 分割的 URL 路径前缀匹配。匹配区分大小写，并且逐个元素匹配。
+一个元素就是通过 <code>/</code> 分割后列表中的每一个元素。 一个请求与路径 <em>p</em> 相匹配则请求中的元素可以
+依次匹配完路径 <em>p</em> 的每一个元素。
+<blockquote class="note">
+  <div><strong>说明：</strong> 如果路径的最后一个元素是请求路径的最后一个元素的子串，则不能匹配(例如：<code>/foo/bar</code> 可以匹配
+请求路径 <code>/foo/bar/baz</code>，但是不能匹配请求路径 <code>/foo/barbaz</code> )。</div>
+</blockquote>
+</p>
+<!--
+</li>
+</ul>
+<h3 id="examples">Examples</h3>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Path(s)</th>
+<th>Request path(s)</th>
+<th>Matches?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prefix</td>
+<td><code>/</code></td>
+<td>(all paths)</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Exact</td>
+<td><code>/foo</code></td>
+<td><code>/foo</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Exact</td>
+<td><code>/foo</code></td>
+<td><code>/bar</code></td>
+<td>No</td>
+</tr>
+<tr>
+<td>Exact</td>
+<td><code>/foo</code></td>
+<td><code>/foo/</code></td>
+<td>No</td>
+</tr>
+<tr>
+<td>Exact</td>
+<td><code>/foo/</code></td>
+<td><code>/foo</code></td>
+<td>No</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/foo</code></td>
+<td><code>/foo</code>, <code>/foo/</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/foo/</code></td>
+<td><code>/foo</code>, <code>/foo/</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/aaa/bb</code></td>
+<td><code>/aaa/bbb</code></td>
+<td>No</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/aaa/bbb</code></td>
+<td><code>/aaa/bbb</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/aaa/bbb/</code></td>
+<td><code>/aaa/bbb</code></td>
+<td>Yes, ignores trailing slash</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/aaa/bbb</code></td>
+<td><code>/aaa/bbb/</code></td>
+<td>Yes,  matches trailing slash</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/aaa/bbb</code></td>
+<td><code>/aaa/bbb/ccc</code></td>
+<td>Yes, matches subpath</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/aaa/bbb</code></td>
+<td><code>/aaa/bbbxyz</code></td>
+<td>No, does not match string prefix</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/</code>, <code>/aaa</code></td>
+<td><code>/aaa/ccc</code></td>
+<td>Yes, matches <code>/aaa</code> prefix</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/</code>, <code>/aaa</code>, <code>/aaa/bbb</code></td>
+<td><code>/aaa/bbb</code></td>
+<td>Yes, matches <code>/aaa/bbb</code> prefix</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/</code>, <code>/aaa</code>, <code>/aaa/bbb</code></td>
+<td><code>/ccc</code></td>
+<td>Yes, matches <code>/</code> prefix</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/aaa</code></td>
+<td><code>/ccc</code></td>
+<td>No, uses default backend</td>
+</tr>
+<tr>
+<td>Mixed</td>
+<td><code>/foo</code> (Prefix), <code>/foo</code> (Exact)</td>
+<td><code>/foo</code></td>
+<td>Yes, prefers Exact</td>
+</tr>
+<tr>
+<td>&ndash;&gt;</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="示例">示例</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>路径</th>
+<th>请求路径</th>
+<th>匹配结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prefix</td>
+<td><code>/</code></td>
+<td>(all paths)</td>
+<td>匹配</td>
+</tr>
+<tr>
+<td>Exact</td>
+<td><code>/foo</code></td>
+<td><code>/foo</code></td>
+<td>匹配</td>
+</tr>
+<tr>
+<td>Exact</td>
+<td><code>/foo</code></td>
+<td><code>/bar</code></td>
+<td>不匹配</td>
+</tr>
+<tr>
+<td>Exact</td>
+<td><code>/foo</code></td>
+<td><code>/foo/</code></td>
+<td>不匹配</td>
+</tr>
+<tr>
+<td>Exact</td>
+<td><code>/foo/</code></td>
+<td><code>/foo</code></td>
+<td>不匹配</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/foo</code></td>
+<td><code>/foo</code>, <code>/foo/</code></td>
+<td>匹配</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/foo/</code></td>
+<td><code>/foo</code>, <code>/foo/</code></td>
+<td>匹配</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/aaa/bb</code></td>
+<td><code>/aaa/bbb</code></td>
+<td>不匹配</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/aaa/bbb</code></td>
+<td><code>/aaa/bbb</code></td>
+<td>匹配</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/aaa/bbb/</code></td>
+<td><code>/aaa/bbb</code></td>
+<td>匹配, 忽略尾部的斜线</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/aaa/bbb</code></td>
+<td><code>/aaa/bbb/</code></td>
+<td>匹配, 匹配尾部的斜线</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/aaa/bbb</code></td>
+<td><code>/aaa/bbb/ccc</code></td>
+<td>匹配, 匹配前缀</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/aaa/bbb</code></td>
+<td><code>/aaa/bbbxyz</code></td>
+<td>不匹配, 不是匹配字符串前缀</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/</code>, <code>/aaa</code></td>
+<td><code>/aaa/ccc</code></td>
+<td>匹配, 匹配 <code>/aaa</code> 前缀</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/</code>, <code>/aaa</code>, <code>/aaa/bbb</code></td>
+<td><code>/aaa/bbb</code></td>
+<td>匹配, 匹配 <code>/aaa/bbb</code> 前缀</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/</code>, <code>/aaa</code>, <code>/aaa/bbb</code></td>
+<td><code>/ccc</code></td>
+<td>匹配, 匹配 <code>/</code> 前缀</td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td><code>/aaa</code></td>
+<td><code>/ccc</code></td>
+<td>不匹配, 使用默认后端</td>
+</tr>
+<tr>
+<td>Mixed</td>
+<td><code>/foo</code> (Prefix), <code>/foo</code> (Exact)</td>
+<td><code>/foo</code></td>
+<td>匹配, 优先完全匹配</td>
+</tr>
+</tbody>
+</table>
+<!--
+#### Multiple matches
+In some cases, multiple paths within an Ingress will match a request. In those
+cases precedence will be given first to the longest matching path. If two paths
+are still equally matched, precedence will be given to paths with an exact path
+type over prefix path type.
+ -->
+<h4 id="多匹配">多匹配</h4>
+<p>在某些情况下，一个 Ingress 中的多个路径都能与请求路径相匹配。在这种情况下优先级最高的是最长匹配
+路径。 如果还有两个路径匹配长度匹配相同，则完全匹配优先级高于前端匹配。</p>
+<!--
+## Hostname wildcards
+Hosts can be precise matches (for example “`foo.bar.com`”) or a wildcard (for
+example “`*.foo.com`”). Precise matches require that the HTTP `host` header
+matches the `host` field. Wildcard matches require the HTTP `host` header is
+equal to the suffix of the wildcard rule.
+
+| Host        | Host header       | Match?                                            |
+| ----------- |-------------------| --------------------------------------------------|
+| `*.foo.com` | `bar.foo.com`     | Matches based on shared suffix                    |
+| `*.foo.com` | `baz.bar.foo.com` | No match, wildcard only covers a single DNS label |
+| `*.foo.com` | `foo.com`         | No match, wildcard only covers a single DNS label |
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingingress-wildcard-hostyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/ingress-wildcard-host.yaml" download="service/networking/ingress-wildcard-host.yaml">
+                    <code>service/networking/ingress-wildcard-host.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingingress-wildcard-hostyaml')" title="Copy service/networking/ingress-wildcard-host.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: ingress-wildcard-host
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">host</span>: <span style="color:#e6db74">&#34;foo.bar.com&#34;</span>
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">path</span>: <span style="color:#e6db74">&#34;/bar&#34;</span>
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service1
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+  - <span style="color:#66d9ef">host</span>: <span style="color:#e6db74">&#34;*.foo.com&#34;</span>
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">path</span>: <span style="color:#e6db74">&#34;/foo&#34;</span>
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service2
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+ -->
+<h2 id="主机名通配符">主机名通配符</h2>
+<p>主机名可以是精确匹配(例如 <code>foo.bar.com</code>)，也可以有通配符(例如 <code>*.foo.com</code>)。
+精确匹配必须要 HTTP 请求头中的 <code>host</code> 与规则的 <code>host</code> 字段完全匹配。
+通配符则要 HTTP 请求头中的 <code>host</code> 与通配符规则的后缀相同。</p>
+<p>例如:</p>
+<table>
+<thead>
+<tr>
+<th>规则</th>
+<th>请求头<code>host</code></th>
+<th>匹配结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>*.foo.com</code></td>
+<td><code>bar.foo.com</code></td>
+<td>匹配，因为后缀相同</td>
+</tr>
+<tr>
+<td><code>*.foo.com</code></td>
+<td><code>baz.bar.foo.com</code></td>
+<td>不匹配, 通配符只能包含一级子域名</td>
+</tr>
+<tr>
+<td><code>*.foo.com</code></td>
+<td><code>foo.com</code></td>
+<td>不匹配, 通配符只能包含一级子域名</td>
+</tr>
+</tbody>
+</table>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingingress-wildcard-hostyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/ingress-wildcard-host.yaml" download="service/networking/ingress-wildcard-host.yaml">
+                    <code>service/networking/ingress-wildcard-host.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingingress-wildcard-hostyaml')" title="Copy service/networking/ingress-wildcard-host.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: ingress-wildcard-host
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">host</span>: <span style="color:#e6db74">&#34;foo.bar.com&#34;</span>
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">path</span>: <span style="color:#e6db74">&#34;/bar&#34;</span>
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service1
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+  - <span style="color:#66d9ef">host</span>: <span style="color:#e6db74">&#34;*.foo.com&#34;</span>
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">path</span>: <span style="color:#e6db74">&#34;/foo&#34;</span>
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service2
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<!--
+## Ingress class
+
+Ingresses can be implemented by different controllers, often with different
+configuration. Each Ingress should specify a class, a reference to an
+IngressClass resource that contains additional configuration including the name
+of the controller that should implement the class.
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingexternal-lbyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/external-lb.yaml" download="service/networking/external-lb.yaml">
+                    <code>service/networking/external-lb.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingexternal-lbyaml')" title="Copy service/networking/external-lb.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: IngressClass
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: external-lb
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">controller</span>: example.com/ingress-controller
+  <span style="color:#66d9ef">parameters</span>:
+    <span style="color:#66d9ef">apiGroup</span>: k8s.example.com
+    <span style="color:#66d9ef">kind</span>: IngressParameters
+    <span style="color:#66d9ef">name</span>: external-lb
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+IngressClass resources contain an optional parameters field. This can be used to
+reference additional configuration for this class.
+ -->
+<h2 id="ingressclass">IngressClass</h2>
+<p>Ingress 可以由不同的控制器实现，通常也会有不同的配置。 每个 Ingress 都需要指定一个类型，
+它是一个 IngressClass 资源的引用， 其中包含如实现该类型的控制器的名称等额外配置。</p>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingexternal-lbyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/external-lb.yaml" download="service/networking/external-lb.yaml">
+                    <code>service/networking/external-lb.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingexternal-lbyaml')" title="Copy service/networking/external-lb.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: IngressClass
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: external-lb
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">controller</span>: example.com/ingress-controller
+  <span style="color:#66d9ef">parameters</span>:
+    <span style="color:#66d9ef">apiGroup</span>: k8s.example.com
+    <span style="color:#66d9ef">kind</span>: IngressParameters
+    <span style="color:#66d9ef">name</span>: external-lb
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<p>IngressClass 资源中包含一个可选参数字段。 可以用设置该类型额外配置的引用</p>
+<!--
+
+### Deprecated annotation
+
+Before the IngressClass resource and `ingressClassName` field were added in
+Kubernetes 1.18, Ingress classes were specified with a
+`kubernetes.io/ingress.class` annotation on the Ingress. This annotation was
+never formally defined, but was widely supported by Ingress controllers.
+
+The newer `ingressClassName` field on Ingresses is a replacement for that
+annotation, but is not a direct equivalent. While the annotation was generally
+used to reference the name of the Ingress controller that should implement the
+Ingress, the field is a reference to an IngressClass resource that contains
+additional Ingress configuration, including the name of the Ingress controller.
+ -->
+<h3 id="废弃的注解">废弃的注解</h3>
+<p>在 k8s 1.18 版本中添加 IngressClass 资源和 <code>ingressClassName</code> 资源前，Ingress 的类型是
+通过其上的 <code>kubernetes.io/ingress.class</code> 注解指定的。 这个注解从来没有正式的定义过，但它
+在 Ingress 控制器中被广泛支持。</p>
+<p>Ingress 中的新字段 <code>ingressClassName</code> 就是对这个注解的替代，但它们也不是直接等价的。
+其中注解通常是用来指定实现该 Ingress 的控制器的名称， 新字段则是指定一个 IngressClass 资源的引用。
+这个 IngressClass 资源中包含一额外的 Ingress 配置参数和 Ingress 控制器的名称。</p>
+<!--
+### Default IngressClass {#default-ingress-class}
+
+You can mark a particular IngressClass as default for your cluster. Setting the
+`ingressclass.kubernetes.io/is-default-class` annotation to `true` on an
+IngressClass resource will ensure that new Ingresses without an
+`ingressClassName` field specified will be assigned this default IngressClass.
+
+<blockquote class="caution">
+  <div><strong>注意：</strong> If you have more than one IngressClass marked as the default for your cluster,
+the admission controller prevents creating new Ingress objects that don&rsquo;t have
+an <code>ingressClassName</code> specified. You can resolve this by ensuring that at most 1
+IngressClass is marked as default in your cluster.</div>
+</blockquote>
+
+ -->
+<h3 id="default-ingress-class">默认 IngressClass</h3>
+<p>用户可以将某个 IngressClass 设置为集群的默认 IngressClass。
+在 IngressClass 资源上设置 <code>ingressclass.kubernetes.io/is-default-class</code> 注解值为 <code>true</code>。
+这样新创建 Ingress 如果没有设置 <code>ingressClassName</code> 字段则会分配这个默认的 IngressClass。</p>
+<blockquote class="caution">
+  <div><strong>注意：</strong> 如果集群中有不止一个 IngressClass 被标记为默认，准入控制器(admission controller) 就会禁止
+创建没有设置 <code>ingressClassName</code> 的 Ingress。 需要用户手动解决，确保集群中只有一个默认
+IngressClass。</div>
+</blockquote>
+
+<!--
+## Types of Ingress
+
+### Ingress backed by a single Service {#single-service-ingress}
+
+There are existing Kubernetes concepts that allow you to expose a single Service
+(see [alternatives](#alternatives)). You can also do this with an Ingress by specifying a
+*default backend* with no rules.
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingtest-ingressyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/test-ingress.yaml" download="service/networking/test-ingress.yaml">
+                    <code>service/networking/test-ingress.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingtest-ingressyaml')" title="Copy service/networking/test-ingress.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: test-ingress
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">defaultBackend</span>:
+    <span style="color:#66d9ef">service</span>:
+      <span style="color:#66d9ef">name</span>: test
+      <span style="color:#66d9ef">port</span>:
+        <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+If you create it using `kubectl apply -f` you should be able to view the state
+of the Ingress you just added:
+
+```bash
+kubectl get ingress test-ingress
+```
+
+```
+NAME           CLASS         HOSTS   ADDRESS         PORTS   AGE
+test-ingress   external-lb   *       203.0.113.123   80      59s
+```
+
+Where `203.0.113.123` is the IP allocated by the Ingress controller to satisfy
+this Ingress.
+
+<blockquote class="note">
+  <div><strong>说明：</strong> Ingress controllers and load balancers may take a minute or two to allocate an IP address.
+Until that time, you often see the address listed as <code>&lt;pending&gt;</code>.</div>
+</blockquote>
+
+ -->
+<h2 id="ingress-的类型">Ingress 的类型</h2>
+<h3 id="single-service-ingress">后端只有一个 Service 的 Ingress </h3>
+<p>k8s 存在概念可以让用户暴露单个 Service (见 <a href="#alternatives">替代方案</a>).
+也可以通过一个指定 <em>默认后端</em> 但没有配置规则的 Ingress 达到同样的效果。</p>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingtest-ingressyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/test-ingress.yaml" download="service/networking/test-ingress.yaml">
+                    <code>service/networking/test-ingress.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingtest-ingressyaml')" title="Copy service/networking/test-ingress.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: test-ingress
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">defaultBackend</span>:
+    <span style="color:#66d9ef">service</span>:
+      <span style="color:#66d9ef">name</span>: test
+      <span style="color:#66d9ef">port</span>:
+        <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<p>通过 <code>kubectl apply -f</code> 创建 Ingress，并通过以下命令查看:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl get ingress test-ingress
+</code></pre></div><pre><code>NAME           CLASS         HOSTS   ADDRESS         PORTS   AGE
+test-ingress   external-lb   *       203.0.113.123   80      59s
+</code></pre><p>其中 <code>203.0.113.123</code> 是由 Ingress 控制器分配来满足这个 Ingress 的 IP 地址。</p>
+<blockquote class="note">
+  <div><strong>说明：</strong> Ingress 控制器和负载均衡器可能需要一两分钟为分配一个 IP 地址。在这之前，通常看到地址列的值为 <code>&lt;pending&gt;</code></div>
+</blockquote>
+
+<!--
+### Simple fanout
+
+A fanout configuration routes traffic from a single IP address to more than one Service,
+based on the HTTP URI being requested. An Ingress allows you to keep the number of load balancers
+down to a minimum. For example, a setup like:
+
+```
+foo.bar.com -> 178.91.123.132 -> / foo    service1:4200
+                                 / bar    service2:8080
+```
+
+would require an Ingress such as:
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingsimple-fanout-exampleyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/simple-fanout-example.yaml" download="service/networking/simple-fanout-example.yaml">
+                    <code>service/networking/simple-fanout-example.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingsimple-fanout-exampleyaml')" title="Copy service/networking/simple-fanout-example.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: simple-fanout-example
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">host</span>: foo.bar.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">path</span>: /foo
+        <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service1
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">4200</span>
+      - <span style="color:#66d9ef">path</span>: /bar
+        <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service2
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">8080</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+When you create the Ingress with `kubectl apply -f`:
+
+```shell
+kubectl describe ingress simple-fanout-example
+```
+
+```
+Name:             simple-fanout-example
+Namespace:        default
+Address:          178.91.123.132
+Default backend:  default-http-backend:80 (10.8.2.3:8080)
+Rules:
+  Host         Path  Backends
+  ----         ----  --------
+  foo.bar.com
+               /foo   service1:4200 (10.8.0.90:4200)
+               /bar   service2:8080 (10.8.0.91:8080)
+Events:
+  Type     Reason  Age                From                     Message
+  ----     ------  ----               ----                     -------
+  Normal   ADD     22s                loadbalancer-controller  default/test
+```
+
+The Ingress controller provisions an implementation-specific load balancer
+that satisfies the Ingress, as long as the Services (`service1`, `service2`) exist.
+When it has done so, you can see the address of the load balancer at the
+Address field.
+
+<blockquote class="note">
+  <div><strong>说明：</strong> Depending on the <a href="/docs/concepts/services-networking/ingress-controllers/">Ingress controller</a>
+you are using, you may need to create a default-http-backend
+<a href="/docs/concepts/services-networking/service/">Service</a>.</div>
+</blockquote>
+
+ -->
+<h3 id="简单分散fanout">简单分散(fanout)</h3>
+<p>一个分散就是基于请求的 HTTP URI 配置路由流量从一单个 IP 地址到多个 Service。
+一个 Ingress 可以使负载均衡器的数量减少到最低。 例如如下配置:</p>
+<pre><code>foo.bar.com -&gt; 178.91.123.132 -&gt; / foo    service1:4200
+                                 / bar    service2:8080
+</code></pre><p>需要要一个如下 Ingress:</p>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingsimple-fanout-exampleyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/simple-fanout-example.yaml" download="service/networking/simple-fanout-example.yaml">
+                    <code>service/networking/simple-fanout-example.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingsimple-fanout-exampleyaml')" title="Copy service/networking/simple-fanout-example.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: simple-fanout-example
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">host</span>: foo.bar.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">path</span>: /foo
+        <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service1
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">4200</span>
+      - <span style="color:#66d9ef">path</span>: /bar
+        <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service2
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">8080</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<p>在使用 <code>kubectl apply -f</code> 命令创建 Ingress 后，通过以下命令查看详情:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl describe ingress simple-fanout-example
+</code></pre></div><pre><code>Name:             simple-fanout-example
+Namespace:        default
+Address:          178.91.123.132
+Default backend:  default-http-backend:80 (10.8.2.3:8080)
+Rules:
+  Host         Path  Backends
+  ----         ----  --------
+  foo.bar.com
+               /foo   service1:4200 (10.8.0.90:4200)
+               /bar   service2:8080 (10.8.0.91:8080)
+Events:
+  Type     Reason  Age                From                     Message
+  ----     ------  ----               ----                     -------
+  Normal   ADD     22s                loadbalancer-controller  default/test
+</code></pre><p>Ingress 控制器会在目标 Service (<code>service1</code>, <code>service2</code>) 还存在时，
+根据本身实现提供一个满足 Ingress 的负载均衡器直到。
+当创建好后，可以在地址字段看到负载均衡器的地址。</p>
+<blockquote class="note">
+  <div><strong>说明：</strong> 基于使用的
+<a href="/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a>
+可能需要创建一个 default-http-backend
+<a href="/k8sDocs/concepts/services-networking/service/">Service</a>.</div>
+</blockquote>
+
+<!--
+### Name based virtual hosting
+
+Name-based virtual hosts support routing HTTP traffic to multiple host names at the same IP address.
+
+```none
+foo.bar.com --|                 |-> foo.bar.com service1:80
+              | 178.91.123.132  |
+bar.foo.com --|                 |-> bar.foo.com service2:80
+```
+
+The following Ingress tells the backing load balancer to route requests based on
+the [Host header](https://tools.ietf.org/html/rfc7230#section-5.4).
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingname-virtual-host-ingressyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/name-virtual-host-ingress.yaml" download="service/networking/name-virtual-host-ingress.yaml">
+                    <code>service/networking/name-virtual-host-ingress.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingname-virtual-host-ingressyaml')" title="Copy service/networking/name-virtual-host-ingress.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: name-virtual-host-ingress
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">host</span>: foo.bar.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">path</span>: <span style="color:#e6db74">&#34;/&#34;</span>
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service1
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+  - <span style="color:#66d9ef">host</span>: bar.foo.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">path</span>: <span style="color:#e6db74">&#34;/&#34;</span>
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service2
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+If you create an Ingress resource without any hosts defined in the rules, then any
+web traffic to the IP address of your Ingress controller can be matched without a name based
+virtual host being required.
+
+For example, the following Ingress routes traffic
+requested for `first.bar.com` to `service1`, `second.foo.com` to `service2`, and any traffic
+to the IP address without a hostname defined in request (that is, without a request header being
+presented) to `service3`.
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingname-virtual-host-ingress-no-third-hostyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/name-virtual-host-ingress-no-third-host.yaml" download="service/networking/name-virtual-host-ingress-no-third-host.yaml">
+                    <code>service/networking/name-virtual-host-ingress-no-third-host.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingname-virtual-host-ingress-no-third-hostyaml')" title="Copy service/networking/name-virtual-host-ingress-no-third-host.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: name-virtual-host-ingress-no-third-host
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">host</span>: first.bar.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">path</span>: <span style="color:#e6db74">&#34;/&#34;</span>
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service1
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+  - <span style="color:#66d9ef">host</span>: second.bar.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">path</span>: <span style="color:#e6db74">&#34;/&#34;</span>
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service2
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+  - <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">path</span>: <span style="color:#e6db74">&#34;/&#34;</span>
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service3
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+ -->
+<h3 id="基于名称的虚拟主机">基于名称的虚拟主机</h3>
+<p>基于名称的虚拟主机支持在同一个IP上将 HTTP 流量路由到多个主机名上。</p>
+<pre><code class="language-none" data-lang="none">foo.bar.com --|                 |-&gt; foo.bar.com service1:80
+              | 178.91.123.132  |
+bar.foo.com --|                 |-&gt; bar.foo.com service2:80
+</code></pre><p>The following Ingress tells the backing load balancer to route requests based on
+the <a href="https://tools.ietf.org/html/rfc7230#section-5.4">Host header</a>.
+以下 Ingress 告诉后端的负载均衡器基于
+<a href="https://tools.ietf.org/html/rfc7230#section-5.4">Host 头字段</a>
+路由请求。</p>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingname-virtual-host-ingressyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/name-virtual-host-ingress.yaml" download="service/networking/name-virtual-host-ingress.yaml">
+                    <code>service/networking/name-virtual-host-ingress.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingname-virtual-host-ingressyaml')" title="Copy service/networking/name-virtual-host-ingress.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: name-virtual-host-ingress
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">host</span>: foo.bar.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">path</span>: <span style="color:#e6db74">&#34;/&#34;</span>
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service1
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+  - <span style="color:#66d9ef">host</span>: bar.foo.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">path</span>: <span style="color:#e6db74">&#34;/&#34;</span>
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service2
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<p>If you create an Ingress resource without any hosts defined in the rules, then any
+web traffic to the IP address of your Ingress controller can be matched without a name based
+virtual host being required.
+如果创建的 Ingress 资源中没有定义任何主机规则，则所有到达这个 Ingress 控制 IP 的的 web 流量
+则不需要基于名称的虚拟主机就能匹配。</p>
+<p>例如， 以下 Ingress 路由 <code>first.bar.com</code> 的请求到 <code>service1</code>，
+<code>second.foo.com</code> 的请求到 <code>service2</code>，其它任意到达这个 IP 地址，但在请求中没有包含主机名
+(也就是没的请求头(或请求头中没有 Host 字段))的请求到 <code>service3</code></p>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingname-virtual-host-ingress-no-third-hostyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/name-virtual-host-ingress-no-third-host.yaml" download="service/networking/name-virtual-host-ingress-no-third-host.yaml">
+                    <code>service/networking/name-virtual-host-ingress-no-third-host.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingname-virtual-host-ingress-no-third-hostyaml')" title="Copy service/networking/name-virtual-host-ingress-no-third-host.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: name-virtual-host-ingress-no-third-host
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">host</span>: first.bar.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">path</span>: <span style="color:#e6db74">&#34;/&#34;</span>
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service1
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+  - <span style="color:#66d9ef">host</span>: second.bar.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">path</span>: <span style="color:#e6db74">&#34;/&#34;</span>
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service2
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+  - <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">path</span>: <span style="color:#e6db74">&#34;/&#34;</span>
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service3
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<!--
+### TLS
+
+You can secure an Ingress by specifying a <a class='glossary-tooltip' href='/docs/concepts/configuration/secret/' target='_blank'>Secret<span class='tooltip-text'>Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.</span>
+</a>
+that contains a TLS private key and certificate. The Ingress resource only
+supports a single TLS port, 443, and assumes TLS termination at the ingress point
+(traffic to the Service and its Pods is in plaintext).
+If the TLS configuration section in an Ingress specifies different hosts, they are
+multiplexed on the same port according to the hostname specified through the
+SNI TLS extension (provided the Ingress controller supports SNI). The TLS secret
+must contain keys named `tls.crt` and `tls.key` that contain the certificate
+and private key to use for TLS. For example:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: testsecret-tls
+  namespace: default
+data:
+  tls.crt: base64 encoded cert
+  tls.key: base64 encoded key
+type: kubernetes.io/tls
+```
+
+Referencing this secret in an Ingress tells the Ingress controller to
+secure the channel from the client to the load balancer using TLS. You need to make
+sure the TLS secret you created came from a certificate that contains a Common
+Name (CN), also known as a Fully Qualified Domain Name (FQDN) for `sslexample.foo.com`.
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingtls-example-ingressyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/tls-example-ingress.yaml" download="service/networking/tls-example-ingress.yaml">
+                    <code>service/networking/tls-example-ingress.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingtls-example-ingressyaml')" title="Copy service/networking/tls-example-ingress.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: tls-example-ingress
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">tls</span>:
+  - <span style="color:#66d9ef">hosts</span>:
+      - https-example.foo.com
+    <span style="color:#66d9ef">secretName</span>: testsecret-tls
+  <span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">host</span>: https-example.foo.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">path</span>: /
+        <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service1
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<blockquote class="note">
+  <div><strong>说明：</strong> There is a gap between TLS features supported by various Ingress
+controllers. Please refer to documentation on
+<a href="https://kubernetes.github.io/ingress-nginx/user-guide/tls/">nginx</a>,
+<a href="https://git.k8s.io/ingress-gce/README.md#frontend-https">GCE</a>, or any other
+platform specific Ingress controller to understand how TLS works in your environment.</div>
+</blockquote>
+
+ -->
+<h3 id="tls">TLS</h3>
+<p>用户可以能过一个包含 TLS 私钥和证书的 <a class='glossary-tooltip' href='/docs/concepts/configuration/secret/' target='_blank'>Secret<span class='tooltip-text'>Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.</span>
+</a> 为 Ingress
+添加安全层。 Ingress 只支持一个 TLS 端口，<code>443</code>， 并且假定 TLS 在 Ingress 终结(也就是
+到达 Service 及其 Pod 的流量是明文的)。
+如果 Ingress TLS 配置区中包含了多个主机名，那么它们根据 SNI TLS 扩展(需要 Ingress 控制器
+支持 SNI)中指定的主机名来区分请求。 TLS <a class='glossary-tooltip' href='/docs/concepts/configuration/secret/' target='_blank'>Secret<span class='tooltip-text'>Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.</span>
+</a>
+中必须要包含名叫 <code>tls.crt</code> 和 <code>tls.key</code> 的键，其它分别存放 TLS 的证书和私钥。 例如:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Secret
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: testsecret-tls
+  <span style="color:#66d9ef">namespace</span>: default
+<span style="color:#66d9ef">data</span>:
+  <span style="color:#66d9ef">tls.crt</span>: base64 encoded cert
+  <span style="color:#66d9ef">tls.key</span>: base64 encoded key
+<span style="color:#66d9ef">type</span>: kubernetes.io/tls
+</code></pre></div><p>在一个 Ingress 中引用该 <a class='glossary-tooltip' href='/docs/concepts/configuration/secret/' target='_blank'>Secret<span class='tooltip-text'>Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.</span>
+</a> 保证客户端到负载均衡器之间的
+连接是使用 TLS。必须要保证创建 TLS Secret 的证书中包含公用名(CN), 也就是 <code>sslexample.foo.com</code>
+的全限定名(FQDN).</p>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingtls-example-ingressyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/tls-example-ingress.yaml" download="service/networking/tls-example-ingress.yaml">
+                    <code>service/networking/tls-example-ingress.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingtls-example-ingressyaml')" title="Copy service/networking/tls-example-ingress.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: networking.k8s.io/v1
+<span style="color:#66d9ef">kind</span>: Ingress
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: tls-example-ingress
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">tls</span>:
+  - <span style="color:#66d9ef">hosts</span>:
+      - https-example.foo.com
+    <span style="color:#66d9ef">secretName</span>: testsecret-tls
+  <span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">host</span>: https-example.foo.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">path</span>: /
+        <span style="color:#66d9ef">pathType</span>: Prefix
+        <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service1
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<blockquote class="note">
+  <div><strong>说明：</strong> 不同的 Ingress 控制器对 TLS 特性的支持有较大差异。 请查阅
+<a href="https://kubernetes.github.io/ingress-nginx/user-guide/tls/">nginx</a>,
+<a href="https://git.k8s.io/ingress-gce/README.md#frontend-https">GCE</a>,
+或其它平台相应的 Ingress 控制的说明文档，以理解在你的环境中 TLS 是怎么工作的。</div>
+</blockquote>
+
+<!--
+### Load balancing {#load-balancing}
+
+An Ingress controller is bootstrapped with some load balancing policy settings
+that it applies to all Ingress, such as the load balancing algorithm, backend
+weight scheme, and others. More advanced load balancing concepts
+(e.g. persistent sessions, dynamic weights) are not yet exposed through the
+Ingress. You can instead get these features through the load balancer used for
+a Service.
+
+It's also worth noting that even though health checks are not exposed directly
+through the Ingress, there exist parallel concepts in Kubernetes such as
+[readiness probes](/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
+that allow you to achieve the same end result. Please review the controller
+specific documentation to see how they handle health checks (for example:
+[nginx](https://git.k8s.io/ingress-nginx/README.md), or
+[GCE](https://git.k8s.io/ingress-gce/README.md#health-checks)).
+ -->
+<h3 id="load-balancing">负载均衡</h3>
+<p>Ingress 控制器天生带有一些会应用到所有 Ingress 负载均衡策略设置，如 负载均衡算法，后端权重，等。
+更高级的负载均衡概念(如，持久会化，动态权重)目前还没能过 Ingress 实现。 要实现这些特性可以通过
+Service 使用的负载均衡器。</p>
+<p>还有值得注意的是健康检查不是直接通过 Ingress 暴露的。 k8s 中存在如
+<a href="/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">存活探针</a>
+的平行概念，允许用户达成同样的结果。 请查阅控制的说明文档，看看是怎么处理健康检查的(例如
+<a href="https://git.k8s.io/ingress-nginx/README.md">nginx</a>, or
+<a href="https://git.k8s.io/ingress-gce/README.md#health-checks">GCE</a>).
+)</p>
+<!--
+## Updating an Ingress
+
+To update an existing Ingress to add a new Host, you can update it by editing the resource:
+
+```shell
+kubectl describe ingress test
+```
+
+```
+Name:             test
+Namespace:        default
+Address:          178.91.123.132
+Default backend:  default-http-backend:80 (10.8.2.3:8080)
+Rules:
+  Host         Path  Backends
+  ----         ----  --------
+  foo.bar.com
+               /foo   service1:80 (10.8.0.90:80)
+Annotations:
+  nginx.ingress.kubernetes.io/rewrite-target:  /
+Events:
+  Type     Reason  Age                From                     Message
+  ----     ------  ----               ----                     -------
+  Normal   ADD     35s                loadbalancer-controller  default/test
+```
+
+```shell
+kubectl edit ingress test
+```
+
+This pops up an editor with the existing configuration in YAML format.
+Modify it to include the new Host:
+
+```yaml
+spec:
+  rules:
+  - host: foo.bar.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: service1
+            port:
+              number: 80
+        path: /foo
+        pathType: Prefix
+  - host: bar.baz.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: service2
+            port:
+              number: 80
+        path: /foo
+        pathType: Prefix
+..
+```
+
+After you save your changes, kubectl updates the resource in the API server, which tells the
+Ingress controller to reconfigure the load balancer.
+
+Verify this:
+
+```shell
+kubectl describe ingress test
+```
+
+```
+Name:             test
+Namespace:        default
+Address:          178.91.123.132
+Default backend:  default-http-backend:80 (10.8.2.3:8080)
+Rules:
+  Host         Path  Backends
+  ----         ----  --------
+  foo.bar.com
+               /foo   service1:80 (10.8.0.90:80)
+  bar.baz.com
+               /foo   service2:80 (10.8.0.91:80)
+Annotations:
+  nginx.ingress.kubernetes.io/rewrite-target:  /
+Events:
+  Type     Reason  Age                From                     Message
+  ----     ------  ----               ----                     -------
+  Normal   ADD     45s                loadbalancer-controller  default/test
+```
+
+You can achieve the same outcome by invoking `kubectl replace -f` on a modified Ingress YAML file.
+ -->
+<h2 id="更新-ingress">更新 Ingress</h2>
+<p>要在已经存在的 Ingress 中添加一个新的主机规则，可以通过编辑 Ingress 资源实现:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl describe ingress test
+</code></pre></div><pre><code>Name:             test
+Namespace:        default
+Address:          178.91.123.132
+Default backend:  default-http-backend:80 (10.8.2.3:8080)
+Rules:
+  Host         Path  Backends
+  ----         ----  --------
+  foo.bar.com
+               /foo   service1:80 (10.8.0.90:80)
+Annotations:
+  nginx.ingress.kubernetes.io/rewrite-target:  /
+Events:
+  Type     Reason  Age                From                     Message
+  ----     ------  ----               ----                     -------
+  Normal   ADD     35s                loadbalancer-controller  default/test
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl edit ingress test
+</code></pre></div><p>这条命令会用文本编辑器打开已经存在的 Ingress  YAML 格式的配置文件，在其中添加新的主机规则配置:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">rules</span>:
+  - <span style="color:#66d9ef">host</span>: foo.bar.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service1
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+        <span style="color:#66d9ef">path</span>: /foo
+        <span style="color:#66d9ef">pathType</span>: Prefix
+  - <span style="color:#66d9ef">host</span>: bar.baz.com
+    <span style="color:#66d9ef">http</span>:
+      <span style="color:#66d9ef">paths</span>:
+      - <span style="color:#66d9ef">backend</span>:
+          <span style="color:#66d9ef">service</span>:
+            <span style="color:#66d9ef">name</span>: service2
+            <span style="color:#66d9ef">port</span>:
+              <span style="color:#66d9ef">number</span>: <span style="color:#ae81ff">80</span>
+        <span style="color:#66d9ef">path</span>: /foo
+        <span style="color:#66d9ef">pathType</span>: Prefix
+..
+</code></pre></div><p>在保存修改后， kubectl 就会在 API-server 中更新该资源，这会使得 Ingress 控制器重新配置
+负载均衡器</p>
+<p>通过以下命令验证:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl describe ingress test
+</code></pre></div><pre><code>Name:             test
+Namespace:        default
+Address:          178.91.123.132
+Default backend:  default-http-backend:80 (10.8.2.3:8080)
+Rules:
+  Host         Path  Backends
+  ----         ----  --------
+  foo.bar.com
+               /foo   service1:80 (10.8.0.90:80)
+  bar.baz.com
+               /foo   service2:80 (10.8.0.91:80)
+Annotations:
+  nginx.ingress.kubernetes.io/rewrite-target:  /
+Events:
+  Type     Reason  Age                From                     Message
+  ----     ------  ----               ----                     -------
+  Normal   ADD     45s                loadbalancer-controller  default/test
+</code></pre><p>也可以通过在外部修改 Ingress YAML 配置后，使用 <code>kubectl replace -f</code> 命令可以达成相同的效果。</p>
+<!--
+## Failing across availability zones
+
+Techniques for spreading traffic across failure domains differ between cloud providers.
+Please check the documentation of the relevant [Ingress controller](/docs/concepts/services-networking/ingress-controllers) for details.
+ -->
+<h2 id="跨可用区失效">跨可用区失效</h2>
+<p>在故障域之间传播流量的方法在各家云提供商上的方式都不一样。
+请查看 <a href="/k8sDocs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>文档了解详细信息</p>
+<!--
+## Alternatives
+
+You can expose a Service in multiple ways that don't directly involve the Ingress resource:
+
+* Use [Service.Type=LoadBalancer](/docs/concepts/services-networking/service/#loadbalancer)
+* Use [Service.Type=NodePort](/docs/concepts/services-networking/service/#nodeport)
+ -->
+<h2 id="alternatives">替代方案</h2>
+<p>在不直接使用 Ingress 的情况下还有几种暴露 Service 的方法:</p>
+<ul>
+<li>使用 <a href="/k8sDocs/concepts/services-networking/service/#loadbalancer">Service.Type=LoadBalancer</a></li>
+<li>使用 <a href="/k8sDocs/concepts/services-networking/service/#nodeport">Service.Type=NodePort</a></li>
+</ul>
+<h2 id="相关资料">相关资料</h2>
+<ul>
+<li>查阅 <a href="/docs/reference/generated/kubernetes-api/v1.19/#ingress-v1beta1-networking-k8s-io">Ingress API</a></li>
+<li>概念 <a href="/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a></li>
+<li>实践 <a href="/docs/tasks/access-application-cluster/ingress-minikube/">使用 NGINX 控制器在 Minikube 上设置 Ingress</a></li>
+</ul>
+<div class="edit-meta">
+Last updated on 21 Sep 2020
+
+
+<br>
+Published on 23 Sep 2020
+<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/concepts/services-networking/ingress.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/endpoint-slices/" title="EndpointSlice"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - EndpointSlice</a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/tasks/" title="Tasks">Next - Tasks <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+</nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
+</footer>
+</main><div class="sidebar">
+
+<nav class="slide-menu">
+<ul>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs">Home</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/setup/">Getting started<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/setup/00-release/">Release notes and version skew</a>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/">概念(Concepts)<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/">概览<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/00-what-is-k8s/">k8s 是什么</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/01-components/">k8s 组件</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/02-k8s-api/">k8s API 说明</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/">k8s 对象管理<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/">集群架构<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/00-nodes/">节点</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/01-control-plane-node-communication/">控制中心与节点的通信</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/02-controller/">控制器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/03-cloud-controller/">Cloud Controller Manager</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/">容器<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/00-images/">镜像</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/01-container-environment/">容器环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/02-runtime-class/">Runtime Class</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/container-lifecycle-hooks/">容器生命周期钩子</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/">工作负载(Workload)<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/">Pod<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/init-containers/">初始化容器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑分布约束条件</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/podpreset/">Pod 预设信息</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/disruptions/">Disruptions</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/ephemeral-containers/">临时容器</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/">控制器<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/deployment/">Deployment</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/">ReplicaSet</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/">StatefulSet</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/daemonset/">DaemonSet</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/job/">Job</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/garbage-collection/">垃圾回收</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/ttlafterfinished/">用于已完成资源的 TTL 控制器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/cron-jobs/">CronJob</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/">Service, 负载均衡, 网络<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service-topology/">Service Topology</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dns-pod-service/">Service 和 Pod 的 DNS</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/endpoint-slices/">EndpointSlice</a></li>
+<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress/">Ingress</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/">Tasks<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/">Install Tools<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/00-install-kubectl/">下载安装配置 kubectl</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/01-install-minikube/">安装 Minikube</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/">Configure Pod Containters<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tutorials/">Tutorials<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tutorials/00-hello-minikube/">Hello Minikube</a>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/">Reference<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/glossary/">Standardized Glossary</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/">kubectl CLI<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/00-overview/">kubectl 概览</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/examples/">Examples<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/examples/readme/"></a></li>
+</ul>
+  
+</li>
+</ul>
+</nav>
+
+
+
+<div class="sidebar-footer"></div>
+</div>
+</div><a href="#" id="backtothetop-fixed" class="backtothetop"
+ data-backtothetop-duration="600"
+ data-backtothetop-easing="easeOutQuart"
+ data-backtothetop-fixed-fadeIn="1000"
+ data-backtothetop-fixed-fadeOut="1000"
+ data-backtothetop-fixed-bottom="10"
+ data-backtothetop-fixed-right="20">
+<span class="fa-layers fa-fw">
+<i class="fas fa-circle"></i>
+<i class="fas fa-arrow-circle-up"></i>
+</span></a>
+</div>
+</body>
+</html>

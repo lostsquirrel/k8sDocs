@@ -75,22 +75,12 @@
     </item>
     
     <item>
-      <title>Volumes</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/05-storage/00-volumes/</link>
-      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      <title>Ingress</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress/</link>
+      <pubDate>Mon, 21 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/05-storage/00-volumes/</guid>
-      <description>TODO</description>
-    </item>
-    
-    <item>
-      <title>Container runtimes</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/setup/02-production-environment/00-container-runtimes/</link>
-      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/setup/02-production-environment/00-container-runtimes/</guid>
-      <description>TODO
-相关资料    </description>
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress/</guid>
+      <description>功能特性状态: Kubernetes v1.19 [stable] 一个用于管理外部访问集群内 Service 的 API 对象，通常是 HTTP。 Ingress 还可以提供负载均衡，SSL 和基于名称的虚拟主机。 Service以</description>
     </item>
     
     <item>
@@ -211,90 +201,6 @@
     </item>
     
     <item>
-      <title>Configure Service Accounts for Pods</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/10-configure-service-account/</link>
-      <pubDate>Fri, 24 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/10-configure-service-account/</guid>
-      <description>TODO
-Add ImagePullSecrets to a service account </description>
-    </item>
-    
-    <item>
-      <title>Pull an Image from a Private Registry</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/11-pull-image-private-registry/</link>
-      <pubDate>Fri, 24 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/11-pull-image-private-registry/</guid>
-      <description>TODO
-Create a Secret based on existing Docker credentials </description>
-    </item>
-    
-    <item>
-      <title>资源配额</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/01-resource-quotas/</link>
-      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/01-resource-quotas/</guid>
-      <description>TODO</description>
-    </item>
-    
-    <item>
-      <title>Pod Security Policies</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/02-pod-security-policy/</link>
-      <pubDate>Thu, 30 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/02-pod-security-policy/</guid>
-      <description>TODO: 为内链创建占位文件，逐步整理中  相关资料    </description>
-    </item>
-    
-    <item>
-      <title>Kubernetes Scheduler</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/00-kube-scheduler/</link>
-      <pubDate>Thu, 30 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/00-kube-scheduler/</guid>
-      <description>TODO: 为内链创建占位文件，逐步整理中  相关资料    </description>
-    </item>
-    
-    <item>
-      <title>Taints and Tolerations</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/01-taint-and-toleration/</link>
-      <pubDate>Tue, 07 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/01-taint-and-toleration/</guid>
-      <description>TODO</description>
-    </item>
-    
-    <item>
-      <title>Assigning Pods to Nodes</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/02-assign-pod-node/</link>
-      <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/02-assign-pod-node/</guid>
-      <description>TODO</description>
-    </item>
-    
-    <item>
-      <title>Cluster Networking</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/10-cluster-administration/03-networking/</link>
-      <pubDate>Thu, 30 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/10-cluster-administration/03-networking/</guid>
-      <description>TODO: 为内链创建占位文件，逐步整理中  相关资料    </description>
-    </item>
-    
-    <item>
-      <title>Extending your Kubernetes Cluster</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/concepts/11-extend-kubernetes/00-extend-cluster/</link>
-      <pubDate>Thu, 09 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/11-extend-kubernetes/00-extend-cluster/</guid>
-      <description>TODO
-Extension Patterns </description>
-    </item>
-    
-    <item>
       <title>下载安装配置 kubectl</title>
       <link>https://lostsquirrel.github.io/k8sDocs/tasks/tools/00-install-kubectl/</link>
       <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
@@ -304,205 +210,12 @@ Extension Patterns </description>
     </item>
     
     <item>
-      <title>Cloud Controller Manager Administration</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/09-running-cloud-controller/</link>
-      <pubDate>Fri, 17 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/09-running-cloud-controller/</guid>
-      <description>TODO
-Running cloud-controller-manager </description>
-    </item>
-    
-    <item>
-      <title>Control Topology Management Policies on a node</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/14-topology-manager/</link>
-      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/14-topology-manager/</guid>
-      <description>TODO</description>
-    </item>
-    
-    <item>
-      <title>Developing Cloud Controller Manager</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/18-developing-cloud-controller-manager/</link>
-      <pubDate>Fri, 17 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/18-developing-cloud-controller-manager/</guid>
-      <description>TODO 这个整理优先级应该较低</description>
-    </item>
-    
-    <item>
-      <title>Reserve Compute Resources for System Daemons</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/28-reserve-compute-resources/</link>
-      <pubDate>Tue, 07 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/28-reserve-compute-resources/</guid>
-      <description>TODO</description>
-    </item>
-    
-    <item>
-      <title>通过名字空间分享一个集群</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/34-namespaces/</link>
-      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/34-namespaces/</guid>
-      <description>TODO</description>
-    </item>
-    
-    <item>
-      <title>Configure a Security Context for a Pod or Container</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/09-security-context/</link>
-      <pubDate>Thu, 30 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/09-security-context/</guid>
-      <description>TODO: 为内链创建占位文件，逐步整理中  相关资料    </description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-pod-initialization/</link>
-      <pubDate>Tue, 04 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-pod-initialization/</guid>
-      <description>TODO: 为内链创建占位文件，逐步整理中  Create a Pod that has an Init Container 相关资料    </description>
-    </item>
-    
-    <item>
-      <title>Attach Handlers to Container Lifecycle Events</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/attach-handler-lifecycle-event/</link>
-      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/attach-handler-lifecycle-event/</guid>
-      <description>TODO: 为内链创建占位文件，逐步整理中  相关资料    </description>
-    </item>
-    
-    <item>
-      <title>Expose Pod Information to Containers Through Files</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/inject-data-application/04-downward-api-volume-expose-pod-information/</link>
-      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/inject-data-application/04-downward-api-volume-expose-pod-information/</guid>
-      <description>TODO
-The Downward API </description>
-    </item>
-    
-    <item>
-      <title>Force Delete StatefulSet Pods</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/run-application/force-delete-stateful-set-pod/</link>
-      <pubDate>Mon, 03 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/run-application/force-delete-stateful-set-pod/</guid>
-      <description>TODO: 为内链创建占位文件，逐步整理中  相关资料    </description>
-    </item>
-    
-    <item>
-      <title>Application Introspection and Debugging</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/00-debug-application-introspection/</link>
-      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/00-debug-application-introspection/</guid>
-      <description>TODO
-相关资料    </description>
-    </item>
-    
-    <item>
-      <title>Debug Init Containers</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/debug-init-containers/</link>
-      <pubDate>Tue, 04 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/debug-init-containers/</guid>
-      <description>TODO: 为内链创建占位文件，逐步整理中  相关资料    </description>
-    </item>
-    
-    <item>
-      <title>Client Libraries</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/reference/using-api/client-libraries/</link>
-      <pubDate>Thu, 30 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/reference/using-api/client-libraries/</guid>
-      <description>TODO: 为内链创建占位文件，逐步整理中  相关资料    </description>
-    </item>
-    
-    <item>
-      <title>Authenticating</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/01-authentication/</link>
-      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/01-authentication/</guid>
-      <description>TODO</description>
-    </item>
-    
-    <item>
-      <title>Using Admission Controllers</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/04-admission-controllers/</link>
-      <pubDate>Mon, 20 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/04-admission-controllers/</guid>
-      <description>TODO
-What does each admission controller do? AlwaysPullImages RuntimeClass </description>
-    </item>
-    
-    <item>
-      <title>Authorization Overview</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/07-authorization/</link>
-      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/07-authorization/</guid>
-      <description>TODO</description>
-    </item>
-    
-    <item>
-      <title>Well-Known Labels, Annotations and Taints</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/reference/kubernetes-api/labels-annotations-taints/</link>
-      <pubDate>Wed, 05 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/reference/kubernetes-api/labels-annotations-taints/</guid>
-      <description>TODO: 为内链创建占位文件，逐步整理中  相关资料    </description>
-    </item>
-    
-    <item>
-      <title>Feature Gates</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/feature-gates/</link>
-      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/feature-gates/</guid>
-      <description>TODO</description>
-    </item>
-    
-    <item>
-      <title>Kubelet authentication/authorization</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/07-kubelet-authentication-authorization/</link>
-      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/07-kubelet-authentication-authorization/</guid>
-      <description>TODO</description>
-    </item>
-    
-    <item>
-      <title>TLS bootstrapping</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/08-kubelet-tls-bootstrapping/</link>
-      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/08-kubelet-tls-bootstrapping/</guid>
-      <description>TODO</description>
-    </item>
-    
-    <item>
       <title>kubectl 概览</title>
       <link>https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/00-overview/</link>
       <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/00-overview/</guid>
       <description>working in progress</description>
-    </item>
-    
-    <item>
-      <title>Scheduling Profiles</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/reference/scheduling/profiles/</link>
-      <pubDate>Wed, 05 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/reference/scheduling/profiles/</guid>
-      <description>TODO: 为内链创建占位文件，逐步整理中  Scheduling plugins 相关资料    </description>
     </item>
     
     <item>
@@ -692,24 +405,6 @@ What does each admission controller do? AlwaysPullImages RuntimeClass </descript
       
       <guid>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/</guid>
       <description>Restarts containers that fail, replaces and reschedules containers when nodes die, kills containers that don&#39;t respond to your user-defined health check, and doesn&#39;t advertise them to clients until they are ready to serve. content_type: concept weight: 90 --- -- 说明： A Deployment that configures a ReplicaSet is now the recommended way to set up replication. A _ReplicationController_ ensures that a specified number of pod replicas are running at</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/10-cluster-management/</link>
-      <pubDate>Thu, 09 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/10-cluster-management/</guid>
-      <description>TODO 集群自动扩容</description>
-    </item>
-    
-    <item>
-      <title>Set up Konnectivity service</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/tasks/extend-kubernetes/01-setup-konnectivity/</link>
-      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/tasks/extend-kubernetes/01-setup-konnectivity/</guid>
-      <description>TODO</description>
     </item>
     
     <item>

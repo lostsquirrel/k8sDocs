@@ -3,13 +3,13 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/setup/</loc>
+    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-lifecycle/</loc>
     <lastmod>2020-07-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-lifecycle/</loc>
-    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
+    <loc>https://lostsquirrel.github.io/k8sDocs/setup/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -19,7 +19,7 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/tasks/</loc>
-    <lastmod>2020-08-04T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -28,7 +28,7 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/reference/</loc>
-    <lastmod>2020-08-05T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -61,13 +61,8 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/setup/02-production-environment/</loc>
-    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/05-storage/</loc>
-    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
+    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress/</loc>
+    <lastmod>2020-09-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -96,88 +91,13 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/</loc>
-    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/</loc>
-    <lastmod>2020-07-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/10-cluster-administration/</loc>
-    <lastmod>2020-07-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/11-extend-kubernetes/</loc>
-    <lastmod>2020-07-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/tasks/tools/</loc>
     <lastmod>2020-06-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/</loc>
-    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/</loc>
-    <lastmod>2020-08-04T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/inject-data-application/</loc>
-    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/run-application/</loc>
-    <lastmod>2020-07-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/</loc>
-    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/extend-kubernetes/</loc>
-    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/reference/using-api/</loc>
-    <lastmod>2020-07-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/</loc>
-    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/reference/kubernetes-api/</loc>
-    <lastmod>2020-08-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/</loc>
-    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/reference/scheduling/</loc>
-    <lastmod>2020-08-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/05-storage/00-volumes/</loc>
-    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
+    <lastmod>2020-05-22T10:52:35+08:00</lastmod>
   </url>
   
   <url>
@@ -187,11 +107,6 @@
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/</loc>
     <lastmod>2020-06-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/setup/02-production-environment/00-container-runtimes/</loc>
-    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -263,16 +178,6 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/10-configure-service-account/</loc>
-    <lastmod>2020-07-24T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/11-pull-image-private-registry/</loc>
-    <lastmod>2020-07-24T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/</loc>
     <lastmod>2020-07-02T00:00:00+00:00</lastmod>
   </url>
@@ -283,143 +188,8 @@
   </url>
   
   <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/01-resource-quotas/</loc>
-    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/02-pod-security-policy/</loc>
-    <lastmod>2020-07-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/00-kube-scheduler/</loc>
-    <lastmod>2020-07-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/01-taint-and-toleration/</loc>
-    <lastmod>2020-07-07T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/02-assign-pod-node/</loc>
-    <lastmod>2020-07-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/10-cluster-administration/03-networking/</loc>
-    <lastmod>2020-07-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/concepts/11-extend-kubernetes/00-extend-cluster/</loc>
-    <lastmod>2020-07-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/tasks/tools/00-install-kubectl/</loc>
     <lastmod>2020-06-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/09-running-cloud-controller/</loc>
-    <lastmod>2020-07-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/14-topology-manager/</loc>
-    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/18-developing-cloud-controller-manager/</loc>
-    <lastmod>2020-07-17T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/28-reserve-compute-resources/</loc>
-    <lastmod>2020-07-07T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/34-namespaces/</loc>
-    <lastmod>2020-06-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/09-security-context/</loc>
-    <lastmod>2020-07-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-pod-initialization/</loc>
-    <lastmod>2020-08-04T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/attach-handler-lifecycle-event/</loc>
-    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/inject-data-application/04-downward-api-volume-expose-pod-information/</loc>
-    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/run-application/force-delete-stateful-set-pod/</loc>
-    <lastmod>2020-08-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/00-debug-application-introspection/</loc>
-    <lastmod>2020-07-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/debug-init-containers/</loc>
-    <lastmod>2020-08-04T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/reference/using-api/client-libraries/</loc>
-    <lastmod>2020-07-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/01-authentication/</loc>
-    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/04-admission-controllers/</loc>
-    <lastmod>2020-07-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/07-authorization/</loc>
-    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/reference/kubernetes-api/labels-annotations-taints/</loc>
-    <lastmod>2020-08-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/feature-gates/</loc>
-    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/07-kubelet-authentication-authorization/</loc>
-    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/08-kubelet-tls-bootstrapping/</loc>
-    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -430,15 +200,6 @@
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/00-overview/</loc>
     <lastmod>2020-06-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/reference/scheduling/profiles/</loc>
-    <lastmod>2020-08-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/reference/10-drivers/</loc>
   </url>
   
   <url>
@@ -544,16 +305,6 @@
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/</loc>
     <lastmod>2020-07-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/10-cluster-management/</loc>
-    <lastmod>2020-07-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://lostsquirrel.github.io/k8sDocs/tasks/extend-kubernetes/01-setup-konnectivity/</loc>
-    <lastmod>2020-07-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>

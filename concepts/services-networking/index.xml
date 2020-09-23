@@ -56,5 +56,14 @@
       <description>功能特性状态: Kubernetes v1.17 [beta] _EndpointSlices_ provide a simple way to track network endpoints within a Kubernetes cluster. They offer a more scalable and extensible alternative to Endpoints. -- 功能特性状态: Kubernetes v1.17 [beta] EndpointSlice 提供了一种简单的方式来在 k8s 集群跟踪网络端点。 它提供</description>
     </item>
     
+    <item>
+      <title>Ingress</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress/</link>
+      <pubDate>Mon, 21 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress/</guid>
+      <description>功能特性状态: Kubernetes v1.19 [stable] 一个用于管理外部访问集群内 Service 的 API 对象，通常是 HTTP。 Ingress 还可以提供负载均衡，SSL 和基于名称的虚拟主机。 Service以</description>
+    </item>
+    
   </channel>
 </rss>

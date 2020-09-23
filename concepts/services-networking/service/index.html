@@ -29,7 +29,7 @@
 <meta itemprop="description" content="No need to modify your application to use an unfamiliar service discovery mechanism. Kubernetes gives Pods their own IP addresses and a single DNS name for a set of Pods, and can load-balance across them. content_type: concept weight: 10 --- -- 以网络服务的方式让一个由一组 PodPod 表示集群中运行的一组容器的集">
 <meta itemprop="datePublished" content="2020-09-09T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-30T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="13834">
+<meta itemprop="wordCount" content="13872">
 
 
 
@@ -2068,7 +2068,7 @@ to set up external HTTP / HTTPS reverse proxying, forwarded to the Endpoints
 of the Service.
 
 <blockquote class="note">
-  <div><strong>说明：</strong> You can also use <a class='glossary-tooltip' href='/docs/concepts/services-networking/ingress/' target='_blank'>Ingress<span class='tooltip-text'>An API object that manages external access to the services in a cluster, typically HTTP.</span>
+  <div><strong>说明：</strong> You can also use <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/ingress/' target='_blank'>Ingress<span class='tooltip-text'>一个用于管理外部访问集群内 Service 的 API 对象，通常是 HTTP。</span>
 </a> in place of Service
 to expose HTTP / HTTPS Services.</div>
 </blockquote>
@@ -2084,7 +2084,7 @@ to expose HTTP / HTTPS Services.</div>
 <p>如果云提供商支持，则可以使用 type=LoadBalancer 的 Service 通过外部的 HTTP / HTTPS 反向代理
 转发到 Service 的 Endpoint</p>
 <blockquote class="note">
-  <div><strong>说明：</strong> 在 Service 暴露的是 HTTP / HTTPS 时也可以使用 <a class='glossary-tooltip' href='/docs/concepts/services-networking/ingress/' target='_blank'>Ingress<span class='tooltip-text'>An API object that manages external access to the services in a cluster, typically HTTP.</span>
+  <div><strong>说明：</strong> 在 Service 暴露的是 HTTP / HTTPS 时也可以使用 <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/ingress/' target='_blank'>Ingress<span class='tooltip-text'>一个用于管理外部访问集群内 Service 的 API 对象，通常是 HTTP。</span>
 </a></div>
 </blockquote>
 
@@ -2234,14 +2234,6 @@ Published on 9 Sep 2020
   
 <ul class="sub-menu">
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/setup/02-production-environment/">Production environment<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/setup/02-production-environment/00-container-runtimes/">Container runtimes</a></li>
-</ul>
-  
-</li>
-
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/setup/00-release/">Release notes and version skew</a>
   
 </li>
@@ -2261,14 +2253,6 @@ Published on 9 Sep 2020
 <li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/">概念(Concepts)<span class="mark opened">-</span></a>
   
 <ul class="sub-menu">
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/05-storage/">Storage<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/05-storage/00-volumes/">Volumes</a></li>
-</ul>
-  
-</li>
 
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/">概览<span class="mark closed">+</span></a>
   
@@ -2360,41 +2344,7 @@ Published on 9 Sep 2020
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dns-pod-service/">Service 和 Pod 的 DNS</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/endpoint-slices/">EndpointSlice</a></li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/">Policies<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/01-resource-quotas/">资源配额</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/08-policy/02-pod-security-policy/">Pod Security Policies</a></li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/">Scheduling and Eviction<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/00-kube-scheduler/">Kubernetes Scheduler</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/01-taint-and-toleration/">Taints and Tolerations</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/scheduling-eviction/02-assign-pod-node/">Assigning Pods to Nodes</a></li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/10-cluster-administration/">Cluster Administration<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/10-cluster-administration/03-networking/">Cluster Networking</a></li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/11-extend-kubernetes/">Extending Kubernetes<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/11-extend-kubernetes/00-extend-cluster/">Extending your Kubernetes Cluster</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress/">Ingress</a></li>
 </ul>
   
 </li>
@@ -2415,61 +2365,10 @@ Published on 9 Sep 2020
   
 </li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/">Administer a Cluster<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/09-running-cloud-controller/">Cloud Controller Manager Administration</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/14-topology-manager/">Control Topology Management Policies on a node</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/18-developing-cloud-controller-manager/">Developing Cloud Controller Manager</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/28-reserve-compute-resources/">Reserve Compute Resources for System Daemons</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/34-namespaces/">通过名字空间分享一个集群</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/administer-cluster/10-cluster-management/"></a></li>
-</ul>
-  
-</li>
-
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/">Configure Pod Containters<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/10-configure-service-account/">Configure Service Accounts for Pods</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/11-pull-image-private-registry/">Pull an Image from a Private Registry</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/09-security-context/">Configure a Security Context for a Pod or Container</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-pod-initialization/"></a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/attach-handler-lifecycle-event/">Attach Handlers to Container Lifecycle Events</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/inject-data-application/">Inject Data Into Applications<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/inject-data-application/04-downward-api-volume-expose-pod-information/">Expose Pod Information to Containers Through Files</a></li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/run-application/"><span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/run-application/force-delete-stateful-set-pod/">Force Delete StatefulSet Pods</a></li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/">Monitoring, Logging, and Debugging<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/00-debug-application-introspection/">Application Introspection and Debugging</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/debug-application-cluster/debug-init-containers/">Debug Init Containers</a></li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/extend-kubernetes/">Extend Kubernetes<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/extend-kubernetes/01-setup-konnectivity/">Set up Konnectivity service</a></li>
 </ul>
   
 </li>
@@ -2493,59 +2392,11 @@ Published on 9 Sep 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/glossary/">Standardized Glossary</a></li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/using-api/">Using the Kubernetes API<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/using-api/client-libraries/">Client Libraries</a></li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/">Accessing the API<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/01-authentication/">Authenticating</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/04-admission-controllers/">Using Admission Controllers</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/03-access-authn-authz/07-authorization/">Authorization Overview</a></li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/kubernetes-api/">API Reference<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/kubernetes-api/labels-annotations-taints/">Well-Known Labels, Annotations and Taints</a></li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/">Feature Gates<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/feature-gates/">Feature Gates</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/07-kubelet-authentication-authorization/">Kubelet authentication/authorization</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/command-line-tools-reference/08-kubelet-tls-bootstrapping/">TLS bootstrapping</a></li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/scheduling/"><span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/scheduling/profiles/">Scheduling Profiles</a></li>
-</ul>
-  
-</li>
-
 <li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/">kubectl CLI<span class="mark closed">+</span></a>
   
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/00-overview/">kubectl 概览</a></li>
 </ul>
-  
-</li>
-
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/10-drivers/">Minikube Drivers</a>
   
 </li>
 </ul>
