@@ -2,19 +2,17 @@
 title: Ingress
 id: ingress
 date: 2018-04-12
-full_link: /docs/concepts/services-networking/ingress/
+full_link: /k8sDocs/concepts/services-networking/ingress/
 short_description: >
-  An API object that manages external access to the services in a cluster, typically HTTP.
+  一个用于管理外部访问集群内 Service 的 API 对象，通常是 HTTP。
 
-aka: 
+aka:
 tags:
 - networking
 - architecture
 - extension
 ---
- An API object that manages external access to the services in a cluster, typically HTTP.
+一个用于管理外部访问集群内 Service 的 API 对象，通常是 HTTP。
+<!--more-->
 
-<!--more--> 
-
-Ingress may provide load balancing, SSL termination and name-based virtual hosting.
-
+Ingress 还可以提供负载均衡，SSL 和基于名称的虚拟主机。
