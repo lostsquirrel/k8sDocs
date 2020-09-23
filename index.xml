@@ -84,6 +84,15 @@
     </item>
     
     <item>
+      <title>Ingress 控制器</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress-controllers/</link>
+      <pubDate>Wed, 23 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress-controllers/</guid>
+      <description>要使一个 Ingress 工作的前提是集群中必须要有一个 Ingress 控制器在运行。 与其它类型的控制器作为 kube-controller-manager 的一部分运行不同， Ingress 不会自动在集群中 运行。 使用本文选择最适合</description>
+    </item>
+    
+    <item>
       <title>使用 Minikube 搭建 K8s环境</title>
       <link>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/00-minikube/</link>
       <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
