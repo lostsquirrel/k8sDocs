@@ -40,7 +40,7 @@ metadata:
 
 ## 应用及应用实例
 
-一个应用可能在 k8s 集群的一个名字空间中安装一次或多次。比如 安装多个 wordpress 的(不同)网站
+一个应用可能在 k8s 集群的一个命名空间中安装一次或多次。比如 安装多个 wordpress 的(不同)网站
 应用名和其实例名都应该作区分， 比如 一个 wordpress 应用为 `app.kubernetes.io/name: wordpress`, 其实例可以设置为 `app.kubernetes.io/instance: wordpress-abcxzy` 这就应用和实例就比较好识别，当一个应用有多个实例是每个实例的名称都要唯一。
 
 ## 示例

@@ -1939,7 +1939,7 @@ Conditions:
   ReplicaFailure  True    FailedCreate
 ```
 
-在遇到配额不足的情况，用户可以通过缩减 Deployment 副本数来解决， 也可以缩减用户其它控制器的副本数，还可以增加用户名字空间的配额。
+在遇到配额不足的情况，用户可以通过缩减 Deployment 副本数来解决， 也可以缩减用户其它控制器的副本数，还可以增加用户命名空间的配额。
 如果达到配额条件， Deployment 这时候就会过成 Deployment 的发布， 这时候就会看到 Deployment 状态被更新为一个成功条件
 (`Status=True` 和 `Reason=NewReplicaSetAvailable`)
 ```

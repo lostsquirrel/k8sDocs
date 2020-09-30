@@ -346,7 +346,7 @@ There are some implicit conventions worth noting here:
 
 以下为一些值得注意的隐性约定:
 
-- 只有在同一个名字空间中的 Pod 才能作为匹配候选者
+- 只有在同一个命名空间中的 Pod 才能作为匹配候选者
 - 没有 `topologySpreadConstraints[*].topologyKey` 的节点会被当作旁路，隐含的意思为:
   1. 这些只点上的 Pod 不会被用于计算 `maxSkew`， 在上面的例子中，假设 `node1` 上没有标签 `zone`，
     这时其上的两个 Pod 会被忽略， 这样新加入的 Pod 就会被分配到  “zoneA”

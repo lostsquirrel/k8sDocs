@@ -54,11 +54,11 @@ For more up-to-date specification, see
 ### 啥东西会有 DNS 名称?
 
 集群中定义的每一个 Service (包括 DNS 服务本身) 都会分配一个 DNS 名称。 默认情况下，一个客户端
-Pod 的 DNS 检索列表会包含 Pod 自己所在的名字空间和集群的默认域。 一例胜千言:
+Pod 的 DNS 检索列表会包含 Pod 自己所在的命名空间和集群的默认域。 一例胜千言:
 
-假设在 k8s 的 `bar` 名字空间有一个叫 `foo` 的 Service. 一个运行在 `bar` 名字空间的 Pod
-只需要简单地使用 `foo` 作为 DNS 查询条目就可以找到这个 Service。 另一个运行在 `quux` 名字空间的 Pod
-同要为查询这个 Service。 DNS 的查询条目就需要是 `foo.bar` (带上名字空间的名称)
+假设在 k8s 的 `bar` 命名空间有一个叫 `foo` 的 Service. 一个运行在 `bar` 命名空间的 Pod
+只需要简单地使用 `foo` 作为 DNS 查询条目就可以找到这个 Service。 另一个运行在 `quux` 命名空间的 Pod
+同要为查询这个 Service。 DNS 的查询条目就需要是 `foo.bar` (带上命名空间的名称)
 
 接下来的章节会详细介绍支持的 DNS 记录类型的规划。 (这一句没懂)
 最新的规格说明书见
@@ -146,7 +146,7 @@ following DNS resolution available:
 
 `pod-ip-address.my-namespace.pod.cluster-domain.example`.
 
-例如， 如果有一个在 `default` 名字空间的 Pod， 它的 IP 地址为 `172.17.0.3`， 集群配置的
+例如， 如果有一个在 `default` 命名空间的 Pod， 它的 IP 地址为 `172.17.0.3`， 集群配置的
 域名叫 `cluster.local`， 这样这个 Pod 的 DNS 名称就是:
 `172-17-0-3.default.pod.cluster.local`.
 
@@ -248,7 +248,7 @@ Pod 的定义中有一个可选字段 `hostname`， 可以用来指定 Pod 的�
 这个 Pod 的主机名就会设置为 `my-host`
 
 Pod 定义中还有一个可选择字段 `subdomain`， 可以用来指定它的子域名。 例如， 一个 Pod 的
-`hostname` 设置为 `foo`， `subdomain` 设置为 `bar`， 处理 `my-namespace` 名字空间。
+`hostname` 设置为 `foo`， `subdomain` 设置为 `bar`， 处理 `my-namespace` 命名空间。
 它的全限定名(FQDN) 就是 `foo.bar.my-namespace.svc.cluster-domain.example`
 
 示例:
@@ -300,10 +300,10 @@ spec:
     name: busybox
 ```
 
-如果存在这样一个无头(headless) 的 Service, 它与另一个 Pod 在同一个名字空间，且 Pod 的
+如果存在这样一个无头(headless) 的 Service, 它与另一个 Pod 在同一个命名空间，且 Pod 的
 `subdomain` 与这个 Service 的名称是一样的。 集群 DNS 服务一样会返回 Pod 全限制名的 A/AAAA 记录。
 例如，假定一个 Pod 的 `hostname` 设置为 `busybox-1`， `subdomain` 设置为 `default-subdomain`，
-一个无头(headless) 的 Service 名字是 `default-subdomain`， 它们在同一个名字空间。
+一个无头(headless) 的 Service 名字是 `default-subdomain`， 它们在同一个命名空间。
 Pod 就可以看到它自己的全限定名(FQDN)为
 `busybox-1.default-subdomain.my-namespace.svc.cluster-domain.example`。
 DNS 服务为这个名称提供一个 A/AAAA 记录， 指向该 Pod 的 IP。 `busybox1` 和 `busybox2`
@@ -356,7 +356,7 @@ If a Pod enables this feature and its FQDN is longer than 64 character, it will 
 
 
 当在 Pod 的定义中设置 `setHostnameAsFQDN: true` 时， kubelet 会将 Pod 的 全限定名(FQDN)
-写到那个 Pod 名字空间的 hostname. 在这种情况下 `hostname` 和 `hostname --fqdn` 两个命令
+写到那个 Pod 命名空间的 hostname. 在这种情况下 `hostname` 和 `hostname --fqdn` 两个命令
 返回的都是全限定名。
 
 {{< note >}}

@@ -166,7 +166,7 @@ kubectl create secret docker-registry <name> --docker-server=DOCKER_REGISTRY_SER
 具体配置见[这里](../../../3-tasks/02-configure-pod-container/11-pull-image-private-registry/#registry-secret-existing-credentials)
 这种配置方式尤其适用有多个私有镜像仓库的情况，因为 `kubectl create secret docker-registry` 创建 Secret 的方式只适用于单个私有镜像仓库的情况。
 {{ <note> }}
-Pod 只能引用当前名字空间内的 `Secret` , 因此需要在每个名字空间都需要创建 `Secret`
+Pod 只能引用当前命名空间内的 `Secret` , 因此需要在每个命名空间都需要创建 `Secret`
 {{ </note> }}
 
 ### 在 Pod 中使用 `imagePullSecrets`
@@ -221,7 +221,7 @@ EOF
   4. 多租户集群，每个租户需要独立的私有镜像仓库
     - 需要打开  [AlwaysPullImages](../../../reference/03-access-authn-authz/04-admission-controllers/#alwayspullimages) admission controller， 否则所有租户的所有 Pod 默认对所有镜像有访问权限
     - 私有镜像仓库需要有认证系统
-    - 为每个租户生成私有镜像仓库凭据，并在每个租户的名字空间中创建对应 Secret.
-    - 各名字空间的租户将名称的 Secret 配置到 `imagePullSecrets`
+    - 为每个租户生成私有镜像仓库凭据，并在每个租户的命名空间中创建对应 Secret.
+    - 各命名空间的租户将名称的 Secret 配置到 `imagePullSecrets`
 
 如果用到的多个私有镜像仓库， 可以对每个仓库创建一个 Secret, kubelet 会将所有 imagePullSecrets 合并到一个虚拟的 `.docker/config.json` 中。

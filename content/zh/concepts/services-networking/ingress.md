@@ -254,7 +254,7 @@ Events:       <none>
 
 ### 资源(Resource) 后端 {#resource-backend}
 
-一个 `Resource` 后端是一个与 Ingress 对象在同一个名字空间的另一个 k8s 资源的引用。
+一个 `Resource` 后端是一个与 Ingress 对象在同一个命名空间的另一个 k8s 资源的引用。
 `Resource` 与 Service 是互斥的，如果同时配置了两者，则不会通过验证。 `Resource` 的一个常见
 应用场景是进入一个存放静态资源的对象存储后端。
 

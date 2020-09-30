@@ -44,7 +44,7 @@ k8s API 的大多数实现都在 kube-apiserver
 - Node 控制器: 负责监视和响应 Node 是不是挂了
 - Replication 控制器: 负责系统中的 Pod 维护在预期的副本数
 - Endpoints 控制器: 负责管理 Endpoints对象(Services & Pods)
-- Service Account & Token 控制器: 为新增的名字空间创建默认的账号和令牌
+- Service Account & Token 控制器: 为新增的命名空间创建默认的账号和令牌
 
 
 ### cloud-controller-manager
@@ -83,7 +83,7 @@ k8s 控制中心集群了云环境的控制逻辑。 云控制管理器是集群
 
 ## 插件
 
-  插件基于 k8s 资源(DaemonSet, Deployment 等)来实现集群新功能。由于提供的是集群级的功能，所有插件所属的名字空间为 `kube-system`
+  插件基于 k8s 资源(DaemonSet, Deployment 等)来实现集群新功能。由于提供的是集群级的功能，所有插件所属的命名空间为 `kube-system`
   下面列举了一些插件，更多请见 [这里](https://kubernetes.io/docs/concepts/cluster-administration/addons/)
   TODO
 

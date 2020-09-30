@@ -125,7 +125,7 @@ for examples of troubleshooting using ephemeral containers.
 允许用户能够部署最小化的容器镜像而达到减少攻击面，减少缺陷和漏洞的暴露。 但 `distroless` 镜像中是没
 shell 或任何其它的调试工具的，所以对 `distroless` 镜像要只通过 `kubectl exec` 来调试就变得无比困难了。
 
-在使用临时容器时，建议打开 [进程名字空间共享](/k8sDocs/tasks/configure-pod-container/share-process-namespace/)
+在使用临时容器时，建议打开 [进程命名空间共享](/k8sDocs/tasks/configure-pod-container/share-process-namespace/)
 这样就可以看到其它容器中的进程了。
 
 更多使用临时容器调试的例子见 [使用临时容器找虫](/k8sDocs/tasks/debug-application-cluster/debug-running-pod/#debugging-with-ephemeral-debug-container)

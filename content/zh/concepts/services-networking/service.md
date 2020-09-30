@@ -227,7 +227,7 @@ Service 最常见的用户就是作为 k8s Pod 的入口， 但它也可以作�
 例如:
 
 - 在生产环境使用的集群外的数库，但是在测试环境用的是内部的数据。
-- 想要将 Service 集群中另一个名字空间中的 Service 或另一个集群的服务。
+- 想要将 Service 集群中另一个命名空间中的 Service 或另一个集群的服务。
 - 在迁移工作负载到 k8s 时，为了评估是否可行，先使用一部分后端服务在 k8s 中。
 
 In any of these scenarios you can define a Service _without_ a Pod selector.
@@ -742,11 +742,11 @@ You can find more information about `ExternalName` resolution in
 一个可感知集群的 DNS 服务， 例如 CoreDNS， 会监听 k8s API 创建的 Service 并创建对应的 DNS 记录。
 如果集群启用的 DNS 服务，则所以的 Pod 都应该会自动地通过 DNS 名称解析 Service。
 
-例如，如果有一个名叫 `"my-service"` Service 于 `"my-ns"` 名字空间，控制中心和 DNS 服务会
-协作创建一条 DNS 记录为 `"my-service.my-ns"`。 在 `"my-ns"` 名字空间的 Pod 可以只需要简单地
+例如，如果有一个名叫 `"my-service"` Service 于 `"my-ns"` 命名空间，控制中心和 DNS 服务会
+协作创建一条 DNS 记录为 `"my-service.my-ns"`。 在 `"my-ns"` 命名空间的 Pod 可以只需要简单地
 使用 `my-service` 就能查到(`"my-service.my-ns"` 也是可以的)
 
-在其它名字空间的 Pod 必须使用 `my-service.my-ns` 这样的限定名。 这些名称会解析为 Service
+在其它命名空间的 Pod 必须使用 `my-service.my-ns` 这样的限定名。 这些名称会解析为 Service
 分配的集群IP。
 
 k8s 还支持命名端口的 DNS SRV (Service) 记录。 如果叫 `"my-service.my-ns"` 的 Service
@@ -1850,7 +1850,7 @@ This section is indebted to the [Kubernetes Tips - Part
 ExternalName 类型的 Service 将 Service 映射到一个 DNS 名称， 而不是一个常见的选择器，如
 `my-service` 或 `cassandra`. 通过 Service `spec.externalName` 字段设置 DNS 名称。
 
-以面示例配置中将在 `prod` 名字空间中一个名叫 `my-service` 的 Service 映射到 `my.database.example.com`:
+以面示例配置中将在 `prod` 命名空间中一个名叫 `my-service` 的 Service 映射到 `my.database.example.com`:
 ```yaml
 apiVersion: v1
 kind: Service

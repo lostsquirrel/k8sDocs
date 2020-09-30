@@ -38,7 +38,7 @@ description: K8S 文档笔记，因为想加些私货，所以没法和官网同
 
 ## 翻译词汇
 
-- namespace 名字空间
+- namespace 命名空间
 - label 标签
 - annotation 注解
 ## Features

@@ -16,7 +16,7 @@ k8s 环境为容器提供了一些重要的资源信息：
 ### 容器信息
 
 容器的主机名，也就是容器运行的 Pod 的名称。 可以通过 `hostname` 命令或 `libc` 库中的 `gethostname` 函数获得
-Pod 的名称和所在的名字空间可能 [downward API](../../../3-tasks/04-inject-data-application/04-downward-api-volume-expose-pod-information/#the-downward-api)以环境变量方式访问
+Pod 的名称和所在的命名空间可能 [downward API](../../../3-tasks/04-inject-data-application/04-downward-api-volume-expose-pod-information/#the-downward-api)以环境变量方式访问
 在 Pod 定义中用户自定义的环境变量和Docker 镜像中的环境变量都会成为容器中的环境变量。
 
 ### 集群信息

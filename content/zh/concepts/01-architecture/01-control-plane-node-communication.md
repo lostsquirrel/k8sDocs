@@ -11,7 +11,7 @@ weight: 20101
 k8s 使用轴辐式(hub-and-spoke) API 模式，所有节点(包括节点上运行的Pod)使用到的API都指向 api-server(其它所有的组件在设计上就不提供远程服务)。api-server 配置成安全的HTTPS端口(通常是 443)来对外提供服务，并且开启一种或多种[认证](../../../reference/03-access-authn-authz/01-authentication/)方式。还需要开启一种或多种[授权](../../../reference/03-access-authn-authz/07-authorization/)方式， 特别是 匿名请求 或 service account tokens 可用(具体见认证相关部分)。
 每个节点上都需要有集群的公开根证书，这样节点才能通过有效的客户凭据安全的连接到 api-server. 例如， 在默认的 GKE 部署中， 客户端为 kubelet 提供的凭据格式为客户端证书， 自动化提供客户端证书的方式见[这里](../../../reference/command-line-tools-reference/08-kubelet-tls-bootstrapping/)
 如果集群中的Pod想要连接到 api-server 可以借助`service account`实现安全连接， k8s 会在 Pod 启动时自动注入公开根谈不上和令牌.
-在每个名字空间下有一个叫 `kubernetes` 的 Service， 指向一个虚拟IP地址，并重写向(通过 kube-proxy)向 api-server 的HTTPS端口上。
+在每个命名空间下有一个叫 `kubernetes` 的 Service， 指向一个虚拟IP地址，并重写向(通过 kube-proxy)向 api-server 的HTTPS端口上。
 控制中心组件也是通过安全端口与集群的 api-server 通信。
 在默认的操作模式下，节点和节点上的Pod 与控制中心的连接默认就是安全的可以信赖于不受信的网络环境中
 

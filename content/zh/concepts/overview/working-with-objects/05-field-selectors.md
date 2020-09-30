@@ -32,7 +32,7 @@ Error from server (BadRequest): Unable to find "ingresses" that match label sele
 
 ## 支持的操作符
 
-字段选择器支持的操作符有 `=`, `==,` 和 `!=`， 其中 (`=` 和 `==` 效果一样)。 例如以下示例表示，选择所有不属于 `default` 名字空间的 `Service`:
+字段选择器支持的操作符有 `=`, `==,` 和 `!=`， 其中 (`=` 和 `==` 效果一样)。 例如以下示例表示，选择所有不属于 `default` 命名空间的 `Service`:
 
 ```sh
 kubectl get services  --all-namespaces --field-selector metadata.namespace!=default
@@ -47,7 +47,7 @@ kubectl get pods --field-selector=status.phase!=Running,spec.restartPolicy=Alway
 
 ## 同时筛选多个类型的资源
 
-字段选择器可以同时对多种类型对象进行筛选， 例如以下示例表示，选择所有不属于 `default` 名字空间的 `Statefulsets` 和 `Services`
+字段选择器可以同时对多种类型对象进行筛选， 例如以下示例表示，选择所有不属于 `default` 命名空间的 `Statefulsets` 和 `Services`
 
 ```sh
 kubectl get statefulsets,services --all-namespaces --field-selector metadata.namespace!=default
