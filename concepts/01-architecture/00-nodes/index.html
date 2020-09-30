@@ -199,7 +199,7 @@ var _hmt = _hmt || [];
 第三个是监控节点状态， 节点控制器负责在节点变得不可达时(如， 因为某些原因收不到心跳，比如节点宕机)，更新节点就绪状态为 <code>ConditionUnknown</code>， 如果节点持续不可达则踢出节点上所有的Pod(使用优雅终结方式)。设置就绪状态的不可达时间为 40s, 踢除 Pod 的时间为 5 分钟。节点控制器检查节点状态的时间由 <code>--node-monitor-period</code> 配置</p>
 <h4 id="心跳">心跳</h4>
 <p>心跳由k8s 节点发送，用于帮助判定节点是否可用
-心跳的形式有两种， 一个更新 <code>NodeStatus</code> 另一个为租约对象。每个节点在 kube-node-lease 名字空间中有一个关联的租约对象。 租约是一个轻量级资源， 用户在集群范围内改善心跳的性能
+心跳的形式有两种， 一个更新 <code>NodeStatus</code> 另一个为租约对象。每个节点在 kube-node-lease 命名空间中有一个关联的租约对象。 租约是一个轻量级资源， 用户在集群范围内改善心跳的性能
 由 kubelet 负责创建更新 <code>NodeStatus</code> 和 租约对象。</p>
 <ul>
 <li>kubelet  在状态发生改变或在配置的时间间隔内没有更新时更新 <code>NodeStatus</code>， <code>NodeStatus</code> 更新的默认的更新间隔为 5 分钟(比不可达节点默认超时的 40 秒长很多)</li>
@@ -279,7 +279,7 @@ Published on 8 Jul 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>

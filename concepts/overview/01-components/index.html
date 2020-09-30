@@ -93,7 +93,7 @@ k8s API 的大多数实现都在 kube-apiserver
 <li>Node 控制器: 负责监视和响应 Node 是不是挂了</li>
 <li>Replication 控制器: 负责系统中的 Pod 维护在预期的副本数</li>
 <li>Endpoints 控制器: 负责管理 Endpoints对象(Services &amp; Pods)</li>
-<li>Service Account &amp; Token 控制器: 为新增的名字空间创建默认的账号和令牌</li>
+<li>Service Account &amp; Token 控制器: 为新增的命名空间创建默认的账号和令牌</li>
 </ul>
 <h3 id="cloud-controller-manager">cloud-controller-manager</h3>
 <p>k8s 控制中心集群了云环境的控制逻辑。 云控制管理器是集群与云提供商API交互的控制器。并与只与集群交互的控制器分离。
@@ -119,7 +119,7 @@ kube-proxy 优先使用系统层的包过虑，如果没有则自己转发</p>
 <p>容器的运行环境，
 k8s 支持容器运行环境有: Docker, containerd, CRI-O 和 任意实现了 k8s CRI(<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-node/container-runtime-interface.md">Container Runtime Interface</a>)的运行环境</p>
 <h2 id="插件">插件</h2>
-<p>插件基于 k8s 资源(DaemonSet, Deployment 等)来实现集群新功能。由于提供的是集群级的功能，所有插件所属的名字空间为 <code>kube-system</code>
+<p>插件基于 k8s 资源(DaemonSet, Deployment 等)来实现集群新功能。由于提供的是集群级的功能，所有插件所属的命名空间为 <code>kube-system</code>
 下面列举了一些插件，更多请见 <a href="https://kubernetes.io/docs/concepts/cluster-administration/addons/">这里</a>
 TODO</p>
 <h3 id="dns">DNS</h3>
@@ -197,7 +197,7 @@ Published on 28 Jun 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>

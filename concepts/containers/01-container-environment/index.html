@@ -78,7 +78,7 @@ var _hmt = _hmt || [];
 </ul>
 <h3 id="容器信息">容器信息</h3>
 <p>容器的主机名，也就是容器运行的 Pod 的名称。 可以通过 <code>hostname</code> 命令或 <code>libc</code> 库中的 <code>gethostname</code> 函数获得
-Pod 的名称和所在的名字空间可能 <a href="../../../3-tasks/04-inject-data-application/04-downward-api-volume-expose-pod-information/#the-downward-api">downward API</a>以环境变量方式访问
+Pod 的名称和所在的命名空间可能 <a href="../../../3-tasks/04-inject-data-application/04-downward-api-volume-expose-pod-information/#the-downward-api">downward API</a>以环境变量方式访问
 在 Pod 定义中用户自定义的环境变量和Docker 镜像中的环境变量都会成为容器中的环境变量。</p>
 <h3 id="集群信息">集群信息</h3>
 <p>在容器创建之前的所有 Service 列表会以环境变量方式加入容器。 这些环境变量与 Docker link 的语法一致。
@@ -143,7 +143,7 @@ Published on 27 Jul 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>

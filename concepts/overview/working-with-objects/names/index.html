@@ -17,16 +17,16 @@
 :root {}
 </style>
 <meta property="og:title" content="对象命令与ID" />
-<meta property="og:description" content="在 k8s 的对象中，同一类型的对象名称唯一， 比如在一个 名字空间中只能有一个叫 myapp-1234 在 Pod， 但不同类型的资源可以有相同的名称，比如还可以定义一个叫 myapp-1234 在" />
+<meta property="og:description" content="在 k8s 的对象中，同一类型的对象名称唯一， 比如在一个 命名空间中只能有一个叫 myapp-1234 在 Pod， 但不同类型的资源可以有相同的名称，比如还可以定义一个叫 myapp-1234 在" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/" />
 <meta property="article:published_time" content="2020-06-30T00:00:00+00:00" />
 <meta property="article:modified_time" content="2020-06-29T00:00:00+00:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="对象命令与ID"/>
-<meta name="twitter:description" content="在 k8s 的对象中，同一类型的对象名称唯一， 比如在一个 名字空间中只能有一个叫 myapp-1234 在 Pod， 但不同类型的资源可以有相同的名称，比如还可以定义一个叫 myapp-1234 在"/>
+<meta name="twitter:description" content="在 k8s 的对象中，同一类型的对象名称唯一， 比如在一个 命名空间中只能有一个叫 myapp-1234 在 Pod， 但不同类型的资源可以有相同的名称，比如还可以定义一个叫 myapp-1234 在"/>
 <meta itemprop="name" content="对象命令与ID">
-<meta itemprop="description" content="在 k8s 的对象中，同一类型的对象名称唯一， 比如在一个 名字空间中只能有一个叫 myapp-1234 在 Pod， 但不同类型的资源可以有相同的名称，比如还可以定义一个叫 myapp-1234 在">
+<meta itemprop="description" content="在 k8s 的对象中，同一类型的对象名称唯一， 比如在一个 命名空间中只能有一个叫 myapp-1234 在 Pod， 但不同类型的资源可以有相同的名称，比如还可以定义一个叫 myapp-1234 在">
 <meta itemprop="datePublished" content="2020-06-30T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-29T00:00:00&#43;00:00" />
 <meta itemprop="wordCount" content="622">
@@ -66,7 +66,7 @@ var _hmt = _hmt || [];
 
 <div class="content-container">
 <main><h1>对象命令与ID</h1>
-<p>在 k8s 的对象中，同一类型的对象名称唯一， 比如在一个 <a href="./02-namespace">名字空间</a>中只能有一个叫 <code>myapp-1234</code> 在 Pod， 但不同类型的资源可以有相同的名称，比如还可以定义一个叫 <code>myapp-1234</code> 在 Deployment。
+<p>在 k8s 的对象中，同一类型的对象名称唯一， 比如在一个 <a href="./02-namespace">命名空间</a>中只能有一个叫 <code>myapp-1234</code> 在 Pod， 但不同类型的资源可以有相同的名称，比如还可以定义一个叫 <code>myapp-1234</code> 在 Deployment。
 每个对象也有一个 <code>UID</code> 这个 <code>UID</code> 整个集群全局唯一
 用户需要定义非唯一的，用户自定义的属性，则可通过 <a href="./03-label-selectors">标签</a> 和 <a href="04-annotation">注解</a> 实现</p>
 <h1 id="对象名称">对象名称</h1>
@@ -118,7 +118,7 @@ Last updated on 29 Jun 2020
 <br>
 Published on 30 Jun 2020
 <br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/concepts/overview/working-with-objects/names.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/" title="k8s 对象介绍"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - k8s 对象介绍</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/" title="名字空间(Namespaces)">Next - 名字空间(Namespaces) <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/" title="命名空间(Namespaces)">Next - 命名空间(Namespaces) <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -163,7 +163,7 @@ Published on 30 Jun 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
 <li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>

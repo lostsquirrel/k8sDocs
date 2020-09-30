@@ -110,7 +110,7 @@ spec:
 目前标签选择器支持两种选择方式： 等值选择，集合选择。
 在待值选择时， 一个标签选择器可以由多个选择条件组成，每个条件用逗号分隔，表示匹配同时满足这些条件的对象，所以这里逗号相当与逻辑与(<code>&amp;&amp;</code>)关系
 空选择器或不使用选择在不同的情况下，有不同的表现。用户标签的 API 需要要正确和有意义的说明文档
-注意: 对于有些 API 类型，比如 <code>ReplicaSets</code> 同一个名字空间两个不同实例的标签选择器不能有交叉， 否些控制器就会将些认为是冲突，导致不能别副本数是否正确(TODO 这里需要有一个示例，描述不太好理解)</p>
+注意: 对于有些 API 类型，比如 <code>ReplicaSets</code> 同一个命名空间两个不同实例的标签选择器不能有交叉， 否些控制器就会将些认为是冲突，导致不能别副本数是否正确(TODO 这里需要有一个示例，描述不太好理解)</p>
 <p>警告: 在编写选择器条件时需要注意，对于 等值选择，集合选择 都没有逻辑与(<code>||</code>)操作符</p>
 <h3 id="等值选择">等值选择</h3>
 <p>等值选择可以分别对于标签的 键和值的相等与不相等，只要对象的标签含有选择器所有的条件相匹配的标签就会选中，不管该对象是否还有其它标签
@@ -207,7 +207,7 @@ Last updated on 29 Jun 2020
 
 <br>
 Published on 2 Jul 2020
-<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/concepts/overview/working-with-objects/labels.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/" title="名字空间(Namespaces)"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 名字空间(Namespaces)</a>
+<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/concepts/overview/working-with-objects/labels.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/" title="命名空间(Namespaces)"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 命名空间(Namespaces)</a>
 <a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/" title="注解 (Annotations)">Next - 注解 (Annotations) <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
@@ -253,7 +253,7 @@ Published on 2 Jul 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a></li>
 <li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>

@@ -277,7 +277,7 @@ Service 代理使用。
 例如:</p>
 <ul>
 <li>在生产环境使用的集群外的数库，但是在测试环境用的是内部的数据。</li>
-<li>想要将 Service 集群中另一个名字空间中的 Service 或另一个集群的服务。</li>
+<li>想要将 Service 集群中另一个命名空间中的 Service 或另一个集群的服务。</li>
 <li>在迁移工作负载到 k8s 时，为了评估是否可行，先使用一部分后端服务在 k8s 中。</li>
 </ul>
 <p>In any of these scenarios you can define a Service <em>without</em> a Pod selector.
@@ -800,10 +800,10 @@ You can find more information about `ExternalName` resolution in
 为你的集群设置 DNS 服务。</p>
 <p>一个可感知集群的 DNS 服务， 例如 CoreDNS， 会监听 k8s API 创建的 Service 并创建对应的 DNS 记录。
 如果集群启用的 DNS 服务，则所以的 Pod 都应该会自动地通过 DNS 名称解析 Service。</p>
-<p>例如，如果有一个名叫 <code>&quot;my-service&quot;</code> Service 于 <code>&quot;my-ns&quot;</code> 名字空间，控制中心和 DNS 服务会
-协作创建一条 DNS 记录为 <code>&quot;my-service.my-ns&quot;</code>。 在 <code>&quot;my-ns&quot;</code> 名字空间的 Pod 可以只需要简单地
+<p>例如，如果有一个名叫 <code>&quot;my-service&quot;</code> Service 于 <code>&quot;my-ns&quot;</code> 命名空间，控制中心和 DNS 服务会
+协作创建一条 DNS 记录为 <code>&quot;my-service.my-ns&quot;</code>。 在 <code>&quot;my-ns&quot;</code> 命名空间的 Pod 可以只需要简单地
 使用 <code>my-service</code> 就能查到(<code>&quot;my-service.my-ns&quot;</code> 也是可以的)</p>
-<p>在其它名字空间的 Pod 必须使用 <code>my-service.my-ns</code> 这样的限定名。 这些名称会解析为 Service
+<p>在其它命名空间的 Pod 必须使用 <code>my-service.my-ns</code> 这样的限定名。 这些名称会解析为 Service
 分配的集群IP。</p>
 <p>k8s 还支持命名端口的 DNS SRV (Service) 记录。 如果叫 <code>&quot;my-service.my-ns&quot;</code> 的 Service
 有一个叫 <code>&quot;http&quot;</code> 的 <code>TCP</code> 端口， 就可以使用 <code>DNS SRV</code> 查询 <code>_http._tcp.my-service.my-ns</code>
@@ -1788,7 +1788,7 @@ Service's `type`.
 <h3 id="externalname">ExternalName</h3>
 <p>ExternalName 类型的 Service 将 Service 映射到一个 DNS 名称， 而不是一个常见的选择器，如
 <code>my-service</code> 或 <code>cassandra</code>. 通过 Service <code>spec.externalName</code> 字段设置 DNS 名称。</p>
-<p>以面示例配置中将在 <code>prod</code> 名字空间中一个名叫 <code>my-service</code> 的 Service 映射到 <code>my.database.example.com</code>:</p>
+<p>以面示例配置中将在 <code>prod</code> 命名空间中一个名叫 <code>my-service</code> 的 Service 映射到 <code>my.database.example.com</code>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
 <span style="color:#66d9ef">kind</span>: Service
 <span style="color:#66d9ef">metadata</span>:
@@ -2266,7 +2266,7 @@ Published on 9 Sep 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>

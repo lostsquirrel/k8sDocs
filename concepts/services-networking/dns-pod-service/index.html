@@ -113,10 +113,10 @@ For more up-to-date specification, see
  -->
 <h3 id="啥东西会有-dns-名称">啥东西会有 DNS 名称?</h3>
 <p>集群中定义的每一个 Service (包括 DNS 服务本身) 都会分配一个 DNS 名称。 默认情况下，一个客户端
-Pod 的 DNS 检索列表会包含 Pod 自己所在的名字空间和集群的默认域。 一例胜千言:</p>
-<p>假设在 k8s 的 <code>bar</code> 名字空间有一个叫 <code>foo</code> 的 Service. 一个运行在 <code>bar</code> 名字空间的 Pod
-只需要简单地使用 <code>foo</code> 作为 DNS 查询条目就可以找到这个 Service。 另一个运行在 <code>quux</code> 名字空间的 Pod
-同要为查询这个 Service。 DNS 的查询条目就需要是 <code>foo.bar</code> (带上名字空间的名称)</p>
+Pod 的 DNS 检索列表会包含 Pod 自己所在的命名空间和集群的默认域。 一例胜千言:</p>
+<p>假设在 k8s 的 <code>bar</code> 命名空间有一个叫 <code>foo</code> 的 Service. 一个运行在 <code>bar</code> 命名空间的 Pod
+只需要简单地使用 <code>foo</code> 作为 DNS 查询条目就可以找到这个 Service。 另一个运行在 <code>quux</code> 命名空间的 Pod
+同要为查询这个 Service。 DNS 的查询条目就需要是 <code>foo.bar</code> (带上命名空间的名称)</p>
 <p>接下来的章节会详细介绍支持的 DNS 记录类型的规划。 (这一句没懂)
 最新的规格说明书见
 <a href="https://github.com/kubernetes/dns/blob/master/docs/specification.md">Kubernetes DNS-Based Service Discovery</a>.</p>
@@ -192,7 +192,7 @@ following DNS resolution available:
 <h3 id="aaaaa-记录-1">A/AAAA 记录</h3>
 <p>通常 Pod 的 DNS 记录名为如下格式:</p>
 <p><code>pod-ip-address.my-namespace.pod.cluster-domain.example</code>.</p>
-<p>例如， 如果有一个在 <code>default</code> 名字空间的 Pod， 它的 IP 地址为 <code>172.17.0.3</code>， 集群配置的
+<p>例如， 如果有一个在 <code>default</code> 命名空间的 Pod， 它的 IP 地址为 <code>172.17.0.3</code>， 集群配置的
 域名叫 <code>cluster.local</code>， 这样这个 Pod 的 DNS 名称就是:
 <code>172-17-0-3.default.pod.cluster.local</code>.</p>
 <p>任意由 Deployment 或 DaemonSet 创建，由 Service 暴露的 Pod 会拥有一个如下的 DNS 名称:
@@ -289,7 +289,7 @@ record unless <code>publishNotReadyAddresses=True</code> is set on the Service.<
 级是高于 Pod 名称作为 Pod 的主机名的。 例如， 设置一个 Pod 的 <code>hostname</code> 为 <code>my-host</code>，
 这个 Pod 的主机名就会设置为 <code>my-host</code></p>
 <p>Pod 定义中还有一个可选择字段 <code>subdomain</code>， 可以用来指定它的子域名。 例如， 一个 Pod 的
-<code>hostname</code> 设置为 <code>foo</code>， <code>subdomain</code> 设置为 <code>bar</code>， 处理 <code>my-namespace</code> 名字空间。
+<code>hostname</code> 设置为 <code>foo</code>， <code>subdomain</code> 设置为 <code>bar</code>， 处理 <code>my-namespace</code> 命名空间。
 它的全限定名(FQDN) 就是 <code>foo.bar.my-namespace.svc.cluster-domain.example</code></p>
 <p>示例:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
@@ -336,10 +336,10 @@ record unless <code>publishNotReadyAddresses=True</code> is set on the Service.<
       - sleep
       - <span style="color:#e6db74">&#34;3600&#34;</span>
     <span style="color:#66d9ef">name</span>: busybox
-</code></pre></div><p>如果存在这样一个无头(headless) 的 Service, 它与另一个 Pod 在同一个名字空间，且 Pod 的
+</code></pre></div><p>如果存在这样一个无头(headless) 的 Service, 它与另一个 Pod 在同一个命名空间，且 Pod 的
 <code>subdomain</code> 与这个 Service 的名称是一样的。 集群 DNS 服务一样会返回 Pod 全限制名的 A/AAAA 记录。
 例如，假定一个 Pod 的 <code>hostname</code> 设置为 <code>busybox-1</code>， <code>subdomain</code> 设置为 <code>default-subdomain</code>，
-一个无头(headless) 的 Service 名字是 <code>default-subdomain</code>， 它们在同一个名字空间。
+一个无头(headless) 的 Service 名字是 <code>default-subdomain</code>， 它们在同一个命名空间。
 Pod 就可以看到它自己的全限定名(FQDN)为
 <code>busybox-1.default-subdomain.my-namespace.svc.cluster-domain.example</code>。
 DNS 服务为这个名称提供一个 A/AAAA 记录， 指向该 Pod 的 IP。 <code>busybox1</code> 和 <code>busybox2</code>
@@ -411,7 +411,7 @@ When you set `setHostnameAsFQDN: true` in the Pod spec, the kubelet writes the P
 在 Pod 内使用默认的 <code>hostname</code> 命令时返回的是 <code>busybox-1</code>， 而 <code>hostname --fqdn</code> 命令
 返回的是全限定名(FQDN)。</p>
 <p>当在 Pod 的定义中设置 <code>setHostnameAsFQDN: true</code> 时， kubelet 会将 Pod 的 全限定名(FQDN)
-写到那个 Pod 名字空间的 hostname. 在这种情况下 <code>hostname</code> 和 <code>hostname --fqdn</code> 两个命令
+写到那个 Pod 命名空间的 hostname. 在这种情况下 <code>hostname</code> 和 <code>hostname --fqdn</code> 两个命令
 返回的都是全限定名。</p>
 <p><blockquote class="note">
   <div><strong>说明：</strong> 在 Linux 中， 内核中的 <code>hostname</code> 字段(<code>struct utsname</code> 的 <code>nodename</code> 字段)限制最多只能有 64 个字符。</div>
@@ -811,7 +811,7 @@ Published on 10 Sep 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>

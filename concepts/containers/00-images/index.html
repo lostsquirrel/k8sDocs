@@ -201,7 +201,7 @@ k8s 只支持 Docker 配置的 <code>auths</code> 和 <code>HttpHeaders</code> �
 具体配置见<a href="../../../3-tasks/02-configure-pod-container/11-pull-image-private-registry/#registry-secret-existing-credentials">这里</a>
 这种配置方式尤其适用有多个私有镜像仓库的情况，因为 <code>kubectl create secret docker-registry</code> 创建 Secret 的方式只适用于单个私有镜像仓库的情况。
 {{ <note> }}
-Pod 只能引用当前名字空间内的 <code>Secret</code> , 因此需要在每个名字空间都需要创建 <code>Secret</code>
+Pod 只能引用当前命名空间内的 <code>Secret</code> , 因此需要在每个命名空间都需要创建 <code>Secret</code>
 {{ </note> }}</p>
 <h3 id="在-pod-中使用-imagepullsecrets">在 Pod 中使用 <code>imagePullSecrets</code></h3>
 <p>当 <code>Secret</code> 创建好后，可以配置 <code>imagePullSecrets</code> 使用该 <code>Secret</code>, 例如：</p>
@@ -255,8 +255,8 @@ cat <span style="color:#e6db74">&lt;&lt;EOF &gt;&gt; ./kustomization.yaml
 <li>多租户集群，每个租户需要独立的私有镜像仓库
 - 需要打开  <a href="../../../reference/03-access-authn-authz/04-admission-controllers/#alwayspullimages">AlwaysPullImages</a> admission controller， 否则所有租户的所有 Pod 默认对所有镜像有访问权限
 - 私有镜像仓库需要有认证系统
-- 为每个租户生成私有镜像仓库凭据，并在每个租户的名字空间中创建对应 Secret.
-- 各名字空间的租户将名称的 Secret 配置到 <code>imagePullSecrets</code></li>
+- 为每个租户生成私有镜像仓库凭据，并在每个租户的命名空间中创建对应 Secret.
+- 各命名空间的租户将名称的 Secret 配置到 <code>imagePullSecrets</code></li>
 </ol>
 <p>如果用到的多个私有镜像仓库， 可以对每个仓库创建一个 Secret, kubelet 会将所有 imagePullSecrets 合并到一个虚拟的 <code>.docker/config.json</code> 中。</p>
 <div class="edit-meta">
@@ -311,7 +311,7 @@ Published on 24 Jul 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>

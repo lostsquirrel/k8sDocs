@@ -82,13 +82,13 @@ var _hmt = _hmt || [];
 </code></pre></div><p>错误信息如下</p>
 <pre><code>Error from server (BadRequest): Unable to find &quot;ingresses&quot; that match label selector &quot;&quot;, field selector &quot;foo.bar=baz&quot;: &quot;foo.bar&quot; is not a known field selector: only &quot;metadata.name&quot;, &quot;metadata.namespace&quot;
 </code></pre><h2 id="支持的操作符">支持的操作符</h2>
-<p>字段选择器支持的操作符有 <code>=</code>, <code>==,</code> 和 <code>!=</code>， 其中 (<code>=</code> 和 <code>==</code> 效果一样)。 例如以下示例表示，选择所有不属于 <code>default</code> 名字空间的 <code>Service</code>:</p>
+<p>字段选择器支持的操作符有 <code>=</code>, <code>==,</code> 和 <code>!=</code>， 其中 (<code>=</code> 和 <code>==</code> 效果一样)。 例如以下示例表示，选择所有不属于 <code>default</code> 命名空间的 <code>Service</code>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl get services  --all-namespaces --field-selector metadata.namespace!<span style="color:#f92672">=</span>default
 </code></pre></div><h2 id="多个选择条件">多个选择条件</h2>
 <p>与标签选择类似， 字段选择和多个条件也可以通过逗号分隔，例如以下示例表示选择所有 <code>status.phase</code> 不是 <code>Running</code> 且 <code>spec.restartPolicy</code> 字段值为 <code>Always</code> 的 Pod</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl get pods --field-selector<span style="color:#f92672">=</span>status.phase!<span style="color:#f92672">=</span>Running,spec.restartPolicy<span style="color:#f92672">=</span>Always
 </code></pre></div><h2 id="同时筛选多个类型的资源">同时筛选多个类型的资源</h2>
-<p>字段选择器可以同时对多种类型对象进行筛选， 例如以下示例表示，选择所有不属于 <code>default</code> 名字空间的 <code>Statefulsets</code> 和 <code>Services</code></p>
+<p>字段选择器可以同时对多种类型对象进行筛选， 例如以下示例表示，选择所有不属于 <code>default</code> 命名空间的 <code>Statefulsets</code> 和 <code>Services</code></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl get statefulsets,services --all-namespaces --field-selector metadata.namespace!<span style="color:#f92672">=</span>default
 </code></pre></div><div class="edit-meta">
 Last updated on 3 Jul 2020
@@ -142,7 +142,7 @@ Published on 3 Jul 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
 <li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>

@@ -1930,7 +1930,7 @@ Conditions:
   Available       True    MinimumReplicasAvailable
   Progressing     False   ProgressDeadlineExceeded
   ReplicaFailure  True    FailedCreate
-</code></pre><p>在遇到配额不足的情况，用户可以通过缩减 Deployment 副本数来解决， 也可以缩减用户其它控制器的副本数，还可以增加用户名字空间的配额。
+</code></pre><p>在遇到配额不足的情况，用户可以通过缩减 Deployment 副本数来解决， 也可以缩减用户其它控制器的副本数，还可以增加用户命名空间的配额。
 如果达到配额条件， Deployment 这时候就会过成 Deployment 的发布， 这时候就会看到 Deployment 状态被更新为一个成功条件
 (<code>Status=True</code> 和 <code>Reason=NewReplicaSetAvailable</code>)</p>
 <pre><code>Conditions:
@@ -2269,7 +2269,7 @@ Published on 20 Aug 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>

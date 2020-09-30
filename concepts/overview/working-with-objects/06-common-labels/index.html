@@ -133,7 +133,7 @@ var _hmt = _hmt || [];
     <span style="color:#66d9ef">app.kubernetes.io/part-of</span>: wordpress
     <span style="color:#66d9ef">app.kubernetes.io/managed-by</span>: helm
 </code></pre></div><h2 id="应用及应用实例">应用及应用实例</h2>
-<p>一个应用可能在 k8s 集群的一个名字空间中安装一次或多次。比如 安装多个 wordpress 的(不同)网站
+<p>一个应用可能在 k8s 集群的一个命名空间中安装一次或多次。比如 安装多个 wordpress 的(不同)网站
 应用名和其实例名都应该作区分， 比如 一个 wordpress 应用为 <code>app.kubernetes.io/name: wordpress</code>, 其实例可以设置为 <code>app.kubernetes.io/instance: wordpress-abcxzy</code> 这就应用和实例就比较好识别，当一个应用有多个实例是每个实例的名称都要唯一。</p>
 <h2 id="示例">示例</h2>
 <p>以下示例展示这些标签的不同用法</p>
@@ -261,7 +261,7 @@ Published on 3 Jul 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>

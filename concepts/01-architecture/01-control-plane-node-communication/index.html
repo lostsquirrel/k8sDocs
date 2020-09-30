@@ -71,7 +71,7 @@ var _hmt = _hmt || [];
 <p>k8s 使用轴辐式(hub-and-spoke) API 模式，所有节点(包括节点上运行的Pod)使用到的API都指向 api-server(其它所有的组件在设计上就不提供远程服务)。api-server 配置成安全的HTTPS端口(通常是 443)来对外提供服务，并且开启一种或多种<a href="../../../reference/03-access-authn-authz/01-authentication/">认证</a>方式。还需要开启一种或多种<a href="../../../reference/03-access-authn-authz/07-authorization/">授权</a>方式， 特别是 匿名请求 或 service account tokens 可用(具体见认证相关部分)。
 每个节点上都需要有集群的公开根证书，这样节点才能通过有效的客户凭据安全的连接到 api-server. 例如， 在默认的 GKE 部署中， 客户端为 kubelet 提供的凭据格式为客户端证书， 自动化提供客户端证书的方式见<a href="../../../reference/command-line-tools-reference/08-kubelet-tls-bootstrapping/">这里</a>
 如果集群中的Pod想要连接到 api-server 可以借助<code>service account</code>实现安全连接， k8s 会在 Pod 启动时自动注入公开根谈不上和令牌.
-在每个名字空间下有一个叫 <code>kubernetes</code> 的 Service， 指向一个虚拟IP地址，并重写向(通过 kube-proxy)向 api-server 的HTTPS端口上。
+在每个命名空间下有一个叫 <code>kubernetes</code> 的 Service， 指向一个虚拟IP地址，并重写向(通过 kube-proxy)向 api-server 的HTTPS端口上。
 控制中心组件也是通过安全端口与集群的 api-server 通信。
 在默认的操作模式下，节点和节点上的Pod 与控制中心的连接默认就是安全的可以信赖于不受信的网络环境中</p>
 <h2 id="从控制中心向节点的通信">从控制中心向节点的通信</h2>
@@ -157,7 +157,7 @@ Published on 8 Jul 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>

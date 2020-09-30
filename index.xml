@@ -242,16 +242,16 @@
       <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/</guid>
-      <description>在 k8s 的对象中，同一类型的对象名称唯一， 比如在一个 名字空间中只能有一个叫 myapp-1234 在 Pod， 但不同类型的资源可以有相同的名称，比如还可以定义一个叫 myapp-1234 在</description>
+      <description>在 k8s 的对象中，同一类型的对象名称唯一， 比如在一个 命名空间中只能有一个叫 myapp-1234 在 Pod， 但不同类型的资源可以有相同的名称，比如还可以定义一个叫 myapp-1234 在</description>
     </item>
     
     <item>
-      <title>名字空间(Namespaces)</title>
+      <title>命名空间(Namespaces)</title>
       <link>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/</link>
       <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/</guid>
-      <description>k8s 可以在一个物理集群上创建多个虚拟集群, 每个名字空间就是一个虚拟集群 啥时候用名字空间 名字空间是为用户分散于有多个组或项目下的场景设计的。 如果</description>
+      <description>k8s 可以在一个物理集群上创建多个虚拟集群, 每个命名空间就是一个虚拟集群 啥时候用命名空间 命名空间是为用户分散于有多个组或项目下的场景设计的。 如果</description>
     </item>
     
     <item>

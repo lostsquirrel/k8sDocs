@@ -203,7 +203,7 @@ for examples of troubleshooting using ephemeral containers.
 <p>特别是 <a href="https://github.com/GoogleContainerTools/distroless">distroless images</a>
 允许用户能够部署最小化的容器镜像而达到减少攻击面，减少缺陷和漏洞的暴露。 但 <code>distroless</code> 镜像中是没
 shell 或任何其它的调试工具的，所以对 <code>distroless</code> 镜像要只通过 <code>kubectl exec</code> 来调试就变得无比困难了。</p>
-<p>在使用临时容器时，建议打开 <a href="/k8sDocs/tasks/configure-pod-container/share-process-namespace/">进程名字空间共享</a>
+<p>在使用临时容器时，建议打开 <a href="/k8sDocs/tasks/configure-pod-container/share-process-namespace/">进程命名空间共享</a>
 这样就可以看到其它容器中的进程了。</p>
 <p>更多使用临时容器调试的例子见 <a href="/k8sDocs/tasks/debug-application-cluster/debug-running-pod/#debugging-with-ephemeral-debug-container">使用临时容器找虫</a></p>
 <!--
@@ -453,7 +453,7 @@ Published on 12 Aug 2020
 <ul class="sub-menu">
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">名字空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>
