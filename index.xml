@@ -102,6 +102,15 @@
     </item>
     
     <item>
+      <title>通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/</link>
+      <pubDate>Fri, 09 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/</guid>
+      <description>在 DNS 和其它方式都不可用时，想要向通过向 Pod 的 /etc/hosts 文件添加条目的方式来重写 Pod 级别的域名解析，可能通过 PodSpec 的 HostAliases 字段向该 Pod 的 /etc/hosts 添加自定义条目。 不建议直接</description>
+    </item>
+    
+    <item>
       <title>使用 Minikube 搭建 K8s环境</title>
       <link>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/00-minikube/</link>
       <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
