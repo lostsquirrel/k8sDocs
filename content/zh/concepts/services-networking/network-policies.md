@@ -3,8 +3,7 @@ title: 网络策略
 content_type: concept
 weight: 80
 date: 2020-09-23
-publishdate: 2020-09-23
-draft: true
+publishdate: 2020-10-09
 ---
 <!--
 ---
@@ -494,7 +493,7 @@ As of Kubernetes 1.20, the following functionality does not exist in the Network
 - The ability to prevent loopback or incoming host traffic (Pods cannot currently block localhost access, nor do they have the ability to block access from their resident node).
  -->
 
-# 不能通过网络策略做到的情况 (至少目前还不能)
+## 不能通过网络策略做到的情况 (至少目前还不能)
 
 到 k8s v1.20 为止，以下功能在 NetworkPolicy API 中是不存在的， 但可能可能通过操作系统组件
 (如 SELinux， OpenVSwitch， IPTables 等) 或者通过 7 层技术(Ingress 控制器，`Service Mesh` 实现)
@@ -502,24 +501,21 @@ As of Kubernetes 1.20, the following functionality does not exist in the Network
 需要注意下面的用户故事(User Stories)(还)不能通过使用 NetworkPolicy API 实现。
 有些(但不是所有)正在被讨论加入到未来版本中的 NetworkPolicy API 中。
 
-- Forcing internal cluster traffic to go through a common gateway (this might be best served with a service mesh or other proxy).
 - 强制集群内流量通过一个通用网关(这个最好使用服务网格或其它代理来提供)
-- Anything TLS related (use a service mesh or ingress controller for this).
 - 所有与 TLS 相关的事(使用服务网格或 Ingress 控制器来实现)
-- Node specific policies (you can use CIDR notation for these, but you cannot target nodes by their Kubernetes identities specifically).
 - 节点特有的策略(可以使用 CIDR 标注，但是不能能过 k8s 标识来特指一些节点)(说的啥？)
-- Targeting of namespaces or services by name (you can, however, target pods or namespaces by their{{< glossary_tooltip text="labels" term_id="label" >}}, which is often a viable workaround).
-- Creation or management of "Policy requests" that are fulfilled by a third party.
-- Default policies which are applied to all namespaces or pods (there are some third party Kubernetes distributions and projects which can do this).
-- Advanced policy querying and reachability tooling.
-- The ability to target ranges of Ports in a single policy declaration.
-- The ability to log network security events (for example connections that are blocked or accepted).
-- The ability to explicitly deny policies (currently the model for NetworkPolicies are deny by default, with only the ability to add allow rules).
-- The ability to prevent loopback or incoming host traffic (Pods cannot currently block localhost access, nor do they have the ability to block access from their resident node).
+- 通过名称将命名空间或 Service 作为目标(通常的做法是通过 Pod 或命名空间的
+  {{< glossary_tooltip term_id="label" >}}来筛选目标)
+- 通过第三方达成对"Policy requests"的创建的或管理
+- 应用到所有命名空间或 Pod 的默认策略(有些第三方 k8s 发行版本和项目提供该功能)
+- 高级策略查询和可到达性检查工具
+- 在一个策略定义中设置端口范围的能力
+- 输出网络安全事件的能力(如，连接是被禁止或接受)
+- 声明显示拒绝的策略的能力(目前的网络策略模型默认为拒绝，只能提供添加允许规则的能力)
+- 能够阻止回环网络或进入主机流量(目前 Pod 不能禁用通过 localhost 的访问，也不能禁止所在主机的访问)
 
 ## {{% heading "whatsnext" %}}
 
-
-- See the [Declare Network Policy](/docs/tasks/administer-cluster/declare-network-policy/)
-  walkthrough for further examples.
-- See more [recipes](https://github.com/ahmetb/kubernetes-network-policy-recipes) for common scenarios enabled by the NetworkPolicy resource.
+- 实践 [声明网络策略](/docs/tasks/administer-cluster/declare-network-policy/)
+- 参阅 [recipes](https://github.com/ahmetb/kubernetes-network-policy-recipes)
+  启用网络策略的常见场景
