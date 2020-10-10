@@ -176,10 +176,7 @@ with the additional entries specified at the bottom. -->
 
 ## 通过 hostAliases 添加额外的条目
 
-In addition to the default boilerplate, you can add additional entries to the
-`hosts` file.
 除了模板条目，可以手动向 `hosts` 文件添加条目
-
 例如下面的示例中通过 Pod 的 `.spec.hostAliases` 字段实现配置：
 将 `foo.local`, `bar.local` 解析到 `127.0.0.1`，
 将 `foo.remote`, `bar.remote` 解析到 `10.1.2.3`
