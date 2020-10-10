@@ -111,6 +111,15 @@
     </item>
     
     <item>
+      <title>IPv4/IPv6 双栈</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dual-stack/</link>
+      <pubDate>Fri, 09 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dual-stack/</guid>
+      <description>Allocation of IPv4 and IPv6 addresses to Pods and Services content_type: concept weight: 70 --- -- 功能特性状态: Kubernetes v1.16 [alpha] IPv4/IPv6 dual-stack enables the allocation of both IPv4 and IPv6 addresses to PodsPod 表示集群中运行的一组容器的集合 and Services以网络服务的方</description>
+    </item>
+    
+    <item>
       <title>使用 Minikube 搭建 K8s环境</title>
       <link>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/00-minikube/</link>
       <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>

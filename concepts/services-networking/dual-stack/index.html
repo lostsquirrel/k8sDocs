@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>IPv4/IPv6 双栈 - Kubernetes</title>
+<meta name="description" content="生产级别的容器编排系统">
+<meta name="generator" content="Hugo 0.68.3" />
+<link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
+<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dual-stack/">
+<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/theme.min.css">
+<script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/chroma.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.easing@1.4.1/jquery.easing.min.js"></script>
+<script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
+:root {}
+</style>
+<meta property="og:title" content="IPv4/IPv6 双栈" />
+<meta property="og:description" content="Allocation of IPv4 and IPv6 addresses to Pods and Services content_type: concept weight: 70 --- -- 功能特性状态: Kubernetes v1.16 [alpha] IPv4/IPv6 dual-stack enables the allocation of both IPv4 and IPv6 addresses to PodsPod 表示集群中运行的一组容器的集合 and Services以网络服务的方" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dual-stack/" />
+<meta property="article:published_time" content="2020-10-10T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-10-09T00:00:00+00:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="IPv4/IPv6 双栈"/>
+<meta name="twitter:description" content="Allocation of IPv4 and IPv6 addresses to Pods and Services content_type: concept weight: 70 --- -- 功能特性状态: Kubernetes v1.16 [alpha] IPv4/IPv6 dual-stack enables the allocation of both IPv4 and IPv6 addresses to PodsPod 表示集群中运行的一组容器的集合 and Services以网络服务的方"/>
+<meta itemprop="name" content="IPv4/IPv6 双栈">
+<meta itemprop="description" content="Allocation of IPv4 and IPv6 addresses to Pods and Services content_type: concept weight: 70 --- -- 功能特性状态: Kubernetes v1.16 [alpha] IPv4/IPv6 dual-stack enables the allocation of both IPv4 and IPv6 addresses to PodsPod 表示集群中运行的一组容器的集合 and Services以网络服务的方">
+<meta itemprop="datePublished" content="2020-10-10T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-10-09T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1858">
+
+
+
+<meta itemprop="keywords" content="" />
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?46e26ffc9d975f663dff0b89f1cf7931";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href=/k8sDocs/css/base_fonts.css>
+
+<link rel="stylesheet" href="/k8sDocs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/k8sDocs/css/callouts.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
+
+</head>
+<body><div class="container"><header>
+<h1>Kubernetes</h1>
+
+ <span class="version">Version v1.19</span>
+
+<p class="description">生产级别的容器编排系统</p>
+
+</header>
+
+<div class="content-container">
+<main><h1>IPv4/IPv6 双栈</h1>
+<!--
+---
+reviewers:
+- lachie83
+- khenidak
+- aramase
+title: IPv4/IPv6 dual-stack
+feature:
+  title: IPv4/IPv6 dual-stack
+  description: >
+    Allocation of IPv4 and IPv6 addresses to Pods and Services
+
+content_type: concept
+weight: 70
+---
+-->
+<!-- overview -->
+<!--
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.16 [alpha]</code>
+</div>
+
+
+
+ IPv4/IPv6 dual-stack enables the allocation of both IPv4 and IPv6 addresses to <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pods<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+</a> and <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Services<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
+</a>.
+
+If you enable IPv4/IPv6 dual-stack networking for your Kubernetes cluster, the cluster will support the simultaneous assignment of both IPv4 and IPv6 addresses.
+ -->
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.16 [alpha]</code>
+</div>
+
+
+<p>IPv4/IPv6 双栈让 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+</a> 和
+<a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
+</a> 能够同时分配到 IPv4 和 IPv6 地址。</p>
+<p>如果在 k8s 集群中启用了 IPv4/IPv6 双栈网络，则集群支持同时分配 IPv4 和 IPv6 地址。</p>
+<!-- body -->
+<!--
+## Supported Features
+
+Enabling IPv4/IPv6 dual-stack on your Kubernetes cluster provides the following features:
+
+   * Dual-stack Pod networking (a single IPv4 and IPv6 address assignment per Pod)
+   * IPv4 and IPv6 enabled Services (each Service must be for a single address family)
+   * Pod off-cluster egress routing (eg. the Internet) via both IPv4 and IPv6 interfaces
+ -->
+<h2 id="支持的特性">支持的特性</h2>
+<p>在集群中开启 IPv4/IPv6 双栈可以提供以下特性:</p>
+<ul>
+<li>Pod 双栈网络(每个 Pod 分配一个 IPv4 和 IPv6 地址)</li>
+<li>Service 启用 IPv4 和 IPv6 (每个 Service 只能是 IPv4 或 IPv6)</li>
+<li>Pod 的出站路由(如，到互联网)会同时通过 IPv4 和 IPv6 接口</li>
+</ul>
+<!--
+## Prerequisites
+
+The following prerequisites are needed in order to utilize IPv4/IPv6 dual-stack Kubernetes clusters:
+
+   * Kubernetes 1.16 or later
+   * Provider support for dual-stack networking (Cloud provider or otherwise must be able to provide Kubernetes nodes with routable IPv4/IPv6 network interfaces)
+   * A network plugin that supports dual-stack (such as Kubenet or Calico)
+ -->
+<h2 id="前置条件">前置条件</h2>
+<p>为集群启用 IPv4/IPv6 双栈需要做以下准备:</p>
+<ul>
+<li>k8s <code>v1.16+</code></li>
+<li>提供商支持双栈网络(云提供商或其它的提供者必须要为 k8s 节点提供IPv4/IPv6网络接口)</li>
+<li>一个支持双栈的网络插件(如 Kubenet 或 Calico)</li>
+</ul>
+<!--
+## Enable IPv4/IPv6 dual-stack
+
+To enable IPv4/IPv6 dual-stack, enable the `IPv6DualStack` [feature gate](/docs/reference/command-line-tools-reference/feature-gates/) for the relevant components of your cluster, and set dual-stack cluster network assignments:
+
+   * kube-apiserver:
+      * `--feature-gates="IPv6DualStack=true"`
+      * `--service-cluster-ip-range=<IPv4 CIDR>,<IPv6 CIDR>`
+   * kube-controller-manager:
+      * `--feature-gates="IPv6DualStack=true"`
+      * `--cluster-cidr=<IPv4 CIDR>,<IPv6 CIDR>`
+      * `--service-cluster-ip-range=<IPv4 CIDR>,<IPv6 CIDR>`
+      * `--node-cidr-mask-size-ipv4|--node-cidr-mask-size-ipv6` defaults to /24 for IPv4 and /64 for IPv6
+   * kubelet:
+      * `--feature-gates="IPv6DualStack=true"`
+   * kube-proxy:
+      * `--cluster-cidr=<IPv4 CIDR>,<IPv6 CIDR>`
+      * `--feature-gates="IPv6DualStack=true"`
+
+<blockquote class="note">
+  <div><strong>说明：</strong> <p>An example of an IPv4 CIDR: <code>10.244.0.0/16</code> (though you would supply your own address range)</p>
+<p>An example of an IPv6 CIDR: <code>fdXY:IJKL:MNOP:15::/64</code> (this shows the format but is not a valid address - see <a href="https://tools.ietf.org/html/rfc4193">RFC 4193</a>)</p>
+</div>
+</blockquote>
+
+ -->
+<h2 id="启用-ipv4ipv6-双栈">启用 IPv4/IPv6 双栈</h2>
+<p>要启用 IPv4/IPv6 双栈, 需要打开集群中的对应组件 <code>IPv6DualStack</code> <a href="/docs/reference/command-line-tools-reference/feature-gates/">功能阀</a>
+并设置集群双栈网络分配:</p>
+<ul>
+<li>kube-apiserver:
+<ul>
+<li><code>--feature-gates=&quot;IPv6DualStack=true&quot;</code></li>
+<li><code>--service-cluster-ip-range=&lt;IPv4 CIDR&gt;,&lt;IPv6 CIDR&gt;</code></li>
+</ul>
+</li>
+<li>kube-controller-manager:
+<ul>
+<li><code>--feature-gates=&quot;IPv6DualStack=true&quot;</code></li>
+<li><code>--cluster-cidr=&lt;IPv4 CIDR&gt;,&lt;IPv6 CIDR&gt;</code></li>
+<li><code>--service-cluster-ip-range=&lt;IPv4 CIDR&gt;,&lt;IPv6 CIDR&gt;</code></li>
+<li><code>--node-cidr-mask-size-ipv4|--node-cidr-mask-size-ipv6</code> IPv4 默认为 /24；IPv6 默认为 /64</li>
+</ul>
+</li>
+<li>kubelet:
+<ul>
+<li><code>--feature-gates=&quot;IPv6DualStack=true&quot;</code></li>
+</ul>
+</li>
+<li>kube-proxy:
+<ul>
+<li><code>--cluster-cidr=&lt;IPv4 CIDR&gt;,&lt;IPv6 CIDR&gt;</code></li>
+<li><code>--feature-gates=&quot;IPv6DualStack=true&quot;</code></li>
+</ul>
+</li>
+</ul>
+<blockquote class="note">
+  <div><strong>说明：</strong> <p>一个 IPv4 CIDR 示例: <code>10.244.0.0/16</code> (应该根据需要设置IP范围)</p>
+<p>一个 IPv6 CIDR 示例: <code>fdXY:IJKL:MNOP:15::/64</code> (这里只显示格式，但不是一个有效的值 - 具体见 <a href="https://tools.ietf.org/html/rfc4193">RFC 4193</a>)</p>
+</div>
+</blockquote>
+
+<!--
+## Services
+
+If your cluster has IPv4/IPv6 dual-stack networking enabled, you can create <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Services<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
+</a> with either an IPv4 or an IPv6 address. You can choose the address family for the Service's cluster IP by setting a field, `.spec.ipFamily`, on that Service.
+You can only set this field when creating a new Service. Setting the `.spec.ipFamily` field is optional and should only be used if you plan to enable IPv4 and IPv6 <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Services<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
+</a> and <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/ingress/' target='_blank'>Ingresses<span class='tooltip-text'>一个用于管理外部访问集群内 Service 的 API 对象，通常是 HTTP。</span>
+</a> on your cluster. The configuration of this field not a requirement for [egress](#egress-traffic) traffic.
+
+<blockquote class="note">
+  <div><strong>说明：</strong> The default address family for your cluster is the address family of the first service cluster IP range configured via the <code>--service-cluster-ip-range</code> flag to the kube-controller-manager.</div>
+</blockquote>
+
+
+You can set `.spec.ipFamily` to either:
+
+   * `IPv4`: The API server will assign an IP from a `service-cluster-ip-range` that is `ipv4`
+   * `IPv6`: The API server will assign an IP from a `service-cluster-ip-range` that is `ipv6`
+
+The following Service specification does not include the `ipFamily` field. Kubernetes will assign an IP address (also known as a "cluster IP") from the first configured `service-cluster-ip-range` to this Service.
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingdual-stack-default-svcyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/dual-stack-default-svc.yaml" download="service/networking/dual-stack-default-svc.yaml">
+                    <code>service/networking/dual-stack-default-svc.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingdual-stack-default-svcyaml')" title="Copy service/networking/dual-stack-default-svc.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Service
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: my-service
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">app</span>: MyApp
+  <span style="color:#66d9ef">ports</span>:
+    - <span style="color:#66d9ef">protocol</span>: TCP
+      <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">80</span>
+      <span style="color:#66d9ef">targetPort</span>: <span style="color:#ae81ff">9376</span></code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+The following Service specification includes the `ipFamily` field. Kubernetes will assign an IPv6 address (also known as a "cluster IP") from the configured `service-cluster-ip-range` to this Service.
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingdual-stack-ipv6-svcyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/dual-stack-ipv6-svc.yaml" download="service/networking/dual-stack-ipv6-svc.yaml">
+                    <code>service/networking/dual-stack-ipv6-svc.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingdual-stack-ipv6-svcyaml')" title="Copy service/networking/dual-stack-ipv6-svc.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Service
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: my-service
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">ipFamily</span>: IPv6
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">app</span>: MyApp
+  <span style="color:#66d9ef">ports</span>:
+    - <span style="color:#66d9ef">protocol</span>: TCP
+      <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">80</span>
+      <span style="color:#66d9ef">targetPort</span>: <span style="color:#ae81ff">9376</span></code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+For comparison, the following Service specification will be assigned an IPv4 address (also known as a "cluster IP") from the configured `service-cluster-ip-range` to this Service.
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingdual-stack-ipv4-svcyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/dual-stack-ipv4-svc.yaml" download="service/networking/dual-stack-ipv4-svc.yaml">
+                    <code>service/networking/dual-stack-ipv4-svc.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingdual-stack-ipv4-svcyaml')" title="Copy service/networking/dual-stack-ipv4-svc.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Service
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: my-service
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">ipFamily</span>: IPv4
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">app</span>: MyApp
+  <span style="color:#66d9ef">ports</span>:
+    - <span style="color:#66d9ef">protocol</span>: TCP
+      <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">80</span>
+      <span style="color:#66d9ef">targetPort</span>: <span style="color:#ae81ff">9376</span></code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+ -->
+<h2 id="service">Service</h2>
+<p>如果集群启用的了 IPv4/IPv6 双栈网络，就可以创建一个带 IPv4 或 IPv6 地址的 <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
+</a>。
+可以通过 Service 的 <code>.spec.ipFamily</code> 来设置该 Service 是使用 IPv4 还是 IPv6 地址。
+只有在创建一个新的 Service 才可以设置该字段。 <code>.spec.ipFamily</code> 是一个可选字段，只有在需要
+在 <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
+</a> 和 <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/ingress/' target='_blank'>Ingress<span class='tooltip-text'>一个用于管理外部访问集群内 Service 的 API 对象，通常是 HTTP。</span>
+</a>
+上启用 IPv4 和 IPv6 时才需要配置该字段。 (这里还有一句不太明白在说啥)</p>
+<blockquote class="note">
+  <div><strong>说明：</strong> 集群默认使用的 IP 族是 kube-controller-manager 上设置 <code>--service-cluster-ip-range</code>的
+值中，前面那一个 CIDR 对应的 IP 族。</div>
+</blockquote>
+
+<p><code>.spec.ipFamily</code> 字段的值可以是:</p>
+<ul>
+<li><code>IPv4</code>: API server 会从 <code>service-cluster-ip-range</code> 中分配一个 <code>ipv4</code> 地址</li>
+<li><code>IPv6</code>: API server 会从 <code>service-cluster-ip-range</code> 中分配一个 <code>ipv6</code> 地址</li>
+</ul>
+<p>下面的这个 Service 配置文件中没有包含 <code>ipFamily</code> 字段。 k8s 会为它分配一个 IP 地址
+(也就是集群IP)，这个地址是 <code>service-cluster-ip-range</code> 配置值中第一个个值所定义的 IP 范围内的一个 IP 地址</p>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingdual-stack-default-svcyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/dual-stack-default-svc.yaml" download="service/networking/dual-stack-default-svc.yaml">
+                    <code>service/networking/dual-stack-default-svc.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingdual-stack-default-svcyaml')" title="Copy service/networking/dual-stack-default-svc.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Service
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: my-service
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">app</span>: MyApp
+  <span style="color:#66d9ef">ports</span>:
+    - <span style="color:#66d9ef">protocol</span>: TCP
+      <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">80</span>
+      <span style="color:#66d9ef">targetPort</span>: <span style="color:#ae81ff">9376</span></code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<p>下面的这个 Service 配置文件中包含 <code>ipFamily</code> 字段。 k8s 会为它分配一个 IPv6 地址(也是集群IP)
+这个地址在 <code>service-cluster-ip-range</code> 配置的范围内</p>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingdual-stack-ipv6-svcyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/dual-stack-ipv6-svc.yaml" download="service/networking/dual-stack-ipv6-svc.yaml">
+                    <code>service/networking/dual-stack-ipv6-svc.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingdual-stack-ipv6-svcyaml')" title="Copy service/networking/dual-stack-ipv6-svc.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Service
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: my-service
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">ipFamily</span>: IPv6
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">app</span>: MyApp
+  <span style="color:#66d9ef">ports</span>:
+    - <span style="color:#66d9ef">protocol</span>: TCP
+      <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">80</span>
+      <span style="color:#66d9ef">targetPort</span>: <span style="color:#ae81ff">9376</span></code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<p>为了对应，下面的这个 Service 的配置会被分配一个 IPv4 地址(作为集群IP)，这个地址在 <code>service-cluster-ip-range</code> 配置的范围内</p>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="servicenetworkingdual-stack-ipv4-svcyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/dual-stack-ipv4-svc.yaml" download="service/networking/dual-stack-ipv4-svc.yaml">
+                    <code>service/networking/dual-stack-ipv4-svc.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkingdual-stack-ipv4-svcyaml')" title="Copy service/networking/dual-stack-ipv4-svc.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
+<span style="color:#66d9ef">kind</span>: Service
+<span style="color:#66d9ef">metadata</span>:
+  <span style="color:#66d9ef">name</span>: my-service
+<span style="color:#66d9ef">spec</span>:
+  <span style="color:#66d9ef">ipFamily</span>: IPv4
+  <span style="color:#66d9ef">selector</span>:
+    <span style="color:#66d9ef">app</span>: MyApp
+  <span style="color:#66d9ef">ports</span>:
+    - <span style="color:#66d9ef">protocol</span>: TCP
+      <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">80</span>
+      <span style="color:#66d9ef">targetPort</span>: <span style="color:#ae81ff">9376</span></code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<!--
+### Type LoadBalancer
+
+On cloud providers which support IPv6 enabled external load balancers, setting the `type` field to `LoadBalancer` in additional to setting `ipFamily` field to `IPv6` provisions a cloud load balancer for your Service.
+ -->
+<h3 id="type-loadbalancer">Type LoadBalancer</h3>
+<p>在支持 IPv6 的云提供商上启用外部负载均衡器时，在 Service 上设置 <code>type</code> 字段值为 <code>LoadBalancer</code> 时，同
+时还需要设置 <code>ipFamily</code> 字段的值为 <code>IPv6</code>。</p>
+<!--
+## Egress Traffic
+
+The use of publicly routable and non-publicly routable IPv6 address blocks is acceptable provided the underlying <a class='glossary-tooltip' href='/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/#cni' target='_blank'>CNI<span class='tooltip-text'>Container network interface (CNI) plugins are a type of Network plugin that adheres to the appc/CNI specification.</span>
+</a> provider is able to implement the transport. If you have a Pod that uses non-publicly routable IPv6 and want that Pod to reach off-cluster destinations (eg. the public Internet), you must set up IP masquerading for the egress traffic and any replies. The [ip-masq-agent](https://github.com/kubernetes-incubator/ip-masq-agent) is dual-stack aware, so you can use ip-masq-agent for IP masquerading on dual-stack clusters.
+ -->
+<h2 id="egress-traffic">Egress Traffic</h2>
+<p>底层实现的 <a class='glossary-tooltip' href='/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/#cni' target='_blank'>CNI<span class='tooltip-text'>Container network interface (CNI) plugins are a type of Network plugin that adheres to the appc/CNI specification.</span>
+</a> 提供者可以提供对
+公网可路由和公网不可路由的 IPv6 地址段。如果 Pod 使用的是公网不可路由的 IPv6 地址，但要求
+这个 Pod 可以访问集群外的目标(如，互联网)， 需要为外出流量及其应答做 IP 地址转换。
+<a href="https://github.com/kubernetes-incubator/ip-masq-agent">ip-masq-agent</a> 支持双栈，
+所以可以使用它在双栈集群中做地址转换。</p>
+<!--
+## Known Issues
+
+   * Kubenet forces IPv4,IPv6 positional reporting of IPs (--cluster-cidr)
+ -->
+<h2 id="已知问题">已知问题</h2>
+<ul>
+<li>Kubenet forces IPv4,IPv6 positional reporting of IPs (&ndash;cluster-cidr)</li>
+</ul>
+<ul>
+<li>kubenet 强制 IPv4,IPv6 位置汇报  (&ndash;cluster-cidr)</li>
+</ul>
+<h2 id="相关资料">相关资料</h2>
+<ul>
+<li>实践 <a href="/k8sDocs/tasks/network/validate-dual-stack">验证 IPv4/IPv6 双栈网络</a></li>
+</ul>
+<div class="edit-meta">
+Last updated on 9 Oct 2020
+
+
+<br>
+Published on 10 Oct 2020
+<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/concepts/services-networking/dual-stack.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/" title="通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/tasks/" title="Tasks">Next - Tasks <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+</nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
+</footer>
+</main><div class="sidebar">
+
+<nav class="slide-menu">
+<ul>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs">Home</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/setup/">Getting started<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/setup/00-release/">Release notes and version skew</a>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/">概念(Concepts)<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/">概览<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/00-what-is-k8s/">k8s 是什么</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/01-components/">k8s 组件</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/02-k8s-api/">k8s API 说明</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/">k8s 对象管理<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/">集群架构<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/00-nodes/">节点</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/01-control-plane-node-communication/">控制中心与节点的通信</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/02-controller/">控制器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/03-cloud-controller/">Cloud Controller Manager</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/">容器<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/00-images/">镜像</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/01-container-environment/">容器环境</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/02-runtime-class/">Runtime Class</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/container-lifecycle-hooks/">容器生命周期钩子</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/">工作负载(Workload)<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/">Pod<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/init-containers/">初始化容器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑分布约束条件</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/podpreset/">Pod 预设信息</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/disruptions/">Disruptions</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/ephemeral-containers/">临时容器</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/">控制器<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/deployment/">Deployment</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/">ReplicaSet</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/">StatefulSet</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/daemonset/">DaemonSet</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/job/">Job</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/garbage-collection/">垃圾回收</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/ttlafterfinished/">用于已完成资源的 TTL 控制器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/cron-jobs/">CronJob</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/">Service, 负载均衡, 网络<span class="mark opened">-</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/">Service</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service-topology/">Service Topology</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dns-pod-service/">Service 和 Pod 的 DNS</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/endpoint-slices/">EndpointSlice</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress/">Ingress</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/network-policies/">网络策略</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a></li>
+<li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dual-stack/">IPv4/IPv6 双栈</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/">Tasks<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/">Install Tools<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/00-install-kubectl/">下载安装配置 kubectl</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/01-install-minikube/">安装 Minikube</a></li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/">Configure Pod Containters<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tutorials/">Tutorials<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tutorials/00-hello-minikube/">Hello Minikube</a>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/">Reference<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/glossary/">Standardized Glossary</a></li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/">kubectl CLI<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/00-overview/">kubectl 概览</a></li>
+</ul>
+  
+</li>
+</ul>
+  
+</li>
+
+<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/examples/">Examples<span class="mark closed">+</span></a>
+  
+<ul class="sub-menu">
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/examples/readme/"></a></li>
+</ul>
+  
+</li>
+</ul>
+</nav>
+
+
+
+<div class="sidebar-footer"></div>
+</div>
+</div><a href="#" id="backtothetop-fixed" class="backtothetop"
+ data-backtothetop-duration="600"
+ data-backtothetop-easing="easeOutQuart"
+ data-backtothetop-fixed-fadeIn="1000"
+ data-backtothetop-fixed-fadeOut="1000"
+ data-backtothetop-fixed-bottom="10"
+ data-backtothetop-fixed-right="20">
+<span class="fa-layers fa-fw">
+<i class="fas fa-circle"></i>
+<i class="fas fa-arrow-circle-up"></i>
+</span></a>
+</div>
+</body>
+</html>

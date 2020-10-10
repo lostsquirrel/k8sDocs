@@ -29,7 +29,7 @@
 <meta itemprop="description" content="在 DNS 和其它方式都不可用时，想要向通过向 Pod 的 /etc/hosts 文件添加条目的方式来重写 Pod 级别的域名解析，可能通过 PodSpec 的 HostAliases 字段向该 Pod 的 /etc/hosts 添加自定义条目。 不建议直接">
 <meta itemprop="datePublished" content="2020-10-09T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-10-09T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="806">
+<meta itemprop="wordCount" content="791">
 
 
 
@@ -262,10 +262,8 @@ fe00::2	ip6-allrouters
 
 with the additional entries specified at the bottom. -->
 <h2 id="通过-hostaliases-添加额外的条目">通过 hostAliases 添加额外的条目</h2>
-<p>In addition to the default boilerplate, you can add additional entries to the
-<code>hosts</code> file.
-除了模板条目，可以手动向 <code>hosts</code> 文件添加条目</p>
-<p>例如下面的示例中通过 Pod 的 <code>.spec.hostAliases</code> 字段实现配置：
+<p>除了模板条目，可以手动向 <code>hosts</code> 文件添加条目
+例如下面的示例中通过 Pod 的 <code>.spec.hostAliases</code> 字段实现配置：
 将 <code>foo.local</code>, <code>bar.local</code> 解析到 <code>127.0.0.1</code>，
 将 <code>foo.remote</code>, <code>bar.remote</code> 解析到 <code>10.1.2.3</code></p>
 
@@ -381,7 +379,7 @@ Last updated on 9 Oct 2020
 <br>
 Published on 9 Oct 2020
 <br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/network-policies/" title="网络策略"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 网络策略</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/tasks/" title="Tasks">Next - Tasks <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dual-stack/" title="IPv4/IPv6 双栈">Next - IPv4/IPv6 双栈 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
 </nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
 </footer>
 </main><div class="sidebar">
@@ -508,6 +506,7 @@ Published on 9 Oct 2020
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a></li>
 <li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/network-policies/">网络策略</a></li>
 <li class="active"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a></li>
+<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dual-stack/">IPv4/IPv6 双栈</a></li>
 </ul>
   
 </li>
