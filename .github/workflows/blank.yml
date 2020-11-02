@@ -27,7 +27,7 @@ jobs:
       run: git submodule update --init --recursive
     - name: bug
       run: |
-        npm install -g postcss-cli
+        sudo npm install -g postcss-cli
         npm install postcss
     # Runs a single command using the runners shell
     - name: Setup Hugo
