@@ -34,7 +34,7 @@ jobs:
     # Runs a set of commands using the runners shell
     - name: Build
       run: |
-        hugo --theme techdoc
+        hugo --theme docsy
 
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
