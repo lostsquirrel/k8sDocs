@@ -1,0 +1,1158 @@
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.75.1" />
+
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
+<link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
+<link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/images/kubernetes-192x192.png">
+<title>Service Topology | Kubernetes</title><meta property="og:title" content="Service Topology" />
+<meta property="og:description" content="Routing of service traffic based upon cluster topology. content_type: concept weight: 10 --- -- 功能特性状态: Kubernetes v1.17 [alpha] _Service Topology_ enables a service to route traffic based upon the Node topology of the cluster. For example, a service can specify that traffic be preferentially routed to endpoints that are on the same Node as the client, or in the same availability zone. -- 功" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/service-topology/" />
+<meta property="article:published_time" content="2020-09-09T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-09-09T00:00:00+00:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="Service Topology">
+<meta itemprop="description" content="Routing of service traffic based upon cluster topology. content_type: concept weight: 10 --- -- 功能特性状态: Kubernetes v1.17 [alpha] _Service Topology_ enables a service to route traffic based upon the Node topology of the cluster. For example, a service can specify that traffic be preferentially routed to endpoints that are on the same Node as the client, or in the same availability zone. -- 功">
+<meta itemprop="datePublished" content="2020-09-09T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-09-09T00:00:00+00:00" />
+<meta itemprop="wordCount" content="1461">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Service Topology"/>
+<meta name="twitter:description" content="Routing of service traffic based upon cluster topology. content_type: concept weight: 10 --- -- 功能特性状态: Kubernetes v1.17 [alpha] _Service Topology_ enables a service to route traffic based upon the Node topology of the cluster. For example, a service can specify that traffic be preferentially routed to endpoints that are on the same Node as the client, or in the same availability zone. -- 功"/>
+
+
+
+
+
+<link rel="preload" href="/k8sDocs/scss/main.min.ef3a36e0df00fd067f010634c3743a5f97c767d3027d208bdaa58808c66c9779.css" as="style">
+<link href="/k8sDocs/scss/main.min.ef3a36e0df00fd067f010634c3743a5f97c767d3027d208bdaa58808c66c9779.css" rel="stylesheet" integrity="">
+
+
+<script src="/k8sDocs/js/jquery-3.5.1.min.js" ></script>
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "url": "https://kubernetes.io",
+    "logo": "https://kubernetes.io/images/favicon.png",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://lostsquirrel.github.io/k8sDocs/search/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+
+  }
+</script>
+<meta name="theme-color" content="#326ce5">
+
+
+
+
+<link rel="stylesheet" href=/k8sDocs/css/base_fonts.css>
+
+<link rel="stylesheet" href="/k8sDocs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/k8sDocs/css/callouts.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
+
+
+
+<meta name="description" content="Routing of service traffic based upon cluster topology. content_type: concept weight: 10 --- -- 功能特性状态: Kubernetes v1.17 [alpha] _Service Topology_ enables a service to route traffic based upon the Node topology of the cluster. For example, a service can specify that traffic be preferentially routed to endpoints that are on the same Node as the client, or in the same availability zone. -- 功">
+<meta property="og:description" content="Routing of service traffic based upon cluster topology. content_type: concept weight: 10 --- -- 功能特性状态: Kubernetes v1.17 [alpha] _Service Topology_ enables a service to route traffic based upon the Node topology of the cluster. For example, a service can specify that traffic be preferentially routed to endpoints that are on the same Node as the client, or in the same availability zone. -- 功">
+<meta name="twitter:description" content="Routing of service traffic based upon cluster topology. content_type: concept weight: 10 --- -- 功能特性状态: Kubernetes v1.17 [alpha] _Service Topology_ enables a service to route traffic based upon the Node topology of the cluster. For example, a service can specify that traffic be preferentially routed to endpoints that are on the same Node as the client, or in the same availability zone. -- 功">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/service-topology/">
+<meta property="og:title" content="Service Topology">
+<meta name="twitter:title" content="Service Topology">
+<meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
+
+<meta name="twitter:image:alt" content="Kubernetes">
+
+<meta property="og:image" content="/k8sDocs/images/kubernetes-horizontal-color.png">
+
+<meta property="og:type" content="article">
+
+
+
+<script src="/k8sDocs/js/script.js"></script>
+
+
+    <title>Service Topology | Kubernetes</title>
+  </head>
+  <body class="td-page td-documentation">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
+        <a class="navbar-brand" href="/k8sDocs/"></a>
+	<div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
+
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			
+			
+			<li class="nav-item mr-2 mb-lg-0">
+				
+				<a class="nav-link active" href="/k8sDocs/docs/" >Documentation</span></a>
+			</li>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</ul>
+	</div>
+  
+
+</nav>
+
+      
+      <div class="header-filler"></div>
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-md-nowrap">
+          <div class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+
+
+
+
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  
+  <form class="td-sidebar__search d-flex align-items-center d-lg-none">
+    
+
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  
+  <nav class="collapse td-sidebar-nav" id="td-section-nav">
+    
+    
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Kubernetes Documentation</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocs">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">概念(Concepts)</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconcepts">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">概览</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverview">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview00-what-is-k8s" href="/k8sDocs/docs/concepts/overview/00-what-is-k8s/">k8s 是什么</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview01-components" href="/k8sDocs/docs/concepts/overview/01-components/">k8s 组件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview02-k8s-api" href="/k8sDocs/docs/concepts/overview/02-k8s-api/">k8s API 说明</a>
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/working-with-objects/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">k8s 对象管理</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverviewworking-with-objects">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects00-kubernetes-objects" href="/k8sDocs/docs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectsnames" href="/k8sDocs/docs/concepts/overview/working-with-objects/names/">对象命令与ID</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects02-namespace" href="/k8sDocs/docs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectslabels" href="/k8sDocs/docs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects04-annotation" href="/k8sDocs/docs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects05-field-selectors" href="/k8sDocs/docs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects06-common-labels" href="/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/architecture/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">集群架构</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsarchitecture">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturenodes" href="/k8sDocs/docs/concepts/architecture/nodes/">节点</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontrol-plane-node-communication" href="/k8sDocs/docs/concepts/architecture/control-plane-node-communication/">控制中心与节点的通信</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontroller" href="/k8sDocs/docs/concepts/architecture/controller/">控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecloud-controller" href="/k8sDocs/docs/concepts/architecture/cloud-controller/">Cloud Controller Manager</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/containers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">容器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptscontainers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers00-images" href="/k8sDocs/docs/concepts/containers/00-images/">镜像</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers01-container-environment" href="/k8sDocs/docs/concepts/containers/01-container-environment/">容器环境</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers02-runtime-class" href="/k8sDocs/docs/concepts/containers/02-runtime-class/">Runtime Class</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainerscontainer-lifecycle-hooks" href="/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/">容器生命周期钩子</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">工作负载(Workload)</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloads">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/pods/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Pod</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloadspods">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-lifecycle" href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsinit-containers" href="/k8sDocs/docs/concepts/workloads/pods/init-containers/">初始化容器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-topology-spread-constraints" href="/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑分布约束条件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspodpreset" href="/k8sDocs/docs/concepts/workloads/pods/podpreset/">Pod 预设信息</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsdisruptions" href="/k8sDocs/docs/concepts/workloads/pods/disruptions/">Disruptions</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsephemeral-containers" href="/k8sDocs/docs/concepts/workloads/pods/ephemeral-containers/">临时容器</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/controllers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">控制器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloadscontrollers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdeployment" href="/k8sDocs/docs/concepts/workloads/controllers/deployment/">Deployment</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicaset" href="/k8sDocs/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersstatefulset" href="/k8sDocs/docs/concepts/workloads/controllers/statefulset/">StatefulSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdaemonset" href="/k8sDocs/docs/concepts/workloads/controllers/daemonset/">DaemonSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersjob" href="/k8sDocs/docs/concepts/workloads/controllers/job/">Job</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersgarbage-collection" href="/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/">垃圾回收</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersttlafterfinished" href="/k8sDocs/docs/concepts/workloads/controllers/ttlafterfinished/">用于已完成资源的 TTL 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollerscron-jobs" href="/k8sDocs/docs/concepts/workloads/controllers/cron-jobs/">CronJob</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicationcontroller" href="/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/services-networking/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Service, 负载均衡, 网络</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconceptsservices-networking">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice" href="/k8sDocs/docs/concepts/services-networking/service/">Service</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsservices-networkingservice-topology" href="/k8sDocs/docs/concepts/services-networking/service-topology/">Service Topology</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdns-pod-service" href="/k8sDocs/docs/concepts/services-networking/dns-pod-service/">Service 和 Pod 的 DNS</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingconnect-applications-service" href="/k8sDocs/docs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingendpoint-slices" href="/k8sDocs/docs/concepts/services-networking/endpoint-slices/">EndpointSlice</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress" href="/k8sDocs/docs/concepts/services-networking/ingress/">Ingress</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress-controllers" href="/k8sDocs/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingnetwork-policies" href="/k8sDocs/docs/concepts/services-networking/network-policies/">网络策略</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingadd-entries-to-pod-etc-hosts-with-host-aliases" href="/k8sDocs/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdual-stack" href="/k8sDocs/docs/concepts/services-networking/dual-stack/">IPv4/IPv6 双栈</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsstorage">
+      
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+  </nav>
+</div>
+
+
+
+
+          </div>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	<ol class="breadcrumb spb-1">
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/">概念(Concepts)</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/">Service, 负载均衡, 网络</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/service-topology/">Service Topology</a>
+</li>
+
+	</ol>
+</nav	>
+
+            
+              
+            
+              
+    <div class="td-content">
+    
+<p>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/services-networking/service-topology.md" id="editPageButton" target="_blank" data-proofer-ignore>
+    Edit This Page
+  </a>
+</p>
+
+  <h1>Service Topology</h1>
+  
+  
+
+<!--
+---
+reviewers:
+- johnbelamaric
+- imroc
+title: Service Topology
+feature:
+  title: Service Topology
+  description: >
+    Routing of service traffic based upon cluster topology.
+
+content_type: concept
+weight: 10
+---
+ -->
+<!-- overview -->
+<!--
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.17 [alpha]</code>
+</div>
+
+
+
+_Service Topology_ enables a service to route traffic based upon the Node
+topology of the cluster. For example, a service can specify that traffic be
+preferentially routed to endpoints that are on the same Node as the client, or
+in the same availability zone.
+ -->
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.17 [alpha]</code>
+</div>
+
+
+<p><em>Service Topology</em> 让 Service 可以根据集群中节点的拓扑结构来路由流量。 例如， 一个 Service
+可以配置为 流量优先路由到与客户端相同的节点或在同一个可用区的 Endpoint.</p>
+<!-- body -->
+<!--
+## Introduction
+
+By default, traffic sent to a `ClusterIP` or `NodePort` Service may be routed to
+any backend address for the Service. Since Kubernetes 1.7 it has been possible
+to route "external" traffic to the Pods running on the Node that received the
+traffic, but this is not supported for `ClusterIP` Services, and more complex
+topologies &mdash; such as routing zonally &mdash; have not been possible. The
+_Service Topology_ feature resolves this by allowing the Service creator to
+define a policy for routing traffic based upon the Node labels for the
+originating and destination Nodes.
+
+By using Node label matching between the source and destination, the operator
+may designate groups of Nodes that are "closer" and "farther" from one another,
+using whatever metric makes sense for that operator's requirements. For many
+operators in public clouds, for example, there is a preference to keep service
+traffic within the same zone, because interzonal traffic has a cost associated
+with it, while intrazonal traffic does not. Other common needs include being able
+to route traffic to a local Pod managed by a DaemonSet, or keeping traffic to
+Nodes connected to the same top-of-rack switch for the lowest latency.
+ -->
+<h2 id="介绍">介绍</h2>
+<p>默认情况下， 发送到 Service  <code>ClusterIP</code> 或 <code>NodePort</code> 的流量会路由到 Service 的任意一个
+后端实例地址。 从 k8s 1.7 开始让外部流量路由到接收到流量的节点上运行的 Pod 上成功可能。
+但是这不支持 <code>ClusterIP</code> 类型的 Service。 更复杂的拓扑结构  — 例如根据分区路由 —
+也不可能。 <em>Service Topology</em>  提供了让 Service 创建者基于流量源和目标节点标签定义一个流量路由策略来解决定个问题</p>
+<p>通过比对源和目标节点的标签， 使用一些必要的度量，就可以推断出这一组节点相对于另一组节点是更近还是更远，
+许多在公有云的操作器，例如, 优先将 Service 的流量保持在同一个区里面， 因为一般在公有云跨区流量是
+收费的，但区内流量是免费的。其它常见的包括能够路由流量到一个由 DaemonSet 管理的本地 Pod， 或
+保持流量在同一个架顶式交换机以达到较低的延迟。</p>
+<!--
+## Using Service Topology
+
+If your cluster has Service Topology enabled, you can control Service traffic
+routing by specifying the `topologyKeys` field on the Service spec. This field
+is a preference-order list of Node labels which will be used to sort endpoints
+when accessing this Service. Traffic will be directed to a Node whose value for
+the first label matches the originating Node's value for that label. If there is
+no backend for the Service on a matching Node, then the second label will be
+considered, and so forth, until no labels remain.
+
+If no match is found, the traffic will be rejected, just as if there were no
+backends for the Service at all. That is, endpoints are chosen based on the first
+topology key with available backends. If this field is specified and all entries
+have no backends that match the topology of the client, the service has no
+backends for that client and connections should fail. The special value `"*"` may
+be used to mean "any topology". This catch-all value, if used, only makes sense
+as the last value in the list.
+
+If `topologyKeys` is not specified or empty, no topology constraints will be applied.
+
+Consider a cluster with Nodes that are labeled with their hostname, zone name,
+and region name. Then you can set the `topologyKeys` values of a service to direct
+traffic as follows.
+
+* Only to endpoints on the same node, failing if no endpoint exists on the node:
+  `["kubernetes.io/hostname"]`.
+* Preferentially to endpoints on the same node, falling back to endpoints in the
+  same zone, followed by the same region, and failing otherwise: `["kubernetes.io/hostname",
+  "topology.kubernetes.io/zone", "topology.kubernetes.io/region"]`.
+  This may be useful, for example, in cases where data locality is critical.
+* Preferentially to the same zone, but fallback on any available endpoint if
+  none are available within this zone:
+  `["topology.kubernetes.io/zone", "*"]`.
+
+ -->
+<h2 id="使用-service-topology">使用 Service Topology</h2>
+<p>如果集群启用了 Service Topology， 可以通过 Service 配置的 <code>topologyKeys</code> 字段来控制
+Service 流量路由方式。 这个字段是一个用于在访问该 Service 时对 Endpoint 排序的一个节点标签的
+优先顺序列表。 流量会优先转发到第一个标签与源节点同一个标签有相同值的节点。 如果 Service 后端
+的所有节点都没有匹配到，就会尝试使用下一个，直至所有标签都试完。</p>
+<p>如果最终一个匹配都没有找到，则这个流量就会被拒绝，就像 Service 根本就没有后端一样。 也就是说，
+Endpoint 是基于第一个有可用后端的拓扑键来选择的。 如果设置了这个字段，但所以有条目都没有
+与客户端的条目相匹配的，则 Service 便就有针对该客户端的后端，连接就会失败。 有一个特殊的值可以
+用来表示 &ldquo;任意拓扑&rdquo;。 这是一个匹配所有的值，如果要使用，只有作为列表的最后一个值才有意义。</p>
+<p>如果 <code>topologyKeys</code> 没有设置或值为空，则不会应用任何拓扑约束。</p>
+<p>假定有一个集群中的节点都打上它们的主机名，分区名，地区名。则可以设置 <code>topologyKeys</code> 如果值来转发流量</p>
+<ul>
+<li>
+<p><code>[&quot;kubernetes.io/hostname&quot;]</code>: 只匹配同一个节点上的 Endpoint, 如果节点上没有对应的 Endpoint 则失败</p>
+</li>
+<li>
+<p>优先使用同节点上匹配的 Endpoint, 如果没则使用同分区匹配的 Endpoint, 要是还没有则使用同地区
+匹配的 Endpoint, 最后都没匹配则失败。</p>
+</li>
+<li>
+<p><code>[&quot;topology.kubernetes.io/zone&quot;, &quot;*&quot;]</code>: 优先使用同分区匹配的 Endpoint，
+如果没则任意该 Service 的可用 Endpoint 都可以。</p>
+</li>
+</ul>
+<!--
+## Constraints
+
+* Service topology is not compatible with `externalTrafficPolicy=Local`, and
+  therefore a Service cannot use both of these features. It is possible to use
+  both features in the same cluster on different Services, just not on the same
+  Service.
+
+* Valid topology keys are currently limited to `kubernetes.io/hostname`,
+  `topology.kubernetes.io/zone`, and `topology.kubernetes.io/region`, but will
+  be generalized to other node labels in the future.
+
+* Topology keys must be valid label keys and at most 16 keys may be specified.
+
+* The catch-all value, `"*"`, must be the last value in the topology keys, if
+  it is used.
+ -->
+<h2 id="限制">限制</h2>
+<ul>
+<li>
+<p>Service Topology 与 <code>externalTrafficPolicy=Local</code> 不兼容，因此同一个 Serice
+不能同时使用这两个特性。 但可以在同一个集群中的不同的 Service 中分别使用一个特性。</p>
+</li>
+<li>
+<p>目前有效的键只有 <code>kubernetes.io/hostname</code>, <code>topology.kubernetes.io/zone</code>,
+<code>topology.kubernetes.io/region</code>，未来可能包含其它的节点标签</p>
+</li>
+<li>
+<p>Topology 必须是有效的标签键，最多只能有 16 个键</p>
+</li>
+<li>
+<p>匹配所有的 <code>&quot;*&quot;</code>，如果要用，只能用作最后一个键</p>
+</li>
+</ul>
+<!--
+## Examples
+
+The following are common examples of using the Service Topology feature.
+
+### Only Node Local Endpoints
+
+A Service that only routes to node local endpoints. If no endpoints exist on the node, traffic is dropped:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9376
+  topologyKeys:
+    - "kubernetes.io/hostname"
+```
+ -->
+<h2 id="示例">示例</h2>
+<p>The following are common examples of using the Service Topology feature.
+以下为 Service Topology 特性常见用法的示例</p>
+<h3 id="仅限当前节点的-endpoint">仅限当前节点的 Endpoint</h3>
+<p>这个 Service 只路由到本节点的 Endpoint， 如果本节点没有匹配的 Endpoint，流量被丢弃:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">selector</span>:
+    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">my-app</span>
+  <span style="color:#f92672">ports</span>:
+    - <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP</span>
+      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">80</span>
+      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">9376</span>
+  <span style="color:#f92672">topologyKeys</span>:
+    - <span style="color:#e6db74">&#34;kubernetes.io/hostname&#34;</span>
+</code></pre></div><!--
+### Prefer Node Local Endpoints
+
+A Service that prefers node local Endpoints but falls back to cluster wide endpoints if node local endpoints do not exist:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9376
+  topologyKeys:
+    - "kubernetes.io/hostname"
+    - "*"
+```
+ -->
+<h3 id="优先使用本节点的-endpoint">优先使用本节点的 Endpoint</h3>
+<p>这个 Service 优先使用本节点匹配的 Endpoint，如果没则使用集群中可用的 Endpoint:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">selector</span>:
+    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">my-app</span>
+  <span style="color:#f92672">ports</span>:
+    - <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP</span>
+      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">80</span>
+      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">9376</span>
+  <span style="color:#f92672">topologyKeys</span>:
+    - <span style="color:#e6db74">&#34;kubernetes.io/hostname&#34;</span>
+    - <span style="color:#e6db74">&#34;*&#34;</span>
+</code></pre></div><!--
+### Only Zonal or Regional Endpoints
+
+A Service that prefers zonal then regional endpoints. If no endpoints exist in either, traffic is dropped.
+
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9376
+  topologyKeys:
+    - "topology.kubernetes.io/zone"
+    - "topology.kubernetes.io/region"
+```
+-->
+<h3 id="仅限本分区或本地区的-endpoint">仅限本分区或本地区的 Endpoint</h3>
+<p>这个 Service 优先使用本分区匹配的 Endpoint, 要是没有则使用同地区匹配的 Endpoint, 要是还没有就丢弃流量。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">selector</span>:
+    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">my-app</span>
+  <span style="color:#f92672">ports</span>:
+    - <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP</span>
+      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">80</span>
+      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">9376</span>
+  <span style="color:#f92672">topologyKeys</span>:
+    - <span style="color:#e6db74">&#34;topology.kubernetes.io/zone&#34;</span>
+    - <span style="color:#e6db74">&#34;topology.kubernetes.io/region&#34;</span>
+</code></pre></div><!--
+### Prefer Node Local, Zonal, then Regional Endpoints
+
+A Service that prefers node local, zonal, then regional endpoints but falls back to cluster wide endpoints.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9376
+  topologyKeys:
+    - "kubernetes.io/hostname"
+    - "topology.kubernetes.io/zone"
+    - "topology.kubernetes.io/region"
+    - "*"
+```
+ -->
+<h3 id="本节点本分区本地区依次优先">本节点，本分区，本地区依次优先</h3>
+<p>这个 Service 按照 本节点，本分区，本地区 的顺序依次匹配，如果三个都没有匹配到，则匹配全集群的 Endpoint</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">selector</span>:
+    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">my-app</span>
+  <span style="color:#f92672">ports</span>:
+    - <span style="color:#f92672">protocol</span>: <span style="color:#ae81ff">TCP</span>
+      <span style="color:#f92672">port</span>: <span style="color:#ae81ff">80</span>
+      <span style="color:#f92672">targetPort</span>: <span style="color:#ae81ff">9376</span>
+  <span style="color:#f92672">topologyKeys</span>:
+    - <span style="color:#e6db74">&#34;kubernetes.io/hostname&#34;</span>
+    - <span style="color:#e6db74">&#34;topology.kubernetes.io/zone&#34;</span>
+    - <span style="color:#e6db74">&#34;topology.kubernetes.io/region&#34;</span>
+    - <span style="color:#e6db74">&#34;*&#34;</span>
+</code></pre></div><h2 id="相关资料">相关资料</h2>
+<ul>
+<li>实践 <a href="/docs/tasks/administer-cluster/enabling-service-topology">启用 Service Topology</a></li>
+<li>概念 <a href="/docs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a></li>
+</ul>
+
+
+
+            
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 September 9, 2020
+</div>
+            
+          </main>
+          <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
+            
+
+
+
+
+
+
+
+
+
+
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#介绍">介绍</a></li>
+    <li><a href="#使用-service-topology">使用 Service Topology</a></li>
+    <li><a href="#限制">限制</a></li>
+    <li><a href="#示例">示例</a>
+      <ul>
+        <li><a href="#仅限当前节点的-endpoint">仅限当前节点的 Endpoint</a></li>
+        <li><a href="#优先使用本节点的-endpoint">优先使用本节点的 Endpoint</a></li>
+        <li><a href="#仅限本分区或本地区的-endpoint">仅限本分区或本地区的 Endpoint</a></li>
+        <li><a href="#本节点本分区本地区依次优先">本节点，本分区，本地区依次优先</a></li>
+      </ul>
+    </li>
+    <li><a href="#相关资料">相关资料</a></li>
+  </ul>
+</nav>
+
+
+
+          </div>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        
+        
+	
+		
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script src="/k8sDocs/js/main.min.446a2e681f8167f44314691b77368dd561bf0b67514487f3f0fd999316c6da4a.js" integrity="sha256-RGouaB&#43;BZ/RDFGkbdzaN1WG/C2dRRIfz8P2ZkxbG2ko=" crossorigin="anonymous"></script>
+
+
+
+
+  </body>
+</html>

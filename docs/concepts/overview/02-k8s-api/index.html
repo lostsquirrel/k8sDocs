@@ -1,0 +1,936 @@
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.75.1" />
+
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
+<link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
+<link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/images/kubernetes-192x192.png">
+<title>k8s API 说明 | Kubernetes</title><meta property="og:title" content="k8s API 说明" />
+<meta property="og:description" content="k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/02-k8s-api/" />
+<meta property="article:published_time" content="2020-06-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-06-24T00:00:00+00:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="k8s API 说明">
+<meta itemprop="description" content="k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这">
+<meta itemprop="datePublished" content="2020-06-29T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-06-24T00:00:00+00:00" />
+<meta itemprop="wordCount" content="1706">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="k8s API 说明"/>
+<meta name="twitter:description" content="k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这"/>
+
+
+
+
+
+<link rel="preload" href="/k8sDocs/scss/main.min.ef3a36e0df00fd067f010634c3743a5f97c767d3027d208bdaa58808c66c9779.css" as="style">
+<link href="/k8sDocs/scss/main.min.ef3a36e0df00fd067f010634c3743a5f97c767d3027d208bdaa58808c66c9779.css" rel="stylesheet" integrity="">
+
+
+<script src="/k8sDocs/js/jquery-3.5.1.min.js" ></script>
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "url": "https://kubernetes.io",
+    "logo": "https://kubernetes.io/images/favicon.png",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://lostsquirrel.github.io/k8sDocs/search/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+
+  }
+</script>
+<meta name="theme-color" content="#326ce5">
+
+
+
+
+<link rel="stylesheet" href=/k8sDocs/css/base_fonts.css>
+
+<link rel="stylesheet" href="/k8sDocs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/k8sDocs/css/callouts.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
+
+
+
+<meta name="description" content="k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这">
+<meta property="og:description" content="k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这">
+<meta name="twitter:description" content="k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/02-k8s-api/">
+<meta property="og:title" content="k8s API 说明">
+<meta name="twitter:title" content="k8s API 说明">
+<meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
+
+<meta name="twitter:image:alt" content="Kubernetes">
+
+<meta property="og:image" content="/k8sDocs/images/kubernetes-horizontal-color.png">
+
+<meta property="og:type" content="article">
+
+
+
+<script src="/k8sDocs/js/script.js"></script>
+
+
+    <title>k8s API 说明 | Kubernetes</title>
+  </head>
+  <body class="td-page td-documentation">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
+        <a class="navbar-brand" href="/k8sDocs/"></a>
+	<div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
+
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			
+			
+			<li class="nav-item mr-2 mb-lg-0">
+				
+				<a class="nav-link active" href="/k8sDocs/docs/" >Documentation</span></a>
+			</li>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</ul>
+	</div>
+  
+
+</nav>
+
+      
+      <div class="header-filler"></div>
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-md-nowrap">
+          <div class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+
+
+
+
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  
+  <form class="td-sidebar__search d-flex align-items-center d-lg-none">
+    
+
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  
+  <nav class="collapse td-sidebar-nav" id="td-section-nav">
+    
+    
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Kubernetes Documentation</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocs">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">概念(Concepts)</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconcepts">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">概览</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconceptsoverview">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview00-what-is-k8s" href="/k8sDocs/docs/concepts/overview/00-what-is-k8s/">k8s 是什么</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview01-components" href="/k8sDocs/docs/concepts/overview/01-components/">k8s 组件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsoverview02-k8s-api" href="/k8sDocs/docs/concepts/overview/02-k8s-api/">k8s API 说明</a>
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/working-with-objects/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">k8s 对象管理</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverviewworking-with-objects">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects00-kubernetes-objects" href="/k8sDocs/docs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectsnames" href="/k8sDocs/docs/concepts/overview/working-with-objects/names/">对象命令与ID</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects02-namespace" href="/k8sDocs/docs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectslabels" href="/k8sDocs/docs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects04-annotation" href="/k8sDocs/docs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects05-field-selectors" href="/k8sDocs/docs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects06-common-labels" href="/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/architecture/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">集群架构</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsarchitecture">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturenodes" href="/k8sDocs/docs/concepts/architecture/nodes/">节点</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontrol-plane-node-communication" href="/k8sDocs/docs/concepts/architecture/control-plane-node-communication/">控制中心与节点的通信</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontroller" href="/k8sDocs/docs/concepts/architecture/controller/">控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecloud-controller" href="/k8sDocs/docs/concepts/architecture/cloud-controller/">Cloud Controller Manager</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/containers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">容器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptscontainers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers00-images" href="/k8sDocs/docs/concepts/containers/00-images/">镜像</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers01-container-environment" href="/k8sDocs/docs/concepts/containers/01-container-environment/">容器环境</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers02-runtime-class" href="/k8sDocs/docs/concepts/containers/02-runtime-class/">Runtime Class</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainerscontainer-lifecycle-hooks" href="/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/">容器生命周期钩子</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">工作负载(Workload)</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloads">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/pods/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Pod</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloadspods">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-lifecycle" href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsinit-containers" href="/k8sDocs/docs/concepts/workloads/pods/init-containers/">初始化容器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-topology-spread-constraints" href="/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑分布约束条件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspodpreset" href="/k8sDocs/docs/concepts/workloads/pods/podpreset/">Pod 预设信息</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsdisruptions" href="/k8sDocs/docs/concepts/workloads/pods/disruptions/">Disruptions</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsephemeral-containers" href="/k8sDocs/docs/concepts/workloads/pods/ephemeral-containers/">临时容器</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/controllers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">控制器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloadscontrollers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdeployment" href="/k8sDocs/docs/concepts/workloads/controllers/deployment/">Deployment</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicaset" href="/k8sDocs/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersstatefulset" href="/k8sDocs/docs/concepts/workloads/controllers/statefulset/">StatefulSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdaemonset" href="/k8sDocs/docs/concepts/workloads/controllers/daemonset/">DaemonSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersjob" href="/k8sDocs/docs/concepts/workloads/controllers/job/">Job</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersgarbage-collection" href="/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/">垃圾回收</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersttlafterfinished" href="/k8sDocs/docs/concepts/workloads/controllers/ttlafterfinished/">用于已完成资源的 TTL 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollerscron-jobs" href="/k8sDocs/docs/concepts/workloads/controllers/cron-jobs/">CronJob</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicationcontroller" href="/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/services-networking/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Service, 负载均衡, 网络</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsservices-networking">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice" href="/k8sDocs/docs/concepts/services-networking/service/">Service</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice-topology" href="/k8sDocs/docs/concepts/services-networking/service-topology/">Service Topology</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdns-pod-service" href="/k8sDocs/docs/concepts/services-networking/dns-pod-service/">Service 和 Pod 的 DNS</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingconnect-applications-service" href="/k8sDocs/docs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingendpoint-slices" href="/k8sDocs/docs/concepts/services-networking/endpoint-slices/">EndpointSlice</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress" href="/k8sDocs/docs/concepts/services-networking/ingress/">Ingress</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress-controllers" href="/k8sDocs/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingnetwork-policies" href="/k8sDocs/docs/concepts/services-networking/network-policies/">网络策略</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingadd-entries-to-pod-etc-hosts-with-host-aliases" href="/k8sDocs/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdual-stack" href="/k8sDocs/docs/concepts/services-networking/dual-stack/">IPv4/IPv6 双栈</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsstorage">
+      
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+  </nav>
+</div>
+
+
+
+
+          </div>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	<ol class="breadcrumb spb-1">
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/">概念(Concepts)</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/">概览</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/02-k8s-api/">k8s API 说明</a>
+</li>
+
+	</ol>
+</nav	>
+
+            
+              
+            
+              
+    <div class="td-content">
+    
+<p>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/overview/02-k8s-api.md" id="editPageButton" target="_blank" data-proofer-ignore>
+    Edit This Page
+  </a>
+</p>
+
+  <h1>k8s API 说明</h1>
+  
+  
+
+<p>k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 <code>api-server</code> 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 <code>api-server</code> 通信</p>
+<p>全部的API约定在<a href="https://git.k8s.io/community/contributors/devel/api-conventions.md">这里</a>
+API endpoints,资源类型，示例在<a href="https://kubernetes.io/docs/reference">这里</a>
+远程访问 API 的说明在<a href="https://kubernetes.io/docs/admin/accessing-the-api">这里</a>
+k8s API 是系统声明式配置的基础， 命令行工具 <code>[kubectl](https://kubernetes.io/docs/user-guide/kubectl/)</code> 可以用来进行对 API 对象的增删改查
+k8s 以API 资源的形式也存储了序列化状态(目前使用 <a href="https://coreos.com/docs/distributed-configuration/getting-started-with-etcd/">etcd</a>)
+k8s 自身也解耦成多个模块，通过 API 进行交互</p>
+<h2 id="api-的变化">API 的变化</h2>
+<p>任何成功的系统都应该快速响应新的应用场景或现有需求的变更。 因此 k8s 在设计 API 时就提供了持续改进与成长的方式。k8s 项目主旨是不打破对已有客户端的普空性。并将此兼容性保持一段时间，让其它项目有时间来进行适配.
+通常新的API 资源和新的API资源项，可以经常频繁增加， 移除资源或资源项则需要遵循 <a href="https://kubernetes.io/docs/reference/using-api/deprecation-policy/">API废弃策略</a> TODO</p>
+<p>关于怎么做兼容和怎么修改API,依照这个(<a href="https://git.k8s.io/community/contributors/devel/sig-architecture/api_changes.md#readme">https://git.k8s.io/community/contributors/devel/sig-architecture/api_changes.md#readme</a>)</p>
+<h2 id="openapi-规范">OpenAPI 规范</h2>
+<p>完整 API 规范明细见 <a href="https://www.openapis.org/">这里</a>
+k8s api-server 通过 <code>/openapi/v2</code> 提供 OpenAPI 规范， 用户可以通过以下请求头发送请求获取响应格式</p>
+<table>
+<thead>
+<tr>
+<th>请求头</th>
+<th>可选值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Accept-Encoding</td>
+<td>gzip</td>
+<td>可选</td>
+</tr>
+<tr>
+<td>Accept</td>
+<td><a href="mailto:application/com.github.proto-openapi.spec.v2@v1.0">application/com.github.proto-openapi.spec.v2@v1.0</a>+protobuf</td>
+<td>mainly for intra-cluster use</td>
+</tr>
+<tr>
+<td>^</td>
+<td>application/json</td>
+<td>默认</td>
+</tr>
+<tr>
+<td>^</td>
+<td>响应 <code>application/json</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>也可以是任务符合OpenAPI 规范的请求头
+k8s 还有一个基于基于 <code>Protobuf</code> 序列化的API，这套API 主要用于集群内通信。具体见对应模块 Go 源码文档，文档设计准则在<a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/protobuf.md">这里</a></p>
+<h2 id="api-版本">API 版本</h2>
+<p>为方便移除资源项或修改资源结构，k8s 同时存在多个版本的 API, 每个版本的 API 路径都不一样，比如 <code>/api/v1</code> <code>/apis/extensions/v1beta1</code>
+这样版本就通过区分就在API这一层完成，而不用到资源或资源荐，可以做到清晰明了,并提供一致的系统资源的行为。
+也可以实现对过期和实验性 API 的访问控制
+JSON和Protobuf序列化的定义结构变更策略与API定义资源结构的规则一致，具体如下:</p>
+<p>API 的版本和软件的版本只是间接相关的(和 Docker 类似)，详见<a href="https://git.k8s.io/community/contributors/design-proposals/release/versioning.md">k8s 版本发布</a>提议</p>
+<p>不同的 API 版本提供不同级别的稳定性和支持，关于每个级别详细描述的细则见<a href="https://git.k8s.io/community/contributors/devel/sig-architecture/api_changes.md#alpha-beta-and-stable-versions">这个文档</a>
+可以总结为如下几个:</p>
+<ul>
+<li>
+<p>Alpha 级别</p>
+<ul>
+<li>api URL名字中带有 alpha (e.g. v1alpha1)</li>
+<li>可能有不少bug,启用这个物引可能会引入bug. 默认关闭</li>
+<li>所支持的功能可能在没有任何通知的情况下被移除</li>
+<li>在未来的版本中可能会在没有通知的情况谱得与之前不兼容</li>
+<li>只推荐用于短期实验集群，因为有较高bug多，缺乏长期支持的风险</li>
+</ul>
+</li>
+<li>
+<p>Beta 级别</p>
+<ul>
+<li>api URL名字中带有 beta (e.g. v2beta3)</li>
+<li>代码是充分测试的，启用这个功能基本上是安全的，默认打开</li>
+<li>整体功能不会被删除，但细节可能会修改</li>
+<li>未来版本中可能会因资源的结构与资源项的含义出现不兼容情况，如果出现这种情况,官方会提供升级与该版本的迁移指导，可能需要删除，编辑或重建 API对象，在修改过程可能需要用户仔细思考需要的改动，此过程信赖些功能的应用可能会不可用</li>
+<li>只推荐 非关键商业 用户使用，因为在未来版本中可能存在潜在的不兼容变更，如果用户有几个可独立更新集群，也可以不受此限制</li>
+<li>强烈建议用户试用beta特性并给予反馈，因为一旦从beta 版本确认为稳定版，则特性将不可更改</li>
+</ul>
+</li>
+<li>
+<p>Stable</p>
+<ul>
+<li>api 版本名称模式为 <code>vX</code>， 其中<code>X</code>为整数</li>
+<li>稳定版功能会存在于稳定版的软件的很多个版本中</li>
+</ul>
+</li>
+</ul>
+<h2 id="api-分组">API 分组</h2>
+<p>为了方便API的扩展， k8s 实现了 API 分组的方式。 API 组在 REST 接口的Path 上的 apiVersion 字段
+<a href="https://git.k8s.io/community/contributors/design-proposals/api-machinery/api-group.md">设计提案之API分组</a>
+集群中一般有如下一些组:</p>
+<ol>
+<li>核心组,也被称为经典组，REST 路径中为 <code>/api/v1</code> 对象定义 <code>apiVersion: v1</code></li>
+<li>其它组 REST 路径为 <code>/apis/$GROUP_NAME/$VERSION</code> 对象定义为 <code>apiVersion: $GROUP_NAME/$VERSION (e.g. apiVersion: batch/v1)</code> <a href="https://kubernetes.io/docs/reference/kubernetes-api/">API文档</a>是有完整的分级列表</li>
+</ol>
+<p>通过自定义资源可以通过以下两种方式扩展API:</p>
+<ol>
+<li>
+<p><a href="https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/">CustomResourceDefinition</a> 通过声明方式定义 api-server 怎么提供用户选择资源的API (TODO 这里描述不太清楚)</p>
+</li>
+<li>
+<p>用户可能通过<a href="https://kubernetes.io/docs/tasks/extend-kubernetes/setup-extension-api-server/">实现自己的扩展api-server</a>, 并通过<a href="https://kubernetes.io/docs/tasks/extend-kubernetes/configure-aggregation-layer/">聚合</a>使客户端可以访问</p>
+</li>
+</ol>
+<h2 id="api-分组开关">API 分组开关</h2>
+<p>一些资源和API默认是开启的，可能通过 api-server 命令行启动参数中使用 &ndash;runtime-config 进行开启或关闭
+关闭 &ndash;runtime-config=batch/v1=false
+开启 &ndash;runtime-config=batch/v2alpha1
+如果有多个分组进制设置，可能key=value并用逗号分隔
+注意： 开启或关闭分组或资源一需要重启 api-server 和 kube-controller-manager</p>
+<h2 id="开启-extensionsv1beta1-组的指定资源">开启 <code>extensions/v1beta1</code> 组的指定资源</h2>
+<p><code>extensions/v1beta1</code> 组默认启用资源的有 <code>DaemonSets</code>, <code>Deployments</code>, <code>StatefulSet</code>, <code>NetworkPolicies</code>, <code>PodSecurityPolicies</code>， <code>ReplicaSets</code></p>
+<p>例如要启用资源 <code>deployments</code> 和 <code>daemonsets</code>
+也是在 api-server 启动参数中使用 &ndash;runtime-config 进行开启或关闭
+<code>--runtime-config=extensions/v1beta1/deployments=false,extensions/v1beta1/ingress=false</code></p>
+<h2 id="持久化">持久化</h2>
+<p>k8s 将序列化的 API 资源对象保存在 etcd 中</p>
+<h2 id="引申阅读">引申阅读</h2>
+<p><a href="https://kubernetes.io/docs/reference/access-authn-authz/controlling-access/">API访问控制</a>
+<a href="https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#api-conventions">API约定</a>
+<a href="https://kubernetes.io/docs/reference/kubernetes-api/">API文档</a></p>
+
+
+
+            
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 June 24, 2020
+</div>
+            
+          </main>
+          <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
+            
+
+
+
+
+
+
+
+
+
+
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#api-的变化">API 的变化</a></li>
+    <li><a href="#openapi-规范">OpenAPI 规范</a></li>
+    <li><a href="#api-版本">API 版本</a></li>
+    <li><a href="#api-分组">API 分组</a></li>
+    <li><a href="#api-分组开关">API 分组开关</a></li>
+    <li><a href="#开启-extensionsv1beta1-组的指定资源">开启 <code>extensions/v1beta1</code> 组的指定资源</a></li>
+    <li><a href="#持久化">持久化</a></li>
+    <li><a href="#引申阅读">引申阅读</a></li>
+  </ul>
+</nav>
+
+
+
+          </div>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        
+        
+	
+		
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script src="/k8sDocs/js/main.min.446a2e681f8167f44314691b77368dd561bf0b67514487f3f0fd999316c6da4a.js" integrity="sha256-RGouaB&#43;BZ/RDFGkbdzaN1WG/C2dRRIfz8P2ZkxbG2ko=" crossorigin="anonymous"></script>
+
+
+
+
+  </body>
+</html>

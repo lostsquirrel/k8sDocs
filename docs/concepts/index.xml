@@ -1,0 +1,131 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubernetes – 概念(Concepts)</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/</link>
+    <description>Recent content in 概念(Concepts) on Kubernetes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 23 Jun 2020 00:00:00 +0000</lastBuildDate>
+    
+	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: 概览</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/</link>
+      <pubDate>Fri, 03 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 集群架构</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/</link>
+      <pubDate>Wed, 15 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 容器</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/</link>
+      <pubDate>Sun, 19 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/</guid>
+      <description>
+        
+        
+        &lt;!-- overview --&gt;
+&lt;p&gt;用户运行的每一个容器都是可重复的，标准中说明容器中包含的所需要的依赖，所以每次运行的行为都应该是一致的&lt;/p&gt;
+&lt;p&gt;容器技术让应用与底层主机的基础设施解耦。这使在不同云环境或操作系统上的部署变得更容易。&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;h2 id=&#34;容器镜像&#34;&gt;容器镜像&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;./00-images/&#34;&gt;容器镜像&lt;/a&gt; 是一个直接可以运行的软件包，其中含了这个应用运行所需要的一切: 应用程序和对应的运行环境，应用和系统的依赖库，必要配置的默认值&lt;/p&gt;
+&lt;p&gt;在设计上一个容器是不可变更的：不能修改一个已经运行的窗口的代码(应用)。如果用户想对一个容器化的应用进行变更，需要构建一个包含这些变更的新镜像，并用这个新的镜像再创建一个新的容器代替原来的容器继续运行&lt;/p&gt;
+&lt;h2 id=&#34;容器运行时&#34;&gt;容器运行时&lt;/h2&gt;
+&lt;p&gt;容器运行时就是负责运行容器的软件， k8s 支持以下几种运行时:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Docker&lt;/li&gt;
+&lt;li&gt;containerd&lt;/li&gt;
+&lt;li&gt;CRI-O&lt;/li&gt;
+&lt;li&gt;任意实现 k8s CRI(Container Runtime Interface)的应用&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;看看 &lt;a href=&#34;./00-images/&#34;&gt;容器镜像&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;看看 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/2-concepts/03-workloads/00-pods/&#34;&gt;Pod&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 工作负载(Workload)</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/</link>
+      <pubDate>Thu, 02 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Service, 负载均衡, 网络</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/</guid>
+      <description>
+        
+        
+        &lt;!--
+Kubernetes networking addresses four concerns:
+- Containers within a Pod use networking to communicate via loopback.
+- Cluster networking provides communication between different Pods.
+- The Service resource lets you expose an application running in Pods to be reachable from outside your cluster.
+- You can also use Services to publish services only for consumption inside your cluster.
+ --&gt;
+&lt;p&gt;k8s 的网络有如下四个方面:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在同一个 Pod 内的容器使用圆环网络通信&lt;/li&gt;
+&lt;li&gt;集群网络提供不同 Pod 之间的通信&lt;/li&gt;
+&lt;li&gt;Service 资源让运行在 Pod 中的应用可以在集群外访问&lt;/li&gt;
+&lt;li&gt;Service 也可以用于集群内的服务发布&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 存储(Storage)</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

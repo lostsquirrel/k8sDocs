@@ -1,23 +1,45 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Reference on Kubernetes</title>
+    <title>Kubernetes – Reference</title>
     <link>https://lostsquirrel.github.io/k8sDocs/reference/</link>
     <description>Recent content in Reference on Kubernetes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Thu, 11 Jun 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://lostsquirrel.github.io/k8sDocs/reference/index.xml" rel="self" type="application/rss+xml" />
+	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/reference/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
     
     
     <item>
-      <title>Standardized Glossary</title>
+      <title>Reference: Standardized Glossary</title>
       <link>https://lostsquirrel.github.io/k8sDocs/reference/glossary/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/reference/glossary/</guid>
-      <description></description>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Reference: kubectl 概览</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/00-overview/</link>
+      <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/00-overview/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;working-in-progress&#34;&gt;working in progress&lt;/h2&gt;
+
+      </description>
     </item>
     
   </channel>

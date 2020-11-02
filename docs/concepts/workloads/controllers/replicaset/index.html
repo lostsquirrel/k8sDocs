@@ -1,0 +1,1756 @@
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.75.1" />
+
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
+<link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
+<link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/images/kubernetes-192x192.png">
+<title>ReplicaSet | Kubernetes</title><meta property="og:title" content="ReplicaSet" />
+<meta property="og:description" content="ReplicaSet 的作用是在任意时间内维持一个稳定的 Pod 副本集。因此它经常被用来保证特定 Pod 在指定的数量以提供可用性。 控制器一个控制回路，负责通过 apiserver 监控集群的共" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/replicaset/" />
+<meta property="article:published_time" content="2020-08-14T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-08-13T00:00:00+00:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="ReplicaSet">
+<meta itemprop="description" content="ReplicaSet 的作用是在任意时间内维持一个稳定的 Pod 副本集。因此它经常被用来保证特定 Pod 在指定的数量以提供可用性。 控制器一个控制回路，负责通过 apiserver 监控集群的共">
+<meta itemprop="datePublished" content="2020-08-14T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-08-13T00:00:00+00:00" />
+<meta itemprop="wordCount" content="3888">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="ReplicaSet"/>
+<meta name="twitter:description" content="ReplicaSet 的作用是在任意时间内维持一个稳定的 Pod 副本集。因此它经常被用来保证特定 Pod 在指定的数量以提供可用性。 控制器一个控制回路，负责通过 apiserver 监控集群的共"/>
+
+
+
+
+
+<link rel="preload" href="/k8sDocs/scss/main.min.ef3a36e0df00fd067f010634c3743a5f97c767d3027d208bdaa58808c66c9779.css" as="style">
+<link href="/k8sDocs/scss/main.min.ef3a36e0df00fd067f010634c3743a5f97c767d3027d208bdaa58808c66c9779.css" rel="stylesheet" integrity="">
+
+
+<script src="/k8sDocs/js/jquery-3.5.1.min.js" ></script>
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "url": "https://kubernetes.io",
+    "logo": "https://kubernetes.io/images/favicon.png",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://lostsquirrel.github.io/k8sDocs/search/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+
+  }
+</script>
+<meta name="theme-color" content="#326ce5">
+
+
+
+
+<link rel="stylesheet" href=/k8sDocs/css/base_fonts.css>
+
+<link rel="stylesheet" href="/k8sDocs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/k8sDocs/css/callouts.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
+
+
+
+<meta name="description" content="ReplicaSet 的作用是在任意时间内维持一个稳定的 Pod 副本集。因此它经常被用来保证特定 Pod 在指定的数量以提供可用性。 控制器一个控制回路，负责通过 apiserver 监控集群的共">
+<meta property="og:description" content="ReplicaSet 的作用是在任意时间内维持一个稳定的 Pod 副本集。因此它经常被用来保证特定 Pod 在指定的数量以提供可用性。 控制器一个控制回路，负责通过 apiserver 监控集群的共">
+<meta name="twitter:description" content="ReplicaSet 的作用是在任意时间内维持一个稳定的 Pod 副本集。因此它经常被用来保证特定 Pod 在指定的数量以提供可用性。 控制器一个控制回路，负责通过 apiserver 监控集群的共">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/replicaset/">
+<meta property="og:title" content="ReplicaSet">
+<meta name="twitter:title" content="ReplicaSet">
+<meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
+
+<meta name="twitter:image:alt" content="Kubernetes">
+
+<meta property="og:image" content="/k8sDocs/images/kubernetes-horizontal-color.png">
+
+<meta property="og:type" content="article">
+
+
+
+<script src="/k8sDocs/js/script.js"></script>
+
+
+    <title>ReplicaSet | Kubernetes</title>
+  </head>
+  <body class="td-page td-documentation">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
+        <a class="navbar-brand" href="/k8sDocs/"></a>
+	<div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
+
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			
+			
+			<li class="nav-item mr-2 mb-lg-0">
+				
+				<a class="nav-link active" href="/k8sDocs/docs/" >Documentation</span></a>
+			</li>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</ul>
+	</div>
+  
+
+</nav>
+
+      
+      <div class="header-filler"></div>
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-md-nowrap">
+          <div class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+
+
+
+
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  
+  <form class="td-sidebar__search d-flex align-items-center d-lg-none">
+    
+
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  
+  <nav class="collapse td-sidebar-nav" id="td-section-nav">
+    
+    
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Kubernetes Documentation</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocs">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">概念(Concepts)</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconcepts">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">概览</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverview">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview00-what-is-k8s" href="/k8sDocs/docs/concepts/overview/00-what-is-k8s/">k8s 是什么</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview01-components" href="/k8sDocs/docs/concepts/overview/01-components/">k8s 组件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview02-k8s-api" href="/k8sDocs/docs/concepts/overview/02-k8s-api/">k8s API 说明</a>
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/working-with-objects/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">k8s 对象管理</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverviewworking-with-objects">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects00-kubernetes-objects" href="/k8sDocs/docs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectsnames" href="/k8sDocs/docs/concepts/overview/working-with-objects/names/">对象命令与ID</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects02-namespace" href="/k8sDocs/docs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectslabels" href="/k8sDocs/docs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects04-annotation" href="/k8sDocs/docs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects05-field-selectors" href="/k8sDocs/docs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects06-common-labels" href="/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/architecture/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">集群架构</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsarchitecture">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturenodes" href="/k8sDocs/docs/concepts/architecture/nodes/">节点</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontrol-plane-node-communication" href="/k8sDocs/docs/concepts/architecture/control-plane-node-communication/">控制中心与节点的通信</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontroller" href="/k8sDocs/docs/concepts/architecture/controller/">控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecloud-controller" href="/k8sDocs/docs/concepts/architecture/cloud-controller/">Cloud Controller Manager</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/containers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">容器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptscontainers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers00-images" href="/k8sDocs/docs/concepts/containers/00-images/">镜像</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers01-container-environment" href="/k8sDocs/docs/concepts/containers/01-container-environment/">容器环境</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers02-runtime-class" href="/k8sDocs/docs/concepts/containers/02-runtime-class/">Runtime Class</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainerscontainer-lifecycle-hooks" href="/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/">容器生命周期钩子</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">工作负载(Workload)</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconceptsworkloads">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/pods/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Pod</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloadspods">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-lifecycle" href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsinit-containers" href="/k8sDocs/docs/concepts/workloads/pods/init-containers/">初始化容器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-topology-spread-constraints" href="/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑分布约束条件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspodpreset" href="/k8sDocs/docs/concepts/workloads/pods/podpreset/">Pod 预设信息</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsdisruptions" href="/k8sDocs/docs/concepts/workloads/pods/disruptions/">Disruptions</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsephemeral-containers" href="/k8sDocs/docs/concepts/workloads/pods/ephemeral-containers/">临时容器</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/controllers/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">控制器</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconceptsworkloadscontrollers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdeployment" href="/k8sDocs/docs/concepts/workloads/controllers/deployment/">Deployment</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsworkloadscontrollersreplicaset" href="/k8sDocs/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersstatefulset" href="/k8sDocs/docs/concepts/workloads/controllers/statefulset/">StatefulSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdaemonset" href="/k8sDocs/docs/concepts/workloads/controllers/daemonset/">DaemonSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersjob" href="/k8sDocs/docs/concepts/workloads/controllers/job/">Job</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersgarbage-collection" href="/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/">垃圾回收</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersttlafterfinished" href="/k8sDocs/docs/concepts/workloads/controllers/ttlafterfinished/">用于已完成资源的 TTL 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollerscron-jobs" href="/k8sDocs/docs/concepts/workloads/controllers/cron-jobs/">CronJob</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicationcontroller" href="/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/services-networking/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Service, 负载均衡, 网络</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsservices-networking">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice" href="/k8sDocs/docs/concepts/services-networking/service/">Service</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice-topology" href="/k8sDocs/docs/concepts/services-networking/service-topology/">Service Topology</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdns-pod-service" href="/k8sDocs/docs/concepts/services-networking/dns-pod-service/">Service 和 Pod 的 DNS</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingconnect-applications-service" href="/k8sDocs/docs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingendpoint-slices" href="/k8sDocs/docs/concepts/services-networking/endpoint-slices/">EndpointSlice</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress" href="/k8sDocs/docs/concepts/services-networking/ingress/">Ingress</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress-controllers" href="/k8sDocs/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingnetwork-policies" href="/k8sDocs/docs/concepts/services-networking/network-policies/">网络策略</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingadd-entries-to-pod-etc-hosts-with-host-aliases" href="/k8sDocs/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdual-stack" href="/k8sDocs/docs/concepts/services-networking/dual-stack/">IPv4/IPv6 双栈</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsstorage">
+      
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+  </nav>
+</div>
+
+
+
+
+          </div>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	<ol class="breadcrumb spb-1">
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/">概念(Concepts)</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/">工作负载(Workload)</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/">控制器</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a>
+</li>
+
+	</ol>
+</nav	>
+
+            
+              
+            
+              
+    <div class="td-content">
+    
+<p>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/workloads/controllers/replicaset.md" id="editPageButton" target="_blank" data-proofer-ignore>
+    Edit This Page
+  </a>
+</p>
+
+  <h1>ReplicaSet</h1>
+  
+  
+
+<!--
+---
+reviewers:
+- Kashomon
+- bprashanth
+- madhusudancs
+title: ReplicaSet
+content_type: concept
+weight: 20
+---
+ -->
+<!-- overview -->
+<!--
+A ReplicaSet's purpose is to maintain a stable set of replica Pods running at any given time. As such, it is often
+used to guarantee the availability of a specified number of identical Pods.
+ -->
+<p><code>ReplicaSet</code> 的作用是在任意时间内维持一个稳定的 Pod 副本集。因此它经常被用来保证特定 Pod 在指定的数量以提供可用性。</p>
+<!-- body -->
+<!--
+## How a ReplicaSet works
+
+A ReplicaSet is defined with fields, including a selector that specifies how to identify Pods it can acquire, a number
+of replicas indicating how many Pods it should be maintaining, and a pod template specifying the data of new Pods
+it should create to meet the number of replicas criteria. A ReplicaSet then fulfills its purpose by creating
+and deleting Pods as needed to reach the desired number. When a ReplicaSet needs to create new Pods, it uses its Pod
+template.
+
+A ReplicaSet is linked to its Pods via the Pods' [metadata.ownerReferences](/docs/concepts/workloads/controllers/garbage-collection/#owners-and-dependents)
+field, which specifies what resource the current object is owned by. All Pods acquired by a ReplicaSet have their owning
+ReplicaSet's identifying information within their ownerReferences field. It's through this link that the ReplicaSet
+knows of the state of the Pods it is maintaining and plans accordingly.
+
+A ReplicaSet identifies new Pods to acquire by using its selector. If there is a Pod that has no OwnerReference or the
+OwnerReference is not a <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/02-controller/' target='_blank'>控制器<span class='tooltip-text'>一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移</span>
+</a> and it matches a ReplicaSet's selector, it will be immediately acquired by said
+ReplicaSet.
+ -->
+<h2 id="how-a-replicaset-works"><code>ReplicaSet</code> 是怎么工作的</h2>
+<p><code>ReplicaSet</code> 通过以下字段定义，
+<code>selector</code> 标签选择器，决定集合中的 Pod，
+<code>replicas</code> 副本数量， 需要维持多少个副本，
+<code>template</code> Pod 的定义模板，
+<code>ReplicaSet</code> 会创建 Pod 或删除 Pod 让 Pod 的数量达到预期的数量。
+<code>ReplicaSet</code> 在需要创建新的 Pod 时会依照 Pod 的定义模来创建 Pod。</p>
+<p><code>ReplicaSet</code> 通过 Pod 上的 <a href="/docs/concepts/workloads/controllers/garbage-collection/#owners-and-dependents">metadata.ownerReferences</a>
+字段实现它们的所以关系。 所以属于该 <code>ReplicaSet</code> 的每一个 Pod 上面都有自己的 ownerReferences 字段来存储它们自己的 <code>ReplicaSet</code> 信息</p>
+<p>通过这个链接信息 <code>ReplicaSet</code> 可以知道对应的 Pod 的状态，并根据状态进行相应的维护与计划</p>
+<p><code>ReplicaSet</code> 通过选择器识别新的 Pod。 如果一个 Pod 上没有 <code>OwnerReference</code> 或 <code>OwnerReference</code>
+不是一个 <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/02-controller/' target='_blank'>控制器<span class='tooltip-text'>一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移</span>
+</a> 然后它又匹配该 <code>ReplicaSet</code> 的选择器，
+那么它马上就会被该 <code>ReplicaSet</code> 捕获。</p>
+<blockquote>
+  <div><strong>TODO: </strong>说得不太清楚，需要实践理解后再考虑怎么修改</div>
+</blockquote>
+
+<!--
+## When to use a ReplicaSet
+
+A ReplicaSet ensures that a specified number of pod replicas are running at any given
+time. However, a Deployment is a higher-level concept that manages ReplicaSets and
+provides declarative updates to Pods along with a lot of other useful features.
+Therefore, we recommend using Deployments instead of directly using ReplicaSets, unless
+you require custom update orchestration or don't require updates at all.
+
+This actually means that you may never need to manipulate ReplicaSet objects:
+use a Deployment instead, and define your application in the spec section.
+ -->
+<h2 id="什么时候应该用-replicaset">什么时候应该用 <code>ReplicaSet</code></h2>
+<p><code>ReplicaSet</code> 保证在任意时间点上某个 Pod 的拥有指定的副本数。
+但是 <code>Deployment</code> 是一个更高层级的抽象概念，实现对 <code>ReplicaSet</code> 的管理并提供了对 Pod 的声明式更新及其它一系列有用的特性。
+所以，我们建议使用 <code>Deployment</code> 而不是直接使用 <code>ReplicaSet</code>
+除非用户需要自定义的更新编排甚至干脆不需要更新。</p>
+<p>也就是说一般用户永远都不需要操作 <code>ReplicaSet</code>： 使用 <code>Deployment</code> 更佳，只需要在 <code>spec</code> 区域定义应用就行</p>
+<!--
+## Example
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="controllersfrontendyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/controllers/frontend.yaml" download="controllers/frontend.yaml">
+                    <code>controllers/frontend.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('controllersfrontendyaml')" title="Copy controllers/frontend.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ReplicaSet</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">frontend</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">guestbook</span>
+    <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">frontend</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#75715e"># modify replicas according to your case</span>
+  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">3</span>
+  <span style="color:#f92672">selector</span>:
+    <span style="color:#f92672">matchLabels</span>:
+      <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">frontend</span>
+  <span style="color:#f92672">template</span>:
+    <span style="color:#f92672">metadata</span>:
+      <span style="color:#f92672">labels</span>:
+        <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">frontend</span>
+    <span style="color:#f92672">spec</span>:
+      <span style="color:#f92672">containers</span>:
+      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">php-redis</span>
+        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">registry.cn-hangzhou.aliyuncs.com/lisong/gb-frontend:v3-google_samples</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+Saving this manifest into `frontend.yaml` and submitting it to a Kubernetes cluster will
+create the defined ReplicaSet and the Pods that it manages.
+
+```shell
+kubectl apply -f https://kubernetes.io/examples/controllers/frontend.yaml
+```
+
+You can then get the current ReplicaSets deployed:
+
+```shell
+kubectl get rs
+```
+
+And see the frontend one you created:
+
+```shell
+NAME       DESIRED   CURRENT   READY   AGE
+frontend   3         3         3       6s
+```
+
+You can also check on the state of the ReplicaSet:
+
+```shell
+kubectl describe rs/frontend
+```
+
+And you will see output similar to:
+
+```shell
+Name:         frontend
+Namespace:    default
+Selector:     tier=frontend
+Labels:       app=guestbook
+              tier=frontend
+Annotations:  kubectl.kubernetes.io/last-applied-configuration:
+                {"apiVersion":"apps/v1","kind":"ReplicaSet","metadata":{"annotations":{},"labels":{"app":"guestbook","tier":"frontend"},"name":"frontend",...
+Replicas:     3 current / 3 desired
+Pods Status:  3 Running / 0 Waiting / 0 Succeeded / 0 Failed
+Pod Template:
+  Labels:  tier=frontend
+  Containers:
+   php-redis:
+    Image:        gcr.io/google_samples/gb-frontend:v3
+    Port:         <none>
+    Host Port:    <none>
+    Environment:  <none>
+    Mounts:       <none>
+  Volumes:        <none>
+Events:
+  Type    Reason            Age   From                   Message
+  ----    ------            ----  ----                   -------
+  Normal  SuccessfulCreate  117s  replicaset-controller  Created pod: frontend-wtsmm
+  Normal  SuccessfulCreate  116s  replicaset-controller  Created pod: frontend-b2zdv
+  Normal  SuccessfulCreate  116s  replicaset-controller  Created pod: frontend-vcmts
+```
+
+And lastly you can check for the Pods brought up:
+
+```shell
+kubectl get pods
+```
+
+You should see Pod information similar to:
+
+```shell
+NAME             READY   STATUS    RESTARTS   AGE
+frontend-b2zdv   1/1     Running   0          6m36s
+frontend-vcmts   1/1     Running   0          6m36s
+frontend-wtsmm   1/1     Running   0          6m36s
+```
+
+You can also verify that the owner reference of these pods is set to the frontend ReplicaSet.
+To do this, get the yaml of one of the Pods running:
+
+```shell
+kubectl get pods frontend-b2zdv -o yaml
+```
+
+The output will look similar to this, with the frontend ReplicaSet's info set in the metadata's ownerReferences field:
+
+```shell
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2020-02-12T07:06:16Z"
+  generateName: frontend-
+  labels:
+    tier: frontend
+  name: frontend-b2zdv
+  namespace: default
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: frontend
+    uid: f391f6db-bb9b-4c09-ae74-6a1f77f3d5cf
+...
+```
+ -->
+<h2 id="示例">示例</h2>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="controllersfrontendyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/controllers/frontend.yaml" download="controllers/frontend.yaml">
+                    <code>controllers/frontend.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('controllersfrontendyaml')" title="Copy controllers/frontend.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ReplicaSet</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">frontend</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">app</span>: <span style="color:#ae81ff">guestbook</span>
+    <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">frontend</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#75715e"># modify replicas according to your case</span>
+  <span style="color:#f92672">replicas</span>: <span style="color:#ae81ff">3</span>
+  <span style="color:#f92672">selector</span>:
+    <span style="color:#f92672">matchLabels</span>:
+      <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">frontend</span>
+  <span style="color:#f92672">template</span>:
+    <span style="color:#f92672">metadata</span>:
+      <span style="color:#f92672">labels</span>:
+        <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">frontend</span>
+    <span style="color:#f92672">spec</span>:
+      <span style="color:#f92672">containers</span>:
+      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">php-redis</span>
+        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">registry.cn-hangzhou.aliyuncs.com/lisong/gb-frontend:v3-google_samples</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<p>将以上配置保存到 <code>frontend.yaml</code>， 然后发布到 k8s 集群，就会在集群中创建一个 ReplicaSet 和对应 Pod。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl apply -f frontend.yaml
+</code></pre></div><p>可以通过以下命令查看当前部署的 <code>ReplicaSet</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get rs
+</code></pre></div><p>输出结果中有类似如下如果:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">NAME       DESIRED   CURRENT   READY   AGE
+frontend   <span style="color:#ae81ff">3</span>         <span style="color:#ae81ff">3</span>         <span style="color:#ae81ff">3</span>       6s
+</code></pre></div><p>也可以通过以下命令查看 <code>ReplicaSet</code> 状态:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl describe rs/frontend
+</code></pre></div><p>输出结果类似如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Name:         frontend
+Namespace:    default
+Selector:     tier<span style="color:#f92672">=</span>frontend
+Labels:       app<span style="color:#f92672">=</span>guestbook
+              tier<span style="color:#f92672">=</span>frontend
+Annotations:  kubectl.kubernetes.io/last-applied-configuration:
+                <span style="color:#f92672">{</span><span style="color:#e6db74">&#34;apiVersion&#34;</span>:<span style="color:#e6db74">&#34;apps/v1&#34;</span>,<span style="color:#e6db74">&#34;kind&#34;</span>:<span style="color:#e6db74">&#34;ReplicaSet&#34;</span>,<span style="color:#e6db74">&#34;metadata&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;annotations&#34;</span>:<span style="color:#f92672">{}</span>,<span style="color:#e6db74">&#34;labels&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;app&#34;</span>:<span style="color:#e6db74">&#34;guestbook&#34;</span>,<span style="color:#e6db74">&#34;tier&#34;</span>:<span style="color:#e6db74">&#34;frontend&#34;</span><span style="color:#f92672">}</span>,<span style="color:#e6db74">&#34;name&#34;</span>:<span style="color:#e6db74">&#34;frontend&#34;</span>,...
+Replicas:     <span style="color:#ae81ff">3</span> current / <span style="color:#ae81ff">3</span> desired
+Pods Status:  <span style="color:#ae81ff">3</span> Running / <span style="color:#ae81ff">0</span> Waiting / <span style="color:#ae81ff">0</span> Succeeded / <span style="color:#ae81ff">0</span> Failed
+Pod Template:
+  Labels:  tier<span style="color:#f92672">=</span>frontend
+  Containers:
+   php-redis:
+    Image:        gcr.io/google_samples/gb-frontend:v3
+    Port:         &lt;none&gt;
+    Host Port:    &lt;none&gt;
+    Environment:  &lt;none&gt;
+    Mounts:       &lt;none&gt;
+  Volumes:        &lt;none&gt;
+Events:
+  Type    Reason            Age   From                   Message
+  ----    ------            ----  ----                   -------
+  Normal  SuccessfulCreate  117s  replicaset-controller  Created pod: frontend-wtsmm
+  Normal  SuccessfulCreate  116s  replicaset-controller  Created pod: frontend-b2zdv
+  Normal  SuccessfulCreate  116s  replicaset-controller  Created pod: frontend-vcmts
+</code></pre></div><p>最后再用以下命令查看创建的 Pod:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get pods
+</code></pre></div><p>输出结果类似如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">NAME             READY   STATUS    RESTARTS   AGE
+frontend-b2zdv   1/1     Running   <span style="color:#ae81ff">0</span>          6m36s
+frontend-vcmts   1/1     Running   <span style="color:#ae81ff">0</span>          6m36s
+frontend-wtsmm   1/1     Running   <span style="color:#ae81ff">0</span>          6m36s
+</code></pre></div><p>通过以正下命令输出的 yaml 可以验证这些 Pod 所属 <code>ReplicaSet</code>：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get pods frontend-b2zdv -o yaml
+</code></pre></div><p>输出结果类似如下，可以看到 <code>metadata.ownerReferences</code> 字段中就是这个叫 <code>frontend</code> 的 <code>ReplicaSet</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: <span style="color:#e6db74">&#34;2020-02-12T07:06:16Z&#34;</span>
+  generateName: frontend-
+  labels:
+    tier: frontend
+  name: frontend-b2zdv
+  namespace: default
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: frontend
+    uid: f391f6db-bb9b-4c09-ae74-6a1f77f3d5cf
+...
+</code></pre></div><!--
+## Non-Template Pod acquisitions
+
+While you can create bare Pods with no problems, it is strongly recommended to make sure that the bare Pods do not have
+labels which match the selector of one of your ReplicaSets. The reason for this is because a ReplicaSet is not limited
+to owning Pods specified by its template-- it can acquire other Pods in the manner specified in the previous sections.
+
+Take the previous frontend ReplicaSet example, and the Pods specified in the  following manifest:
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="podspod-rsyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/pod-rs.yaml" download="pods/pod-rs.yaml">
+                    <code>pods/pod-rs.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('podspod-rsyaml')" title="Copy pods/pod-rs.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod1</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">frontend</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">containers</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">hello1</span>
+    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">registry.cn-hangzhou.aliyuncs.com/lisong/hello-app:2.0-google-samples</span>
+
+---
+
+<span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod2</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">frontend</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">containers</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">hello2</span>
+    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">registry.cn-hangzhou.aliyuncs.com/lisong/hello-app:1.0-google-samples</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+As those Pods do not have a Controller (or any object) as their owner reference and match the selector of the frontend
+ReplicaSet, they will immediately be acquired by it.
+
+Suppose you create the Pods after the frontend ReplicaSet has been deployed and has set up its initial Pod replicas to
+fulfill its replica count requirement:
+
+```shell
+kubectl apply -f https://kubernetes.io/examples/pods/pod-rs.yaml
+```
+
+The new Pods will be acquired by the ReplicaSet, and then immediately terminated as the ReplicaSet would be over
+its desired count.
+
+Fetching the Pods:
+
+```shell
+kubectl get pods
+```
+
+The output shows that the new Pods are either already terminated, or in the process of being terminated:
+
+```shell
+NAME             READY   STATUS        RESTARTS   AGE
+frontend-b2zdv   1/1     Running       0          10m
+frontend-vcmts   1/1     Running       0          10m
+frontend-wtsmm   1/1     Running       0          10m
+pod1             0/1     Terminating   0          1s
+pod2             0/1     Terminating   0          1s
+```
+
+If you create the Pods first:
+
+```shell
+kubectl apply -f https://kubernetes.io/examples/pods/pod-rs.yaml
+```
+
+And then create the ReplicaSet however:
+
+```shell
+kubectl apply -f https://kubernetes.io/examples/controllers/frontend.yaml
+```
+
+You shall see that the ReplicaSet has acquired the Pods and has only created new ones according to its spec until the
+number of its new Pods and the original matches its desired count. As fetching the Pods:
+
+```shell
+kubectl get pods
+```
+
+Will reveal in its output:
+```shell
+NAME             READY   STATUS    RESTARTS   AGE
+frontend-hmmj2   1/1     Running   0          9s
+pod1             1/1     Running   0          36s
+pod2             1/1     Running   0          36s
+```
+
+In this manner, a ReplicaSet can own a non-homogenous set of Pods
+ -->
+<h2 id="不是自己模板定义的-pod-的捕获">不是自己模板定义的 Pod 的捕获</h2>
+<p>用户可以自由的创建裸 Pod， 但是推荐在创建裸 Pod 时不要在上面打上已经存在的 <code>ReplicaSet</code> 选择器对应的标签。
+不这么做的原因是 <code>ReplicaSet</code> 并不仅限于自身模板创建的 Pod， 也可以捕获其它拥有对应标签的 Pod(上一节介绍过)</p>
+<p>继续上一个例子中的 <code>frontend</code> <code>ReplicaSet</code>， 再加下如下定义的 Pod</p>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="podspod-rsyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/pod-rs.yaml" download="pods/pod-rs.yaml">
+                    <code>pods/pod-rs.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('podspod-rsyaml')" title="Copy pods/pod-rs.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod1</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">frontend</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">containers</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">hello1</span>
+    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">registry.cn-hangzhou.aliyuncs.com/lisong/hello-app:2.0-google-samples</span>
+
+---
+
+<span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pod2</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">frontend</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">containers</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">hello2</span>
+    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">registry.cn-hangzhou.aliyuncs.com/lisong/hello-app:1.0-google-samples</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<p>这些 Pod 没并有在所属者引用上有控制器(或其它对象)， 但是它上面的标签又被 <code>frontend</code> <code>ReplicaSet</code>
+的选择器所匹配，它们马上就会被这个 <code>ReplicaSet</code> 捕获。</p>
+<p>假设 Pod 的创建时间是在 <code>frontend</code> <code>ReplicaSet</code> 部署之后，并且其创建的 Pod 已经达到了所期望的数量：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl apply -f pod-rs.yaml
+</code></pre></div><p>新创建的 Pod 会被 <code>ReplicaSet</code> 捕获，然后发现 <code>ReplicaSet</code> 副本数已经超过预期数量，所以就会终止这些多余的 Pod</p>
+<p>查看 Pod 状态:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get pods
+</code></pre></div><p>输出类似如下，会发现新创建的 Pod 正在被干掉或已经被干掉:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">NAME             READY   STATUS        RESTARTS   AGE
+frontend-b2zdv   1/1     Running       <span style="color:#ae81ff">0</span>          10m
+frontend-vcmts   1/1     Running       <span style="color:#ae81ff">0</span>          10m
+frontend-wtsmm   1/1     Running       <span style="color:#ae81ff">0</span>          10m
+pod1             0/1     Terminating   <span style="color:#ae81ff">0</span>          1s
+pod2             0/1     Terminating   <span style="color:#ae81ff">0</span>          1s
+</code></pre></div><p>如果创建的顺序调换一下，先创建这些 Pod:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl apply -f pod-rs.yaml
+</code></pre></div><p>然后再创建 <code>ReplicaSet</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl apply -f frontend.yaml
+</code></pre></div><p>这次就会发现 <code>ReplicaSet</code> 会捕获已经创建的两个 Pod，然后根据预期的状态中需要3个，所以就再创建一个新的，就完工了。
+再次查看 Pod 状态</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get pods
+</code></pre></div><p>输出结果就会变得不一样，具体如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">NAME             READY   STATUS    RESTARTS   AGE
+frontend-hmmj2   1/1     Running   <span style="color:#ae81ff">0</span>          9s
+pod1             1/1     Running   <span style="color:#ae81ff">0</span>          36s
+pod2             1/1     Running   <span style="color:#ae81ff">0</span>          36s
+</code></pre></div><p>也就是， <code>ReplicaSet</code> 下属的 Pod 可以是不是通过本身模板创建的 Pod</p>
+<!--  
+## Writing a ReplicaSet manifest
+
+As with all other Kubernetes API objects, a ReplicaSet needs the `apiVersion`, `kind`, and `metadata` fields.
+For ReplicaSets, the kind is always just ReplicaSet.
+In Kubernetes 1.9 the API version `apps/v1` on the ReplicaSet kind is the current version and is enabled by default. The API version `apps/v1beta2` is deprecated.
+Refer to the first lines of the `frontend.yaml` example for guidance.
+
+The name of a ReplicaSet object must be a valid
+[DNS subdomain name](/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+
+A ReplicaSet also needs a [`.spec` section](https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status).
+-->
+<h2 id="编写-replicaset-定义清单">编写 <code>ReplicaSet</code> 定义清单</h2>
+<p>与其它所以其它 k8s API 对象一样， <code>ReplicaSet</code> 需要有 <code>apiVersion</code>, <code>kind</code>, <code>metadata</code> 字段.
+对于 <code>ReplicaSet</code>， <code>kind</code> 字段就一直是 <code>ReplicaSet</code>。
+在 k8s v1.9+ <code>apiVersion</code> 字段的值为 <code>apps/v1</code>，默认开启。 API 版本 <code>apps/v1beta2</code> 被废弃。
+具体可以看之前示例中 <code>frontend.yaml</code> 文件内容。</p>
+<p><code>ReplicaSet</code> 名称必须是一个有效的 <a href="/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.
+<code>ReplicaSet</code> 还必须要有一个
+<a href="https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status"><code>.spec</code> 字段</a>.</p>
+<!--
+### Pod Template
+
+The `.spec.template` is a [pod template](/docs/concepts/workloads/Pods/pod-overview/#pod-templates) which is also
+required to have labels in place. In our `frontend.yaml` example we had one label: `tier: frontend`.
+Be careful not to overlap with the selectors of other controllers, lest they try to adopt this Pod.
+
+For the template's [restart policy](/docs/concepts/workloads/Pods/pod-lifecycle/#restart-policy) field,
+`.spec.template.spec.restartPolicy`, the only allowed value is `Always`, which is the default.
+ -->
+<h3 id="pod-模板">Pod 模板</h3>
+<p><code>.spec.template</code> 字段就是 <a href="/k8sDocs/concepts/workloads/Pods/pod-overview/#pod-templates">pod template</a> 而且其中还必须要定义标签.
+在示例中的 <code>frontend.yaml</code> 打的标签是: <code>tier: frontend</code>.
+注意不能与其它控制器的选择器相重叠，以免它们会争抢这个 Pod</p>
+<p>模板中的 <a href="/docs/concepts/workloads/Pods/pod-lifecycle/#restart-policy">重启策略</a> 字段,
+<code>.spec.template.spec.restartPolicy</code>, 允许的值只能是 <code>Always</code>, 默认也是  <code>Always</code>.</p>
+<!--
+### Pod Selector
+
+The `.spec.selector` field is a [label selector](/docs/concepts/overview/working-with-objects/labels/). As discussed
+[earlier](#how-a-replicaset-works) these are the labels used to identify potential Pods to acquire. In our
+`frontend.yaml` example, the selector was:
+```shell
+matchLabels:
+	tier: frontend
+```
+
+In the ReplicaSet, `.spec.template.metadata.labels` must match `spec.selector`, or it will
+be rejected by the API.
+
+<blockquote class="note">
+  <div><strong>说明：</strong> For 2 ReplicaSets specifying the same <code>.spec.selector</code> but different <code>.spec.template.metadata.labels</code> and <code>.spec.template.spec</code> fields, each ReplicaSet ignores the Pods created by the other ReplicaSet.</div>
+</blockquote>
+
+ -->
+<h3 id="pod-选择器">Pod 选择器</h3>
+<p><code>.spec.selector</code> 字段是一个 <a href="/k8sDocs/concepts/overview/working-with-objects/labels/">标签选择器</a>
+<a href="#how-a-replicaset-works">之前</a>讨论过，这些标签用于识别潜在的捕获对象。 在之前示例中 <code>frontend.yaml</code>
+定义的选择器如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">matchLabels</span>:
+  <span style="color:#f92672">tier</span>: <span style="color:#ae81ff">frontend</span>
+</code></pre></div><p>在 <code>ReplicaSet</code> 中， <code>.spec.template.metadata.labels</code> 必须要与 <code>spec.selector</code> 匹配，否则会被 API 拒绝。
+<blockquote class="note">
+  <div><strong>说明：</strong> 如果两个 <code>ReplicaSet</code> 拥有相同的 <code>.spec.selector</code>， 但 <code>.spec.template.metadata.labels</code> 和 <code>.spec.template.spec</code> 字段不同
+则相互之间会忽略对方创建的 Pod</div>
+</blockquote>
+</p>
+<p>HOW？</p>
+<!--
+### Replicas
+
+You can specify how many Pods should run concurrently by setting `.spec.replicas`. The ReplicaSet will create/delete
+its Pods to match this number.
+
+If you do not specify `.spec.replicas`, then it defaults to 1.
+ -->
+<h3 id="副本数">副本数</h3>
+<p>用户可以通过 <code>.spec.replicas</code> 设置需要同时运行 Pod 的数量。 <code>ReplicaSet</code> 会创建/删除 它管理的 Pod 以达成该数量。
+如果在配置中没有 <code>.spec.replicas</code>， 则默认为 1.</p>
+<!--
+## Working with ReplicaSets
+
+### Deleting a ReplicaSet and its Pods
+
+To delete a ReplicaSet and all of its Pods, use [`kubectl delete`](/docs/reference/generated/kubectl/kubectl-commands#delete). The [Garbage collector](/docs/concepts/workloads/controllers/garbage-collection/) automatically deletes all of the dependent Pods by default.
+
+When using the REST API or the `client-go` library, you must set `propagationPolicy` to `Background` or `Foreground` in
+the -d option.
+For example:
+```shell
+kubectl proxy --port=8080
+curl -X DELETE  'localhost:8080/apis/apps/v1/namespaces/default/replicasets/frontend' \
+> -d '{"kind":"DeleteOptions","apiVersion":"v1","propagationPolicy":"Foreground"}' \
+> -H "Content-Type: application/json"
+```
+ -->
+<h2 id="replicaset-的使用">ReplicaSet 的使用</h2>
+<h3 id="删除一个-replicaset-及其-pod">删除一个 <code>ReplicaSet</code> 及其 Pod</h3>
+<p>要删除一个 <code>ReplicaSet</code> 及其所属的全部 Pod， 可以使用 <a href="/docs/reference/generated/kubectl/kubectl-commands#delete"><code>kubectl delete</code></a>
+<a href="/docs/concepts/workloads/controllers/garbage-collection/">垃圾回收</a> 默认会自动删除它所属的全部 Pod。</p>
+<p>当使用  <code>REST API</code> 或 <code>client-go</code> 库， 必须将 <code>propagationPolicy</code> 设置为 <code>Background</code> 或 <code>Foreground</code>
+例如:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl proxy --port<span style="color:#f92672">=</span><span style="color:#ae81ff">8080</span>
+curl -X DELETE  <span style="color:#e6db74">&#39;localhost:8080/apis/apps/v1/namespaces/default/replicasets/frontend&#39;</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>&gt; -d <span style="color:#e6db74">&#39;{&#34;kind&#34;:&#34;DeleteOptions&#34;,&#34;apiVersion&#34;:&#34;v1&#34;,&#34;propagationPolicy&#34;:&#34;Foreground&#34;}&#39;</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>&gt; -H <span style="color:#e6db74">&#34;Content-Type: application/json&#34;</span>
+</code></pre></div><!--
+### Deleting just a ReplicaSet
+
+You can delete a ReplicaSet without affecting any of its Pods using [`kubectl delete`](/docs/reference/generated/kubectl/kubectl-commands#delete) with the `--cascade=false` option.
+When using the REST API or the `client-go` library, you must set `propagationPolicy` to `Orphan`.
+For example:
+```shell
+kubectl proxy --port=8080
+curl -X DELETE  'localhost:8080/apis/apps/v1/namespaces/default/replicasets/frontend' \
+> -d '{"kind":"DeleteOptions","apiVersion":"v1","propagationPolicy":"Orphan"}' \
+> -H "Content-Type: application/json"
+```
+
+Once the original is deleted, you can create a new ReplicaSet to replace it.  As long
+as the old and new `.spec.selector` are the same, then the new one will adopt the old Pods.
+However, it will not make any effort to make existing Pods match a new, different pod template.
+To update Pods to a new spec in a controlled way, use a
+[Deployment](/docs/concepts/workloads/controllers/deployment/#creating-a-deployment), as ReplicaSets do not support a rolling update directly.
+ -->
+<h3 id="仅删除-replicaset">仅删除 <code>ReplicaSet</code></h3>
+<p>用户可以通过 <a href="/docs/reference/generated/kubectl/kubectl-commands#delete"><code>kubectl delete</code></a>
+加 <code>--cascade=false</code> 选项，实现仅删除 <code>ReplicaSet</code> 对象，而不删除其所属的 Pod。
+当使用  <code>REST API</code> 或 <code>client-go</code> 库， 必须将 <code>propagationPolicy</code> 设置为 <code>Orphan</code></p>
+<p>例如:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl proxy --port<span style="color:#f92672">=</span><span style="color:#ae81ff">8080</span>
+curl -X DELETE  <span style="color:#e6db74">&#39;localhost:8080/apis/apps/v1/namespaces/default/replicasets/frontend&#39;</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>&gt; -d <span style="color:#e6db74">&#39;{&#34;kind&#34;:&#34;DeleteOptions&#34;,&#34;apiVersion&#34;:&#34;v1&#34;,&#34;propagationPolicy&#34;:&#34;Orphan&#34;}&#39;</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>&gt; -H <span style="color:#e6db74">&#34;Content-Type: application/json&#34;</span>
+</code></pre></div><p>当原来的 <code>ReplicaSet</code> 就可以创建一个新的来替代它。 新创建的 ReplicaSet 的 <code>.spec.selector</code> 需要与原来的一样， 这样它就能接管这些 Pod。
+但是它不会让旧的 Pod 使用新的模板。
+而想要以控制器方式更新 Pod 的模板，需要使用 <a href="/k8sDocs/concepts/workloads/controllers/deployment/#creating-a-deployment">Deployment</a>
+因为 <code>ReplicaSet</code> 不支持直接的滚动更新。</p>
+<!--
+### Isolating Pods from a ReplicaSet
+
+You can remove Pods from a ReplicaSet by changing their labels. This technique may be used to remove Pods
+from service for debugging, data recovery, etc. Pods that are removed in this way will be replaced automatically (
+assuming that the number of replicas is not also changed).
+ -->
+<h3 id="将-pod-从-replicaset-剥离出来">将 Pod 从 <code>ReplicaSet</code> 剥离出来</h3>
+<p>用户可以通过修改标签的方式将 Pod 从 <code>ReplicaSet</code> 中移出， 也可以通过这种方式将 Pod 从其它的服务中移出后用作调度，数据恢复等。
+用这种方式移出的 Pod 会自动被替代(如果副本数没有同步修改)</p>
+<!--
+### Scaling a ReplicaSet
+
+A ReplicaSet can be easily scaled up or down by simply updating the `.spec.replicas` field. The ReplicaSet controller
+ensures that a desired number of Pods with a matching label selector are available and operational.
+ -->
+<h3 id="replicaset-容量伸缩"><code>ReplicaSet</code> 容量伸缩</h3>
+<p><code>ReplicaSet</code> 可以通过修改 <code>.spec.replicas</code> 字段来实现容量的扩大或缩小。 <code>ReplicaSet</code> 控制器会保证 所属的 Pod 的数量与预期的相同</p>
+<!--
+### ReplicaSet as a Horizontal Pod Autoscaler Target
+
+A ReplicaSet can also be a target for
+[Horizontal Pod Autoscalers (HPA)](/docs/tasks/run-application/horizontal-pod-autoscale/). That is,
+a ReplicaSet can be auto-scaled by an HPA. Here is an example HPA targeting
+the ReplicaSet we created in the previous example.
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="controllershpa-rsyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/controllers/hpa-rs.yaml" download="controllers/hpa-rs.yaml">
+                    <code>controllers/hpa-rs.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('controllershpa-rsyaml')" title="Copy controllers/hpa-rs.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">autoscaling/v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">HorizontalPodAutoscaler</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">frontend-scaler</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">scaleTargetRef</span>:
+    <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ReplicaSet</span>
+    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">frontend</span>
+  <span style="color:#f92672">minReplicas</span>: <span style="color:#ae81ff">3</span>
+  <span style="color:#f92672">maxReplicas</span>: <span style="color:#ae81ff">10</span>
+  <span style="color:#f92672">targetCPUUtilizationPercentage</span>: <span style="color:#ae81ff">50</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+Saving this manifest into `hpa-rs.yaml` and submitting it to a Kubernetes cluster should
+create the defined HPA that autoscales the target ReplicaSet depending on the CPU usage
+of the replicated Pods.
+
+```shell
+kubectl apply -f https://k8s.io/examples/controllers/hpa-rs.yaml
+```
+
+Alternatively, you can use the `kubectl autoscale` command to accomplish the same
+(and it's easier!)
+
+```shell
+kubectl autoscale rs frontend --max=10 --min=3 --cpu-percent=50
+```
+ -->
+<h3 id="replicaset-作为-pod-水平自动扩展目标"><code>ReplicaSet</code> 作为 Pod 水平自动扩展目标</h3>
+<p><code>ReplicaSet</code> 也可作为 <a href="/k8sDocs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscalers (HPA)</a>
+的目标。 也就是 <code>ReplicaSet</code> 可以通过一个 HPA 来自动伸缩。 以下为一个 <code>ReplicaSet</code> 为目标的 HPA 的示例:</p>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="controllershpa-rsyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/controllers/hpa-rs.yaml" download="controllers/hpa-rs.yaml">
+                    <code>controllers/hpa-rs.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('controllershpa-rsyaml')" title="Copy controllers/hpa-rs.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">autoscaling/v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">HorizontalPodAutoscaler</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">frontend-scaler</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">scaleTargetRef</span>:
+    <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ReplicaSet</span>
+    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">frontend</span>
+  <span style="color:#f92672">minReplicas</span>: <span style="color:#ae81ff">3</span>
+  <span style="color:#f92672">maxReplicas</span>: <span style="color:#ae81ff">10</span>
+  <span style="color:#f92672">targetCPUUtilizationPercentage</span>: <span style="color:#ae81ff">50</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<p>将配置文件内容存入 <code>hpa-rs.yaml</code> 并提交到 k8s 集群， 会创建一个 HPA，它会根据所属 Pod CPU使用自动伸缩目标 <code>ReplicaSet</code> 的容量</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl apply -f hpa-rs.yaml
+</code></pre></div><p>相应的，也可能通过 <code>kubectl autoscale</code> 达到相同的效果(更容易)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl autoscale rs frontend --max<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span> --min<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span> --cpu-percent<span style="color:#f92672">=</span><span style="color:#ae81ff">50</span>
+</code></pre></div><!--
+## Alternatives to ReplicaSet
+
+### Deployment (recommended)
+
+[`Deployment`](/docs/concepts/workloads/controllers/deployment/) is an object which can own ReplicaSets and update
+them and their Pods via declarative, server-side rolling updates.
+While ReplicaSets can be used independently, today they're  mainly used by Deployments as a mechanism to orchestrate Pod
+creation, deletion and updates. When you use Deployments you don’t have to worry about managing the ReplicaSets that
+they create. Deployments own and manage their ReplicaSets.
+As such, it is recommended to use Deployments when you want ReplicaSets.
+ -->
+<h2 id="replicaset-替代方案"><code>ReplicaSet</code> 替代方案</h2>
+<h3 id="deployment-推荐">Deployment (推荐)</h3>
+<p><a href="/k8sDocs/concepts/workloads/controllers/deployment/"><code>Deployment</code></a> 对象可以包含 <code>ReplicaSet</code> 并且可以通过声明方式更新自身及所属的 Pod，
+服务端滚动更新。 虽然 ReplicaSet 可以独立使用，但是现在主要是使用 Deployment 作为组织 Pod 创建，删除，更新的方式。
+当用户使用 <code>Deployment</code> 不需要关心它所创建的 <code>ReplicaSet</code>， <code>Deployment</code> 会管理所属的 <code>ReplicaSet</code>
+因此用户在想要使用 <code>ReplicaSet</code> 时推荐使用 <code>Deployment</code> 代替。</p>
+<!--
+### Bare Pods
+
+Unlike the case where a user directly created Pods, a ReplicaSet replaces Pods that are deleted or terminated for any reason, such as in the case of node failure or disruptive node maintenance, such as a kernel upgrade. For this reason, we recommend that you use a ReplicaSet even if your application requires only a single Pod. Think of it similarly to a process supervisor, only it supervises multiple Pods across multiple nodes instead of individual processes on a single node. A ReplicaSet delegates local container restarts to some agent on the node (for example, Kubelet or Docker).
+ -->
+<h3 id="让-pod-裸奔">让 Pod 裸奔</h3>
+<p>与用户直接创建 Pod 不同， <code>ReplicaSet</code> 在 Pod 因为某些原因被删除或终止时会创建替代的 Pod， 这些原因可能是 节点挂了，节点因维护如升级内格而引起的计划内故障。
+对于这些原因，我们建议用户使用 <code>ReplicaSet</code> 即便这个应用只需要一个 Pod。 可以把它认为是一个进程监控， 只是它可以监控多个节点上的多个 Pod，而不是一个节点上的一个进程。
+<code>ReplicaSet</code> 会委托节点上的代理(如 kubelet 或 docker)来实现对本地容器的重启。</p>
+<!--
+### Job
+
+Use a [`Job`](/docs/concepts/jobs/run-to-completion-finite-workloads/) instead of a ReplicaSet for Pods that are expected to terminate on their own
+(that is, batch jobs).
+ -->
+<h3 id="job">Job</h3>
+<p>在运行那会在有限时间内自己运行结束后自动终止的 Pod(批处理任务)，请使用 <a href="/k8sDocs/concepts/jobs/run-to-completion-finite-workloads/"><code>Job</code></a>,就不要用 <code>ReplicaSet</code>了</p>
+<!--
+### DaemonSet
+
+Use a [`DaemonSet`](/docs/concepts/workloads/controllers/daemonset/) instead of a ReplicaSet for Pods that provide a
+machine-level function, such as machine monitoring or machine logging.  These Pods have a lifetime that is tied
+to a machine lifetime: the Pod needs to be running on the machine before other Pods start, and are
+safe to terminate when the machine is otherwise ready to be rebooted/shutdown.
+ -->
+<h3 id="daemonset">DaemonSet</h3>
+<p>当 Pod 需要使用到机器级别的功能，如机器监控或机器日志时，使用 <a href="/k8sDocs/concepts/workloads/controllers/daemonset/"><code>DaemonSet</code></a>
+因为这些 Pod 的生存期会与对应机器的生存期绑定在一起: 这些 Pod 需要在机器上其它 Pod 运行之前就在节点上运行， 只有在机器准备重启或关机时才能
+安全的终止。</p>
+<!--
+### ReplicationController
+
+ReplicaSets are the successors to [_ReplicationControllers_](/docs/concepts/workloads/controllers/replicationcontroller/).
+The two serve the same purpose, and behave similarly, except that a ReplicationController does not support set-based
+selector requirements as described in the [labels user guide](/docs/concepts/overview/working-with-objects/labels/#label-selectors).
+As such, ReplicaSets are preferred over ReplicationControllers
+ -->
+<h3 id="replicationcontroller">ReplicationController</h3>
+<p>ReplicaSet 是  <a href="/k8sDocs/concepts/workloads/controllers/replicationcontroller/"><em>ReplicationControllers</em></a> 的继任者。
+它们两个可以达成相同的目的，而且行为方式也相似， 除了 <code>ReplicationController</code> 不支持像
+<a href="/k8sDocs/concepts/overview/working-with-objects/labels/#label-selectors">标签使用</a> 中介绍的基于集合的选择器。
+因此相对于 ReplicationControllers 推荐使用 <code>ReplicaSet</code></p>
+
+
+
+            
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 August 13, 2020
+</div>
+            
+          </main>
+          <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
+            
+
+
+
+
+
+
+
+
+
+
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#how-a-replicaset-works"><code>ReplicaSet</code> 是怎么工作的</a></li>
+    <li><a href="#什么时候应该用-replicaset">什么时候应该用 <code>ReplicaSet</code></a></li>
+    <li><a href="#示例">示例</a></li>
+    <li><a href="#不是自己模板定义的-pod-的捕获">不是自己模板定义的 Pod 的捕获</a></li>
+    <li><a href="#编写-replicaset-定义清单">编写 <code>ReplicaSet</code> 定义清单</a>
+      <ul>
+        <li><a href="#pod-模板">Pod 模板</a></li>
+        <li><a href="#pod-选择器">Pod 选择器</a></li>
+        <li><a href="#副本数">副本数</a></li>
+      </ul>
+    </li>
+    <li><a href="#replicaset-的使用">ReplicaSet 的使用</a>
+      <ul>
+        <li><a href="#删除一个-replicaset-及其-pod">删除一个 <code>ReplicaSet</code> 及其 Pod</a></li>
+        <li><a href="#仅删除-replicaset">仅删除 <code>ReplicaSet</code></a></li>
+        <li><a href="#将-pod-从-replicaset-剥离出来">将 Pod 从 <code>ReplicaSet</code> 剥离出来</a></li>
+        <li><a href="#replicaset-容量伸缩"><code>ReplicaSet</code> 容量伸缩</a></li>
+        <li><a href="#replicaset-作为-pod-水平自动扩展目标"><code>ReplicaSet</code> 作为 Pod 水平自动扩展目标</a></li>
+      </ul>
+    </li>
+    <li><a href="#replicaset-替代方案"><code>ReplicaSet</code> 替代方案</a>
+      <ul>
+        <li><a href="#deployment-推荐">Deployment (推荐)</a></li>
+        <li><a href="#让-pod-裸奔">让 Pod 裸奔</a></li>
+        <li><a href="#job">Job</a></li>
+        <li><a href="#daemonset">DaemonSet</a></li>
+        <li><a href="#replicationcontroller">ReplicationController</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+
+
+          </div>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        
+        
+	
+		
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script src="/k8sDocs/js/main.min.446a2e681f8167f44314691b77368dd561bf0b67514487f3f0fd999316c6da4a.js" integrity="sha256-RGouaB&#43;BZ/RDFGkbdzaN1WG/C2dRRIfz8P2ZkxbG2ko=" crossorigin="anonymous"></script>
+
+
+
+
+  </body>
+</html>

@@ -1,13 +1,17 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Release notes and version skew on Kubernetes</title>
+    <title>Kubernetes – Release notes and version skew</title>
     <link>https://lostsquirrel.github.io/k8sDocs/setup/00-release/</link>
     <description>Recent content in Release notes and version skew on Kubernetes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     
-	<atom:link href="https://lostsquirrel.github.io/k8sDocs/setup/00-release/index.xml" rel="self" type="application/rss+xml" />
+	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/setup/00-release/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
     
     
   </channel>

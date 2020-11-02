@@ -1,0 +1,1014 @@
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.75.1" />
+
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
+<link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
+<link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/images/kubernetes-192x192.png">
+<title>镜像 | Kubernetes</title><meta property="og:title" content="镜像" />
+<meta property="og:description" content="一个容器镜像就是构建应用的二进制数据和应用所以需要的依赖。 容器镜像是一个可独立运行的可执行软件包，并定义了清楚的运行环境。 通常是用户创建一个" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/00-images/" />
+<meta property="article:published_time" content="2020-07-24T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-07-19T00:00:00+00:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="镜像">
+<meta itemprop="description" content="一个容器镜像就是构建应用的二进制数据和应用所以需要的依赖。 容器镜像是一个可独立运行的可执行软件包，并定义了清楚的运行环境。 通常是用户创建一个">
+<meta itemprop="datePublished" content="2020-07-24T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-07-19T00:00:00+00:00" />
+<meta itemprop="wordCount" content="2737">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="镜像"/>
+<meta name="twitter:description" content="一个容器镜像就是构建应用的二进制数据和应用所以需要的依赖。 容器镜像是一个可独立运行的可执行软件包，并定义了清楚的运行环境。 通常是用户创建一个"/>
+
+
+
+
+
+<link rel="preload" href="/k8sDocs/scss/main.min.ef3a36e0df00fd067f010634c3743a5f97c767d3027d208bdaa58808c66c9779.css" as="style">
+<link href="/k8sDocs/scss/main.min.ef3a36e0df00fd067f010634c3743a5f97c767d3027d208bdaa58808c66c9779.css" rel="stylesheet" integrity="">
+
+
+<script src="/k8sDocs/js/jquery-3.5.1.min.js" ></script>
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "url": "https://kubernetes.io",
+    "logo": "https://kubernetes.io/images/favicon.png",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://lostsquirrel.github.io/k8sDocs/search/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+
+  }
+</script>
+<meta name="theme-color" content="#326ce5">
+
+
+
+
+<link rel="stylesheet" href=/k8sDocs/css/base_fonts.css>
+
+<link rel="stylesheet" href="/k8sDocs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/k8sDocs/css/callouts.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
+
+
+
+<meta name="description" content="一个容器镜像就是构建应用的二进制数据和应用所以需要的依赖。 容器镜像是一个可独立运行的可执行软件包，并定义了清楚的运行环境。 通常是用户创建一个">
+<meta property="og:description" content="一个容器镜像就是构建应用的二进制数据和应用所以需要的依赖。 容器镜像是一个可独立运行的可执行软件包，并定义了清楚的运行环境。 通常是用户创建一个">
+<meta name="twitter:description" content="一个容器镜像就是构建应用的二进制数据和应用所以需要的依赖。 容器镜像是一个可独立运行的可执行软件包，并定义了清楚的运行环境。 通常是用户创建一个">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/00-images/">
+<meta property="og:title" content="镜像">
+<meta name="twitter:title" content="镜像">
+<meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
+
+<meta name="twitter:image:alt" content="Kubernetes">
+
+<meta property="og:image" content="/k8sDocs/images/kubernetes-horizontal-color.png">
+
+<meta property="og:type" content="article">
+
+
+
+<script src="/k8sDocs/js/script.js"></script>
+
+
+    <title>镜像 | Kubernetes</title>
+  </head>
+  <body class="td-page td-documentation">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
+        <a class="navbar-brand" href="/k8sDocs/"></a>
+	<div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
+
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			
+			
+			<li class="nav-item mr-2 mb-lg-0">
+				
+				<a class="nav-link active" href="/k8sDocs/docs/" >Documentation</span></a>
+			</li>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</ul>
+	</div>
+  
+
+</nav>
+
+      
+      <div class="header-filler"></div>
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-md-nowrap">
+          <div class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+
+
+
+
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  
+  <form class="td-sidebar__search d-flex align-items-center d-lg-none">
+    
+
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  
+  <nav class="collapse td-sidebar-nav" id="td-section-nav">
+    
+    
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Kubernetes Documentation</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocs">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">概念(Concepts)</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconcepts">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">概览</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverview">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview00-what-is-k8s" href="/k8sDocs/docs/concepts/overview/00-what-is-k8s/">k8s 是什么</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview01-components" href="/k8sDocs/docs/concepts/overview/01-components/">k8s 组件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview02-k8s-api" href="/k8sDocs/docs/concepts/overview/02-k8s-api/">k8s API 说明</a>
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/working-with-objects/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">k8s 对象管理</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverviewworking-with-objects">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects00-kubernetes-objects" href="/k8sDocs/docs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectsnames" href="/k8sDocs/docs/concepts/overview/working-with-objects/names/">对象命令与ID</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects02-namespace" href="/k8sDocs/docs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectslabels" href="/k8sDocs/docs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects04-annotation" href="/k8sDocs/docs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects05-field-selectors" href="/k8sDocs/docs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects06-common-labels" href="/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/architecture/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">集群架构</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsarchitecture">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturenodes" href="/k8sDocs/docs/concepts/architecture/nodes/">节点</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontrol-plane-node-communication" href="/k8sDocs/docs/concepts/architecture/control-plane-node-communication/">控制中心与节点的通信</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontroller" href="/k8sDocs/docs/concepts/architecture/controller/">控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecloud-controller" href="/k8sDocs/docs/concepts/architecture/cloud-controller/">Cloud Controller Manager</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/containers/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">容器</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconceptscontainers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptscontainers00-images" href="/k8sDocs/docs/concepts/containers/00-images/">镜像</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers01-container-environment" href="/k8sDocs/docs/concepts/containers/01-container-environment/">容器环境</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers02-runtime-class" href="/k8sDocs/docs/concepts/containers/02-runtime-class/">Runtime Class</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainerscontainer-lifecycle-hooks" href="/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/">容器生命周期钩子</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">工作负载(Workload)</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloads">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/pods/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Pod</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloadspods">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-lifecycle" href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsinit-containers" href="/k8sDocs/docs/concepts/workloads/pods/init-containers/">初始化容器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-topology-spread-constraints" href="/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑分布约束条件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspodpreset" href="/k8sDocs/docs/concepts/workloads/pods/podpreset/">Pod 预设信息</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsdisruptions" href="/k8sDocs/docs/concepts/workloads/pods/disruptions/">Disruptions</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsephemeral-containers" href="/k8sDocs/docs/concepts/workloads/pods/ephemeral-containers/">临时容器</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/controllers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">控制器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloadscontrollers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdeployment" href="/k8sDocs/docs/concepts/workloads/controllers/deployment/">Deployment</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicaset" href="/k8sDocs/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersstatefulset" href="/k8sDocs/docs/concepts/workloads/controllers/statefulset/">StatefulSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdaemonset" href="/k8sDocs/docs/concepts/workloads/controllers/daemonset/">DaemonSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersjob" href="/k8sDocs/docs/concepts/workloads/controllers/job/">Job</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersgarbage-collection" href="/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/">垃圾回收</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersttlafterfinished" href="/k8sDocs/docs/concepts/workloads/controllers/ttlafterfinished/">用于已完成资源的 TTL 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollerscron-jobs" href="/k8sDocs/docs/concepts/workloads/controllers/cron-jobs/">CronJob</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicationcontroller" href="/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/services-networking/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Service, 负载均衡, 网络</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsservices-networking">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice" href="/k8sDocs/docs/concepts/services-networking/service/">Service</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice-topology" href="/k8sDocs/docs/concepts/services-networking/service-topology/">Service Topology</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdns-pod-service" href="/k8sDocs/docs/concepts/services-networking/dns-pod-service/">Service 和 Pod 的 DNS</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingconnect-applications-service" href="/k8sDocs/docs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingendpoint-slices" href="/k8sDocs/docs/concepts/services-networking/endpoint-slices/">EndpointSlice</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress" href="/k8sDocs/docs/concepts/services-networking/ingress/">Ingress</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress-controllers" href="/k8sDocs/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingnetwork-policies" href="/k8sDocs/docs/concepts/services-networking/network-policies/">网络策略</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingadd-entries-to-pod-etc-hosts-with-host-aliases" href="/k8sDocs/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdual-stack" href="/k8sDocs/docs/concepts/services-networking/dual-stack/">IPv4/IPv6 双栈</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsstorage">
+      
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+  </nav>
+</div>
+
+
+
+
+          </div>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	<ol class="breadcrumb spb-1">
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/">概念(Concepts)</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/">容器</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/00-images/">镜像</a>
+</li>
+
+	</ol>
+</nav	>
+
+            
+              
+            
+              
+    <div class="td-content">
+    
+<p>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/containers/00-images.md" id="editPageButton" target="_blank" data-proofer-ignore>
+    Edit This Page
+  </a>
+</p>
+
+  <h1>镜像</h1>
+  
+  
+
+<!-- overview -->
+<p>一个容器镜像就是构建应用的二进制数据和应用所以需要的依赖。 容器镜像是一个可独立运行的可执行软件包，并定义了清楚的运行环境。
+通常是用户创建一个应用的容器镜像，推送到镜像仓库，在 Pod 中引用这个镜像。</p>
+<p>本文介绍容器镜像的主要概念</p>
+<!-- body -->
+<h2 id="镜像名称">镜像名称</h2>
+<p>镜像的名称通常是长成这些个样子的 <code>pause</code>, <code>example/mycontainer</code>, <code>kube-apiserver</code>。 镜像名也可以带上镜像仓库的主机名(自建或第三方镜像仓库默认都要带上)，如：<code>fictional.registry.example/imagename</code>。也可能有端口号，如: <code>fictional.registry.example:10443/imagename</code></p>
+<p>如果镜像名称上没有镜像仓库的主机名， 则 k8s 认为使用的是 Docker 公共镜像仓库。</p>
+<p>在镜像名称的后面通常还会有一个标签(<code>tag</code>)(就和 <code>docker</code> 与 <code>podman</code> 命令用的的一样)。 标签用于区分同一系列镜像的不同版本。</p>
+<p>标签名的命名规范为： 大小写字母，数字，下划线(<code>_</code>)，点(<code>.</code>)中划线(<code>-</code>)，但分隔符(<code>_</code>,<code>.</code>,<code>-</code>)有使用限制
+如果镜像名称后没有标签，则默认使用 <code>latest</code> 作为标签。</p>
+<p>{{ <warning> }}
+在生产环境部署中尽量避免使用 latest 标签。 这样很难跟踪当前运行的是哪个版本，要做版本回退就更难了。
+所以建议使用有含意的标签，如: <code>v1.42.0</code>
+{{ </warning> }}</p>
+<h2 id="镜像更新策略">镜像更新策略</h2>
+<p>默认的更新策略为 <code>IfNotPresent</code>, 就是让 kubelet 在找不到镜像时才从仓库拉取。 如果想要每次都强制拉取，则可以通过以下任意一种方式实现：</p>
+<ul>
+<li>将容器 <code>imagePullPolicy</code> 的值设置为 <code>Always</code></li>
+<li>不设置 <code>imagePullPolicy</code> 并让镜像使用 <code>latest</code> 标签</li>
+<li>不设置 <code>imagePullPolicy</code> 并镜像也不设置标签</li>
+<li>打开  <a href="../../../reference/03-access-authn-authz/04-admission-controllers/#alwayspullimages">AlwaysPullImages</a> admission controller</li>
+</ul>
+<p>如果配置了 <code>imagePullPolicy</code> 但没有设置值，则默认为 <code>Always</code></p>
+<h2 id="带清单manifest的多架构镜像">带清单(Manifest)的多架构镜像</h2>
+<p>镜像仓库在提供二进制镜像的同时也可以提供 <a href="https://github.com/opencontainers/image-spec/blob/master/manifest.md">容器镜像清单</a>, 这个清单中列举了不同架构的镜像引用层。这样虽然镜像只有一个名字(如: <code>pause</code>, <code>example/mycontainer</code>, <code>kube-apiserve</code>), 但不同的操作系统架构可以拉取到对应架构的镜像。</p>
+<p>在 k8s 中容器镜像名称是带有后缀 <code>-$(ARCH)</code>的。 为了向后兼容， 请为旧的镜像添加后缀。 比如生成包含所有架构清单的镜像叫 <code>pause</code>，<code>pause-amd64</code> 就是为向后兼容旧的配置或可能存在于YAML配置文件中带后续硬编码镜像名</p>
+<h2 id="使用私有仓库">使用私有仓库</h2>
+<p>从私有仓库拉取镜像时一般都需要提供凭据。
+以下为提供凭据的几种方式:</p>
+<ul>
+<li>
+<p>在节点上配置仓库认证</p>
+<ul>
+<li>所有的 Pod 都对仓库有全部访问权限</li>
+<li>需要集群管理员对节点进行配置</li>
+</ul>
+</li>
+<li>
+<p>预先下载镜像</p>
+<ul>
+<li>所有的 Pod 可以使用节点是缓存的镜像</li>
+<li>需要在节点上以 root 用户配置</li>
+</ul>
+</li>
+<li>
+<p>基于提供商或本地插件</p>
+<ul>
+<li>如果使用自定义节点配置， 用户(或云提供商)可以自己在节点上实现向镜像仓库的认证</li>
+</ul>
+</li>
+</ul>
+<p>以下为对这些认证方式更详细的说明</p>
+<h3 id="在节点上配置仓库认证">在节点上配置仓库认证</h3>
+<p>如果节点上运行的是 Docker 用户可以通过配置 Docker 运行时向私有仓库进行认证
+这种方式适用于用于能近控制节点配置</p>
+<p>{{ <note> }}
+k8s 只支持 Docker 配置的 <code>auths</code> 和 <code>HttpHeaders</code> 部分， Docker 凭据帮助工具(<code>credHelpers</code> 或 <code>credsStore</code>)是不支持的
+{{ </note> }}</p>
+<p>Docker 会将私有仓库的凭据存储在 <code>$HOME/.dockercfg</code> 或 <code>$HOME/.docker/config.json</code> 文件中，kubelet 在拉取镜像时也可以从以下列表中搜寻凭据配置文件:</p>
+<ul>
+<li><code>{--root-dir:-/var/lib/kubelet}/config.json</code></li>
+<li><code>{cwd of kubelet}/config.json</code></li>
+<li><code>${HOME}/.docker/config.json</code></li>
+<li><code>/.docker/config.json</code></li>
+<li><code>{--root-dir:-/var/lib/kubelet}/.dockercfg</code></li>
+<li><code>{cwd of kubelet}/.dockercfg</code></li>
+<li><code>${HOME}/.dockercfg</code></li>
+<li><code>/.dockercfg</code>
+{{ <note> }}
+用户可以在 kubelet 进行的环境变量上显示地设置 HOME=/root
+{{ </note> }}</li>
+</ul>
+<p>以下为为节点设置私有仓库凭据的推荐方式。 本示例运行在控制机/笔记本上：</p>
+<ol>
+<li>为每一个想要使用的凭据执行命令 <code>docker login [server]</code>，该命令会更本机的 <code>$HOME/.docker/config.json</code> 文件</li>
+<li>在文本编辑器中查看 <code>$HOME/.docker/config.json</code> 文件，保证其中只包含需要使用到的凭据。</li>
+<li>获取节点列表; 例如:
+<ul>
+<li>获取节点名称: <code>nodes=$( kubectl get nodes -o jsonpath='{range.items[*].metadata}{.name} {end}' )</code></li>
+<li>获取节点IP: <code>nodes=$( kubectl get nodes -o jsonpath='{range .items[*].status.addresses[?(@.type==&quot;ExternalIP&quot;)]}{.address} {end}' )</code></li>
+</ul>
+</li>
+<li>将本地 <code>.docker/config.json</code> 文件拷贝到以上列举的节点的凭据搜索目录中的一个
+<ul>
+<li>例如: <code>for n in $nodes; do scp ~/.docker/config.json root@&quot;$n&quot;:/var/lib/kubelet/config.json; done</code></li>
+</ul>
+</li>
+</ol>
+<p>{{ <note> }}
+在生成环境集群中，使用配置管理工具来让配置拷贝到所有需要的节点上
+{{ </note> }}</p>
+<p>要验证配置是否正确，则使用私有仓库中的镜像来创建一个Pod，如：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl apply -f - <span style="color:#e6db74">&lt;&lt;EOF
+</span><span style="color:#e6db74">apiVersion: v1
+</span><span style="color:#e6db74">kind: Pod
+</span><span style="color:#e6db74">metadata:
+</span><span style="color:#e6db74">  name: private-image-test-1
+</span><span style="color:#e6db74">spec:
+</span><span style="color:#e6db74">  containers:
+</span><span style="color:#e6db74">    - name: uses-private-image
+</span><span style="color:#e6db74">      image: $PRIVATE_IMAGE_NAME
+</span><span style="color:#e6db74">      imagePullPolicy: Always
+</span><span style="color:#e6db74">      command: [ &#34;echo&#34;, &#34;SUCCESS&#34; ]
+</span><span style="color:#e6db74">EOF</span>
+</code></pre></div><p>如果所有配置正确，则在一会之后可以通过命令</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl logs private-image-test-1
+</code></pre></div><p>输出</p>
+<pre><code>SUCCESS
+</code></pre><p>如果怀疑命令失败，则执行命令:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl describe pods/private-image-test-1 | grep <span style="color:#e6db74">&#39;Failed&#39;</span>
+</code></pre></div><p>如果有失败则输出类似如下</p>
+<pre><code> Fri, 26 Jun 2015 15:36:13 -0700    Fri, 26 Jun 2015 15:39:13 -0700    19    {kubelet node-i2hq}    spec.containers{uses-private-image}    failed        Failed to pull image &quot;user/privaterepo:v1&quot;: Error: image user/privaterepo:v1 not found
+</code></pre><p>必须要保证所有节点都是使用的同一个 <code>.docker/config.json</code> 文件， 否则 Pod 可能在某些节点成功，某些节点则失败。 例如，在使用节点自动扩容时， 每个实例模板都需要包含 <code>.docker/config.json</code> 或挂载包含该文件的盘
+当私有仓库的凭据被添加到<code>.docker/config.json</code>后 所有的 Pod 都可以对其中配置的任意私有仓库中拉取镜像。</p>
+<h3 id="预先拉取镜像">预先拉取镜像</h3>
+<p>{{ <note> }}
+这种方式适用于用于用户有权限对节点配置的情况，而且不适用于节点由云提供商管理且能够自动扩容的情况
+{{ </note> }}</p>
+<p>默认情况下， kubelet 会尝试从指定镜像仓库拉取每一个镜像， 但是在容器 imagePullPolicy 属性的值被设置为 <code>IfNotPresent</code> 或 <code>Never</code>时，则会使用本地镜像。 (preferentially or exclusively, respectively).</p>
+<p>如果想要用预先摘取的方式取代镜像仓库认证， 需要保证集群中所有节点上预先摘取到的所有镜像都必须一致。
+这种方式可用于预先取镜像来达到提速的目的或代替私有镜像仓库认证。
+所有的 Pod 都有权访问任意预先拉取的镜像</p>
+<h3 id="在-pod-上设置-imagepullsecrets">在 Pod 上设置 <code>ImagePullSecrets</code></h3>
+<p>{{ <note> }}
+这是使用私有仓库镜像的推荐方式
+{{ </note> }}</p>
+<p>k8s 支持在 Pod 上配置私有镜像仓库凭据</p>
+<h4 id="创建带-docker-配置的-secret">创建带 Docker 配置的 Secret</h4>
+<p>替换命令中的大写值为对应的配置，并运行此命令:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">kubectl create secret docker-registry &lt;name&gt; --docker-server<span style="color:#f92672">=</span>DOCKER_REGISTRY_SERVER --docker-username<span style="color:#f92672">=</span>DOCKER_USER --docker-password<span style="color:#f92672">=</span>DOCKER_PASSWORD --docker-email<span style="color:#f92672">=</span>DOCKER_EMAIL
+</code></pre></div><p>如果已经有 Docker 凭据，可以不用以上命令，直接使用凭据文件创建对应的 Secret.
+具体配置见<a href="../../../3-tasks/02-configure-pod-container/11-pull-image-private-registry/#registry-secret-existing-credentials">这里</a>
+这种配置方式尤其适用有多个私有镜像仓库的情况，因为 <code>kubectl create secret docker-registry</code> 创建 Secret 的方式只适用于单个私有镜像仓库的情况。
+{{ <note> }}
+Pod 只能引用当前命名空间内的 <code>Secret</code> , 因此需要在每个命名空间都需要创建 <code>Secret</code>
+{{ </note> }}</p>
+<h3 id="在-pod-中使用-imagepullsecrets">在 Pod 中使用 <code>imagePullSecrets</code></h3>
+<p>当 <code>Secret</code> 创建好后，可以配置 <code>imagePullSecrets</code> 使用该 <code>Secret</code>, 例如：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">cat <span style="color:#e6db74">&lt;&lt;EOF &gt; pod.yaml
+</span><span style="color:#e6db74">apiVersion: v1
+</span><span style="color:#e6db74">kind: Pod
+</span><span style="color:#e6db74">metadata:
+</span><span style="color:#e6db74">  name: foo
+</span><span style="color:#e6db74">  namespace: awesomeapps
+</span><span style="color:#e6db74">spec:
+</span><span style="color:#e6db74">  containers:
+</span><span style="color:#e6db74">    - name: foo
+</span><span style="color:#e6db74">      image: janedoe/awesomeapp:v1
+</span><span style="color:#e6db74">  imagePullSecrets:
+</span><span style="color:#e6db74">    - name: myregistrykey
+</span><span style="color:#e6db74">EOF</span>
+
+cat <span style="color:#e6db74">&lt;&lt;EOF &gt;&gt; ./kustomization.yaml
+</span><span style="color:#e6db74">resources:
+</span><span style="color:#e6db74">- pod.yaml
+</span><span style="color:#e6db74">EOF</span>
+</code></pre></div><p>需要在每个用到私有镜像仓库的 Pod 都需要该配置。
+也可以在 <code>ServiceAccount</code> 设置 <code>imagePullSecrets</code> 可以使用对应的 Pod 自动添加该属性
+在 <code>ServiceAccount</code> 设置 <code>imagePullSecrets</code>具体见<a href="../../../3-tasks/02-configure-pod-container/10-configure-service-account/#add-imagepullsecrets-to-a-service-account">这里</a>
+这个配置可与节点上的 <code>.docker/config.json</code> 配合使用，两个配置的凭据全合并到一起。</p>
+<h2 id="应用场景">应用场景</h2>
+<p>配置私有仓库镜像的方式有多种，以下为常用应用场景和推荐方案。</p>
+<ol>
+<li>集群只使用开放(如：开源)镜像， 不需要私有仓库。
+- 使用 Docker Hub 上的公有镜像
+<ul>
+<li>不需要配置</li>
+<li>一些云提供商会自动缓存或镜像开放镜像， 可以提高可用性并减少拉取镜像的时间</li>
+</ul>
+</li>
+<li>集群使用到的镜像对外私有，对内公开
+- 使用自建私有镜像仓库
+<ul>
+<li>可以托管在 Docker Hub 或其它地方</li>
+<li>使用上面介结的在每个节点配置 <code>.docker/config.json</code> 的方式
+- 在内网运行一个开放的内部私有镜像仓库</li>
+<li>不需要在 k8s 上做配置
+- 使用一个有访问控制的镜像仓库</li>
+<li>在节点自动扩容的场景下会比手动更佳
+- 在节点配置不方便的集群中使用 <code>imagePullSecrets</code></li>
+</ul>
+</li>
+<li>镜像仓库需要更严格的访问控制
+- 需要打开  <a href="../../../reference/03-access-authn-authz/04-admission-controllers/#alwayspullimages">AlwaysPullImages</a> admission controller， 否则所有 Pod 默认对所有镜像有访问权限
+- 将敏感数据放的 Secret 中， 还是是打在镜像中</li>
+<li>多租户集群，每个租户需要独立的私有镜像仓库
+- 需要打开  <a href="../../../reference/03-access-authn-authz/04-admission-controllers/#alwayspullimages">AlwaysPullImages</a> admission controller， 否则所有租户的所有 Pod 默认对所有镜像有访问权限
+- 私有镜像仓库需要有认证系统
+- 为每个租户生成私有镜像仓库凭据，并在每个租户的命名空间中创建对应 Secret.
+- 各命名空间的租户将名称的 Secret 配置到 <code>imagePullSecrets</code></li>
+</ol>
+<p>如果用到的多个私有镜像仓库， 可以对每个仓库创建一个 Secret, kubelet 会将所有 imagePullSecrets 合并到一个虚拟的 <code>.docker/config.json</code> 中。</p>
+
+
+
+            
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 July 19, 2020
+</div>
+            
+          </main>
+          <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
+            
+
+
+
+
+
+
+
+
+
+
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#镜像名称">镜像名称</a></li>
+    <li><a href="#镜像更新策略">镜像更新策略</a></li>
+    <li><a href="#带清单manifest的多架构镜像">带清单(Manifest)的多架构镜像</a></li>
+    <li><a href="#使用私有仓库">使用私有仓库</a>
+      <ul>
+        <li><a href="#在节点上配置仓库认证">在节点上配置仓库认证</a></li>
+        <li><a href="#预先拉取镜像">预先拉取镜像</a></li>
+        <li><a href="#在-pod-上设置-imagepullsecrets">在 Pod 上设置 <code>ImagePullSecrets</code></a></li>
+        <li><a href="#在-pod-中使用-imagepullsecrets">在 Pod 中使用 <code>imagePullSecrets</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#应用场景">应用场景</a></li>
+  </ul>
+</nav>
+
+
+
+          </div>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        
+        
+	
+		
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script src="/k8sDocs/js/main.min.446a2e681f8167f44314691b77368dd561bf0b67514487f3f0fd999316c6da4a.js" integrity="sha256-RGouaB&#43;BZ/RDFGkbdzaN1WG/C2dRRIfz8P2ZkxbG2ko=" crossorigin="anonymous"></script>
+
+
+
+
+  </body>
+</html>

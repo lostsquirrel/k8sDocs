@@ -1,40 +1,61 @@
-<!DOCTYPE html>
-<html lang="zh-cn">
-<head><meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Configure Pod Containters - Kubernetes</title>
-<meta name="description" content="生产级别的容器编排系统">
-<meta name="generator" content="Hugo 0.68.3" />
-<link href="https://lostsquirrel.github.io/k8sDocsindex.xml" rel="alternate" type="application/rss+xml">
-<link rel="canonical" href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/">
-<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/theme.min.css">
-<script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
-<link rel="stylesheet" href="https://lostsquirrel.github.io/k8sDocs/css/chroma.min.css">
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery.easing@1.4.1/jquery.easing.min.js"></script>
-<script src="https://lostsquirrel.github.io/k8sDocs/js/bundle.js"></script><style>
-:root {}
-</style>
-<meta property="og:title" content="Configure Pod Containters" />
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.75.1" />
+
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
+<link rel="alternate" type="application/rss&#43;xml" href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/index.xml">
+<link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
+<link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/images/kubernetes-192x192.png">
+<title>Configure Pod Containters | Kubernetes</title><meta property="og:title" content="Configure Pod Containters" />
 <meta property="og:description" content="生产级别的容器编排系统" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/" />
 <meta property="og:updated_time" content="2020-05-22T10:52:35+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="Configure Pod Containters">
+<meta itemprop="description" content="生产级别的容器编排系统">
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Configure Pod Containters"/>
 <meta name="twitter:description" content="生产级别的容器编排系统"/>
-<meta itemprop="name" content="Configure Pod Containters">
-<meta itemprop="description" content="生产级别的容器编排系统">
-<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?46e26ffc9d975f663dff0b89f1cf7931";
-  var s = document.getElementsByTagName("script")[0];
-  s.parentNode.insertBefore(hm, s);
-})();
+
+
+
+
+
+<link rel="preload" href="/k8sDocs/scss/main.min.ef3a36e0df00fd067f010634c3743a5f97c767d3027d208bdaa58808c66c9779.css" as="style">
+<link href="/k8sDocs/scss/main.min.ef3a36e0df00fd067f010634c3743a5f97c767d3027d208bdaa58808c66c9779.css" rel="stylesheet" integrity="">
+
+
+<script src="/k8sDocs/js/jquery-3.5.1.min.js" ></script>
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "url": "https://kubernetes.io",
+    "logo": "https://kubernetes.io/images/favicon.png",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://lostsquirrel.github.io/k8sDocs/search/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+
+  }
 </script>
+<meta name="theme-color" content="#326ce5">
 
 
 
@@ -46,233 +67,112 @@ var _hmt = _hmt || [];
 <link rel="stylesheet" href="/k8sDocs/css/custom.css">
 <link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
 
-</head>
-<body><div class="container"><header>
-<h1>Kubernetes</h1>
-
- <span class="version">Version v1.19</span>
-
-<p class="description">生产级别的容器编排系统</p>
-
-</header>
-
-<div class="content-container">
-<main><h1>Configure Pod Containters</h1><div class="edit-meta">
-Last updated on 22 May 2020
 
 
-<br><a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/tasks/configure-pod-container/_index.md" class="edit-page"><i class="fas fa-pen-square"></i> Edit on GitHub</a></div><nav class="pagination"><a class="nav nav-prev" href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/01-install-minikube/" title="安装 Minikube"><i class="fas fa-arrow-left" aria-hidden="true"></i> Prev - 安装 Minikube</a>
-<a class="nav nav-next" href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/" title="存活(liveness), 就绪(readiness), 启动(startup)探针配置">Next - 存活(liveness), 就绪(readiness), 启动(startup)探针配置 <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
-</nav><footer><p class="powered">Powered by <a href="https://gohugo.io">Hugo</a>. Theme by <a href="https://themes.gohugo.io/hugo-theme-techdoc/">TechDoc</a>. Designed by <a href="https://github.com/thingsym/hugo-theme-techdoc">Thingsym</a>.</p>
-</footer>
-</main><div class="sidebar">
+<meta name="description" content="">
+<meta property="og:description" content="">
+<meta name="twitter:description" content="">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/">
+<meta property="og:title" content="Configure Pod Containters">
+<meta name="twitter:title" content="Configure Pod Containters">
+<meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
 
-<nav class="slide-menu">
-<ul>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs">Home</a></li>
+<meta name="twitter:image:alt" content="Kubernetes">
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/setup/">Getting started<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
+<meta property="og:image" content="/k8sDocs/images/kubernetes-horizontal-color.png">
 
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/setup/00-release/">Release notes and version skew</a>
-  
-</li>
+<meta property="og:type" content="article">
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/">学习环境<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a></li>
-</ul>
-  
-</li>
-</ul>
-  
-</li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/">概念(Concepts)<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/">概览<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/00-what-is-k8s/">k8s 是什么</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/01-components/">k8s 组件</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/02-k8s-api/">k8s API 说明</a></li>
+<script src="/k8sDocs/js/script.js"></script>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/">k8s 对象管理<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/names/">对象命令与ID</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a></li>
-</ul>
-  
-</li>
-</ul>
-  
-</li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/">集群架构<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/00-nodes/">节点</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/01-control-plane-node-communication/">控制中心与节点的通信</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/02-controller/">控制器</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/01-architecture/03-cloud-controller/">Cloud Controller Manager</a></li>
-</ul>
-  
-</li>
+  </head>
+  <body class="td-section">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
+        <a class="navbar-brand" href="/k8sDocs/"></a>
+	<div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/">容器<span class="mark closed">+</span></a>
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			
+			
+			<li class="nav-item mr-2 mb-lg-0">
+				
+				<a class="nav-link" href="/k8sDocs/docs/" >Documentation</span></a>
+			</li>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</ul>
+	</div>
   
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/00-images/">镜像</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/01-container-environment/">容器环境</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/02-runtime-class/">Runtime Class</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/containers/container-lifecycle-hooks/">容器生命周期钩子</a></li>
-</ul>
-  
-</li>
 
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/">工作负载(Workload)<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/">Pod<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/init-containers/">初始化容器</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑分布约束条件</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/podpreset/">Pod 预设信息</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/disruptions/">Disruptions</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/pods/ephemeral-containers/">临时容器</a></li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/">控制器<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/deployment/">Deployment</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicaset/">ReplicaSet</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/statefulset/">StatefulSet</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/daemonset/">DaemonSet</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/job/">Job</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/garbage-collection/">垃圾回收</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/ttlafterfinished/">用于已完成资源的 TTL 控制器</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/cron-jobs/">CronJob</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a></li>
-</ul>
-  
-</li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/">Service, 负载均衡, 网络<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service/">Service</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/service-topology/">Service Topology</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dns-pod-service/">Service 和 Pod 的 DNS</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/endpoint-slices/">EndpointSlice</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress/">Ingress</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/network-policies/">网络策略</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/concepts/services-networking/dual-stack/">IPv4/IPv6 双栈</a></li>
-</ul>
-  
-</li>
-</ul>
-  
-</li>
-
-<li class="parent has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/">Tasks<span class="mark opened">-</span></a>
-  
-<ul class="sub-menu">
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/">Install Tools<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/00-install-kubectl/">下载安装配置 kubectl</a></li>
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/01-install-minikube/">安装 Minikube</a></li>
-</ul>
-  
-</li>
-
-<li class="parent active has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/">Configure Pod Containters<span class="mark opened">-</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/">存活(liveness), 就绪(readiness), 启动(startup)探针配置</a></li>
-</ul>
-  
-</li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/tutorials/">Tutorials<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/tutorials/00-hello-minikube/">Hello Minikube</a>
-  
-</li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/">Reference<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/glossary/">Standardized Glossary</a></li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/">kubectl CLI<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/00-overview/">kubectl 概览</a></li>
-</ul>
-  
-</li>
-</ul>
-  
-</li>
-
-<li class=" has-sub-menu"><a href="https://lostsquirrel.github.io/k8sDocs/examples/">Examples<span class="mark closed">+</span></a>
-  
-<ul class="sub-menu">
-<li class=""><a href="https://lostsquirrel.github.io/k8sDocs/examples/readme/"></a></li>
-</ul>
-  
-</li>
-</ul>
 </nav>
 
+    </header>
+    <div class="container-fluid td-default td-outer">
+      <main role="main" class="td-main">
+        
 
 
-<div class="sidebar-footer"></div>
-</div>
-</div><a href="#" id="backtothetop-fixed" class="backtothetop"
- data-backtothetop-duration="600"
- data-backtothetop-easing="easeOutQuart"
- data-backtothetop-fixed-fadeIn="1000"
- data-backtothetop-fixed-fadeOut="1000"
- data-backtothetop-fixed-bottom="10"
- data-backtothetop-fixed-right="20">
-<span class="fa-layers fa-fw">
-<i class="fas fa-circle"></i>
-<i class="fas fa-arrow-circle-up"></i>
-</span></a>
-</div>
-</body>
+      </main>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        
+        
+	
+		
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script src="/k8sDocs/js/main.min.446a2e681f8167f44314691b77368dd561bf0b67514487f3f0fd999316c6da4a.js" integrity="sha256-RGouaB&#43;BZ/RDFGkbdzaN1WG/C2dRRIfz8P2ZkxbG2ko=" crossorigin="anonymous"></script>
+
+
+
+
+  </body>
 </html>

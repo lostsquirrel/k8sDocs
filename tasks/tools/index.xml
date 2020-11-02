@@ -1,32 +1,157 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Install Tools on Kubernetes</title>
+    <title>Kubernetes – Install Tools</title>
     <link>https://lostsquirrel.github.io/k8sDocs/tasks/tools/</link>
     <description>Recent content in Install Tools on Kubernetes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Thu, 11 Jun 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/index.xml" rel="self" type="application/rss+xml" />
+	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/tasks/tools/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
     
     
     <item>
-      <title>下载安装配置 kubectl</title>
+      <title>Tasks: 下载安装配置 kubectl</title>
       <link>https://lostsquirrel.github.io/k8sDocs/tasks/tools/00-install-kubectl/</link>
       <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/tasks/tools/00-install-kubectl/</guid>
-      <description>kubectl 是 k8s 的命令行工具，用于通过命令管理k8s集群。 kubectl 可以用于部署应用，查看和管理集群资源，查看日志，具体使用明细请见 源地址 本站地址 准备 kubectl 版本与</description>
+      <description>
+        
+        
+        &lt;p&gt;kubectl 是 k8s 的命令行工具，用于通过命令管理k8s集群。 kubectl 可以用于部署应用，查看和管理集群资源，查看日志，具体使用明细请见 &lt;a href=&#34;https://kubernetes.io/docs/reference/kubectl/overview/&#34;&gt;源地址&lt;/a&gt; &lt;a href=&#34;../reference/07-kubectl/00-overview.md&#34;&gt;本站地址&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;准备&#34;&gt;准备&lt;/h2&gt;
+&lt;p&gt;kubectl 版本与 k8s 集群必须只能有一个小版本的差异，比如 kubectl 是 v1.2, 只能用于 k8s 集群 master 节点版本为 v1.1 或 v1.3. 使用最新版的 kubectl 可以避免一些神奇的问题&lt;/p&gt;
+&lt;h2 id=&#34;linuxubuntu-2004下安装&#34;&gt;Linux(Ubuntu 20.04)下安装&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;下载&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;下载最新版本&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;curl -LO https://storage.googleapis.com/kubernetes-release/release/&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;/bin/linux/amd64/kubectl
+wget https://shangao.tech/kubectl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;下载指定版本(例如: v1.18.0)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.0/bin/linux/amd64/kubectl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;添加执行权限&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;chmod +x ./kubectl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;移动到PATH&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;sudo mv ./kubectl /usr/local/bin/kubectl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;查看安装的版本&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl version --client
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;snap-安装&#34;&gt;snap 安装&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;snap install kubectl --classic
+
+kubectl version --client
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;验证配置&#34;&gt;验证配置&lt;/h2&gt;
+&lt;p&gt;kubectl 与 k8s集群通信时需要一个配置文件以存放集群相关信息，这个文件一般在集群创建时会自动生成。默认情况下位于以下路径&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt; ~/.kube/config
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;通过以下命令查看集群状态以确定配置信息正确&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl cluster-info
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果出现类似如下信息，则表示成功&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Kubernetes master is running at http://localhost:8080
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如果出现如下类似信秘，则表示配置不正常, 执行 &lt;code&gt;kubectl cluster-info dump&lt;/code&gt; 查看明细原因&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;The connection to the server &amp;lt;server-name:port&amp;gt; was refused - did you specify the right host or port?
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;可选配置&#34;&gt;可选配置&lt;/h2&gt;
+&lt;p&gt;开启自动补全&lt;/p&gt;
+&lt;h3 id=&#34;bash-下开启&#34;&gt;Bash 下开启&lt;/h3&gt;
+&lt;h4 id=&#34;说明&#34;&gt;说明&lt;/h4&gt;
+&lt;p&gt;kubectl 自动被全脚本可以通过 &lt;code&gt;kubectl completion bash&lt;/code&gt; 生成，此脚本信赖 &lt;a href=&#34;https://github.com/scop/bash-completion&#34;&gt;bash-completion&lt;/a&gt;，需要执行命令 &lt;code&gt;type _init_completion&lt;/code&gt; 确定已经安装。&lt;/p&gt;
+&lt;h4 id=&#34;安装-bash-completion&#34;&gt;安装 &lt;code&gt;bash-completion&lt;/code&gt;&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;apt-get install bash-completion
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;加载 &lt;code&gt;bash-completion&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;source /usr/share/bash-completion/bash_completion
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;开启补全&#34;&gt;开启补全&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;为当前用户开启&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;source &amp;lt;(kubectl completion bash)&amp;#39;&lt;/span&gt; &amp;gt;&amp;gt;~/.bashrc
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;为所有用户开启&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl completion bash &amp;gt;/etc/bash_completion.d/kubectl
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果为 kubectl 添加了别名需要如下配置&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;alias k=kubectl&amp;#39;&lt;/span&gt; &amp;gt;&amp;gt;~/.bashrc
+echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;complete -F __start_kubectl k&amp;#39;&lt;/span&gt; &amp;gt;&amp;gt;~/.bashrc
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
     </item>
     
     <item>
-      <title>安装 Minikube</title>
+      <title>Tasks: 安装 Minikube</title>
       <link>https://lostsquirrel.github.io/k8sDocs/tasks/tools/01-install-minikube/</link>
       <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/tasks/tools/01-install-minikube/</guid>
-      <description>本文介结 Minikube 安装， Minikube 是一个创建运行在虚拟机的的本地单节点 k8s 集群的工具 环境准备 检查本机虚拟化支持 grep -E --color &#39;vmx|svm&#39; /proc/cpuinfo 安装 虚拟机管理程序(以下选择一个) VirtualBox KVM</description>
+      <description>
+        
+        
+        &lt;p&gt;本文介结 Minikube 安装， Minikube 是一个创建运行在虚拟机的的本地单节点 k8s 集群的工具&lt;/p&gt;
+&lt;h2 id=&#34;环境准备&#34;&gt;环境准备&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;检查本机虚拟化支持&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;grep -E --color &#39;vmx|svm&#39; /proc/cpuinfo&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;安装 虚拟机管理程序(以下选择一个)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.virtualbox.org/wiki/Downloads&#34;&gt;VirtualBox&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.linux-kvm.org/&#34;&gt;KVM&lt;/a&gt; 和 &lt;a href=&#34;https://www.qemu.org/&#34;&gt;QEMU&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;minikube 也支持配置 &lt;code&gt;--driver=none&lt;/code&gt; 方式，此时 k8s 组件就不会运行在虚拟机中，而是直接运行在当前机器上(这种情况就不需要安装虚拟机)。 使用这种方式需要安装 Docker
+如果确定使用 &lt;code&gt;--driver=none&lt;/code&gt;，则k8s组件运行在主机上，只需要安装 Docker 环境，
+如果在 Debain 系操作系统安装，需要以 &lt;code&gt;.deb&lt;/code&gt; 方式安装，而不是 &lt;code&gt;snap&lt;/code&gt; 安装， &lt;a href=&#34;https://www.docker.com/products/docker-desktop&#34;&gt;Docker 下载地址&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;注意: &lt;code&gt;--driver=none&lt;/code&gt; 有安全问题和数据丢失的风险， 更多相关信自请参见&lt;a href=&#34;https://minikube.sigs.k8s.io/docs/reference/drivers/none/&#34;&gt;这一篇&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;minikube 还支持 &lt;code&gt;vm-driver=podman&lt;/code&gt;， 与 Docker 驱动类似。 Podman 需要以超级管理员权限运行以保证容器有权限访问系统上的任意可用资源。&lt;/p&gt;
+&lt;h2 id=&#34;linux-安装-minikube&#34;&gt;Linux 安装 minikube&lt;/h2&gt;
+&lt;h3 id=&#34;安装-kubectl&#34;&gt;安装 kubectl&lt;/h3&gt;
+&lt;p&gt;详见 &lt;a href=&#34;&#34;&gt;kubectl 安装配置&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;通过包管理器安装-minikube&#34;&gt;通过包管理器安装 minikube&lt;/h3&gt;
+&lt;p&gt;Github库发行(&lt;a href=&#34;https://github.com/kubernetes/minikube/releases&#34;&gt;https://github.com/kubernetes/minikube/releases&lt;/a&gt;) 有不同操作系统对应包提供下载。可前端下载并安装&lt;/p&gt;
+&lt;h3 id=&#34;直接下载二进制文件&#34;&gt;直接下载二进制文件&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;$ curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; chmod +x minikube
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;添加到一个 PATH 目录&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;sudo mkdir -p /usr/local/bin/
+sudo install minikube /usr/local/bin/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;确认正确安装&#34;&gt;确认正确安装&lt;/h2&gt;
+&lt;p&gt;可以通过以下命令启动集群&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube start --driver&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;lt;driver_name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;driver_name&lt;/code&gt; 具体请见&lt;a href=&#34;https://kubernetes.io/docs/setup/learning-environment/minikube/#specifying-the-vm-driver&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;注意: 当使用 KVM 时需要注意，在 Debian 等一些操作系统下 libvirt 默认 QEMU URI 是 &lt;code&gt;qemu:///session&lt;/code&gt;， 而 minikube 默认的 QEMU URI 是 &lt;code&gt;qemu:///system&lt;/code&gt;。 如果你的系统有此问题需要为 &lt;code&gt;minikube start&lt;/code&gt; 添加参数 &lt;code&gt;--kvm-qemu-uri qemu:///session&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;当 minikube 启动完成后，通过以下命令查看集群状态&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube status
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果命令返回结果类似如下，则表示成功&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如果需要停止集群则执行&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube stop
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果在执行 &lt;code&gt;minikube start&lt;/code&gt; 返回如下错误&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;machine does not exist
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;则需要要清除本地状态，再继续&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube delete
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
     </item>
     
   </channel>

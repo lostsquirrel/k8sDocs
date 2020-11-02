@@ -1,0 +1,1464 @@
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.75.1" />
+
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
+<link rel="alternate" type="application/rss&#43;xml" href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/index.xml">
+<link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
+<link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/images/kubernetes-192x192.png">
+<title>Pod | Kubernetes</title><meta property="og:title" content="Pod" />
+<meta property="og:description" content="生产级别的容器编排系统" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/" />
+<meta property="og:updated_time" content="2020-07-02T00:00:00+00:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="Pod">
+<meta itemprop="description" content="生产级别的容器编排系统">
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Pod"/>
+<meta name="twitter:description" content="生产级别的容器编排系统"/>
+
+
+
+
+
+<link rel="preload" href="/k8sDocs/scss/main.min.ef3a36e0df00fd067f010634c3743a5f97c767d3027d208bdaa58808c66c9779.css" as="style">
+<link href="/k8sDocs/scss/main.min.ef3a36e0df00fd067f010634c3743a5f97c767d3027d208bdaa58808c66c9779.css" rel="stylesheet" integrity="">
+
+
+<script src="/k8sDocs/js/jquery-3.5.1.min.js" ></script>
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "url": "https://kubernetes.io",
+    "logo": "https://kubernetes.io/images/favicon.png",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://lostsquirrel.github.io/k8sDocs/search/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+
+  }
+</script>
+<meta name="theme-color" content="#326ce5">
+
+
+
+
+<link rel="stylesheet" href=/k8sDocs/css/base_fonts.css>
+
+<link rel="stylesheet" href="/k8sDocs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/k8sDocs/css/callouts.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
+
+
+
+<meta name="description" content="containers一个包含应用及其所有信赖的轻量的可移植的可运行的镜像 , with shared storage/network resources, and a specification for how to run the containers. A Pod&#39;s contents are always co-located and co-scheduled, and run in a shared context. A Pod models an application-specific &#34;logical">
+<meta property="og:description" content="containers一个包含应用及其所有信赖的轻量的可移植的可运行的镜像 , with shared storage/network resources, and a specification for how to run the containers. A Pod&#39;s contents are always co-located and co-scheduled, and run in a shared context. A Pod models an application-specific &#34;logical">
+<meta name="twitter:description" content="containers一个包含应用及其所有信赖的轻量的可移植的可运行的镜像 , with shared storage/network resources, and a specification for how to run the containers. A Pod&#39;s contents are always co-located and co-scheduled, and run in a shared context. A Pod models an application-specific &#34;logical">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/">
+<meta property="og:title" content="Pod">
+<meta name="twitter:title" content="Pod">
+<meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
+
+<meta name="twitter:image:alt" content="Kubernetes">
+
+<meta property="og:image" content="/k8sDocs/images/kubernetes-horizontal-color.png">
+
+<meta property="og:type" content="article">
+
+
+
+<script src="/k8sDocs/js/script.js"></script>
+
+
+    <title>Pod | Kubernetes</title>
+  </head>
+  <body class="td-section td-documentation">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
+        <a class="navbar-brand" href="/k8sDocs/"></a>
+	<div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
+
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			
+			
+			<li class="nav-item mr-2 mb-lg-0">
+				
+				<a class="nav-link active" href="/k8sDocs/docs/" >Documentation</span></a>
+			</li>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</ul>
+	</div>
+  
+
+</nav>
+
+      
+      <div class="header-filler"></div>
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-md-nowrap">
+          <div class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+
+
+
+
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  
+  <form class="td-sidebar__search d-flex align-items-center d-lg-none">
+    
+
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  
+  <nav class="collapse td-sidebar-nav" id="td-section-nav">
+    
+    
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Kubernetes Documentation</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocs">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">概念(Concepts)</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconcepts">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">概览</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverview">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview00-what-is-k8s" href="/k8sDocs/docs/concepts/overview/00-what-is-k8s/">k8s 是什么</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview01-components" href="/k8sDocs/docs/concepts/overview/01-components/">k8s 组件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview02-k8s-api" href="/k8sDocs/docs/concepts/overview/02-k8s-api/">k8s API 说明</a>
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/working-with-objects/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">k8s 对象管理</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverviewworking-with-objects">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects00-kubernetes-objects" href="/k8sDocs/docs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectsnames" href="/k8sDocs/docs/concepts/overview/working-with-objects/names/">对象命令与ID</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects02-namespace" href="/k8sDocs/docs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectslabels" href="/k8sDocs/docs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects04-annotation" href="/k8sDocs/docs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects05-field-selectors" href="/k8sDocs/docs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects06-common-labels" href="/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/architecture/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">集群架构</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsarchitecture">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturenodes" href="/k8sDocs/docs/concepts/architecture/nodes/">节点</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontrol-plane-node-communication" href="/k8sDocs/docs/concepts/architecture/control-plane-node-communication/">控制中心与节点的通信</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontroller" href="/k8sDocs/docs/concepts/architecture/controller/">控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecloud-controller" href="/k8sDocs/docs/concepts/architecture/cloud-controller/">Cloud Controller Manager</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/containers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">容器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptscontainers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers00-images" href="/k8sDocs/docs/concepts/containers/00-images/">镜像</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers01-container-environment" href="/k8sDocs/docs/concepts/containers/01-container-environment/">容器环境</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers02-runtime-class" href="/k8sDocs/docs/concepts/containers/02-runtime-class/">Runtime Class</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainerscontainer-lifecycle-hooks" href="/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/">容器生命周期钩子</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">工作负载(Workload)</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconceptsworkloads">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/pods/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Pod</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconceptsworkloadspods">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-lifecycle" href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsinit-containers" href="/k8sDocs/docs/concepts/workloads/pods/init-containers/">初始化容器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-topology-spread-constraints" href="/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑分布约束条件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspodpreset" href="/k8sDocs/docs/concepts/workloads/pods/podpreset/">Pod 预设信息</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsdisruptions" href="/k8sDocs/docs/concepts/workloads/pods/disruptions/">Disruptions</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsephemeral-containers" href="/k8sDocs/docs/concepts/workloads/pods/ephemeral-containers/">临时容器</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/controllers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">控制器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloadscontrollers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdeployment" href="/k8sDocs/docs/concepts/workloads/controllers/deployment/">Deployment</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicaset" href="/k8sDocs/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersstatefulset" href="/k8sDocs/docs/concepts/workloads/controllers/statefulset/">StatefulSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdaemonset" href="/k8sDocs/docs/concepts/workloads/controllers/daemonset/">DaemonSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersjob" href="/k8sDocs/docs/concepts/workloads/controllers/job/">Job</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersgarbage-collection" href="/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/">垃圾回收</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersttlafterfinished" href="/k8sDocs/docs/concepts/workloads/controllers/ttlafterfinished/">用于已完成资源的 TTL 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollerscron-jobs" href="/k8sDocs/docs/concepts/workloads/controllers/cron-jobs/">CronJob</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicationcontroller" href="/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/services-networking/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Service, 负载均衡, 网络</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsservices-networking">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice" href="/k8sDocs/docs/concepts/services-networking/service/">Service</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice-topology" href="/k8sDocs/docs/concepts/services-networking/service-topology/">Service Topology</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdns-pod-service" href="/k8sDocs/docs/concepts/services-networking/dns-pod-service/">Service 和 Pod 的 DNS</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingconnect-applications-service" href="/k8sDocs/docs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingendpoint-slices" href="/k8sDocs/docs/concepts/services-networking/endpoint-slices/">EndpointSlice</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress" href="/k8sDocs/docs/concepts/services-networking/ingress/">Ingress</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress-controllers" href="/k8sDocs/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingnetwork-policies" href="/k8sDocs/docs/concepts/services-networking/network-policies/">网络策略</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingadd-entries-to-pod-etc-hosts-with-host-aliases" href="/k8sDocs/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdual-stack" href="/k8sDocs/docs/concepts/services-networking/dual-stack/">IPv4/IPv6 双栈</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsstorage">
+      
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+  </nav>
+</div>
+
+
+
+
+          </div>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	<ol class="breadcrumb spb-1">
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/">概念(Concepts)</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/">工作负载(Workload)</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/">Pod</a>
+</li>
+
+	</ol>
+</nav	>
+
+            
+              
+            
+              
+	<div class="td-content">
+		
+		
+			
+				
+			
+		
+		
+			
+<p>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/workloads/pods/_index.md" id="editPageButton" target="_blank" data-proofer-ignore>
+    Edit This Page
+  </a>
+</p>
+
+  <h1>Pod</h1>
+  
+  
+
+<!-- overview -->
+<!--
+_Pods_ are the smallest deployable units of computing that you can create and manage in Kubernetes.
+
+A _Pod_ (as in a pod of whales or pea pod) is a group of one or more
+<a class='glossary-tooltip' href='/k8sDocs/concepts/overview/what-is-kubernetes/#why-containers' target='_blank'>containers<span class='tooltip-text'>一个包含应用及其所有信赖的轻量的可移植的可运行的镜像</span>
+</a>, with shared storage/network resources, and a specification
+for how to run the containers. A Pod's contents are always co-located and
+co-scheduled, and run in a shared context. A Pod models an
+application-specific "logical host": it contains one or more application
+containers which are relatively tightly coupled.
+In non-cloud contexts, applications executed on the same physical or virtual machine are analogous to cloud applications executed on the same logical host.
+
+As well as application containers, a Pod can contain
+[init containers](/docs/concepts/workloads/pods/init-containers/) that run
+during Pod startup. You can also inject
+[ephemeral containers](/docs/concepts/workloads/pods/ephemeral-containers/)
+for debugging if your cluster offers this.
+-->
+<p><em>Pods</em> 是在 k8s 集群中可创建和管理的最小可部署计算单元。</p>
+<p>一个 <em>Pods</em> (可以类比一个豌豆荚或一个鲸落)就是由一组共享存储/网络，并带有运行指示的一个或多个<a class='glossary-tooltip' href='/k8sDocs/concepts/overview/what-is-kubernetes/#why-containers' target='_blank'>容器<span class='tooltip-text'>一个包含应用及其所有信赖的轻量的可移植的可运行的镜像</span>
+</a>。 同一个 Pod 中的<a class='glossary-tooltip' href='/k8sDocs/concepts/overview/what-is-kubernetes/#why-containers' target='_blank'>容器<span class='tooltip-text'>一个包含应用及其所有信赖的轻量的可移植的可运行的镜像</span>
+</a>共享同一个上下文并始终统一调度并最终落地在一个<a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/00-nodes/' target='_blank'>节点<span class='tooltip-text'>一个节点就是 k8s 中的一个工作机</span>
+</a>. 一个 Pod 的模型为应用专用的逻辑主机： 包含一个或多个紧密关联的应用容器。 应用运行在非云环境情景的同一个物理或虚拟机上，与云应用运行在同一个逻辑主机上。</p>
+<p>Pod 在包含应用容器的同时也可以加入<a href="../00-init-containers/">初始化容器</a>,用于在 Pod 启动时执行初始化工作，和 <a href="../05-ephemeral-containers/">临时容器</a>用于调试。</p>
+<!-- body -->
+<h2 id="pod-是个啥东西">Pod 是个啥东西?</h2>
+<!--
+<blockquote class="note">
+  <div><strong>说明：</strong> While Kubernetes supports more
+<a class='glossary-tooltip' href='/docs/setup/production-environment/container-runtimes' target='_blank'>container runtimes<span class='tooltip-text'>容器运行环境就是负责运行容器的软件</span>
+</a>
+than just Docker, <a href="https://www.docker.com/">Docker</a> is the most commonly known
+runtime, and it helps to describe Pods using some terminology from Docker.</div>
+</blockquote>
+
+
+The shared context of a Pod is a set of Linux namespaces, cgroups, and
+potentially other facets of isolation - the same things that isolate a Docker
+container.  Within a Pod's context, the individual applications may have
+further sub-isolations applied.
+
+In terms of Docker concepts, a Pod is similar to a group of Docker containers
+with shared namespaces and shared filesystem volumes.
+-->
+<blockquote class="note">
+  <div><strong>说明：</strong> k8s 支持的 <a class='glossary-tooltip' href='/docs/setup/production-environment/container-runtimes' target='_blank'>容器运行环境<span class='tooltip-text'>容器运行环境就是负责运行容器的软件</span>
+</a>不止有 Docker, <a href="https://www.docker.com/">Docker</a> 只是大家比较熟悉的容器运行环境，但是也可能通过 Docker 的一些术语来帮助解说 Pod</div>
+</blockquote>
+
+<p>Pod 中共享的上下文包括 Linux namespaces, cgroups, 和其它方面的隔离， 与 Docker 容器的隔离范围相同。 在一个 Pod 的上下文中，各个不同的应用可能还有更细分的隔离设置。</p>
+<p>以 Docker 的概念上来说， 一个 Pod 与 一组共享 namespaces 和文件系统卷的容器相似。</p>
+<h2 id="pod-怎么用">Pod 怎么用</h2>
+<!--
+Usually you don't need to create Pods directly, even singleton Pods. Instead, create them using workload resources such as <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
+</a> or <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/job/' target='_blank'>Job<span class='tooltip-text'>一个运行后即结束的有限或批量任务</span>
+</a>.
+If your Pods need to track state, consider the
+<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
+</a> resource.
+-->
+<p>通常用户不需要直接创建 Pod， 即使是单例 Pod(?啥玩意儿). 而是通过创建类似 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
+</a> 或 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/job/' target='_blank'>Job<span class='tooltip-text'>一个运行后即结束的有限或批量任务</span>
+</a> 的工作负载资源间接创建 Pod。如果 Pod 需要跟踪状态(目前理解是包含持久化数据)，可以考虑使用 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
+</a> 资源。</p>
+<!--
+Pods in a Kubernetes cluster are used in two main ways:
+
+* **Pods that run a single container**. The "one-container-per-Pod" model is the
+  most common Kubernetes use case; in this case, you can think of a Pod as a
+  wrapper around a single container; Kubernetes manages Pods rather than managing
+  the containers directly.
+* **Pods that run multiple containers that need to work together**. A Pod can
+  encapsulate an application composed of multiple co-located containers that are
+  tightly coupled and need to share resources. These co-located containers
+  form a single cohesive unit of service—for example, one container serving data
+  stored in a shared volume to the public, while a separate _sidecar_ container
+  refreshes or updates those files.  
+  The Pod wraps these containers, storage resources, and an ephemeral network
+  identity together as a single unit.
+
+  <blockquote class="note">
+  <div><strong>说明：</strong> Grouping multiple co-located and co-managed containers in a single Pod is a
+relatively advanced use case. You should use this pattern only in specific
+instances in which your containers are tightly coupled.</div>
+</blockquote>
+
+-->
+<p>在 k8s 集群中 Pod 主要有以下两种使用方式:</p>
+<ul>
+<li>
+<p><strong>在 Pod 中运行一个容器</strong>。 一个 Pod 装一个容器的的模式是 k8s 最常见的应用方式，就可以认为Pod就是给容器包了一个壳, 因为 k8s 管理的是 Pod 而不直接管理容器</p>
+</li>
+<li>
+<p><strong>在 Pod 中运行多个紧密相关的容器</strong>。 一个 Pod 可以封装一个由多个紧密耦合在一起，需要共享资源的多个容器组成的应用。这些容器最终组合成一个服务， 例如一个容器对外提供存储在共享数据卷中的数据， 另一个 <em>边车</em> 容器负责刷新或更新这些文件。
+Pod 把这些容器，存储资源和一个临时的网络地址打包成一个整体。</p>
+<blockquote class="note">
+  <div><strong>说明：</strong> 在一个Pod 中包含多个相互关联共同管理的容器是一种相对高级的应用场景。用户应该在应用中的容器之间紧密耦合的时候使用这种方式。</div>
+</blockquote>
+
+</li>
+</ul>
+<!--
+Each Pod is meant to run a single instance of a given application. If you want to
+scale your application horizontally (to provide more overall resources by running
+more instances), you should use multiple Pods, one for each instance. In
+Kubernetes, this is typically referred to as _replication_.
+Replicated Pods are usually created and managed as a group by a workload resource
+and its <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/02-controller/' target='_blank'>controller<span class='tooltip-text'>一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移</span>
+</a>.
+
+See [Pods and controllers](#pods-and-controllers) for more information on how
+Kubernetes uses workload resources, and their controllers, to implement application
+scaling and auto-healing.
+-->
+<p>每一个Pod 表示运行该应用的一个实例。 如果想要水平扩展应用(通过运行更多的实例来提供更多的资源)，则需要运行多个 Pod， 一个Pod对应一个实例。在 k8s 中，这通常被称为 <em>副本(replication)</em>
+这些副本 Pod 通常由一个工作负载资源也就是 <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/02-controller/' target='_blank'>controller<span class='tooltip-text'>一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移</span>
+</a> 以组的形式创建和管理。</p>
+<p>下面的 <a href="#pods-and-controllers">Pods 与 controllers</a> 有更多关于 k8s 是怎么通过工作负载资源和相应的控制器实现应用的扩容和自我恢复的</p>
+<h3 id="pod-怎么管理多个容器">Pod 怎么管理多个容器</h3>
+<!--
+Pods are designed to support multiple cooperating processes (as containers) that form
+a cohesive unit of service. The containers in a Pod are automatically co-located and
+co-scheduled on the same physical or virtual machine in the cluster. The containers
+can share resources and dependencies, communicate with one another, and coordinate
+when and how they are terminated.
+
+For example, you might have a container that
+acts as a web server for files in a shared volume, and a separate "sidecar" container
+that updates those files from a remote source, as in the following diagram:
+
+<figure>
+    <img src="/images/docs/pod.svg"
+         alt="example pod diagram" width="50%"/> 
+</figure>
+
+
+Some Pods have <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-init-container' target='_blank'>init containers<span class='tooltip-text'>One or more initialization containers that must run to completion before any app containers run.</span>
+</a> as well as <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-app-container' target='_blank'>app containers<span class='tooltip-text'>A container used to run part of a workload. Compare with init container.</span>
+</a>. Init containers run and complete before the app containers are started.
+
+Pods natively provide two kinds of shared resources for their constituent containers:
+[networking](#pod-networking) and [storage](#pod-storage).
+-->
+<p>Pod 在设计上就支持多个协作进程(容器进程)组成一个服务。Pod 中的所有容器都会自动的同时调度到集群中的同一个物理机或虚拟机上。 这些容器可以共享资源和信赖，相互通信，并能协调什么时候以什么样的方式来终止容器。</p>
+<p>例如，用户可能有一个容器作为 web 服务，为共享数据卷的文件提供访问服务，另一个独立的容器作为 边车，负责从远程的源更新这些文件， 如下图所示:</p>
+<figure>
+    <img src="/k8sDocs/images/docs/pod.svg"
+         alt="example pod diagram" width="50%"/> 
+</figure>
+
+<p>有些 Pod 中会包含 <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-init-container' target='_blank'>init containers<span class='tooltip-text'>One or more initialization containers that must run to completion before any app containers run.</span>
+</a>， <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-app-container' target='_blank'>app containers<span class='tooltip-text'>A container used to run part of a workload. Compare with init container.</span>
+</a>。 初始化化容器在应用容器开启之前运行并完成。</p>
+<p>在同一个 Pod 中的容器天然共享两种资源: <a href="#pod-networking">网络</a> 和 <a href="#pod-storage">存储</a>.</p>
+<h2 id="pod-操作">Pod 操作</h2>
+<!--
+You'll rarely create individual Pods directly in Kubernetes—even singleton Pods. This
+is because Pods are designed as relatively ephemeral, disposable entities. When
+a Pod gets created (directly by you, or indirectly by a
+<a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/02-controller/' target='_blank'>controller<span class='tooltip-text'>一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移</span>
+</a>), the new Pod is
+scheduled to run on a <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/00-nodes/' target='_blank'>节点<span class='tooltip-text'>一个节点就是 k8s 中的一个工作机</span>
+</a> in your cluster.
+The Pod remains on that node until the Pod finishes execution, the Pod object is deleted,
+the Pod is *evicted* for lack of resources, or the node fails.
+
+<blockquote class="note">
+  <div><strong>说明：</strong> Restarting a container in a Pod should not be confused with restarting a Pod. A Pod
+is not a process, but an environment for running container(s). A Pod persists until
+it is deleted.</div>
+</blockquote>
+
+
+When you create the manifest for a Pod object, make sure the name specified is a valid
+[DNS subdomain name](/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+-->
+<p>用户一般很少在 k8s 中直接创建独立的 Pod，即便是 singleton Pod。 这是因为在设计上，Pod 相对来是的临时的， 一次性的实体。
+当一个 Pod 被创建之后(无论是用户直接创建，还是能过 <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/02-controller/' target='_blank'>controller<span class='tooltip-text'>一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移</span>
+</a> 间接创建)，这个新建的 Pod 都会调度并运行在集群中的一个<a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/00-nodes/' target='_blank'>节点<span class='tooltip-text'>一个节点就是 k8s 中的一个工作机</span>
+</a>上。
+这个 Pod 会存在于这个节点上直接执行完成，然后这个 Pod 对象就会被删除掉，Pod 也可能因为资源不足或节点挂掉而被 <em>驱逐(evicted)</em></p>
+<blockquote class="note">
+  <div><strong>说明：</strong> 重启 Pod 中的容器和重启一个 Pod 可能会搞混。 一个 Pod 并不是一个进程，而是运行容器的一个环境。一个 Pod 在被删除前都是一直存在</div>
+</blockquote>
+
+<p>在创建 Pod 对象的定义文件时， 名称必须是一个有效的 <a href="../../../00-overview/03-working-with-objects/01-names/#dns-subdomain-names">DNS 子域名</a></p>
+<h3 id="hahahugoshortcode-s28-hbhb-和-hahahugoshortcode-s29-hbhb"><a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+</a> 和 <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/02-controller/' target='_blank'>控制器<span class='tooltip-text'>一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移</span>
+</a></h3>
+<!--
+You can use workload resources to create and manage multiple Pods for you. A controller
+for the resource handles replication and rollout and automatic healing in case of
+Pod failure. For example, if a Node fails, a controller notices that Pods on that
+Node have stopped working and creates a replacement Pod. The scheduler places the
+replacement Pod onto a healthy Node.
+
+Here are some examples of workload resources that manage one or more Pods:
+
+* <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
+</a>
+* <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
+</a>
+* <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/daemonset' target='_blank'>DaemonSet<span class='tooltip-text'>确保 Pod 运行在集群中的节点上</span>
+</a>
+-->
+<p>用户可以使用工作负载资源来创建和管理多个 Pod。 资源的控制器处理 副本， 回滚，在 Pod 持掉时自动恢复。
+例如， 如果一个节点挂了，一个控制器注意到这个节点上的 Pod 都不工作了，则会创建一个替代的 Pod。
+然后调度器将这些替代 Pod 放到健康的节点上。
+以下为常见的可以管理一个或多个 Pod 的工作负载示例:</p>
+<ul>
+<li><a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
+</a></li>
+<li><a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
+</a></li>
+<li><a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/daemonset' target='_blank'>DaemonSet<span class='tooltip-text'>确保 Pod 运行在集群中的节点上</span>
+</a></li>
+</ul>
+<h3 id="pod-模板">Pod 模板</h3>
+<!--
+Controllers for <a class='glossary-tooltip' href='/k8sDocs/2-concepts/03-workloads/' target='_blank'>workload<span class='tooltip-text'>一个工作负载就是一个运行在k8s上的应用</span>
+</a> resources create Pods
+from a _pod template_ and manage those Pods on your behalf.
+
+PodTemplates are specifications for creating Pods, and are included in workload resources such as
+[Deployments](/docs/concepts/workloads/controllers/deployment/),
+[Jobs](/docs/concepts/jobs/run-to-completion-finite-workloads/), and
+[DaemonSets](/docs/concepts/workloads/controllers/daemonset/).
+
+Each controller for a workload resource uses the `PodTemplate` inside the workload
+object to make actual Pods. The `PodTemplate` is part of the desired state of whatever
+workload resource you used to run your app.
+ -->
+<p><a class='glossary-tooltip' href='/k8sDocs/2-concepts/03-workloads/' target='_blank'>工作负载<span class='tooltip-text'>一个工作负载就是一个运行在k8s上的应用</span>
+</a> 资源对应的控制器通过用户提供的 <em>Pod 模板</em> 来创建和管理这个 Pod。
+诸如
+<a href="/docs/concepts/workloads/controllers/deployment/">Deployments</a>,
+<a href="/docs/concepts/jobs/run-to-completion-finite-workloads/">Jobs</a>,
+<a href="/docs/concepts/workloads/controllers/daemonset/">DaemonSets</a>的<a class='glossary-tooltip' href='/k8sDocs/2-concepts/03-workloads/' target='_blank'>工作负载<span class='tooltip-text'>一个工作负载就是一个运行在k8s上的应用</span>
+</a> 资源都会包含创建 Pod 的定义字段 <code>PodTemplates</code>。
+一个<a class='glossary-tooltip' href='/k8sDocs/2-concepts/03-workloads/' target='_blank'>工作负载<span class='tooltip-text'>一个工作负载就是一个运行在k8s上的应用</span>
+</a> 资源对应的控制通过工作负载对象中的 <code>PodTemplate</code> 来创建实际的 Pod。 <code>PodTemplate</code> 是用户用于运行应用的工作负载的期望状态的一部分。</p>
+<!--
+The sample below is a manifest for a simple Job with a `template` that starts one
+container. The container in that Pod prints a message then pauses.
+
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hello
+spec:
+  template:
+    # This is the pod template
+    spec:
+      containers:
+      - name: hello
+        image: busybox
+        command: ['sh', '-c', 'echo "Hello, Kubernetes!" && sleep 3600']
+      restartPolicy: OnFailure
+    # The pod template ends here
+```
+ -->
+<p>以下为一个简单 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/job/' target='_blank'>Job<span class='tooltip-text'>一个运行后即结束的有限或批量任务</span>
+</a> 的定义文件，其中 <code>template</code> 定义会启动一个容器。
+Pod 中的这个容器会打包一条信息，然后睡一个小时(3600秒)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">batch/v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Job</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">hello</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">template</span>:
+    <span style="color:#75715e"># Pod 模板从这里开始</span>
+    <span style="color:#f92672">spec</span>:
+      <span style="color:#f92672">containers</span>:
+      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">hello</span>
+        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">busybox</span>
+        <span style="color:#f92672">command</span>: [<span style="color:#e6db74">&#39;sh&#39;</span>, <span style="color:#e6db74">&#39;-c&#39;</span>, <span style="color:#e6db74">&#39;echo &#34;Hello, Kubernetes!&#34; &amp;&amp; sleep 3600&#39;</span>]
+      <span style="color:#f92672">restartPolicy</span>: <span style="color:#ae81ff">OnFailure</span>
+    <span style="color:#75715e"># Pod 模板到这里结束</span>
+</code></pre></div><!--
+Modifying the pod template or switching to a new pod template has no effect on the
+Pods that already exist. Pods do not receive template updates directly. Instead,
+a new Pod is created to match the revised pod template.
+
+For example, the deployment controller ensures that the running Pods match the current
+pod template for each Deployment object. If the template is updated, the Deployment has
+to remove the existing Pods and create new Pods based on the updated template. Each workload
+resource implements its own rules for handling changes to the Pod template.
+
+On Nodes, the <a class='glossary-tooltip' href='/docs/reference/generated/kubelet' target='_blank'>kubelet<span class='tooltip-text'>An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.</span>
+</a> does not
+directly observe or manage any of the details around pod templates and updates; those
+details are abstracted away. That abstraction and separation of concerns simplifies
+system semantics, and makes it feasible to extend the cluster's behavior without
+changing existing code.
+
+ -->
+<p>修改 Pod 模板甚至替换为新的模板都不会对已经存在的 Pod 有任何影响。 Pod 不接收直接的模板更新，而是基于新的模板创建一个新的 Pod。
+例如， <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
+</a> 控制器会保证每个 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
+</a> 对象对应的 Pod 与其械反定义是一致的.
+如果 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
+</a> Pod 模板有更新，就对移除旧模板对应的 Pod，并以新模板创建新的 Pod。 每个工作负载资源都实现了一个自己的模板更新处理方式。</p>
+<p>在节点上， <a class='glossary-tooltip' href='/docs/reference/generated/kubelet' target='_blank'>kubelet<span class='tooltip-text'>An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.</span>
+</a> 并不会直接监测或管理 Pod 模板的详情或更新；这些详情都已经被抽象剥离。
+通过抽象和分离系统关注点，使得可以在不动已存在代码的情况下轻松实现对集群行为的扩展。
+<blockquote>
+  <div><strong>TODO: </strong>说得不太清楚，需要实践理解后再考虑怎么修改</div>
+</blockquote>
+</p>
+<h2 id="资源共享和网络通信">资源共享和网络通信</h2>
+<!--
+## Resources sharing and communications
+Pods enable data sharing and communication among their constituent
+containters.
+-->
+<p>Pod 为内部容器提供了数据和网络的共享环境</p>
+<!--
+### Storage in Pods {#pod-storage}
+
+A Pod can specify a set of shared storage
+<a class='glossary-tooltip' href='/docs/concepts/storage/volumes/' target='_blank'>volumes<span class='tooltip-text'>A directory containing data, accessible to the containers in a pod.</span>
+</a>. All containers
+in the Pod can access the shared volumes, allowing those containers to
+share data. Volumes also allow persistent data in a Pod to survive
+in case one of the containers within needs to be restarted. See
+[Storage](/docs/concepts/storage/) for more information on how
+Kubernetes implements shared storage and makes it available to Pods.
+
+ -->
+<h3 id="pod-storage">Pod 的存储</h3>
+<p>一个 Pod 可以指定一组共享的存储 <a class='glossary-tooltip' href='/docs/concepts/storage/volumes/' target='_blank'>Volume<span class='tooltip-text'>A directory containing data, accessible to the containers in a pod.</span>
+</a>。
+这个 Pod 内的所有容器都可以使用这个共享卷， 实现容器间的数据共享。卷也可以让其中的数据在， Pod
+被销毁重建后依然存在。更多关于 k8s 怎么实现共享存储及其在 Pod 中的使用，见 <a href="../../05-storage/">存储</a></p>
+<!--
+### Pod networking
+
+Each Pod is assigned a unique IP address for each address family. Every
+container in a Pod shares the network namespace, including the IP address and
+network ports. Inside a Pod (and **only** then), the containers that belong to the Pod
+can communicate with one another using `localhost`. When containers in a Pod communicate
+with entities *outside the Pod*,
+they must coordinate how they use the shared network resources (such as ports).
+Within a Pod, containers share an IP address and port space, and
+can find each other via `localhost`. The containers in a Pod can also communicate
+with each other using standard inter-process communications like SystemV semaphores
+or POSIX shared memory.  Containers in different Pods have distinct IP addresses
+and can not communicate by IPC without
+[special configuration](/docs/concepts/policy/pod-security-policy/).
+Containers that want to interact with a container running in a different Pod can
+use IP networking to comunicate.
+
+Containers within the Pod see the system hostname as being the same as the configured
+`name` for the Pod. There's more about this in the [networking](/docs/concepts/cluster-administration/networking/)
+section.
+
+
+ -->
+<h3 id="pod-的网络">Pod 的网络</h3>
+<p>每个 Pod 在一个地址族内分配唯一IP地址，在Pod内的所有容器共享网络空间，包括IP地址和网络端口，
+在一个Pod中(且仅在此时)， 属于该 Pod的容器相互之间可以通过 <code>localhost</code>通信。 当 Pod 中的容器
+与 <em>Pod 外</em> 的实体通信时需要协调好，它们(Pod 中的容器)之间怎么使用共享的网络资源(如端口)。
+在同一个Pod中的容器共享IP地址和端口池，并且相互之间可以通过 <code>localhost</code> 找到彼此。
+在同一个Pod中的容器还可以使用如 SystemV 信号量 或 POSIX 共享内存之类的标准进程间通信。
+不同Pod中的容器拥有不同的IP地址，并且在不进行<a href="../../08-policy/02-pod-security-policy/">特殊配置</a>的情况下不能通过进程间通信(IPC)</p>
+<p>Pod 中的容器看到的系统主机名就是定义文件中这个 Pod 的 <code>name</code> 字段的值。 更多相关信息请见 <a href="../../10-cluster-administration/03-networking/">网络</a></p>
+<!--
+## Privileged mode for containers
+
+Any container in a Pod can enable privileged mode, using the `privileged` flag on the [security context](/docs/tasks/configure-pod-container/security-context/) of the container spec. This is useful for containers that want to use operating system administrative capabilities such as manipulating the network stack or accessing hardware devices.
+Processes within a privileged container get almost the same privileges that are available to processes outside a container.
+
+<blockquote class="note">
+  <div><strong>说明：</strong> Your <a class='glossary-tooltip' href='/docs/setup/production-environment/container-runtimes' target='_blank'>container runtime<span class='tooltip-text'>容器运行环境就是负责运行容器的软件</span>
+</a> must support the concept of a privileged container for this setting to be relevant.</div>
+</blockquote>
+
+
+ -->
+<h2 id="容器的提权模式">容器的提权模式</h2>
+<p>Pod 中的任意容器都可以开启提权模式，通过容器定义中的 <a href="../../../3-tasks/02-configure-pod-container/09-security-context/">安全上下文</a> 中有一个 <code>privileged</code> 标志 开启或关闭(默认是关闭的). 这个模式对需要使用操作系统管理员权限如操作网络栈或访问硬件设备相当有用。
+在提权模式开启的容器中的进行基本与容器外的的进程拥有相同的权限。</p>
+<blockquote class="note">
+  <div><strong>说明：</strong> 提权模式生效需要 <a class='glossary-tooltip' href='/docs/setup/production-environment/container-runtimes' target='_blank'>容器运行环境<span class='tooltip-text'>容器运行环境就是负责运行容器的软件</span>
+</a> 支持提权容器这个概念。</div>
+</blockquote>
+
+<!--
+## Static Pods
+
+_Static Pods_ are managed directly by the kubelet daemon on a specific node,
+without the <a class='glossary-tooltip' href='/docs/reference/generated/kube-apiserver/' target='_blank'>API server<span class='tooltip-text'>Control plane component that serves the Kubernetes API.</span>
+</a>
+observing them.
+Whereas most Pods are managed by the control plane (for example, a
+<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
+</a>), for static
+Pods, the kubelet directly supervises each static Pod (and restarts it if it fails).
+
+Static Pods are always bound to one <a class='glossary-tooltip' href='/docs/reference/generated/kubelet' target='_blank'>Kubelet<span class='tooltip-text'>An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.</span>
+</a> on a specific node.
+The main use for static Pods is to run a self-hosted control plane: in other words,
+using the kubelet to supervise the individual [control plane components](/docs/concepts/overview/components/#control-plane-components).
+
+The kubelet automatically tries to create a <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-mirror-pod' target='_blank'>mirror Pod<span class='tooltip-text'>用于追踪 kubelet 监管的静态 Pod，存在于 api-server 中的对象</span>
+</a>
+on the Kubernetes API server for each static Pod.
+This means that the Pods running on a node are visible on the API server,
+but cannot be controlled from there.
+
+ -->
+<h2 id="静态-pod">静态 Pod</h2>
+<p><em>静态 Pod</em> 是由节点上的 kubelet 直接管理的 Pod， 并不被 <a class='glossary-tooltip' href='/docs/reference/generated/kube-apiserver/' target='_blank'>API server<span class='tooltip-text'>Control plane component that serves the Kubernetes API.</span>
+</a>
+监控。 然而多数 Pod 都是受控制中心管理(例，<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployment<span class='tooltip-text'>管理集群中的一个多副本应用</span>
+</a>)，
+静态 Pod 则是直接由 kubelet 监控和管理(如果挂也是由 kubelet 来重启)。
+静态 Pod 总是与节点上的 <a class='glossary-tooltip' href='/docs/reference/generated/kubelet' target='_blank'>Kubelet<span class='tooltip-text'>An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.</span>
+</a> 绑定在一起的。
+静态 Pod 主要用于运行自建(相对于云提供商提供)控制中心，也就是用 kubelet 来监管各个<a href="../../00-overview/01-components/#control-plane-components">控制中心组件</a></p>
+<p>kubelet 会自动的尝试在 <a class='glossary-tooltip' href='/docs/reference/generated/kube-apiserver/' target='_blank'>API server<span class='tooltip-text'>Control plane component that serves the Kubernetes API.</span>
+</a> 上为每个静态 Pod 去创建 <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-mirror-pod' target='_blank'>镜像 Pod<span class='tooltip-text'>用于追踪 kubelet 监管的静态 Pod，存在于 api-server 中的对象</span>
+</a>。
+也就是说这些运行在节点上的Pod在 <a class='glossary-tooltip' href='/docs/reference/generated/kube-apiserver/' target='_blank'>API server<span class='tooltip-text'>Control plane component that serves the Kubernetes API.</span>
+</a> 上也是可以看到的，但不能通过 <a class='glossary-tooltip' href='/docs/reference/generated/kube-apiserver/' target='_blank'>API server<span class='tooltip-text'>Control plane component that serves the Kubernetes API.</span>
+</a> 对其进行修改。</p>
+<h2 id="相关资料">相关资料</h2>
+<!--
+
+* Learn about the [lifecycle of a Pod](/docs/concepts/workloads/pods/pod-lifecycle/).
+* Learn about [PodPresets](/docs/concepts/workloads/pods/podpreset/).
+* Lean about [RuntimeClass](/docs/concepts/containers/runtime-class/) and how you can use it to
+  configure different Pods with different container runtime configurations.
+* Read about [Pod topology spread constraints](/docs/concepts/workloads/pods/pod-topology-spread-constraints/).
+* Read about [PodDisruptionBudget](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/) and how you can use it to manage application availability during disruptions.
+* Pod is a top-level resource in the Kubernetes REST API.  
+  The [Pod](/docs/reference/generated/kubernetes-api/v1.19/#pod-v1-core)
+  object definition describes the object in detail.
+* [The Distributed System Toolkit: Patterns for Composite Containers](https://kubernetes.io/blog/2015/06/the-distributed-system-toolkit-patterns) explains common layouts for Pods with more than one container.
+
+To understand the context for why Kubernetes wraps a common Pod API in other resources (such as <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSets<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
+</a> or <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployments<span class='tooltip-text'>管理集群中的一个多副本应用</span>
+</a>, you can read about the prior art, including:
+  * [Aurora](http://aurora.apache.org/documentation/latest/reference/configuration/#job-schema)
+  * [Borg](https://research.google.com/pubs/pub43438.html)
+  * [Marathon](https://mesosphere.github.io/marathon/docs/rest-api.html)
+  * [Omega](https://research.google/pubs/pub41684/)
+  * [Tupperware](https://engineering.fb.com/data-center-engineering/tupperware/).
+ -->
+<ul>
+<li>了解 <a href="../00-pod-lifecycle/">Pod生命周期</a>.</li>
+<li>了解 <a href="../03-podpreset/">PodPresets</a>.</li>
+<li>了解 <a href="../../02-containers/02runtime-class/">RuntimeClass</a> 并如何使用它来在不同的运行时上运行不同的 Pod</li>
+<li>了解 <a href="../02-pod-topology-spread-constraints/">Pod topology spread constraints</a>.</li>
+<li>了解 <a href="https://kubernetes.io/docs/concepts/workloads/pods/disruptions/">PodDisruptionBudget</a> 并用它来在干扰时管理应用的可用性</li>
+<li>Pod k8s REST API 中顶级资源.<br>
+这里是 <a href="/docs/reference/generated/kubernetes-api/v1.19/#pod-v1-core">Pod</a>
+对象文档</li>
+<li><a href="https://kubernetes.io/blog/2015/06/the-distributed-system-toolkit-patterns">The Distributed System Toolkit: Patterns for Composite Containers</a> 介绍多容器 Pod 的常用布局</li>
+</ul>
+<p>要理解为啥k8s 要把 Pod 包在其它(如 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSets<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
+</a> 或 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/deployment/' target='_blank'>Deployments<span class='tooltip-text'>管理集群中的一个多副本应用</span>
+</a>)的资源中，请阅读以下先前技术(prior art)：</p>
+<ul>
+<li><a href="http://aurora.apache.org/documentation/latest/reference/configuration/#job-schema">Aurora</a></li>
+<li><a href="https://research.google.com/pubs/pub43438.html">Borg</a></li>
+<li><a href="https://mesosphere.github.io/marathon/docs/rest-api.html">Marathon</a></li>
+<li><a href="https://research.google/pubs/pub41684/">Omega</a></li>
+<li><a href="https://engineering.fb.com/data-center-engineering/tupperware/">Tupperware</a>.</li>
+</ul>
+
+
+		
+		<div class="section-index">
+    
+    
+    
+    
+    <hr class="panel-line">
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a>
+                    </h5>
+                    <p></p>
+                </div>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/k8sDocs/docs/concepts/workloads/pods/init-containers/">初始化容器</a>
+                    </h5>
+                    <p></p>
+                </div>
+            
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑分布约束条件</a>
+                    </h5>
+                    <p></p>
+                </div>
+            
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/k8sDocs/docs/concepts/workloads/pods/podpreset/">Pod 预设信息</a>
+                    </h5>
+                    <p></p>
+                </div>
+            
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/k8sDocs/docs/concepts/workloads/pods/disruptions/">Disruptions</a>
+                    </h5>
+                    <p></p>
+                </div>
+            
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/k8sDocs/docs/concepts/workloads/pods/ephemeral-containers/">临时容器</a>
+                    </h5>
+                    <p></p>
+                </div>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    
+</div>
+
+	</div>
+
+            
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 July 2, 2020
+</div>
+            
+          </main>
+          <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
+            
+
+
+
+
+
+
+
+
+
+
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#pod-是个啥东西">Pod 是个啥东西?</a></li>
+    <li><a href="#pod-怎么用">Pod 怎么用</a>
+      <ul>
+        <li><a href="#pod-怎么管理多个容器">Pod 怎么管理多个容器</a></li>
+      </ul>
+    </li>
+    <li><a href="#pod-操作">Pod 操作</a>
+      <ul>
+        <li><a href="#hahahugoshortcode-s28-hbhb-和-hahahugoshortcode-s29-hbhb">HAHAHUGOSHORTCODE-s28-HBHB 和 HAHAHUGOSHORTCODE-s29-HBHB</a></li>
+        <li><a href="#pod-模板">Pod 模板</a></li>
+      </ul>
+    </li>
+    <li><a href="#资源共享和网络通信">资源共享和网络通信</a>
+      <ul>
+        <li><a href="#pod-storage">Pod 的存储</a></li>
+        <li><a href="#pod-的网络">Pod 的网络</a></li>
+      </ul>
+    </li>
+    <li><a href="#容器的提权模式">容器的提权模式</a></li>
+    <li><a href="#静态-pod">静态 Pod</a></li>
+    <li><a href="#相关资料">相关资料</a></li>
+  </ul>
+</nav>
+
+
+
+          </div>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        
+        
+	
+		
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script src="/k8sDocs/js/main.min.446a2e681f8167f44314691b77368dd561bf0b67514487f3f0fd999316c6da4a.js" integrity="sha256-RGouaB&#43;BZ/RDFGkbdzaN1WG/C2dRRIfz8P2ZkxbG2ko=" crossorigin="anonymous"></script>
+
+
+
+
+  </body>
+</html>

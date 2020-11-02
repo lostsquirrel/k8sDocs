@@ -1,0 +1,611 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubernetes – k8s 对象管理</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/</link>
+    <description>Recent content in k8s 对象管理 on Kubernetes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Fri, 03 Jul 2020 00:00:00 +0000</lastBuildDate>
+    
+	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: k8s 对象介绍</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/00-kubernetes-objects/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/00-kubernetes-objects/</guid>
+      <description>
+        
+        
+        &lt;p&gt;本文介绍 k8s 对象 是怎么在 k8s API 中表示的，怎么以 &lt;code&gt;.yaml&lt;/code&gt; 格式输出 k8s 对象&lt;/p&gt;
+&lt;h2 id=&#34;简介&#34;&gt;简介&lt;/h2&gt;
+&lt;p&gt;k8s 对象是 k8s 系统中持久化的实体， k8s 使用这些实体来表示集群的状态，它们具体可以表示如下:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;哪些容器的应用在(如个节点上)运行&lt;/li&gt;
+&lt;li&gt;可用于运行应用的资源&lt;/li&gt;
+&lt;li&gt;应用的行为策略，比如重启策略，升级，容错性&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;k8s 对象是对用户一个意图的记录，当用户创建一个对象后，系统需要保证对象持续存在。用户通过创建一个来告知 k8s 需要一个什么样的 工作负载(workload), 也就是集群的期望状态(desired state)&lt;/p&gt;
+&lt;p&gt;要实现对 k8s 对象的管理，比如增删改查都需要调用 k8s API, 例如，当用户可以通过 kubectl 命令来实现对API的调用。也可以通过自己写程序实现对 k8s API 的调用，调用库详见(&lt;a href=&#34;https://kubernetes.io/docs/reference/using-api/client-libraries/&#34;&gt;https://kubernetes.io/docs/reference/using-api/client-libraries/&lt;/a&gt;)&lt;/p&gt;
+&lt;h2 id=&#34;对象的-specstatus-属性&#34;&gt;对象的 &lt;code&gt;Spec&lt;/code&gt;，&lt;code&gt;Status&lt;/code&gt; 属性&lt;/h2&gt;
+&lt;p&gt;基本上所有的 k8s 都包含两个嵌套对象作为属性用于管理对象的配置，其中一个对象为 &lt;code&gt;spec&lt;/code&gt;， 另一个为 &lt;code&gt;status&lt;/code&gt;， 用户在创建对象进设置 &lt;code&gt;spec&lt;/code&gt; 来定义所需资源的特性，也就是集群的期望状态。&lt;/p&gt;
+&lt;p&gt;而 &lt;code&gt;status&lt;/code&gt; 字段，则是对象的当前的实际状态，由 k8s 系统及其组件进行提供和修改。 k8s 控制中心的任务就是始终让所有对象的实际状态与期望状态一致。&lt;/p&gt;
+&lt;p&gt;例如: 在 k8s 中， 一个  Deployment 对象表示运行有用户集群中的一个应用，当用户创建一个 Deployment 并在 spec 对象中设置应用副本数为 3时， k8s 会读取对象属性，启动用户所期望的三个实例并更新相应的状态以达成与 spec 配置的一致。 如果其它任意一个实例失效(某一状态发生变化)， k8s 将会对 spec 与 status 之间的差异采取行动，在当前描述的情况下就会再启动一个实例代替失效的实例。更多关于对象 &lt;code&gt;spec&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, &lt;code&gt;metadata&lt;/code&gt; 相关信息看&lt;a href=&#34;https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;怎么描述一个-k8s-对象&#34;&gt;怎么描述一个 k8s 对象&lt;/h2&gt;
+&lt;p&gt;用户在创建 k8s 对象时，必须要提供描述期望状态的 &lt;code&gt;spec&lt;/code&gt;, 同时还需要该对象的基础信息，比如名称。 当用户使用 API 创建对象时(无论是直接调用还是通过 &lt;code&gt;kubectl&lt;/code&gt; ), 对象信息都为以JSON格式作为请求的消息体发送给 API.&lt;/p&gt;
+&lt;p&gt;一般情况下使用 &lt;code&gt;yaml&lt;/code&gt; 文件为 &lt;code&gt;kubectl&lt;/code&gt;提供信息, 此时kubectl 会将 &lt;code&gt;.yaml&lt;/code&gt; 格式转化为JSON格式然后对 k8s API 发起请求&lt;/p&gt;
+&lt;p&gt;以下是示例为创建一个 Deployment 必要字段和对象 &lt;code&gt;spec&lt;/code&gt;的 &lt;code&gt;yaml&lt;/code&gt; 文件：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1 # 集群版本 &amp;lt; 1.9.0 使用 apps/v1beta2&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deployment&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx-deployment&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;replicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# 需要按以下模板运行 3 个 Pod&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx:1.14.2&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;containerPort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;80&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;要使用以上的 &lt;code&gt;yaml&lt;/code&gt; 文件创建一个 Deployment，一种方式是通过 &lt;code&gt;kubectl apply&lt;/code&gt; 命令，并将这个 &lt;code&gt;yaml&lt;/code&gt; 文件作为参数&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl apply -f nginx-deployment.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;命令输出如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;deployment.apps/nginx-deployment created --record
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;必要字段&#34;&gt;必要字段&lt;/h2&gt;
+&lt;p&gt;在使用 &lt;code&gt;.yaml&lt;/code&gt; 创建对象时，以下是必要字段:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;apiVersion&lt;/code&gt; 使用哪个版本的 k8s API 创建这个对象&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;kind&lt;/code&gt; 创建对象的类型&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;metadata&lt;/code&gt; 唯一标识对象的信息，
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;name&lt;/code&gt; 字符串&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;UID&lt;/code&gt; (系统会生成?)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;namespace&lt;/code&gt;, 可选，默认 default&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;spec&lt;/code&gt; 对象实际定义(期望)， 每类对象不一样&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;其中 &lt;code&gt;spec&lt;/code&gt; 字段值是一个嵌套对象，其字段因不同的对象类型而有不同。&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/&#34;&gt;这个文档&lt;/a&gt;包含k8s 所有对象的创建, 比如 &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podspec-v1-core&#34;&gt;这里是Pod的 spec 详情&lt;/a&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#deploymentspec-v1-apps&#34;&gt;这里是Deployment的 spec 详情&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;源文件&#34;&gt;源文件&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/&#34;&gt;https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;引申阅读&#34;&gt;引申阅读&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/using-api/api-overview/&#34;&gt;k8s API 概念说明&lt;/a&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/&#34;&gt;k8s 最重要基础概念 Pod&lt;/a&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/concepts/architecture/controller/&#34;&gt;k8s 的控制器&lt;/a&gt;&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 对象命令与ID</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/names/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/names/</guid>
+      <description>
+        
+        
+        &lt;p&gt;在 k8s 的对象中，同一类型的对象名称唯一， 比如在一个 &lt;a href=&#34;./02-namespace&#34;&gt;命名空间&lt;/a&gt;中只能有一个叫 &lt;code&gt;myapp-1234&lt;/code&gt; 在 Pod， 但不同类型的资源可以有相同的名称，比如还可以定义一个叫 &lt;code&gt;myapp-1234&lt;/code&gt; 在 Deployment。
+每个对象也有一个 &lt;code&gt;UID&lt;/code&gt; 这个 &lt;code&gt;UID&lt;/code&gt; 整个集群全局唯一
+用户需要定义非唯一的，用户自定义的属性，则可通过 &lt;a href=&#34;./03-label-selectors&#34;&gt;标签&lt;/a&gt; 和 &lt;a href=&#34;04-annotation&#34;&gt;注解&lt;/a&gt; 实现&lt;/p&gt;
+&lt;h1 id=&#34;对象名称&#34;&gt;对象名称&lt;/h1&gt;
+&lt;p&gt;对象的名称是一个字符串，体现在对象的 URL中， 比如 &lt;code&gt;/api/v1/pods/some-name&lt;/code&gt;
+在同一时间，一个类型的对象名称必须唯一，但如果用户删除的这个对象，则可以用这个名称再创建一个新的对象&lt;/p&gt;
+&lt;p&gt;以下是命令规范三类限制&lt;/p&gt;
+&lt;h3 id=&#34;dns-subdomain-names&#34;&gt;DNS 子域名&lt;/h3&gt;
+&lt;p&gt;多数类型的资源命令必须可以作为 DNS 子域名，定义在这里(&lt;a href=&#34;https://tools.ietf.org/html/rfc1123),&#34;&gt;https://tools.ietf.org/html/rfc1123),&lt;/a&gt; 总结如下:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;不能多于 253个字符&lt;/li&gt;
+&lt;li&gt;只能包含小写字母，数字， &lt;code&gt;-&lt;/code&gt;(中划线)，&lt;code&gt;.&lt;/code&gt;(点)&lt;/li&gt;
+&lt;li&gt;只能以字母数字开头&lt;/li&gt;
+&lt;li&gt;只能以字母数字结尾&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;更多资料见 &lt;a href=&#34;https://en.wikipedia.org/wiki/Subdomain&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;dns-标签名&#34;&gt;DNS 标签名&lt;/h3&gt;
+&lt;p&gt;有些资源类型命令遵循 DNS 标签名称， 规则如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;最多 63 个字符&lt;/li&gt;
+&lt;li&gt;只能包含小写字母，数字， &lt;code&gt;-&lt;/code&gt;(中划线)&lt;/li&gt;
+&lt;li&gt;只能以字母数字开头&lt;/li&gt;
+&lt;li&gt;只能以字母数字结尾&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;路径分段名&#34;&gt;路径分段名&lt;/h3&gt;
+&lt;p&gt;有些资源类型的命令必须要能够编码到 路径的一段上，所以名称不能包含 &lt;code&gt;.&lt;/code&gt; 或 &lt;code&gt;..&lt;/code&gt;, 也不能包含 &lt;code&gt;/&lt;/code&gt; 或 &lt;code&gt;%&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;以下为一个命令为 &lt;code&gt;nginx-demo&lt;/code&gt; 的 Pod 示例&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx-demo&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx:1.14.2&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;containerPort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;80&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;注意: 还有一些资源类型有更严格的命名规则&lt;/p&gt;
+&lt;h2 id=&#34;uids&#34;&gt;UIDs&lt;/h2&gt;
+&lt;p&gt;由系统创建的对象的唯一标识，类型为字符串
+k8s 集群整个生命周期内，创建的每一个对象的UID都是唯一的，用于区分可能存在或曾今过的相似对象
+k8s UID 是 UUID， 使用标准为  &lt;code&gt;ISO/IEC 9834-8&lt;/code&gt;  和 &lt;code&gt;ITU-T X.667&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;引申阅读&#34;&gt;引申阅读&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;./03-label-selectors&#34;&gt;k8s 标签&lt;/a&gt;
+&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/architecture/identifiers.md&#34;&gt;k8s 标识符与命令设计文档&lt;/a&gt;&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 命名空间(Namespaces)</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/02-namespace/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/02-namespace/</guid>
+      <description>
+        
+        
+        &lt;p&gt;k8s 可以在一个物理集群上创建多个虚拟集群, 每个命名空间就是一个虚拟集群&lt;/p&gt;
+&lt;h2 id=&#34;啥时候用命名空间&#34;&gt;啥时候用命名空间&lt;/h2&gt;
+&lt;p&gt;命名空间是为用户分散于有多个组或项目下的场景设计的。 如果只有二三十个用户就不用想了，当需要用到命名空间的特性时才考虑用命名空间
+命名空间是对象名称的一个作用域，对象命名只需要在一个命名空间唯一即可，命名空间不可以嵌套且一个资源对象只能属于一个命名空间
+命名空间是集群中多个(组)用户分配资源的一个方式(&lt;a href=&#34;../../../08-policy/01-resource-quotas&#34;&gt;通过资源配额&lt;/a&gt;)
+未来版本，一个命名空间下的对象可能有相同的默认访问控制策略
+不必要用命名空间来区分差异较小的资源，比如同一个软件的不同版本，可以同一个命名空间下使用标签(labels)区分这些对象&lt;/p&gt;
+&lt;h2 id=&#34;管理命名空间&#34;&gt;管理命名空间&lt;/h2&gt;
+&lt;p&gt;命名空间的创建和删除请见&lt;a href=&#34;../../../../3-tasks/01-administer-cluster/34-namespaces&#34;&gt;管理指南命名空间部分&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;注意: 在自定义命名空间是，避免使用 &lt;code&gt;kube-&lt;/code&gt; 作为前缀， 这个前缀是 k8s 命名空间保留字&lt;/p&gt;
+&lt;h3 id=&#34;查看&#34;&gt;查看&lt;/h3&gt;
+&lt;p&gt;可以通过以下命令查看当前集群所有命名空间:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get namespaces
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出类似如下:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;NAME              STATUS   AGE
+default           Active   1d
+kube-node-lease   Active   1d
+kube-public       Active   1d
+kube-system       Active   1d
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;k8s 启动时会初始化创建以下4个命名空间:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;default：&lt;/code&gt; 当对象不指定命名空间时所属的命名空间&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;kube-system&lt;/code&gt;： 由系统创建对象所在的命名空间&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;kube-public&lt;/code&gt;：可以被所有人访问(包括未授权用户)，一般只能被系统使用，在这个命名空间的对象，整个集群都可访问，公开只是为了方便，不是强制要求&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;kube-node-lease&lt;/code&gt;: 用于放置用于存放与每个节点关联的租约对象，在集群扩容时改善节点心跳性能&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;在请求中添加命名空间&#34;&gt;在请求中添加命名空间&lt;/h3&gt;
+&lt;p&gt;为当前请求添加命名空间 使用 &lt;code&gt;--namespace&lt;/code&gt; 参数
+示例如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl run nginx --image&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;nginx --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;lt;insert-namespace-name-here&amp;gt;
+kubectl get pods --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;lt;insert-namespace-name-here&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;设置默认命名空间&#34;&gt;设置默认命名空间&lt;/h3&gt;
+&lt;p&gt;持久化配置 kubectl 默认操作的命名空间&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl config set-context --current --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;lt;insert-namespace-name-here&amp;gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# Validate it&lt;/span&gt;
+kubectl config view --minify | grep namespace:
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;命名空间与dns的关系&#34;&gt;命名空间与DNS的关系&lt;/h3&gt;
+&lt;p&gt;当用户创建 &lt;a href=&#34;../../../services-networking/service/&#34;&gt;Service&lt;/a&gt; 时会对应生成一条 &lt;a href=&#34;../../../services-networking/03-dns-pod-service/&#34;&gt;DNS 记录&lt;/a&gt;, 而这条记录中的格式为 &lt;code&gt;&amp;lt;service-name&amp;gt;.&amp;lt;namespace-name&amp;gt;.svc.cluster.local&lt;/code&gt; 也就是说 通过 &lt;code&gt;&amp;lt;service-name&amp;gt;&lt;/code&gt; 只能解析到本命名空间的服务，这在不同命名空间使用同一套配置时相关有用，比如开发，演示，生产等不同环境。如果跨命名空间访问 Service 需要使用全限定名(FQDN)，一般来说只需要 &lt;code&gt;&amp;lt;service-name&amp;gt;.&amp;lt;namespace-name&amp;gt;&lt;/code&gt; 也是可以的&lt;/p&gt;
+&lt;h2 id=&#34;那些不属于任何命名空间的对象&#34;&gt;那些不属于任何命名空间的对象&lt;/h2&gt;
+&lt;p&gt;大多数 k8s 资源( pod, service, replication controller 等)都会属于某一个命名空间。 而 命名空间 资源则不属于任何命名空间。 还有一个底层资源 比如 &lt;a href=&#34;../../../01-architecture/00-nodes/&#34;&gt;节点&lt;/a&gt;， persistentVolumes 也不属于任何命名空间&lt;/p&gt;
+&lt;p&gt;以下命令可以查看资源是否属于命名空间:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 在一个命名空间中&lt;/span&gt;
+kubectl api-resources --namespaced&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;true
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# 不属于任何命名空间&lt;/span&gt;
+kubectl api-resources --namespaced&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;false
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;Node&lt;/li&gt;
+&lt;li&gt;persistentVolumes&lt;/li&gt;
+&lt;li&gt;Events: 根据事件关联的对象，可能有属于命名空间也可能不属于命名空间&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 标签和标签选择器</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/labels/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/labels/</guid>
+      <description>
+        
+        
+        &lt;p&gt;标签是附加在对象上的键值对，应该与所在的对象有关且具有意义
+标签可以用于组织和筛选一组对象
+标签可以在对象创建时就定义，也可以在对象创建后任何时间添加或修改
+一个对象可以有多个标签，但同一个对象所有标签的名称必须唯一
+标签可以让UI或命令行工具快速地查询和监听对象，所以标签不适用于非标识性的内容，非标识性内容应该使用注解(&lt;a href=&#34;../04-annotation/&#34;&gt;annotations&lt;/a&gt;)&lt;/p&gt;
+&lt;h2 id=&#34;动机&#34;&gt;动机&lt;/h2&gt;
+&lt;p&gt;标签让用户可以以松耦合的形式把组织架构映射到系统对象上，而不需要客户端存在这些映射
+服务部署和批处理流水线通常胡是多维的实体(比如: 多个分区或部署， 多条发布线， 多个层级， 每个次级又有多个微服务)。 要管理这些对象经常需要多维度分割操作， 这就需要打破严格的层级结构的表现形式， 特别是由基础设施而不是由用户决定的死板的层级结构&lt;/p&gt;
+&lt;p&gt;常用标签示例：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;&amp;quot;release&amp;quot; : &amp;quot;stable&amp;quot;&lt;/code&gt;, &lt;code&gt;&amp;quot;release&amp;quot; : &amp;quot;canary&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;quot;environment&amp;quot; : &amp;quot;dev&amp;quot;&lt;/code&gt;, &lt;code&gt;&amp;quot;environment&amp;quot; : &amp;quot;qa&amp;quot;&lt;/code&gt;, &lt;code&gt;&amp;quot;environment&amp;quot; : &amp;quot;production&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;quot;tier&amp;quot; : &amp;quot;frontend&amp;quot;&lt;/code&gt;, &lt;code&gt;&amp;quot;tier&amp;quot; : &amp;quot;backend&amp;quot;&lt;/code&gt;, &lt;code&gt;&amp;quot;tier&amp;quot; : &amp;quot;cache&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;quot;partition&amp;quot; : &amp;quot;customerA&amp;quot;&lt;/code&gt;, &lt;code&gt;&amp;quot;partition&amp;quot; : &amp;quot;customerB&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;quot;track&amp;quot; : &amp;quot;daily&amp;quot;&lt;/code&gt;, &lt;code&gt;&amp;quot;track&amp;quot; : &amp;quot;weekly&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;syntax-and-character-set&#34;&gt;语法和字符集&lt;/h2&gt;
+&lt;p&gt;标签由 键值对组成。 合法的键可以由两上部分组成， 一个可选的前级加上本身的名称中间用斜线(&lt;code&gt;/&lt;/code&gt;)分隔。
+名称部分 不得多于63个字符，必须以字母或数字 ([a-z0-9A-Z])开头和结束，中间部分可以包含中划线(&lt;code&gt;-&lt;/code&gt;)，下划线 &lt;code&gt;(_)&lt;/code&gt;，点 (&lt;code&gt;.&lt;/code&gt;),字母,数字。
+如果要使用前缀， 前端必须是一个合法的 DNS 字域名，由多个 DNS 标签组成，中间由点(&lt;code&gt;.&lt;/code&gt;)分隔， 总长度不超过 253 个字符&lt;/p&gt;
+&lt;p&gt;如果一个标签键没有前缀则假定它是属于用于私有的，
+由系统自动化组件(e.g. &lt;code&gt;kube-scheduler&lt;/code&gt;, &lt;code&gt;kube-controller-manager&lt;/code&gt;, &lt;code&gt;kube-apiserver&lt;/code&gt;, &lt;code&gt;kubectl&lt;/code&gt;, 或其它第三方自动化工具), 在给用户对象加标签时必须加前缀， &lt;code&gt;kubernetes.io/&lt;/code&gt;和 &lt;code&gt;k8s.io/&lt;/code&gt; 为 k8s 核心组件保留前缀&lt;/p&gt;
+&lt;p&gt;值 可以为空，不多于63个字符，必须以字母或数字 ([&lt;code&gt;a-z0-9A-Z&lt;/code&gt;])开头和结束，中间可以包含中划线(&lt;code&gt;-&lt;/code&gt;)，下划线 &lt;code&gt;(_)&lt;/code&gt;，点 (.),字母,数字&lt;/p&gt;
+&lt;p&gt;以下示例中的 Pod 包含 &lt;code&gt;environment: production&lt;/code&gt; 和 &lt;code&gt;app: nginx&lt;/code&gt; 两个标签:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;label-demo&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;environment&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;production&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx:1.14.2&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;containerPort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;80&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;标签选择器&#34;&gt;标签选择器&lt;/h2&gt;
+&lt;p&gt;与对象名称和对象UID不同，对象标签在对象之间不需要唯一，并且一般来说，会有多个对象有相同的标签
+用户或客户端程序可以选择器可以通过标签选择器选取一个对象集. 标签选择器是 k8s 核心分组r 基础
+目前标签选择器支持两种选择方式： 等值选择，集合选择。
+在待值选择时， 一个标签选择器可以由多个选择条件组成，每个条件用逗号分隔，表示匹配同时满足这些条件的对象，所以这里逗号相当与逻辑与(&lt;code&gt;&amp;amp;&amp;amp;&lt;/code&gt;)关系
+空选择器或不使用选择在不同的情况下，有不同的表现。用户标签的 API 需要要正确和有意义的说明文档
+注意: 对于有些 API 类型，比如 &lt;code&gt;ReplicaSets&lt;/code&gt; 同一个命名空间两个不同实例的标签选择器不能有交叉， 否些控制器就会将些认为是冲突，导致不能别副本数是否正确(TODO 这里需要有一个示例，描述不太好理解)&lt;/p&gt;
+&lt;p&gt;警告: 在编写选择器条件时需要注意，对于 等值选择，集合选择 都没有逻辑与(&lt;code&gt;||&lt;/code&gt;)操作符&lt;/p&gt;
+&lt;h3 id=&#34;等值选择&#34;&gt;等值选择&lt;/h3&gt;
+&lt;p&gt;等值选择可以分别对于标签的 键和值的相等与不相等，只要对象的标签含有选择器所有的条件相匹配的标签就会选中，不管该对象是否还有其它标签
+操作符&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;=,==, 表示等于; 对象标签的键和值都要一致&lt;/li&gt;
+&lt;li&gt;!= 表示不等于; 对象标签有该键，但不是该值
+例：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;environment = production # 筛选包含标签键为 environment， 且对应值为 production 的对象
+tier != frontend # 筛选包含标签键为 tier，且对应值不为 frontend 的对象
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;筛选&lt;code&gt;production&lt;/code&gt;环境中层级除 &lt;code&gt;frontend&lt;/code&gt; 外的对象可以写成 &lt;code&gt;environment=production,tier!=frontend&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;等值选择标签选择器的一个应用场景为为 Pod 指定 节点选择的条件。以下 Pod 节点选择的条件为 &lt;code&gt;accelerator=nvidia-tesla-p100&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;cuda-test&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;cuda-test&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;k8s.gcr.io/cuda-vector-add:v0.1&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;limits&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;nvidia.com/gpu&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;nodeSelector&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;accelerator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nvidia-tesla-p100&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;集合选择器&#34;&gt;集合选择器&lt;/h3&gt;
+&lt;p&gt;标签的集合选择器可以且于多值过虑。 支持三种操作符 &lt;code&gt;in&lt;/code&gt;,&lt;code&gt;notin&lt;/code&gt; 和 &lt;code&gt;exists&lt;/code&gt;(仅用在键上)
+示例:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;environment in (production, qa) # 筛选 有键为 environment 且对应值为 production 或 qa 的对象
+tier notin (frontend, backend) # 筛选 有键为 tier 且值 不是frontend 也不是 backend 的对象和所有不包含键为 tier 的对象
+partition # 筛选 存在键为 tier 不管值是啥的对象
+!partition # 筛选 不存在键为 tier 不管值是啥的对象
+partition,environment notin (qa) # 筛选 存在键为 partition 且 environment 的值不是 qa
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;多个条件之间的逗号赞同一逻辑与(&lt;code&gt;&amp;amp;&amp;amp;&lt;/code&gt;)
+&lt;code&gt;environment=production&lt;/code&gt; 与 &lt;code&gt;environment in (production)&lt;/code&gt; 等同
+&lt;code&gt;!=&lt;/code&gt; 与 &lt;code&gt;notin&lt;/code&gt; 单值时等同
+两种标签选择方式可以组合使用 例： &lt;code&gt;partition in (customerA, customerB),environment!=qa&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;选择器在-api-上的使用&#34;&gt;选择器在 API 上的使用&lt;/h2&gt;
+&lt;h3 id=&#34;list-watch-操作时过虑对象&#34;&gt;LIST/ WATCH 操作时过虑对象&lt;/h3&gt;
+&lt;p&gt;在时行LIST/ WATCH 操作时可以通过标签选择筛选需要的对象。 上节提及的两种方式都可以使用， 在URL中请求参数类似如下:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;等值选择: &lt;code&gt;?labelSelector=environment%3Dproduction,tier%3Dfrontend&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;集合选择: &lt;code&gt;?labelSelector=environment+in+%28production%2Cqa%29%2Ctier+in+%28frontend%29&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;也可以用于 REST 客户端 或 &lt;code&gt;kubectl&lt;/code&gt;
+例如 &lt;code&gt;kubectl&lt;/code&gt; 中使用&lt;/p&gt;
+&lt;p&gt;等值选择&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get pods -l environment&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;production,tier&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;frontend
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;集合选择&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get pods -l &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;environment in (production),tier in (frontend)&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;集合选择的表达更宽泛，比如这个可以达到或的效果&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get pods -l &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;environment in (production, qa)&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;逻辑否的效果&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get pods -l &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;environment,environment notin (frontend)&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;set-references-in-api-objects-啥意思&#34;&gt;Set references in API objects 啥意思&lt;/h3&gt;
+&lt;p&gt;有些 k8s 对象，比如 &lt;a href=&#34;../../../services-networking/service/&#34;&gt;Service&lt;/a&gt; &lt;a href=&#34;../../../03-workloads/01-controllers/01-replicationcontroller/&#34;&gt;ReplicationController&lt;/a&gt; 也是通过标签选择器来限定被其管理的资源对象，比如 &lt;a href=&#34;../../../03-workloads/00-pods/&#34;&gt;Pod&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;service-和-replicationcontroller-对选择器的使用&#34;&gt;&lt;code&gt;Service&lt;/code&gt; 和 &lt;code&gt;ReplicationController&lt;/code&gt; 对选择器的使用&lt;/h3&gt;
+&lt;p&gt;Service 通过标签选择器来指定负载均衡的 Pod
+ReplicationController 也是通过标签选择器来指定被其管理的 Pod&lt;/p&gt;
+&lt;p&gt;只支持等值选择，可以为 &lt;code&gt;yaml&lt;/code&gt; 或 &lt;code&gt;JSON&lt;/code&gt; 格式
+示例:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis # 相当于 component=redis 或 component in (redis)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;支持集合选择的资源&#34;&gt;支持集合选择的资源&lt;/h3&gt;
+&lt;p&gt;较新的资源，如 &lt;code&gt;Job&lt;/code&gt;, &lt;code&gt;Deployment&lt;/code&gt;, &lt;code&gt;ReplicaSet&lt;/code&gt;, &lt;code&gt;DaemonSet&lt;/code&gt; 都支持集合选择&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+    - {&lt;span style=&#34;color:#f92672&#34;&gt;key: tier, operator: In, values&lt;/span&gt;: [&lt;span style=&#34;color:#ae81ff&#34;&gt;cache]}&lt;/span&gt;
+    - {&lt;span style=&#34;color:#f92672&#34;&gt;key: environment, operator: NotIn, values&lt;/span&gt;: [&lt;span style=&#34;color:#ae81ff&#34;&gt;dev]}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;matchLabels&lt;/code&gt; 是一个键值对字典&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# 等同与&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+    - {&lt;span style=&#34;color:#f92672&#34;&gt;key: component, operator: In, values&lt;/span&gt;: [&lt;span style=&#34;color:#ae81ff&#34;&gt;redis]}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;matchExpressions&lt;/code&gt; 是一个条件的集合
+其条件中可用的操作符(operator)包括: &lt;code&gt;In&lt;/code&gt;, &lt;code&gt;NotIn&lt;/code&gt;, &lt;code&gt;Exists&lt;/code&gt;, &lt;code&gt;DoesNotExist&lt;/code&gt;
+&lt;code&gt;NotIn&lt;/code&gt; 的值必须非空
+包括 &lt;code&gt;matchLabels&lt;/code&gt; 和 &lt;code&gt;matchExpressions&lt;/code&gt; 定义的条件,所有条件之间的关系为逻辑与.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;选择节点集合&#34;&gt;选择节点集合&lt;/h3&gt;
+&lt;p&gt;标签的另一个应用场景为筛选 Pod 可以调度的 节点。 具体见&lt;a href=&#34;../../../09-scheduling-eviction/02-assign-pod-node/&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 注解 (Annotations)</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/04-annotation/</link>
+      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/04-annotation/</guid>
+      <description>
+        
+        
+        &lt;p&gt;用户可以将任非标识符元素关联到对象上，其它库或工具可以读取这些元数据&lt;/p&gt;
+&lt;h2 id=&#34;关联元数据到对象&#34;&gt;关联元数据到对象&lt;/h2&gt;
+&lt;p&gt;用户可以通过标签或注意的方式将元数据关联到对象上，标签用于选择或查找符合条件的对象， 而在注解中的元数据则不是用于选择或查找对象的，其中的内容可以很小也可以很大，可以是结构化数据也可以是非结构化数据，还可以使用标签不允许的字符
+注解与标签类似，也是键值对形式的字典，例如:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;metadata&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;:&lt;/span&gt; {
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;annotations&amp;#34;&lt;/span&gt;: {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;key1&amp;#34;&lt;/span&gt; : &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;value1&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;key2&amp;#34;&lt;/span&gt; : &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;value2&amp;#34;&lt;/span&gt;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;可以用注解存储的常见数据示例：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;由声明式配置层管理的字段. 把这些字段作为注解关联到对象是为能与诸如以下字段做区分: 由客户端或服务端设置的默认值; 由自动扩容系统自动生成的字段&lt;/li&gt;
+&lt;li&gt;构建，发布，镜像相关信息如 时间戳，发布编号，git 分支，PR 编号，镜像 hash, 镜像库地址&lt;/li&gt;
+&lt;li&gt;日志, 监控, 分析, 审计仓库的信息.&lt;/li&gt;
+&lt;li&gt;关于客户端库或工具可用于调试目的的信息 例如：名称, 版本, 构建信息.&lt;/li&gt;
+&lt;li&gt;来自用户或 工具/系统 信息, 例如 对象在外部系统中的URLs地址&lt;/li&gt;
+&lt;li&gt;轻量级回滚帮助信息， 例如, 配置或检查点.&lt;/li&gt;
+&lt;li&gt;对使用对象的用户提供修改指导或非标准特性的使用说明&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;当然这些信息可以保存在外部的数据库或系统中，但这样制作部署，管理，自省的工具库就不那么容易了&lt;/p&gt;
+&lt;h2 id=&#34;语法和字符集&#34;&gt;语法和字符集&lt;/h2&gt;
+&lt;p&gt;标签由 键值对组成。 合法的键可以由两上部分组成， 一个可选的前级加上本身的名称中间用斜线(&lt;code&gt;/&lt;/code&gt;)分隔。
+名称部分 不得多于63个字符，必须以字母或数字 ([a-z0-9A-Z])开头和结束，中间部分可以包含中划线(&lt;code&gt;-&lt;/code&gt;)，下划线 &lt;code&gt;(_)&lt;/code&gt;，点 (&lt;code&gt;.&lt;/code&gt;),字母,数字。
+如果要使用前缀， 前端必须是一个合法的 DNS 字域名，由多个 DNS 标签组成，中间由点(&lt;code&gt;.&lt;/code&gt;)分隔， 总长度不超过 253 个字符&lt;/p&gt;
+&lt;p&gt;如果一个标签键没有前缀则假定它是属于用于私有的，
+由系统自动化组件(e.g. &lt;code&gt;kube-scheduler&lt;/code&gt;, &lt;code&gt;kube-controller-manager&lt;/code&gt;, &lt;code&gt;kube-apiserver&lt;/code&gt;, &lt;code&gt;kubectl&lt;/code&gt;, 或其它第三方自动化工具), 在给用户对象加标签时必须加前缀， &lt;code&gt;kubernetes.io/&lt;/code&gt;和 &lt;code&gt;k8s.io/&lt;/code&gt; 为 k8s 核心组件保留前缀&lt;/p&gt;
+&lt;p&gt;以下示例一个包含一个注解 &lt;code&gt;imageregistry: https://hub.docker.com/&lt;/code&gt; 的 Pod&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;annotations-demo&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;imageregistry&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://hub.docker.com/&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx:1.14.2&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;containerPort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;80&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 字段选择器</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/05-field-selectors/</link>
+      <pubDate>Fri, 03 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/05-field-selectors/</guid>
+      <description>
+        
+        
+        &lt;p&gt;用户可以通过字段选择器的以对象的一个或多个字段的值作为选择条件实现对 &lt;a href=&#34;../00-kubernetes-objects/&#34;&gt;k8s 对象&lt;/a&gt;的选择。示例如下:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;metadata.name=my-service&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;metadata.namespace!=default&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;status.phase=Pending&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;以下 &lt;code&gt;kubectl&lt;/code&gt; 命令通过选择器，选择 &lt;code&gt;status.phase&lt;/code&gt; 字段值是 &lt;code&gt;Running&lt;/code&gt; 的对象:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get pods --field-selector status.phase&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;Running
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;注意: 字段选择器是基本的资源选择器。 默认没有设置选择条件。 也就是选择该类型所有的对象。这就让以下两个 &lt;code&gt;kubectl&lt;/code&gt; 命令等效 &lt;code&gt;kubectl get pods&lt;/code&gt;， &lt;code&gt;kubectl get pods --field-selector &amp;quot;&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;支持选择的字段&#34;&gt;支持选择的字段&lt;/h2&gt;
+&lt;p&gt;字段选择器支持的字段因 k8s 资源不同而不同。 但所有的资源都支持 &lt;code&gt;metadata.name&lt;/code&gt; 和 &lt;code&gt;metadata.namespace&lt;/code&gt;， 使用不支持的字段会报错。
+比如以下示例:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get ingress --field-selector foo.bar&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;baz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;错误信息如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Error from server (BadRequest): Unable to find &amp;quot;ingresses&amp;quot; that match label selector &amp;quot;&amp;quot;, field selector &amp;quot;foo.bar=baz&amp;quot;: &amp;quot;foo.bar&amp;quot; is not a known field selector: only &amp;quot;metadata.name&amp;quot;, &amp;quot;metadata.namespace&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;支持的操作符&#34;&gt;支持的操作符&lt;/h2&gt;
+&lt;p&gt;字段选择器支持的操作符有 &lt;code&gt;=&lt;/code&gt;, &lt;code&gt;==,&lt;/code&gt; 和 &lt;code&gt;!=&lt;/code&gt;， 其中 (&lt;code&gt;=&lt;/code&gt; 和 &lt;code&gt;==&lt;/code&gt; 效果一样)。 例如以下示例表示，选择所有不属于 &lt;code&gt;default&lt;/code&gt; 命名空间的 &lt;code&gt;Service&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get services  --all-namespaces --field-selector metadata.namespace!&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;default
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;多个选择条件&#34;&gt;多个选择条件&lt;/h2&gt;
+&lt;p&gt;与标签选择类似， 字段选择和多个条件也可以通过逗号分隔，例如以下示例表示选择所有 &lt;code&gt;status.phase&lt;/code&gt; 不是 &lt;code&gt;Running&lt;/code&gt; 且 &lt;code&gt;spec.restartPolicy&lt;/code&gt; 字段值为 &lt;code&gt;Always&lt;/code&gt; 的 Pod&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get pods --field-selector&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;status.phase!&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;Running,spec.restartPolicy&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;Always
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;同时筛选多个类型的资源&#34;&gt;同时筛选多个类型的资源&lt;/h2&gt;
+&lt;p&gt;字段选择器可以同时对多种类型对象进行筛选， 例如以下示例表示，选择所有不属于 &lt;code&gt;default&lt;/code&gt; 命名空间的 &lt;code&gt;Statefulsets&lt;/code&gt; 和 &lt;code&gt;Services&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get statefulsets,services --all-namespaces --field-selector metadata.namespace!&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;default
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 标签设置指导</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/</link>
+      <pubDate>Fri, 03 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/</guid>
+      <description>
+        
+        
+        &lt;p&gt;用户可以使用 kubectl 和 dashboard 外的可视化管理工具。一些通用的描述对象信息的标签配置可以让这些工具更好地工作
+为了工具能更好的使用这些标签，建议标签以方便查询的方式来定义对象信息
+元数据是围绕应用这个概念来组织的。k8s 并不是一个平台即服务(PaaS),也没有一个对应用有一个强制的格式规范。只是通过元数据来提供应用的描述和信息。关于应用所包含的信息的的规范是相关宽松的
+注意: 只能推荐使用这些标签。以方便对应用的管理，这些都不是 k8s 核心工具所必要的
+共享标签和注解需要共享一个共同的前缀 &lt;code&gt;app.kubernetes.io&lt;/code&gt;, 没有前缀的标签是用户私有的。在共享标签上使用使用共享前缀是为了保证不会影响到用户私有的标签。&lt;/p&gt;
+&lt;h2 id=&#34;标签&#34;&gt;标签&lt;/h2&gt;
+&lt;p&gt;为了给读者一个标签使用的整体印象，以下标签可以用在第一个资源对象上。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;标签键&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;th&gt;示例值&lt;/th&gt;
+&lt;th&gt;值数据类型&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;app.kubernetes.io/name&lt;/td&gt;
+&lt;td&gt;应用名称&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;mysql&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;string&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;app.kubernetes.io/instance&lt;/td&gt;
+&lt;td&gt;用于识别应用实例的唯一名称&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;wordpress-abcxzy&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;string&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;app.kubernetes.io/version&lt;/td&gt;
+&lt;td&gt;应用的当前版本 (如 版本号, 版本哈希, 等.)&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;5.7.21&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;string&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;app.kubernetes.io/component&lt;/td&gt;
+&lt;td&gt;架构中的结构名&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;database&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;string&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;app.kubernetes.io/part-of&lt;/td&gt;
+&lt;td&gt;这个对象是哪个应用的一部分&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;wordpress&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;string&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;app.kubernetes.io/managed-by&lt;/td&gt;
+&lt;td&gt;用于管理这个对象的工具&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;helm&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;string&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;以下是一个 &lt;code&gt;StatefulSet&lt;/code&gt; 的实践示例&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;StatefulSet&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysql&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/instance&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress-abcxzy&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/version&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;5.7.21&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;database&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/part-of&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/managed-by&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;helm&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;应用及应用实例&#34;&gt;应用及应用实例&lt;/h2&gt;
+&lt;p&gt;一个应用可能在 k8s 集群的一个命名空间中安装一次或多次。比如 安装多个 wordpress 的(不同)网站
+应用名和其实例名都应该作区分， 比如 一个 wordpress 应用为 &lt;code&gt;app.kubernetes.io/name: wordpress&lt;/code&gt;, 其实例可以设置为 &lt;code&gt;app.kubernetes.io/instance: wordpress-abcxzy&lt;/code&gt; 这就应用和实例就比较好识别，当一个应用有多个实例是每个实例的名称都要唯一。&lt;/p&gt;
+&lt;h2 id=&#34;示例&#34;&gt;示例&lt;/h2&gt;
+&lt;p&gt;以下示例展示这些标签的不同用法&lt;/p&gt;
+&lt;h3 id=&#34;一个简单的无状态-service&#34;&gt;一个简单的无状态 Service&lt;/h3&gt;
+&lt;p&gt;以下应用场景为 用一个 Deployment 和 Service 对象部署一个简单的无状态服务。 以下为其标签的最简配置
+Deployment 用于管理应用运行的 Pod&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deployment&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myservice&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/instance&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myservice-abcxzy&lt;/span&gt;
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Service 用于应用接入&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Service&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myservice&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/instance&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myservice-abcxzy&lt;/span&gt;
+...
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;带数据库的web应用&#34;&gt;带数据库的Web应用&lt;/h3&gt;
+&lt;p&gt;稍复杂一点的应用场景: 一个web 应用(WordPress)用到一个数据库(MySQL), 通过 Helm 安装&lt;/p&gt;
+&lt;p&gt;WordPress 的 Deployment&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deployment&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/instance&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress-abcxzy&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/version&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;4.9.4&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/managed-by&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;helm&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;server&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/part-of&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress&lt;/span&gt;
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;WordPress 的 Service&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Service&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/instance&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress-abcxzy&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/version&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;4.9.4&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/managed-by&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;helm&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;server&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/part-of&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress&lt;/span&gt;
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;MySQL 的 StatefulSet&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;StatefulSet&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysql&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/instance&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysql-abcxzy&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/version&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;5.7.21&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/managed-by&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;helm&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;database&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/part-of&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress&lt;/span&gt;
+...
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;MySQL 的 Service&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Service&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysql&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/instance&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysql-abcxzy&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/version&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;5.7.21&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/managed-by&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;helm&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;database&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/part-of&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress&lt;/span&gt;
+...
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在 StatefulSet 和 Service 可以找到它们自己的信息所属的应用的信息。这些在更大的应用中相当有用。&lt;/p&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

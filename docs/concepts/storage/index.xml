@@ -1,0 +1,18 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubernetes – 存储(Storage)</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/</link>
+    <description>Recent content in 存储(Storage) on Kubernetes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+  </channel>
+</rss>

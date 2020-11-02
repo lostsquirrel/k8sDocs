@@ -1,0 +1,455 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubernetes – 集群架构</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/</link>
+    <description>Recent content in 集群架构 on Kubernetes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 15 Jul 2020 00:00:00 +0000</lastBuildDate>
+    
+	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: 节点</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/nodes/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/nodes/</guid>
+      <description>
+        
+        
+        &lt;p&gt;k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。
+一般情况下一个集群会有多个节点; 在资源受限或学习的环境，可能只有一个节点。
+每个节点包含的组件有 kubelet, 容器运行环境, kube-proxy&lt;/p&gt;
+&lt;h2 id=&#34;节点管理&#34;&gt;节点管理&lt;/h2&gt;
+&lt;p&gt;向 api-server 添加节点的方式有以下两种:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;节点上的 kubelet 服务自动注册到控制中心&lt;/li&gt;
+&lt;li&gt;管理员用户手动添加节点对象&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;当管理员用户创建节点对象或 kubelet 将节点自动注册，控制中心会检查新创建的新节点是否有效。例如，可以通过以下 JSON 创建一个新节点&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;kind&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Node&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;apiVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;v1&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;metadata&amp;#34;&lt;/span&gt;: {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;10.240.79.157&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;labels&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;my-first-k8s-node&amp;#34;&lt;/span&gt;
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;k8s 节点是内部创建的. k8s 检查通过 kubelet 注册到 api-server 的节点. 如果节点是健康的 (当所有必要的服务都正常运行), 这个节点就可以用来运行 Pod, 否则 这个节点状态在变为健康之前，这个节点会被所有集群活动忽略.&lt;/p&gt;
+&lt;p&gt;注意: k8s 会一直保留无效的节点并持续检查这个节点是否变更为健康. 用户或控制器必须要显示的删除这个节点对象，这种检测才会停止。&lt;/p&gt;
+&lt;p&gt;节点的名称必须要是一个有效的&lt;a href=&#34;../../00-overview/03-working-with-objects/01-names/#DNS%20%E5%AD%90%E5%9F%9F%E5%90%8D&#34;&gt;DNS 子域名&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;节点的自注册&#34;&gt;节点的自注册&lt;/h3&gt;
+&lt;p&gt;当 kubelet 参数 &lt;code&gt;--register-node&lt;/code&gt; 设置为 &lt;code&gt;true&lt;/code&gt; 时(默认值)， kubelet 会自动把所在节点注册到 api-server. 这是首选的配置方式，被多数集群搭建工具使用。&lt;/p&gt;
+&lt;p&gt;对于自注册的节点， kubelet 需要以下配置参数:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;--kubeconfig&lt;/code&gt;  节点在 api-server 认证凭据所在目录&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--cloud-provider&lt;/code&gt; 怎么从云提供商获取节点元数据&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--register-node&lt;/code&gt; 自动注册到 api-server&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--register-with-taints&lt;/code&gt; 为注册节点添加 taints (格式为 &lt;key&gt;=&lt;value&gt;:&lt;effect&gt;，多个由逗号分隔)，如果 register-node 值设置为 false 则，该配置无操作&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--node-ip&lt;/code&gt; 节点的 IP 地址&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;-node-labels&lt;/code&gt; 当节点注册是，添加到节点上的标签&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;--node-status-update-frequency&lt;/code&gt; kubectl 向控制中心报告状态的频率&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;当 &lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/node/&#34;&gt;Node authorization mode&lt;/a&gt; 和 &lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#noderestriction&#34;&gt;NodeRestriction admission&lt;/a&gt; 插件打开进, kubelet 只被授权创建/修改自己的节点资源&lt;/p&gt;
+&lt;h3 id=&#34;节点手动管理&#34;&gt;节点手动管理&lt;/h3&gt;
+&lt;p&gt;用户可以通过 kubectl 创建和修改节点对象
+当用户需要手动创建一个节点对象时，需要 kubelet 设置参数  &lt;code&gt;--register-node=false&lt;/code&gt;
+也可修改节点配置忽略 &lt;code&gt;--register-node&lt;/code&gt; 配置。 例如可以在存在的节点上设置标签或将节点标记为不可调度
+可以通过节点的标签和Pod的节点标签选择器来控制调度。 例如， 限制某个 Pod 只能在某些节点上运行
+标记一个节点为不可调度后，就会阻止调度器再向这个节点调度新的 Pod ， 但不会影响到节点上已经在运行的 Pod。 以下命令将标记指定节点为不可调度:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl cordon $NODENAME
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;注意: 属于 DaemonSet 的 Pod 会运行在不可调度的节点上， 因为 &lt;code&gt;DaemonSets&lt;/code&gt; 通常提供节点本地服务，所以即使节点被清空应用工作负载也应该运行在节点&lt;/p&gt;
+&lt;h2 id=&#34;节点状态&#34;&gt;节点状态&lt;/h2&gt;
+&lt;p&gt;节点状态包含以下信息:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;地址&lt;/li&gt;
+&lt;li&gt;条件&lt;/li&gt;
+&lt;li&gt;容量和可分配状态&lt;/li&gt;
+&lt;li&gt;其它信息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;可以通过以命令查看节点状态与其它更多信息:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl describe node &amp;lt;insert-node-name-here&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;每个部分详细信息&lt;/p&gt;
+&lt;h3 id=&#34;地址&#34;&gt;地址&lt;/h3&gt;
+&lt;p&gt;这些字段会根据节点是云提供或裸金属和等的不同而不同&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;主机名: 由节点的内核提供，可以通过 kubelet 的 &amp;ndash;hostname-override 覆盖&lt;/li&gt;
+&lt;li&gt;外部IP: 在外部网络(集群之外)路由可达的IP地址&lt;/li&gt;
+&lt;li&gt;内部IP: 只在集群内部路由可达的IP地址&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;条件&#34;&gt;条件&lt;/h3&gt;
+&lt;p&gt;conditions 字段描述的是 所有状态为 Running 的节点， 示例如下:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Ready&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;True 则表示节点健康，可以接收调度 Pod&lt;/li&gt;
+&lt;li&gt;False 则表示节点状不健康，不可接收 Pod&lt;/li&gt;
+&lt;li&gt;Unknown node 控制器在最近一个 &lt;code&gt;node-monitor-grace-period&lt;/code&gt; 内(默认40s)没有收到节点的心跳&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;DiskPressure&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;True 磁盘存储剩余空间紧张&lt;/li&gt;
+&lt;li&gt;False 磁盘存储剩余空间充足&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;MemoryPressure&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;True 节点内存紧张&lt;/li&gt;
+&lt;li&gt;False 节点内存充足&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;PIDPressure&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;True 节点上的进程太多了&lt;/li&gt;
+&lt;li&gt;False 节点上进程数量适度&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;NetworkUnavailable&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;True 节点网络配置错误&lt;/li&gt;
+&lt;li&gt;False 节点网络配置正常&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;注意: 通过命令行工具打印清楚节点的详细信息中， 条件信息中包含 &lt;code&gt;SchedulingDisabled&lt;/code&gt;， 但 SchedulingDisabled 不属于 k8s API, 而是节点被标记为不可调度&lt;/p&gt;
+&lt;p&gt;节点的条件可以表现为JSON对象，如下是一个健康的节点的示例:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;conditions&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;:&lt;/span&gt; [
+  {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Ready&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;status&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;True&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;reason&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;KubeletReady&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;message&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;kubelet is posting ready status&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;lastHeartbeatTime&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2019-06-05T18:38:35Z&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;lastTransitionTime&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2019-06-05T11:41:27Z&amp;#34;&lt;/span&gt;
+  }
+]
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果 &lt;code&gt;Ready&lt;/code&gt; 条件的状态为 &lt;code&gt;Unknown&lt;/code&gt; 或 &lt;code&gt;False&lt;/code&gt; 持续时间超过 &lt;code&gt;pod-eviction-timeout&lt;/code&gt; (通过  kube-controller-manager 参数配置)， 这个节点上所以的 Pod 都会被节点控制器调度为删除。 默认的踢除的超时时间为5分钟。 在某些情况下，当一个节点不可达时，api-server 就不能与节点上的 kubelet 进行通信。 在 kubelet 与 api-server 重新建立连接之前对 Pod 的删除指令传达不到 kubelet. 在这段时间内这些被调度为删除的节点可以继续在分区节点上运行。&lt;/p&gt;
+&lt;p&gt;节点控制器在确认 Pod 在集群中已经停止运行前是不会强制删除的。 所以可以会出现 Pod 运行在状态为  &lt;code&gt;Terminating&lt;/code&gt; 或 &lt;code&gt;Unknown&lt;/code&gt; 的不可达节点上。 有时候 k8s 不能在节点被永久移出集群后不能从基础设施自动的移除，需要管理员手动地删除对应的节点对象。从 k8s 中删除节点对象时，会同时从 api-server 中对应删除节点上运行的所有 Pod 对象，并释放其名称&lt;/p&gt;
+&lt;p&gt;节点的生命周期管理器会自动创建代理节点状态的 &lt;code&gt;Taint&lt;/code&gt;. 调度器在分配 Pod 到节点时会顾及节点上的 Taint. Pod 也可以配置容忍节点的某些 &lt;code&gt;Taint&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;了解更多 Taint 相关信息见&lt;a href=&#34;../../09-scheduling-eviction/01-taint-and-toleration.md&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;容量和可分配状态&#34;&gt;容量和可分配状态&lt;/h3&gt;
+&lt;p&gt;表示节点上的可用资源: CPU, 内存， 节点可接受 Pod 数量的最大值
+容量(capacity)块下的字段表示节点资源总数
+可分配状态(allocatable)块下的字段表示可用于普通 Pod 的资源数&lt;/p&gt;
+&lt;p&gt;了解更多关于 容量和可分配状态 的信息见&lt;a href=&#34;../../../3-tasks/01-administer-cluster/28-reserve-compute-resources.md&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;其它信息&#34;&gt;其它信息&lt;/h3&gt;
+&lt;p&gt;表示邛的通用信息，如 内核版本， k8s 版本(kubelet 和 kube-proxy 的版本)， Docker 版本， OS 名称。 这些信息都是节点上的 kubelet 生成的&lt;/p&gt;
+&lt;h3 id=&#34;节点控制器&#34;&gt;节点控制器&lt;/h3&gt;
+&lt;p&gt;节点控制器是 k8s 控制中心的组成部分，用于管理节点的各方面功能
+节点控制器在节点的生命周期类扮演多个角色。 第一个就是为节点分配 CIDR 段(当 CIDR 分配开启时)
+第二个是保持节点控制器内部的节点列表与云提供商提供的可用机器列表一致， 在运行在云环境时，当一个节点状态变为不健康时， 节点控制器会向云提供商查询该节点的虚拟机是否可用。 如果不可用就会从列表中删除该节点
+第三个是监控节点状态， 节点控制器负责在节点变得不可达时(如， 因为某些原因收不到心跳，比如节点宕机)，更新节点就绪状态为 &lt;code&gt;ConditionUnknown&lt;/code&gt;， 如果节点持续不可达则踢出节点上所有的Pod(使用优雅终结方式)。设置就绪状态的不可达时间为 40s, 踢除 Pod 的时间为 5 分钟。节点控制器检查节点状态的时间由 &lt;code&gt;--node-monitor-period&lt;/code&gt; 配置&lt;/p&gt;
+&lt;h4 id=&#34;心跳&#34;&gt;心跳&lt;/h4&gt;
+&lt;p&gt;心跳由k8s 节点发送，用于帮助判定节点是否可用
+心跳的形式有两种， 一个更新 &lt;code&gt;NodeStatus&lt;/code&gt; 另一个为租约对象。每个节点在 kube-node-lease 命名空间中有一个关联的租约对象。 租约是一个轻量级资源， 用户在集群范围内改善心跳的性能
+由 kubelet 负责创建更新 &lt;code&gt;NodeStatus&lt;/code&gt; 和 租约对象。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;kubelet  在状态发生改变或在配置的时间间隔内没有更新时更新 &lt;code&gt;NodeStatus&lt;/code&gt;， &lt;code&gt;NodeStatus&lt;/code&gt; 更新的默认的更新间隔为 5 分钟(比不可达节点默认超时的 40 秒长很多)&lt;/li&gt;
+&lt;li&gt;kubelet 创建随后每隔10秒(默认时间间隔)更新租约对象。 租约对象的更新独立与 &lt;code&gt;NodeStatus&lt;/code&gt; 更新。 如果租约更新失败， kubelet 使用从 200ms 到 7s 间的指数组补尝&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;可靠性&#34;&gt;可靠性&lt;/h4&gt;
+&lt;p&gt;大多数情况下， 节点控制器限制踢除速率由 &lt;code&gt;--node-eviction-rate&lt;/code&gt;(每秒) 配置， 默认 &lt;code&gt;0.1&lt;/code&gt;，即每10秒最多能踢除一个 Pod。
+节点的踢除行为会在节点所有的可用区变为不健康时发生改变。 节点控制器会检查区域内同一时间不健康(&lt;code&gt;NodeReady&lt;/code&gt; 条件为 &lt;code&gt;ConditionUnknown&lt;/code&gt; 或 &lt;code&gt;ConditionFalse&lt;/code&gt;)节点的百分比。 如果不健康的节点比达达到 &lt;code&gt;--unhealthy-zone-threshold&lt;/code&gt; (默认 0.55)时踢除速率会降低: 如果集群较小(不多于 &lt;code&gt;--large-cluster-size-threshold&lt;/code&gt; 节点, 默认 50)，踢除行为停止。否则踢除速率降低至 &lt;code&gt;--secondary-node-eviction-rate&lt;/code&gt; (默认 0.01)每秒。 这个策略会在每个分区实现因为这个可用区可能与集群分隔， 但其它部分仍正常连接。 如果集群不是分散在多个云提供商的可用区，则只有一个可用区(即整个集群)。&lt;/p&gt;
+&lt;p&gt;将节点分散在不同可用区的主要原因就当一个可用区整体不可用时，可以将工作负载转移到另一个可用区。 如果一个可用区的节点都不可用时节点控制器使用正常踢除速率(&lt;code&gt;--node-eviction-rate&lt;/code&gt;). 极限情况是当所有的可用区全部变得不可用时(整个集群每有一个健康节点)， 在这种情况下节点控制器认为主节点有连接问题并停止踢除行为直到连接恢复。&lt;/p&gt;
+&lt;p&gt;节点控制器负责踢除包含 NoExecute Taint 节点运行的 Pod, 除了包含容忍该 Taint 的 Pod。 节点控制器会为有问题(如不可达或未就绪的节点)添加相应的 Taint, 也就是说调度器不会向不健康的节点放置 Pod.&lt;/p&gt;
+&lt;p&gt;警告: &lt;code&gt;kubectl cordon&lt;/code&gt; 命令标记一个节点为不可调度，而其作为是 服务控制器会将节点从所有负载列表中移除， 并再向该节点调度流量。&lt;/p&gt;
+&lt;h4 id=&#34;节点容量&#34;&gt;节点容量&lt;/h4&gt;
+&lt;p&gt;节点对象记录了节点的资源容量(如: 可用内存，CPU核心数)。 自动注册的节点在注册时会报告其容量，如果节点是手动添加，则需要在添加时提供对应容量信息。
+k8s 调度器保证节点有足够的资源运行分配到其上的 Pod， 调度器检测节点不所有容器请求的资源不大于节点的容量。 请求资源总和包括由kubelet 管理的所有容器， 但不包括直接由容器运行环境启动的容器。也不包括其它所有不被kubelet 控制的进程。
+注意: 如果需要为非 Pod 进程保留资源，见&lt;a href=&#34;../../../3-tasks/01-administer-cluster/28-reserve-compute-resources/&#34;&gt;为系统进程保留资源&lt;/a&gt;,系统保留部分。&lt;/p&gt;
+&lt;h2 id=&#34;节点拓扑&#34;&gt;节点拓扑&lt;/h2&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.16 [alpha]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;如果通过&lt;a href=&#34;../../../reference/command-line-tools-reference/feature-gates/&#34;&gt;功能特性开关&lt;/a&gt;，开启了 &lt;code&gt;TopologyManager&lt;/code&gt;， kubelet 在作资源分配决策时会参考拓扑信息。更多信息， 见&lt;a href=&#34;../../../3-tasks/01-administer-cluster/14-topology-manager/&#34;&gt;节点拓扑控制管理策略&lt;/a&gt;&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 控制中心与节点的通信</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/control-plane-node-communication/</link>
+      <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/control-plane-node-communication/</guid>
+      <description>
+        
+        
+        &lt;p&gt;本文主要介结控制中心(实际就是 api-server)与 k8s 集群通信的几种途径, 目的是使用户可以选择健壮的网络配置使集群可以运行在不受信的网络环境中(或在云提供商的公网IP上)&lt;/p&gt;
+&lt;h2 id=&#34;从节点到控制中心的通信&#34;&gt;从节点到控制中心的通信&lt;/h2&gt;
+&lt;p&gt;k8s 使用轴辐式(hub-and-spoke) API 模式，所有节点(包括节点上运行的Pod)使用到的API都指向 api-server(其它所有的组件在设计上就不提供远程服务)。api-server 配置成安全的HTTPS端口(通常是 443)来对外提供服务，并且开启一种或多种&lt;a href=&#34;../../../reference/03-access-authn-authz/01-authentication/&#34;&gt;认证&lt;/a&gt;方式。还需要开启一种或多种&lt;a href=&#34;../../../reference/03-access-authn-authz/07-authorization/&#34;&gt;授权&lt;/a&gt;方式， 特别是 匿名请求 或 service account tokens 可用(具体见认证相关部分)。
+每个节点上都需要有集群的公开根证书，这样节点才能通过有效的客户凭据安全的连接到 api-server. 例如， 在默认的 GKE 部署中， 客户端为 kubelet 提供的凭据格式为客户端证书， 自动化提供客户端证书的方式见&lt;a href=&#34;../../../reference/command-line-tools-reference/08-kubelet-tls-bootstrapping/&#34;&gt;这里&lt;/a&gt;
+如果集群中的Pod想要连接到 api-server 可以借助&lt;code&gt;service account&lt;/code&gt;实现安全连接， k8s 会在 Pod 启动时自动注入公开根谈不上和令牌.
+在每个命名空间下有一个叫 &lt;code&gt;kubernetes&lt;/code&gt; 的 Service， 指向一个虚拟IP地址，并重写向(通过 kube-proxy)向 api-server 的HTTPS端口上。
+控制中心组件也是通过安全端口与集群的 api-server 通信。
+在默认的操作模式下，节点和节点上的Pod 与控制中心的连接默认就是安全的可以信赖于不受信的网络环境中&lt;/p&gt;
+&lt;h2 id=&#34;从控制中心向节点的通信&#34;&gt;从控制中心向节点的通信&lt;/h2&gt;
+&lt;p&gt;由控制中心(api-server)向节点的通信路径注要有两条， 第一条从 api-server 直接连接到集群中每个节点上的 kubelet 进程。 第二条是通过 api-server 的代理功能来实现 api-server 到任意节点， Pod， Service的连接&lt;/p&gt;
+&lt;h3 id=&#34;从-api-server-连接到-kubelet&#34;&gt;从 api-server 连接到 kubelet&lt;/h3&gt;
+&lt;p&gt;从 api-server 到 kubelet 通信主要有以下用途:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;摘取 Pod 日志&lt;/li&gt;
+&lt;li&gt;通过 kubelet 终端连接到运行的Pod&lt;/li&gt;
+&lt;li&gt;为 kubelet 提供端口转发功能&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;连接指向的是 kubelet 的 HTTPS 端口， 默认 api-server 不验证 kubelet 提供的证书，这样会存在中间人攻击的风险，在不受网络环境中是不安全的。&lt;/p&gt;
+&lt;p&gt;要验证这个连接，需要在 api-server 配置启动参数 &lt;code&gt;--kubelet-certificate-authority&lt;/code&gt; 指向 根证书用于验证 kubelet 的服务证书。
+如果做不到， 则在非受信网络或公网中使用 SSH 遂道连接 api-server 和 kubelet.
+最后，需要开启 &lt;a href=&#34;../../../reference/command-line-tools-reference/07-kubelet-authentication-authorization/&#34;&gt;kubelet 认证和授权&lt;/a&gt;，以保护 kubelet API 安全。&lt;/p&gt;
+&lt;h3 id=&#34;从-api-server-到-kubelet-节点-pod--service-的连接&#34;&gt;从 api-server 到 kubelet, 节点, Pod,  Service 的连接&lt;/h3&gt;
+&lt;p&gt;默认情况下 从 api-server 到 kubelet, 节点, Pod,  Service 的连接是通过 HTTP 明文，因此没有认证也没加密。在连接到 节点， Pod, Service 名称对应的 API URL时可以添加 https 前缀来使用 HTTPS 来建立安全连接，但不会验证HTTPS证书也不验证客户端提供的凭据。 因此也不能保证任何完整性。 所以目前这能连接都不能用于非受信网络或公网。&lt;/p&gt;
+&lt;h3 id=&#34;ssh-遂道&#34;&gt;SSH 遂道&lt;/h3&gt;
+&lt;p&gt;k8s 支持通过 SSH 遂道的方式来实现从 控制中心到节点的连接路径的安全。 在这个配置中， 由 api-server 来初始化 SSH 遂道连接到集群中每个节点(连接到ssh服务监听端口22)，并通过这个连接来传输 kubelet, 节点, Pod,  Service 所有流量， 这样可以使流量不会显露给节点运行的外部网络&lt;/p&gt;
+&lt;p&gt;SSH 遂道连接方式当前已经被废弃，用户在开启该功能需要清楚为什么为开启。  Konnectivity 服务是替代方案&lt;/p&gt;
+&lt;h3 id=&#34;konnectivity-服务&#34;&gt;Konnectivity 服务&lt;/h3&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.18 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;作为 SSH 遂道 的替代方案， Konnectivity 服务 通过提供 TCP 层的代理来实现 控制中心与集群之间的通信。 Konnectivity 服务主要由两部分组成， Konnectivity 服务端和Konnectivity 代理程序，分别运行在 控制中心网络和节点网络上。 Konnectivity 代理程序初始化并维护到服务端的连接。 在开启 Konnectivity 服务后，控制中心到节的所有连接都通过这些连接。
+在集群中开启 Konnectivity 服务见 &lt;a href=&#34;../../../3-tasks/09-extend-kubernetes/01-setup-konnectivity/&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 控制器</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/controller/</link>
+      <pubDate>Thu, 09 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/controller/</guid>
+      <description>
+        
+        
+        &lt;p&gt;在机器人技术和自动化领域，一个控制回路就是一个控制系统状态的无限循环。
+以下为控制回路的一个示例: 房间内的温度控制器
+当用户设定一个温度值时，就是告知温度控制器其期望状态。 当时房间内实际的问题则是当前状态。 温度控制器就会启动相应的动作(开启或关闭相应的设备)来让当前状态逐渐趋近于期望状态。&lt;/p&gt;
+&lt;p&gt;在 k8s 中，控制器就是监控集群状态的控制循环，在需要的时候执行变更或请求其它服务执行变更。每一个控制器都在尝试让当前状态向期望状态演进。&lt;/p&gt;
+&lt;h2 id=&#34;control-pattern&#34;&gt;控制模式&lt;/h2&gt;
+&lt;p&gt;一个控制器至少会跟踪一个k8s 资源类型。 这些&lt;a href=&#34;../../00-overview/03-working-with-objects/00-kubernetes-objects/&#34;&gt;对象&lt;/a&gt;都有一个 &lt;code&gt;spec&lt;/code&gt; 字段来定义它的期望状态。该资源所对应的控制器就负责让当前状态逐渐趋近于期望状态。控制器可以直接采取动作实现状态的变更，但在 k8s 中，通常是一个控制器会向 &lt;code&gt;api-server&lt;/code&gt; 发送消息来达到这个目的。接下来可以会有实例。&lt;/p&gt;
+&lt;h3 id=&#34;通过-api-server-实现控制&#34;&gt;通过 api-server 实现控制&lt;/h3&gt;
+&lt;p&gt;Job 控制器就是 k8s 内置控制器的一员. 内置控制器就是通过与集群 api-server 来实现状态管理.
+Job 这种 k8s 资源类型的工作模型是，运行一个或多个 Pod 来完成某个任务，完成后就停止。
+(一旦完成&lt;a href=&#34;../../09-scheduling-eviction/&#34;&gt;调度&lt;/a&gt;， Pod对蟓就会成为 &lt;code&gt;kubelet&lt;/code&gt; 期望状态的组成部署)&lt;/p&gt;
+&lt;p&gt;当 Job 控制器接收到一个新的任务，就需要按照任务的需求在集群中的某些节点上运行指定数量的 Pod 来完成相应的任务。 但 Job 控制器本身并不会运行任意 Pod 或容器。 而是向 api-server 发送 创建或删除 Pod 的请求。控制中心中的其它组件就会根据请求信息(有新的 Pod 需要调度并运行)，然后最终完成任务。&lt;/p&gt;
+&lt;p&gt;在用户创建一个新的 Job 后，此时的期望状态就是完成这个 Job。 Job 控制器让当前状态逐渐趋近于期望状态： 创建 Job 需要完成任务的 Pod，此时就离完成 Job 进了不步。&lt;/p&gt;
+&lt;p&gt;控制器也会更新那些对控制器进行配置的对象。 例如： 当一个 Job 对应的任务完成后， Job 控制器更新对应 Job 的对象状态为 &lt;code&gt;Finished&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;(就像开时提到的温度控制器有点类似，温度的控制器关闭指示灯表示当前房间内的温度达到用户设置所期望的温度)&lt;/p&gt;
+&lt;h3 id=&#34;直接控制&#34;&gt;直接控制&lt;/h3&gt;
+&lt;p&gt;与 Job 控制方式不同， 有些控制需要对集群外的部分组成资源进行变更。
+例如，用户使用一个控制回路来保证集群中有足够的节点， 此时这个控制器就需要一些集群外的资源来实现对节点的配置管理。
+控制器也是通过 api-server 来获取外部资源的期望状态，然后再直接与外部系统通信让其状态实现向期望状态的迁移。
+(实际就有一个控制器可以实现集群节点的水平扩展， 见 &lt;a href=&#34;../../../3-tasks/01-administer-cluster/10-cluster-management/#cluster-autoscaling&#34;&gt;集群扩容&lt;/a&gt;)&lt;/p&gt;
+&lt;h2 id=&#34;期望状态与当前状态&#34;&gt;期望状态与当前状态&lt;/h2&gt;
+&lt;p&gt;k8s 是一个云原生的系统，能够处理持续不断的变更请求。
+集群可以在任何时候发变更， 控制回路会自动的修复出现的问题。 也就是从始至终集群可能都不会达到一个稳定的状态。
+当控制器都在正常运行且能够过成有效的变更，全局状态是否稳定就无关紧要了
+(这段意思表达得不是很顺畅)&lt;/p&gt;
+&lt;h2 id=&#34;设计&#34;&gt;设计&lt;/h2&gt;
+&lt;p&gt;按照设计宗旨， k8s 使用很多控制器，每个控制器管理特定方面的集群状态。大多数情况下， 一个特定的控制回路(控制器)使用一种类型的资源作为期望状态，并通过管理多种类型的资源来实现期望状态。 例如：一个 Job 控制器跟踪 Job 对象(发现新发布的任务)和 Pod 对象(用来运行任务和监测任务是否完成，什么时候完成)。 在这种情况下，其它组件创建 Job， Job 控制器再创建 Pod。
+使用多个简单的的控制器而不是一个内部关联的单体控制回路集合理有优势。 因为控制器可能挂掉，k8s 在设计上也是允许这种情况发生的。&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 一般可以有多个控制器创建或更新同一个类型的对象。 在这种情况下， k8s 控制器保证只关注与控制资源关联的资源。 例如： 同时使用  Deployment 和 Job， 两者都会创建 Pod， 但 Job 的控制器不能删除 Deployment 创建的 Pod， 因为控制器可以傅秀对象包含的信息(标签)来区分各自不同的 Pod。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;运行控制器的方式&#34;&gt;运行控制器的方式&lt;/h2&gt;
+&lt;p&gt;k8s 自带了一系列内置的控制器，运行在 &lt;code&gt;kube-controller-manager&lt;/code&gt; 中，这些内置的控制提供了重要的核心功能。
+例如 Deployment 控制器和 Job 控制器就是由 k8s 本身(内置控制器)提供的控制器。 k8s 允许运行弹性的控制中心，所以当任意内置控制器挂掉后，其它节点的控制器能接替其上任。&lt;/p&gt;
+&lt;p&gt;也可以找到用于扩展k8s 功能，运行在控制中心外的控制器。 如果用户愿意也可以自己编写全新的控制器。这些控制器可以以Pod的方式运行， 也可以运行在 k8s 集群之外。 具体由控制器的功能决定。&lt;/p&gt;
+&lt;h2 id=&#34;引申阅读&#34;&gt;引申阅读&lt;/h2&gt;
+&lt;p&gt;这里介绍怎么编写自己的控制器, 见&lt;a href=&#34;../../11-extend-kubernetes/00-extend-cluster/#extension-patterns&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Cloud Controller Manager</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/cloud-controller/</link>
+      <pubDate>Wed, 15 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/cloud-controller/</guid>
+      <description>
+        
+        
+        
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.11 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cloud-controller-manager&lt;/code&gt; 是集成了云提供商控制逻辑的 k8s 控制中心组件。 云提供商控制管理器让集群与云提供商提供的 API 相关系并让与云平台交互的组件和与集群交互的组件分离。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cloud-controller-manager&lt;/code&gt; 组件通过让 k8s 与底层云基础设施的交互逻辑解耦，使得云提供上功能发布的节奏与 k8s 项目功能发的节奏分离
+&lt;code&gt;cloud-controller-manager&lt;/code&gt; 以插件结构的方便让不同的云提供与可以让其平台可以与 k8s 集成。&lt;/p&gt;
+&lt;h2 id=&#34;设计&#34;&gt;设计&lt;/h2&gt;
+&lt;p&gt;以下为 &lt;code&gt;cloud-controller-manager&lt;/code&gt; 在 k8s 架构中的位置：
+&lt;img src=&#34;https://d33wubrfki0l68.cloudfront.net/7016517375d10c702489167e704dcb99e570df85/7bb53/images/docs/components-of-kubernetes.png&#34; alt=&#34;kubernetes architecture&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The cloud controller manager runs in the control plane as a replicated set of processes (usually, these are containers in Pods). Each cloud-controller-manager implements multiple controllers in a single process.
+云提供商控制管理器在控制中心中以副本集进程的形式运行(通常为 Pod 中的容器)。 每个 &lt;code&gt;cloud-controller-manager&lt;/code&gt; 在一个进程中实现了多个控制器。&lt;/p&gt;
+&lt;p&gt;{{ &lt;node&gt; }}
+云提供商控制管理器通常以插件的方式运行而不是以控制中心组件的方式运行
+{{ &lt;/node&gt; }}&lt;/p&gt;
+&lt;h2 id=&#34;云提供商控制管理器的功用&#34;&gt;云提供商控制管理器的功用&lt;/h2&gt;
+&lt;p&gt;云提供商控制管理器包含如下控制器:&lt;/p&gt;
+&lt;h3 id=&#34;节点控制器&#34;&gt;节点控制器&lt;/h3&gt;
+&lt;p&gt;节点控制器当在云基础设施上创建服务器时负责创建圣训的节点对象。 节点控制器获取用户在云提供商所租赁的主机的信息。 节点控制器主要有以下功能：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;为控制器通过云提供商API发现的服务器初始化节点信息&lt;/li&gt;
+&lt;li&gt;在节点对象上打上云提供商相关的注解和标签，例如 节点部署的区域，和可用资源(CPU, memory, 等)&lt;/li&gt;
+&lt;li&gt;获取节点的主机名和网络地址&lt;/li&gt;
+&lt;li&gt;验证节点的健康状况。 当一个节点不响应时，控制器会检查云提供商的 API， 确认服务器状态是否被修改为 停用/删除/终止。 如果发现节点已经被从云端删除则从 k8s 集群中删除对应的节点对象&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;有些云提供商在实现时会将其分为两个独立的控制器，分别为节点控制器和节点生命周期控制器&lt;/p&gt;
+&lt;h3 id=&#34;路由控制器&#34;&gt;路由控制器&lt;/h3&gt;
+&lt;p&gt;路由控制器负责在云提供商配置适当的路由以实现不同节点之间的通信。
+根据云提供商的不同， 路由控制器还可能要为 Pod 网络申请一个IP段&lt;/p&gt;
+&lt;h3 id=&#34;service-控制器&#34;&gt;Service 控制器&lt;/h3&gt;
+&lt;p&gt;在云环境中 Service 会与一些云基础设施组件集群，比如负载均衡，IP地址， 网络包过滤，目标健康检测。 Service 控制器在创建 Service 时调用云提供商的API 设置 Service 需要的负载均衡和其它云基础设施组件&lt;/p&gt;
+&lt;h2 id=&#34;授权&#34;&gt;授权&lt;/h2&gt;
+&lt;p&gt;本节将分别说明云提供商管理器执行对应操作所需要访问的各种 API 对象的&lt;/p&gt;
+&lt;h3 id=&#34;节点控制器-1&#34;&gt;节点控制器&lt;/h3&gt;
+&lt;p&gt;节点控制器只需要访问节点对象。需要提供节点对的的读写权限&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;v1/Node&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Get&lt;/li&gt;
+&lt;li&gt;List&lt;/li&gt;
+&lt;li&gt;Create&lt;/li&gt;
+&lt;li&gt;Update&lt;/li&gt;
+&lt;li&gt;Patch&lt;/li&gt;
+&lt;li&gt;Watch&lt;/li&gt;
+&lt;li&gt;Delete&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;路由控制器-1&#34;&gt;路由控制器&lt;/h3&gt;
+&lt;p&gt;路由控制器需要监听节点对象的创建来配置对应的路由。 所以需要节点对象的 &lt;code&gt;Get&lt;/code&gt; 权限&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;v1/Node&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Get&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;service-控制器-1&#34;&gt;Service 控制器&lt;/h3&gt;
+&lt;p&gt;Service 控制器监听 Service 对象的创建，更新，删除事件来配置对应的 Endpoint&lt;/p&gt;
+&lt;p&gt;访问 Service 需要 List， Watch 权限
+更新 Service 需要 Patch， Update 权限
+设置 Service 对的 Endpoint 需要 Create, List, Get, Watch, Update
+最终需要如下：&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;v1/Service&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;List&lt;/li&gt;
+&lt;li&gt;Get&lt;/li&gt;
+&lt;li&gt;Watch&lt;/li&gt;
+&lt;li&gt;Patch&lt;/li&gt;
+&lt;li&gt;Update&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;其它权限需求&#34;&gt;其它权限需求&lt;/h3&gt;
+&lt;p&gt;云提供商控制管理器核心的实现中需要创建  Event 对象的权限。 为了设置安全操作，还需要创建 ServiceAccount 的权限&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;v1/Event&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Create&lt;/li&gt;
+&lt;li&gt;Patch&lt;/li&gt;
+&lt;li&gt;Update&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;v1/ServiceAccount&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Create&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;最终云提供商控制管理器基于 RBAC ClusterRole 配置如下:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;rbac.authorization.k8s.io/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ClusterRole&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;cloud-controller-manager&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;rules&lt;/span&gt;:
+- &lt;span style=&#34;color:#f92672&#34;&gt;apiGroups&lt;/span&gt;:
+  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;events&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;verbs&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;create&lt;/span&gt;
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;patch&lt;/span&gt;
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;update&lt;/span&gt;
+- &lt;span style=&#34;color:#f92672&#34;&gt;apiGroups&lt;/span&gt;:
+  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;nodes&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;verbs&lt;/span&gt;:
+  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;*&amp;#39;&lt;/span&gt;
+- &lt;span style=&#34;color:#f92672&#34;&gt;apiGroups&lt;/span&gt;:
+  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;nodes/status&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;verbs&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;patch&lt;/span&gt;
+- &lt;span style=&#34;color:#f92672&#34;&gt;apiGroups&lt;/span&gt;:
+  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;services&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;verbs&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;list&lt;/span&gt;
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;patch&lt;/span&gt;
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;update&lt;/span&gt;
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;watch&lt;/span&gt;
+- &lt;span style=&#34;color:#f92672&#34;&gt;apiGroups&lt;/span&gt;:
+  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;serviceaccounts&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;verbs&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;create&lt;/span&gt;
+- &lt;span style=&#34;color:#f92672&#34;&gt;apiGroups&lt;/span&gt;:
+  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;persistentvolumes&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;verbs&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;get&lt;/span&gt;
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;list&lt;/span&gt;
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;update&lt;/span&gt;
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;watch&lt;/span&gt;
+- &lt;span style=&#34;color:#f92672&#34;&gt;apiGroups&lt;/span&gt;:
+  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;endpoints&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;verbs&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;create&lt;/span&gt;
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;get&lt;/span&gt;
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;list&lt;/span&gt;
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;watch&lt;/span&gt;
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;update&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;接下来应该看啥&#34;&gt;接下来应该看啥&lt;/h2&gt;
+&lt;p&gt;这篇讲怎么运行管理 云提供商控制管理器 &lt;a href=&#34;../../../3-tasks/01-administer-cluster/09-running-cloud-controller/#cloud-controller-manager&#34;&gt;云提供商控制管理器管理&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;想要自己开发一个 云提供商控制管理器 &lt;a href=&#34;../../../3-tasks/01-administer-cluster/18-developing-cloud-controller-manager/&#34;&gt;云提供商控制管理器开发&lt;/a&gt;&lt;/p&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

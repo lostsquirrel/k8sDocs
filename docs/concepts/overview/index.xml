@@ -1,0 +1,352 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubernetes – 概览</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/</link>
+    <description>Recent content in 概览 on Kubernetes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Fri, 03 Jul 2020 00:00:00 +0000</lastBuildDate>
+    
+	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: k8s 是什么</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/00-what-is-k8s/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/00-what-is-k8s/</guid>
+      <description>
+        
+        
+        &lt;p&gt;k8s 是一个可扩展，可移植的开源平台，用于管理容器化的工作负载和服务，帮助实现声明式配置与自动化，有一个区大且快速发展的生态系统
+源自Google 15年的生产经验&lt;/p&gt;
+&lt;h2 id=&#34;部署方式演进&#34;&gt;部署方式演进&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://d33wubrfki0l68.cloudfront.net/26a177ede4d7b032362289c6fccd448fc4a91174/eb693/images/docs/container_evolution.svg&#34; alt=&#34;deployment&#34;&gt; &lt;a href=&#34;https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/&#34;&gt;来源 kubernetes.io&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;传统部署时代&#34;&gt;传统部署时代&lt;/h3&gt;
+&lt;p&gt;应用直接部署在物理服务器上，无法设置资源限制，因而可能引起资源分配问题
+如果每个应用独立部署在物理机上，资源利用不充分，维护大量物理机费用高昂&lt;/p&gt;
+&lt;h3 id=&#34;虚拟化部署&#34;&gt;虚拟化部署&lt;/h3&gt;
+&lt;p&gt;通过虚拟机方式实现资源隔离和应用的扩展
+虚拟机会在其自己的操作系统运行一个机器所有的组件&lt;/p&gt;
+&lt;h3 id=&#34;容器化部署&#34;&gt;容器化部署&lt;/h3&gt;
+&lt;p&gt;容器与虚拟机类似，但有更低的隔离级别，应用之间共享操作系统，因此容器被认为更轻量，与虚拟机类似，容器有独立的文件系统，CPU,内存，进程空间等。些两者都能实现与底层基础设施解耦，因此可以在不同的操作系统与云环境之间移植
+容器变得流行，因为它提供了以下额外的优势&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;相较与虚拟机镜像创建更高效，更快捷的应用创建，更宽松的部署&lt;/li&gt;
+&lt;li&gt;持续开发，集成，部署能通过镜像构建变得快速可靠，部署回滚也因为镜像的不可变性而变得快速和容易&lt;/li&gt;
+&lt;li&gt;分离 开发和运维的关注点 在构建和发布时创建镜像而不是在部署。实现了应用与基础设施的解耦&lt;/li&gt;
+&lt;li&gt;不止可以观测到系统级的信息和指数，还可以观测到应用的健康状态及其它信息&lt;/li&gt;
+&lt;li&gt;实现 开发，测试，生产各环境的一致性。 可以在开发的笔记本和云运营上的环境上运行同样的镜像&lt;/li&gt;
+&lt;li&gt;实现云环境和各种操作系统之间的可移植， 可运行在 Ubuntu, RHEL, CoreOS, on-premises,主流云环境，其它环境&lt;/li&gt;
+&lt;li&gt;应用指数管理： 将抽像级别在虚拟操作系统运行应用提升到在一个运行在逻辑资源上的操作系统上运行应用&lt;/li&gt;
+&lt;li&gt;松耦合，分布式，灵活，开放的微服务，应用被拆分为较小，独立，可以动态部署和管理。不是运行在一个专用大机器来运行一个单体应用&lt;/li&gt;
+&lt;li&gt;资源隔离： 可预期的应用性能&lt;/li&gt;
+&lt;li&gt;资源利用率: 高效充分&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;为啥需要-k8s它又能做啥&#34;&gt;为啥需要 k8s，它又能做啥&lt;/h2&gt;
+&lt;p&gt;以上可知，应用容器化是个好东西，但在生产环境中,需要管理容器，并保证应用一直可用。 比如当一个容器挂掉以后，需要要马上再启动一个。如果这些都由一个系统来搞定，是不是管理容器就更容易了。而 k8s 就是为些而生的。 k8s 提供了运行弹性分布式系统的框架。提供应用的扩展和容灾等如下功能：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;服务发现和负载均衡
+在 k8s 中可以通过 DNS 名称或 IP 地址来访问容器， 如果流量较高可能负载到多个容器上&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;存储编排
+k8s 允许你自动挂载你选择的存储系统，比如 本地存储或公有云存储&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;自动化更新或回滚
+由你来定义部署容器的状态，k8s 通过控制器来实现这些状态&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;自动化调度
+将能够运行对应容器的节点加入 k8s 集群， 为容器定义需要的 CPU和内存资源数。k8s会把容器调度到合适的节点上，并充分利用节点资源&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;自愈
+k8s 能重启替换挂掉的容器，根据配置检测不响应的容器，不让未就绪的容器进度流量负载列表&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;敏感数据和配置管理
+通过配置管理敏感数据，而不需要将敏感数据打入到容器镜像中&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;k8s-不xxx&#34;&gt;k8s 不XXX&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;k8s 不限制应用的类型，k8s 致力于支持各种类型的工作负载，包括 无状态应用，有状态应用，数据处理工作，如果一个应用可以在容器中运行，就可以在k8s上运行&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;k8s 不发布源码，不构建应用。 可由组织文化和技术偏好决定CI/CD的工作流&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;k8s 不提供应用层的服务，比如 中间件(eg: 消息总线)，数据处理框架(eg: Spark), 数据库(eg: mysql), 缓存服务，集群存储系统(eg: Ceph) 等作为其内置服务， 这些组件可以直接运行在 k8s 上或者通过 k8s 可移植机制(Open Service Broker)让k8s 集群中的应用访问&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;k8s 不指定 日志，监控，报警解决方案，只提供集成方式，和收集导出相关metrics的机制&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;k8s 不提供也不要求一种配置 语言/系统(e.g. jsonnet)，只提供任意形式的声明式规范的声明式的API?&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;k8s 不提供也不接收？ 任何 综合机器配置，维护，管理，自愈系统
+k8s 也不仅仅是一个编排系统，实事上它消除了对编排的需求。 编排的技术定义是执行一个定义的工作流：先做A,然后B,再然后C. 相反的，k8s由一组独立的，可组合的管理理进程组成，它们的任务就是保证当前的状态与期望的状态是一致的。不关心怎么从A到C. 不需要中心化的控制。 这样可以使系统更易用，更强大，健壮，有更好的弹性和扩展性&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;kubernetesk8s的字面意思&#34;&gt;Kubernetes(K8s),的字面意思&lt;/h2&gt;
+&lt;p&gt;源自希腊词，意思是舵手或引向员，是最高的管理和控制， k8s 是缩写&lt;/p&gt;
+&lt;h2 id=&#34;参考资料&#34;&gt;参考资料&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://research.google.com/pubs/pub43438.html&#34;&gt;https://research.google.com/pubs/pub43438.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/&#34;&gt;https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: k8s 组件</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/01-components/</link>
+      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/01-components/</guid>
+      <description>
+        
+        
+        &lt;p&gt;当完成 k8s 部署后，用户就拥有一个 k8s 集群， 一个 k8s 一般包含多台工作机，称为节点，用于运行容器化应用。 每个集群至少包含一个节点。
+在节点上运行应用工作负载的组件称为 Pod. k8s 控制面板 管理工作节点和集群中的 Pod. 在生产环境中，k8s 控制面板一般会运行在多个机器上，同样一个集群也会包含多个节点，用以提高集群的容错和高可用&lt;/p&gt;
+&lt;p&gt;本文主要介绍一个完整可工作的集群包含哪些组件
+下图标示出了一个集群的所有组件及相互关系
+&lt;img src=&#34;https://d33wubrfki0l68.cloudfront.net/7016517375d10c702489167e704dcb99e570df85/7bb53/images/docs/components-of-kubernetes.png&#34; alt=&#34;k8s components diagram&#34;&gt; &lt;a href=&#34;https://kubernetes.io/docs/concepts/overview/components/&#34;&gt;来源 kubernetes.io&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;control-plane-components&#34;&gt;控制中心 组件&lt;/h2&gt;
+&lt;p&gt;控制中心负责整个集群的全局决策(例如，调度)，也包含侦听和响应集群事件(例如，当应用的副本数增加时启动一个新的 Pod)
+控制中心组件可以运行在集群的任意机器上。 但为了简单，创建脚本一般都会将组件放在同一个节点上，并不在这个节点上运行用户的容器。 更多示例参见
+&lt;a href=&#34;TODO&#34;&gt;高可用集群&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;kube-apiserver&#34;&gt;kube-apiserver&lt;/h3&gt;
+&lt;p&gt;提供 k8s API，是k8s控制中心的前端(此前端非)
+k8s API 的大多数实现都在 kube-apiserver
+提供了水平扩展的能力，扩容方式为部署多个实例，并提供负载均衡 &lt;a href=&#34;TODO&#34;&gt;搭建高可能集群&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;etcd&#34;&gt;etcd&lt;/h3&gt;
+&lt;p&gt;强一致性和高可用键值存储，用于 k8s 存储所有集群数据
+一定要对 etcd 数据做备份计划
+需要深入了解 etcd 请移步 &lt;a href=&#34;https://etcd.io/docs/&#34;&gt;官网&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;kube-scheduler&#34;&gt;kube-scheduler&lt;/h3&gt;
+&lt;p&gt;侦听新创建还没有指定 Node 的 Pod，为其选择一个 Node
+调度因素：包含独立，集合资源需求，硬件，软件，策略，亲和性，反亲和性规范，数据位置，inter-workload interference and deadlines (TODO 没接触过，需要研究一下)&lt;/p&gt;
+&lt;h3 id=&#34;kube-controller-manager&#34;&gt;kube-controller-manager&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;kube-controller-manager&lt;/code&gt; 包含控制器进程，逻辑上每个 控制器是独立的进程，但为了降低复杂度，将它们打入一个可执行文件并运行在一个进程里&lt;/p&gt;
+&lt;p&gt;有如下控制器：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Node 控制器: 负责监视和响应 Node 是不是挂了&lt;/li&gt;
+&lt;li&gt;Replication 控制器: 负责系统中的 Pod 维护在预期的副本数&lt;/li&gt;
+&lt;li&gt;Endpoints 控制器: 负责管理 Endpoints对象(Services &amp;amp; Pods)&lt;/li&gt;
+&lt;li&gt;Service Account &amp;amp; Token 控制器: 为新增的命名空间创建默认的账号和令牌&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;cloud-controller-manager&#34;&gt;cloud-controller-manager&lt;/h3&gt;
+&lt;p&gt;k8s 控制中心集群了云环境的控制逻辑。 云控制管理器是集群与云提供商API交互的控制器。并与只与集群交互的控制器分离。
+&lt;code&gt;cloud-controller-manager&lt;/code&gt; 只运行与指定云提供商对应的控制器。 如果k8s集群没有运行在云上，则集群不包含 &lt;code&gt;cloud-controller-manager&lt;/code&gt;
+与 &lt;code&gt;kube-controller-manager&lt;/code&gt; 一样，&lt;code&gt;cloud-controller-manager&lt;/code&gt; 也是由多个独立的控制器放在一个二进制文件中，并运行在一个进程里。 可能运行多个运程实现水平扩展达到扩容和容灾的目的&lt;/p&gt;
+&lt;p&gt;以下控制器依赖于云提供商：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Node 控制器 当机器不响应时向云提供商询问是否被删除&lt;/li&gt;
+&lt;li&gt;Route 控制器 在云提供商的基础设施上创建路由&lt;/li&gt;
+&lt;li&gt;Service 控制器: 创建，更新，删除云提供商的负载均衡&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;node-组件&#34;&gt;Node 组件&lt;/h2&gt;
+&lt;p&gt;Node 组件运行在每个节点上，维护 Pod 运行，提供 k8s 运行环境&lt;/p&gt;
+&lt;h3 id=&#34;kubelet&#34;&gt;kubelet&lt;/h3&gt;
+&lt;p&gt;保证容器在 Pod 运行
+读取&lt;code&gt;PodSpecs&lt;/code&gt; 保证容器的健康运行
+kubelet 不管理非 k8s 创建的容器(例如由 manifests 创建的 Pod)&lt;/p&gt;
+&lt;h3 id=&#34;kube-proxy&#34;&gt;kube-proxy&lt;/h3&gt;
+&lt;p&gt;kube-proxy 运行在集群中每个节点上的网络代理， 实现 Service 层抽象的组成部分
+kube-proxy 维护节点上的网络规则。 这些规则允计集群内外能够与 Pod 进行网络通信
+kube-proxy 优先使用系统层的包过虑，如果没有则自己转发&lt;/p&gt;
+&lt;h3 id=&#34;container-runtime&#34;&gt;Container Runtime&lt;/h3&gt;
+&lt;p&gt;容器的运行环境，
+k8s 支持容器运行环境有: Docker, containerd, CRI-O 和 任意实现了 k8s CRI(&lt;a href=&#34;https://github.com/kubernetes/community/blob/master/contributors/devel/sig-node/container-runtime-interface.md&#34;&gt;Container Runtime Interface&lt;/a&gt;)的运行环境&lt;/p&gt;
+&lt;h2 id=&#34;插件&#34;&gt;插件&lt;/h2&gt;
+&lt;p&gt;插件基于 k8s 资源(DaemonSet, Deployment 等)来实现集群新功能。由于提供的是集群级的功能，所有插件所属的命名空间为 &lt;code&gt;kube-system&lt;/code&gt;
+下面列举了一些插件，更多请见 &lt;a href=&#34;https://kubernetes.io/docs/concepts/cluster-administration/addons/&#34;&gt;这里&lt;/a&gt;
+TODO&lt;/p&gt;
+&lt;h3 id=&#34;dns&#34;&gt;DNS&lt;/h3&gt;
+&lt;p&gt;其它插件不是十分必要，但这个必须要有，许多示例依赖这个插件
+Cluster DNS，是一个DNS服务，是对其它DNS服务的补充，为k8s 集群 Service 提供 DNS 记录
+由 k8s 启动的容器会自动包含 此 DNS 的配置&lt;/p&gt;
+&lt;h3 id=&#34;web-ui-dashboard&#34;&gt;Web UI (Dashboard)&lt;/h3&gt;
+&lt;p&gt;一个通用的 k8s 集群 web UI. 可用于集群和集群内应用的管理和调试
+&lt;a href=&#34;https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/&#34;&gt;Dashboard&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;容器资源监控&#34;&gt;容器资源监控&lt;/h3&gt;
+&lt;p&gt;记录容器的时序监控数据到到一个中心数据库，并提供查看数据的UI
+&lt;a href=&#34;https://kubernetes.io/docs/tasks/debug-application-cluster/resource-usage-monitoring/&#34;&gt;Container Resource Monitoring&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;集群级的日志&#34;&gt;集群级的日志&lt;/h3&gt;
+&lt;p&gt;提供集群级的容器日志采集并存储到中心日志存储的机制，并提供查询和阅览接口
+&lt;a href=&#34;https://kubernetes.io/docs/concepts/cluster-administration/logging/&#34;&gt;Cluster-level Logging&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;参考资料&#34;&gt;参考资料&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/overview/components/&#34;&gt;https://kubernetes.io/docs/concepts/overview/components/&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;引申阅读&#34;&gt;引申阅读&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/architecture/nodes/&#34;&gt;节点&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/architecture/controller/&#34;&gt;控制器&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/&#34;&gt;调度器&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://etcd.io/docs/&#34;&gt;etcd 官网&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/admin/high-availability/&#34;&gt;k8s 集群高可用&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: k8s API 说明</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/02-k8s-api/</link>
+      <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/02-k8s-api/</guid>
+      <description>
+        
+        
+        &lt;p&gt;k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 &lt;code&gt;api-server&lt;/code&gt; 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 &lt;code&gt;api-server&lt;/code&gt; 通信&lt;/p&gt;
+&lt;p&gt;全部的API约定在&lt;a href=&#34;https://git.k8s.io/community/contributors/devel/api-conventions.md&#34;&gt;这里&lt;/a&gt;
+API endpoints,资源类型，示例在&lt;a href=&#34;https://kubernetes.io/docs/reference&#34;&gt;这里&lt;/a&gt;
+远程访问 API 的说明在&lt;a href=&#34;https://kubernetes.io/docs/admin/accessing-the-api&#34;&gt;这里&lt;/a&gt;
+k8s API 是系统声明式配置的基础， 命令行工具 &lt;code&gt;[kubectl](https://kubernetes.io/docs/user-guide/kubectl/)&lt;/code&gt; 可以用来进行对 API 对象的增删改查
+k8s 以API 资源的形式也存储了序列化状态(目前使用 &lt;a href=&#34;https://coreos.com/docs/distributed-configuration/getting-started-with-etcd/&#34;&gt;etcd&lt;/a&gt;)
+k8s 自身也解耦成多个模块，通过 API 进行交互&lt;/p&gt;
+&lt;h2 id=&#34;api-的变化&#34;&gt;API 的变化&lt;/h2&gt;
+&lt;p&gt;任何成功的系统都应该快速响应新的应用场景或现有需求的变更。 因此 k8s 在设计 API 时就提供了持续改进与成长的方式。k8s 项目主旨是不打破对已有客户端的普空性。并将此兼容性保持一段时间，让其它项目有时间来进行适配.
+通常新的API 资源和新的API资源项，可以经常频繁增加， 移除资源或资源项则需要遵循 &lt;a href=&#34;https://kubernetes.io/docs/reference/using-api/deprecation-policy/&#34;&gt;API废弃策略&lt;/a&gt; TODO&lt;/p&gt;
+&lt;p&gt;关于怎么做兼容和怎么修改API,依照这个(&lt;a href=&#34;https://git.k8s.io/community/contributors/devel/sig-architecture/api_changes.md#readme&#34;&gt;https://git.k8s.io/community/contributors/devel/sig-architecture/api_changes.md#readme&lt;/a&gt;)&lt;/p&gt;
+&lt;h2 id=&#34;openapi-规范&#34;&gt;OpenAPI 规范&lt;/h2&gt;
+&lt;p&gt;完整 API 规范明细见 &lt;a href=&#34;https://www.openapis.org/&#34;&gt;这里&lt;/a&gt;
+k8s api-server 通过 &lt;code&gt;/openapi/v2&lt;/code&gt; 提供 OpenAPI 规范， 用户可以通过以下请求头发送请求获取响应格式&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;请求头&lt;/th&gt;
+&lt;th&gt;可选值&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Accept-Encoding&lt;/td&gt;
+&lt;td&gt;gzip&lt;/td&gt;
+&lt;td&gt;可选&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Accept&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;mailto:application/com.github.proto-openapi.spec.v2@v1.0&#34;&gt;application/com.github.proto-openapi.spec.v2@v1.0&lt;/a&gt;+protobuf&lt;/td&gt;
+&lt;td&gt;mainly for intra-cluster use&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;^&lt;/td&gt;
+&lt;td&gt;application/json&lt;/td&gt;
+&lt;td&gt;默认&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;^&lt;/td&gt;
+&lt;td&gt;响应 &lt;code&gt;application/json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;也可以是任务符合OpenAPI 规范的请求头
+k8s 还有一个基于基于 &lt;code&gt;Protobuf&lt;/code&gt; 序列化的API，这套API 主要用于集群内通信。具体见对应模块 Go 源码文档，文档设计准则在&lt;a href=&#34;https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/protobuf.md&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;api-版本&#34;&gt;API 版本&lt;/h2&gt;
+&lt;p&gt;为方便移除资源项或修改资源结构，k8s 同时存在多个版本的 API, 每个版本的 API 路径都不一样，比如 &lt;code&gt;/api/v1&lt;/code&gt; &lt;code&gt;/apis/extensions/v1beta1&lt;/code&gt;
+这样版本就通过区分就在API这一层完成，而不用到资源或资源荐，可以做到清晰明了,并提供一致的系统资源的行为。
+也可以实现对过期和实验性 API 的访问控制
+JSON和Protobuf序列化的定义结构变更策略与API定义资源结构的规则一致，具体如下:&lt;/p&gt;
+&lt;p&gt;API 的版本和软件的版本只是间接相关的(和 Docker 类似)，详见&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/release/versioning.md&#34;&gt;k8s 版本发布&lt;/a&gt;提议&lt;/p&gt;
+&lt;p&gt;不同的 API 版本提供不同级别的稳定性和支持，关于每个级别详细描述的细则见&lt;a href=&#34;https://git.k8s.io/community/contributors/devel/sig-architecture/api_changes.md#alpha-beta-and-stable-versions&#34;&gt;这个文档&lt;/a&gt;
+可以总结为如下几个:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Alpha 级别&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;api URL名字中带有 alpha (e.g. v1alpha1)&lt;/li&gt;
+&lt;li&gt;可能有不少bug,启用这个物引可能会引入bug. 默认关闭&lt;/li&gt;
+&lt;li&gt;所支持的功能可能在没有任何通知的情况下被移除&lt;/li&gt;
+&lt;li&gt;在未来的版本中可能会在没有通知的情况谱得与之前不兼容&lt;/li&gt;
+&lt;li&gt;只推荐用于短期实验集群，因为有较高bug多，缺乏长期支持的风险&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Beta 级别&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;api URL名字中带有 beta (e.g. v2beta3)&lt;/li&gt;
+&lt;li&gt;代码是充分测试的，启用这个功能基本上是安全的，默认打开&lt;/li&gt;
+&lt;li&gt;整体功能不会被删除，但细节可能会修改&lt;/li&gt;
+&lt;li&gt;未来版本中可能会因资源的结构与资源项的含义出现不兼容情况，如果出现这种情况,官方会提供升级与该版本的迁移指导，可能需要删除，编辑或重建 API对象，在修改过程可能需要用户仔细思考需要的改动，此过程信赖些功能的应用可能会不可用&lt;/li&gt;
+&lt;li&gt;只推荐 非关键商业 用户使用，因为在未来版本中可能存在潜在的不兼容变更，如果用户有几个可独立更新集群，也可以不受此限制&lt;/li&gt;
+&lt;li&gt;强烈建议用户试用beta特性并给予反馈，因为一旦从beta 版本确认为稳定版，则特性将不可更改&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Stable&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;api 版本名称模式为 &lt;code&gt;vX&lt;/code&gt;， 其中&lt;code&gt;X&lt;/code&gt;为整数&lt;/li&gt;
+&lt;li&gt;稳定版功能会存在于稳定版的软件的很多个版本中&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;api-分组&#34;&gt;API 分组&lt;/h2&gt;
+&lt;p&gt;为了方便API的扩展， k8s 实现了 API 分组的方式。 API 组在 REST 接口的Path 上的 apiVersion 字段
+&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/api-machinery/api-group.md&#34;&gt;设计提案之API分组&lt;/a&gt;
+集群中一般有如下一些组:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;核心组,也被称为经典组，REST 路径中为 &lt;code&gt;/api/v1&lt;/code&gt; 对象定义 &lt;code&gt;apiVersion: v1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;其它组 REST 路径为 &lt;code&gt;/apis/$GROUP_NAME/$VERSION&lt;/code&gt; 对象定义为 &lt;code&gt;apiVersion: $GROUP_NAME/$VERSION (e.g. apiVersion: batch/v1)&lt;/code&gt; &lt;a href=&#34;https://kubernetes.io/docs/reference/kubernetes-api/&#34;&gt;API文档&lt;/a&gt;是有完整的分级列表&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;通过自定义资源可以通过以下两种方式扩展API:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/&#34;&gt;CustomResourceDefinition&lt;/a&gt; 通过声明方式定义 api-server 怎么提供用户选择资源的API (TODO 这里描述不太清楚)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;用户可能通过&lt;a href=&#34;https://kubernetes.io/docs/tasks/extend-kubernetes/setup-extension-api-server/&#34;&gt;实现自己的扩展api-server&lt;/a&gt;, 并通过&lt;a href=&#34;https://kubernetes.io/docs/tasks/extend-kubernetes/configure-aggregation-layer/&#34;&gt;聚合&lt;/a&gt;使客户端可以访问&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;api-分组开关&#34;&gt;API 分组开关&lt;/h2&gt;
+&lt;p&gt;一些资源和API默认是开启的，可能通过 api-server 命令行启动参数中使用 &amp;ndash;runtime-config 进行开启或关闭
+关闭 &amp;ndash;runtime-config=batch/v1=false
+开启 &amp;ndash;runtime-config=batch/v2alpha1
+如果有多个分组进制设置，可能key=value并用逗号分隔
+注意： 开启或关闭分组或资源一需要重启 api-server 和 kube-controller-manager&lt;/p&gt;
+&lt;h2 id=&#34;开启-extensionsv1beta1-组的指定资源&#34;&gt;开启 &lt;code&gt;extensions/v1beta1&lt;/code&gt; 组的指定资源&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;extensions/v1beta1&lt;/code&gt; 组默认启用资源的有 &lt;code&gt;DaemonSets&lt;/code&gt;, &lt;code&gt;Deployments&lt;/code&gt;, &lt;code&gt;StatefulSet&lt;/code&gt;, &lt;code&gt;NetworkPolicies&lt;/code&gt;, &lt;code&gt;PodSecurityPolicies&lt;/code&gt;， &lt;code&gt;ReplicaSets&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;例如要启用资源 &lt;code&gt;deployments&lt;/code&gt; 和 &lt;code&gt;daemonsets&lt;/code&gt;
+也是在 api-server 启动参数中使用 &amp;ndash;runtime-config 进行开启或关闭
+&lt;code&gt;--runtime-config=extensions/v1beta1/deployments=false,extensions/v1beta1/ingress=false&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;持久化&#34;&gt;持久化&lt;/h2&gt;
+&lt;p&gt;k8s 将序列化的 API 资源对象保存在 etcd 中&lt;/p&gt;
+&lt;h2 id=&#34;引申阅读&#34;&gt;引申阅读&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/controlling-access/&#34;&gt;API访问控制&lt;/a&gt;
+&lt;a href=&#34;https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#api-conventions&#34;&gt;API约定&lt;/a&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/reference/kubernetes-api/&#34;&gt;API文档&lt;/a&gt;&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: k8s 对象管理</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/</link>
+      <pubDate>Fri, 03 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/</guid>
+      <description>
+        
+        
+        &lt;p&gt;k8s 对象为年老体弱化到 k8s 系统的实体。 k8s 使用这些实体表示集群的状态。本节主要介绍对象的域模型与怎么管理这些对象&lt;/p&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

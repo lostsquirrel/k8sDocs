@@ -1,0 +1,1674 @@
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.75.1" />
+
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
+<link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
+<link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/images/kubernetes-192x192.png">
+<title>Pod 拓扑分布约束条件 | Kubernetes</title><meta property="og:title" content="Pod 拓扑分布约束条件" />
+<meta property="og:description" content="功能特性状态: Kubernetes v1.18 [beta] You can use _topology spread constraints_ to control how PodsPod 表示集群中运行的一组容器的集合 are spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains. This can help to achieve high availability as well as efficient resource utilization. -- 功能特性" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/" />
+<meta property="article:published_time" content="2020-08-05T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-07-29T00:00:00+00:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="Pod 拓扑分布约束条件">
+<meta itemprop="description" content="功能特性状态: Kubernetes v1.18 [beta] You can use _topology spread constraints_ to control how PodsPod 表示集群中运行的一组容器的集合 are spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains. This can help to achieve high availability as well as efficient resource utilization. -- 功能特性">
+<meta itemprop="datePublished" content="2020-08-05T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-07-29T00:00:00+00:00" />
+<meta itemprop="wordCount" content="4314">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Pod 拓扑分布约束条件"/>
+<meta name="twitter:description" content="功能特性状态: Kubernetes v1.18 [beta] You can use _topology spread constraints_ to control how PodsPod 表示集群中运行的一组容器的集合 are spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains. This can help to achieve high availability as well as efficient resource utilization. -- 功能特性"/>
+
+
+
+
+
+<link rel="preload" href="/k8sDocs/scss/main.min.ef3a36e0df00fd067f010634c3743a5f97c767d3027d208bdaa58808c66c9779.css" as="style">
+<link href="/k8sDocs/scss/main.min.ef3a36e0df00fd067f010634c3743a5f97c767d3027d208bdaa58808c66c9779.css" rel="stylesheet" integrity="">
+
+
+<script src="/k8sDocs/js/jquery-3.5.1.min.js" ></script>
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "url": "https://kubernetes.io",
+    "logo": "https://kubernetes.io/images/favicon.png",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://lostsquirrel.github.io/k8sDocs/search/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+
+  }
+</script>
+<meta name="theme-color" content="#326ce5">
+
+
+
+
+<link rel="stylesheet" href=/k8sDocs/css/base_fonts.css>
+
+<link rel="stylesheet" href="/k8sDocs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/k8sDocs/css/callouts.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
+
+
+
+<meta name="description" content="功能特性状态: Kubernetes v1.18 [beta] You can use _topology spread constraints_ to control how PodsPod 表示集群中运行的一组容器的集合 are spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains. This can help to achieve high availability as well as efficient resource utilization. -- 功能特性">
+<meta property="og:description" content="功能特性状态: Kubernetes v1.18 [beta] You can use _topology spread constraints_ to control how PodsPod 表示集群中运行的一组容器的集合 are spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains. This can help to achieve high availability as well as efficient resource utilization. -- 功能特性">
+<meta name="twitter:description" content="功能特性状态: Kubernetes v1.18 [beta] You can use _topology spread constraints_ to control how PodsPod 表示集群中运行的一组容器的集合 are spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains. This can help to achieve high availability as well as efficient resource utilization. -- 功能特性">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/">
+<meta property="og:title" content="Pod 拓扑分布约束条件">
+<meta name="twitter:title" content="Pod 拓扑分布约束条件">
+<meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
+
+<meta name="twitter:image:alt" content="Kubernetes">
+
+<meta property="og:image" content="/k8sDocs/images/kubernetes-horizontal-color.png">
+
+<meta property="og:type" content="article">
+
+
+
+<script src="/k8sDocs/js/script.js"></script>
+
+
+    <title>Pod 拓扑分布约束条件 | Kubernetes</title>
+  </head>
+  <body class="td-page td-documentation">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
+        <a class="navbar-brand" href="/k8sDocs/"></a>
+	<div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
+
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			
+			
+			<li class="nav-item mr-2 mb-lg-0">
+				
+				<a class="nav-link active" href="/k8sDocs/docs/" >Documentation</span></a>
+			</li>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</ul>
+	</div>
+  
+
+</nav>
+
+      
+      <div class="header-filler"></div>
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-md-nowrap">
+          <div class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+
+
+
+
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  
+  <form class="td-sidebar__search d-flex align-items-center d-lg-none">
+    
+
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  
+  <nav class="collapse td-sidebar-nav" id="td-section-nav">
+    
+    
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Kubernetes Documentation</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocs">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">概念(Concepts)</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconcepts">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">概览</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverview">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview00-what-is-k8s" href="/k8sDocs/docs/concepts/overview/00-what-is-k8s/">k8s 是什么</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview01-components" href="/k8sDocs/docs/concepts/overview/01-components/">k8s 组件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview02-k8s-api" href="/k8sDocs/docs/concepts/overview/02-k8s-api/">k8s API 说明</a>
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/working-with-objects/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">k8s 对象管理</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverviewworking-with-objects">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects00-kubernetes-objects" href="/k8sDocs/docs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectsnames" href="/k8sDocs/docs/concepts/overview/working-with-objects/names/">对象命令与ID</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects02-namespace" href="/k8sDocs/docs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectslabels" href="/k8sDocs/docs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects04-annotation" href="/k8sDocs/docs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects05-field-selectors" href="/k8sDocs/docs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects06-common-labels" href="/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/architecture/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">集群架构</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsarchitecture">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturenodes" href="/k8sDocs/docs/concepts/architecture/nodes/">节点</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontrol-plane-node-communication" href="/k8sDocs/docs/concepts/architecture/control-plane-node-communication/">控制中心与节点的通信</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontroller" href="/k8sDocs/docs/concepts/architecture/controller/">控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecloud-controller" href="/k8sDocs/docs/concepts/architecture/cloud-controller/">Cloud Controller Manager</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/containers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">容器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptscontainers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers00-images" href="/k8sDocs/docs/concepts/containers/00-images/">镜像</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers01-container-environment" href="/k8sDocs/docs/concepts/containers/01-container-environment/">容器环境</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers02-runtime-class" href="/k8sDocs/docs/concepts/containers/02-runtime-class/">Runtime Class</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainerscontainer-lifecycle-hooks" href="/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/">容器生命周期钩子</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">工作负载(Workload)</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconceptsworkloads">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/pods/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Pod</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconceptsworkloadspods">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-lifecycle" href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsinit-containers" href="/k8sDocs/docs/concepts/workloads/pods/init-containers/">初始化容器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsworkloadspodspod-topology-spread-constraints" href="/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑分布约束条件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspodpreset" href="/k8sDocs/docs/concepts/workloads/pods/podpreset/">Pod 预设信息</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsdisruptions" href="/k8sDocs/docs/concepts/workloads/pods/disruptions/">Disruptions</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsephemeral-containers" href="/k8sDocs/docs/concepts/workloads/pods/ephemeral-containers/">临时容器</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/controllers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">控制器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloadscontrollers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdeployment" href="/k8sDocs/docs/concepts/workloads/controllers/deployment/">Deployment</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicaset" href="/k8sDocs/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersstatefulset" href="/k8sDocs/docs/concepts/workloads/controllers/statefulset/">StatefulSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdaemonset" href="/k8sDocs/docs/concepts/workloads/controllers/daemonset/">DaemonSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersjob" href="/k8sDocs/docs/concepts/workloads/controllers/job/">Job</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersgarbage-collection" href="/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/">垃圾回收</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersttlafterfinished" href="/k8sDocs/docs/concepts/workloads/controllers/ttlafterfinished/">用于已完成资源的 TTL 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollerscron-jobs" href="/k8sDocs/docs/concepts/workloads/controllers/cron-jobs/">CronJob</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicationcontroller" href="/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/services-networking/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Service, 负载均衡, 网络</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsservices-networking">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice" href="/k8sDocs/docs/concepts/services-networking/service/">Service</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice-topology" href="/k8sDocs/docs/concepts/services-networking/service-topology/">Service Topology</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdns-pod-service" href="/k8sDocs/docs/concepts/services-networking/dns-pod-service/">Service 和 Pod 的 DNS</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingconnect-applications-service" href="/k8sDocs/docs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingendpoint-slices" href="/k8sDocs/docs/concepts/services-networking/endpoint-slices/">EndpointSlice</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress" href="/k8sDocs/docs/concepts/services-networking/ingress/">Ingress</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress-controllers" href="/k8sDocs/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingnetwork-policies" href="/k8sDocs/docs/concepts/services-networking/network-policies/">网络策略</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingadd-entries-to-pod-etc-hosts-with-host-aliases" href="/k8sDocs/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdual-stack" href="/k8sDocs/docs/concepts/services-networking/dual-stack/">IPv4/IPv6 双栈</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsstorage">
+      
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+  </nav>
+</div>
+
+
+
+
+          </div>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	<ol class="breadcrumb spb-1">
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/">概念(Concepts)</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/">工作负载(Workload)</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/">Pod</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑分布约束条件</a>
+</li>
+
+	</ol>
+</nav	>
+
+            
+              
+            
+              
+    <div class="td-content">
+    
+<p>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/workloads/pods/pod-topology-spread-constraints.md" id="editPageButton" target="_blank" data-proofer-ignore>
+    Edit This Page
+  </a>
+</p>
+
+  <h1>Pod 拓扑分布约束条件</h1>
+  
+  
+
+<!--
+---
+title: Pod Topology Spread Constraints
+content_type: concept
+weight: 40
+---
+ -->
+<!-- overview -->
+<!--  
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.18 [beta]</code>
+</div>
+
+
+
+You can use _topology spread constraints_ to control how <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pods<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+</a> are spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains. This can help to achieve high availability as well as efficient resource utilization.
+-->
+<p>
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.18 [beta]</code>
+</div>
+
+
+用户可以通过 <em>拓扑分布约束条件</em> 来控制 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pods<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+</a>
+在包含集群中故障域 （如 地区，分区，节点和其它用户定义拓扑域）中是怎样分布的。
+该功能可以帮助用户在实现高可用的同时充分利用资源。</p>
+<!-- body -->
+<!--
+## Prerequisites
+
+### Enable Feature Gate
+
+The `EvenPodsSpread` [feature gate](/docs/reference/command-line-tools-reference/feature-gates/)
+must be enabled for the
+<a class='glossary-tooltip' href='/docs/reference/generated/kube-apiserver/' target='_blank'>API Server<span class='tooltip-text'>Control plane component that serves the Kubernetes API.</span>
+</a> **and**
+<a class='glossary-tooltip' href='/docs/reference/generated/kube-scheduler/' target='_blank'>scheduler<span class='tooltip-text'>Control plane component that watches for newly created pods with no assigned node, and selects a node for them to run on.</span>
+</a>.
+
+### Node Labels
+
+Topology spread constraints rely on node labels to identify the topology domain(s) that each Node is in. For example, a Node might have labels: `node=node1,zone=us-east-1a,region=us-east-1`
+
+Suppose you have a 4-node cluster with the following labels:
+
+```
+NAME    STATUS   ROLES    AGE     VERSION   LABELS
+node1   Ready    <none>   4m26s   v1.16.0   node=node1,zone=zoneA
+node2   Ready    <none>   3m58s   v1.16.0   node=node2,zone=zoneA
+node3   Ready    <none>   3m17s   v1.16.0   node=node3,zone=zoneB
+node4   Ready    <none>   2m43s   v1.16.0   node=node4,zone=zoneB
+```
+
+Then the cluster is logically viewed as below:
+
+```
++---------------+---------------+
+|     zoneA     |     zoneB     |
++-------+-------+-------+-------+
+| node1 | node2 | node3 | node4 |
++-------+-------+-------+-------+
+```
+
+Instead of manually applying labels, you can also reuse the [well-known labels](/docs/reference/kubernetes-api/labels-annotations-taints/) that are created and populated automatically on most clusters.
+ -->
+<h2 id="准备工作">准备工作</h2>
+<h3 id="打开功能开关">打开功能开关</h3>
+<p>需要打开
+<a class='glossary-tooltip' href='/docs/reference/generated/kube-apiserver/' target='_blank'>API Server<span class='tooltip-text'>Control plane component that serves the Kubernetes API.</span>
+</a> <strong>和</strong>
+<a class='glossary-tooltip' href='/docs/reference/generated/kube-scheduler/' target='_blank'>scheduler<span class='tooltip-text'>Control plane component that watches for newly created pods with no assigned node, and selects a node for them to run on.</span>
+</a>
+中叫 <code>EvenPodsSpread</code> 的<a href="/k8sDocs/reference/command-line-tools-reference/feature-gates/">功能阀</a></p>
+<h3 id="为节点添加恰当的标签">为节点添加恰当的标签</h3>
+<p>拓扑分布约束条件信赖于节点标签来区分其所在的拓扑域。 例如， 某节点标签可以为:
+<code>node=node1,zone=us-east-1a,region=us-east-1</code>
+假设集群中有4个节点，标签如下:</p>
+<pre><code>NAME    STATUS   ROLES    AGE     VERSION   LABELS
+node1   Ready    &lt;none&gt;   4m26s   v1.16.0   node=node1,zone=zoneA
+node2   Ready    &lt;none&gt;   3m58s   v1.16.0   node=node2,zone=zoneA
+node3   Ready    &lt;none&gt;   3m17s   v1.16.0   node=node3,zone=zoneB
+node4   Ready    &lt;none&gt;   2m43s   v1.16.0   node=node4,zone=zoneB
+</code></pre><p>那么该集群的逻辑视图如下:</p>
+<pre><code>+---------------+---------------+
+|     zoneA     |     zoneB     |
++-------+-------+-------+-------+
+| node1 | node2 | node3 | node4 |
++-------+-------+-------+-------+
+</code></pre><p>相较于手动添加标签，可以重用在大多数集群会自动创建和添加的
+<a href="/k8sDocs/reference/kubernetes-api/labels-annotations-taints/">常用标签</a></p>
+<!--
+## Spread Constraints for Pods
+
+### API
+
+The field `pod.spec.topologySpreadConstraints` is introduced in 1.16 as below:
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  topologySpreadConstraints:
+    - maxSkew: <integer>
+      topologyKey: <string>
+      whenUnsatisfiable: <string>
+      labelSelector: <object>
+```
+
+You can define one or multiple `topologySpreadConstraint` to instruct the kube-scheduler how to place each incoming Pod in relation to the existing Pods across your cluster. The fields are:
+
+- **maxSkew** describes the degree to which Pods may be unevenly distributed. It's the maximum permitted difference between the number of matching Pods in any two topology domains of a given topology type. It must be greater than zero.
+- **topologyKey** is the key of node labels. If two Nodes are labelled with this key and have identical values for that label, the scheduler treats both Nodes as being in the same topology. The scheduler tries to place a balanced number of Pods into each topology domain.
+- **whenUnsatisfiable** indicates how to deal with a Pod if it doesn't satisfy the spread constraint:
+  - `DoNotSchedule` (default) tells the scheduler not to schedule it.
+  - `ScheduleAnyway` tells the scheduler to still schedule it while prioritizing nodes that minimize the skew.
+- **labelSelector** is used to find matching Pods. Pods that match this label selector are counted to determine the number of Pods in their corresponding topology domain. See [Label Selectors](/docs/concepts/overview/working-with-objects/labels/#label-selectors) for more details.
+
+You can read more about this field by running `kubectl explain Pod.spec.topologySpreadConstraints`.
+ -->
+<h2 id="pod-的扩散约束">Pod 的扩散约束</h2>
+<h3 id="api">API</h3>
+<p>在 <code>1.16</code> 版本中加入了 <code>pod.spec.topologySpreadConstraints</code> 字段，如下:</p>
+<pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  topologySpreadConstraints:
+    - maxSkew: &lt;integer&gt;
+      topologyKey: &lt;string&gt;
+      whenUnsatisfiable: &lt;string&gt;
+      labelSelector: &lt;object&gt;
+</code></pre><p>用户可以在 Pod 上定义一个或多个 <code>topologySpreadConstraint</code>， 用于指导 <code>kube-scheduler</code>
+在集群中有与已经存在的 Pod 相关的新的 Pod 时应该怎么放置。有如下字段：</p>
+<ul>
+<li><strong>maxSkew</strong> 该字段描述 Pod 分布不均匀的程度。 在指定拓扑类型的两个拓扑域中特定 Pod 数量相差数允许的最大值，这个值必须大于 0</li>
+<li><strong>topologyKey</strong> 该字段使用节点的标签键， 如果有两个节点包含一个键，且该键值也相同，
+调度器会将这两个节点认为在同一个拓扑。 调度器会尝试让两个拓扑域中的 Pod 数量平衡。</li>
+<li><strong>whenUnsatisfiable</strong> 该字段设置怎么处理不满足分布约束的Pod
+<ul>
+<li><code>DoNotSchedule</code> (默认) 让调度器不要调度该 Pod</li>
+<li><code>ScheduleAnyway</code> 让调度器仍然调度，但调度到不均匀度(skew)最低的节点</li>
+</ul>
+</li>
+<li><strong>labelSelector</strong> 用于找到匹配的 Pod。 匹配到的 Pod 会作为对应拓扑域的的一员(参与数量统计)
+更多标签和选择器见 <a href="/k8sDocs/concepts/overview/working-with-objects/labels/#label-selectors">标签和选择器</a></li>
+</ul>
+<p>更新多关于该字段的信息请查看 <code>kubectl explain Pod.spec.topologySpreadConstraints</code> 命令结果。</p>
+<!--
+### Example: One TopologySpreadConstraint
+
+Suppose you have a 4-node cluster where 3 Pods labeled `foo:bar` are located in node1, node2 and node3 respectively (`P` represents Pod):
+
+```
++---------------+---------------+
+|     zoneA     |     zoneB     |
++-------+-------+-------+-------+
+| node1 | node2 | node3 | node4 |
++-------+-------+-------+-------+
+|   P   |   P   |   P   |       |
++-------+-------+-------+-------+
+```
+
+If we want an incoming Pod to be evenly spread with existing Pods across zones, the spec can be given as:
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="podstopology-spread-constraintsone-constraintyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/topology-spread-constraints/one-constraint.yaml" download="pods/topology-spread-constraints/one-constraint.yaml">
+                    <code>pods/topology-spread-constraints/one-constraint.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('podstopology-spread-constraintsone-constraintyaml')" title="Copy pods/topology-spread-constraints/one-constraint.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+<span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">mypod</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">foo</span>: <span style="color:#ae81ff">bar</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">topologySpreadConstraints</span>:
+  - <span style="color:#f92672">maxSkew</span>: <span style="color:#ae81ff">1</span>
+    <span style="color:#f92672">topologyKey</span>: <span style="color:#ae81ff">zone</span>
+    <span style="color:#f92672">whenUnsatisfiable</span>: <span style="color:#ae81ff">DoNotSchedule</span>
+    <span style="color:#f92672">labelSelector</span>:
+      <span style="color:#f92672">matchLabels</span>:
+        <span style="color:#f92672">foo</span>: <span style="color:#ae81ff">bar</span>
+  <span style="color:#f92672">containers</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pause</span>
+    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">k8s.gcr.io/pause:3.1</span></code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+`topologyKey: zone` implies the even distribution will only be applied to the nodes which have label pair "zone:&lt;any value&gt;" present. `whenUnsatisfiable: DoNotSchedule` tells the scheduler to let it stay pending if the incoming Pod can’t satisfy the constraint.
+
+If the scheduler placed this incoming Pod into "zoneA", the Pods distribution would become [3, 1], hence the actual skew is 2 (3 - 1) - which violates `maxSkew: 1`. In this example, the incoming Pod can only be placed onto "zoneB":
+
+```
++---------------+---------------+      +---------------+---------------+
+|     zoneA     |     zoneB     |      |     zoneA     |     zoneB     |
++-------+-------+-------+-------+      +-------+-------+-------+-------+
+| node1 | node2 | node3 | node4 |  OR  | node1 | node2 | node3 | node4 |
++-------+-------+-------+-------+      +-------+-------+-------+-------+
+|   P   |   P   |   P   |   P   |      |   P   |   P   |  P P  |       |
++-------+-------+-------+-------+      +-------+-------+-------+-------+
+```
+
+You can tweak the Pod spec to meet various kinds of requirements:
+
+- Change `maxSkew` to a bigger value like "2" so that the incoming Pod can be placed onto "zoneA" as well.
+- Change `topologyKey` to "node" so as to distribute the Pods evenly across nodes instead of zones. In the above example, if `maxSkew` remains "1", the incoming Pod can only be placed onto "node4".
+- Change `whenUnsatisfiable: DoNotSchedule` to `whenUnsatisfiable: ScheduleAnyway` to ensure the incoming Pod to be always schedulable (suppose other scheduling APIs are satisfied). However, it’s preferred to be placed onto the topology domain which has fewer matching Pods. (Be aware that this preferability is jointly normalized with other internal scheduling priorities like resource usage ratio, etc.)
+ -->
+<h3 id="示例-单个-topologyspreadconstraint">示例: 单个 TopologySpreadConstraint</h3>
+<p>假设有一个4节点的集群中有三个标签包含标签为 <code>foo:bar</code>的 Pod， 分别分布在 1，2，3 号节点上(一个 <code>P</code> 代表一个 Pod)</p>
+<pre><code>+---------------+---------------+
+|     zoneA     |     zoneB     |
++-------+-------+-------+-------+
+| node1 | node2 | node3 | node4 |
++-------+-------+-------+-------+
+|   P   |   P   |   P   |       |
++-------+-------+-------+-------+
+</code></pre><p>如果想要新加入的 Pod 与之前的三个节点均匀的分布在不同的区域内， 可以使用如下配置:</p>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="podstopology-spread-constraintsone-constraintyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/topology-spread-constraints/one-constraint.yaml" download="pods/topology-spread-constraints/one-constraint.yaml">
+                    <code>pods/topology-spread-constraints/one-constraint.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('podstopology-spread-constraintsone-constraintyaml')" title="Copy pods/topology-spread-constraints/one-constraint.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+<span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">mypod</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">foo</span>: <span style="color:#ae81ff">bar</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">topologySpreadConstraints</span>:
+  - <span style="color:#f92672">maxSkew</span>: <span style="color:#ae81ff">1</span>
+    <span style="color:#f92672">topologyKey</span>: <span style="color:#ae81ff">zone</span>
+    <span style="color:#f92672">whenUnsatisfiable</span>: <span style="color:#ae81ff">DoNotSchedule</span>
+    <span style="color:#f92672">labelSelector</span>:
+      <span style="color:#f92672">matchLabels</span>:
+        <span style="color:#f92672">foo</span>: <span style="color:#ae81ff">bar</span>
+  <span style="color:#f92672">containers</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pause</span>
+    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">k8s.gcr.io/pause:3.1</span></code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<p>配置中 <code>topologyKey: zone</code> 表示均匀分布只针对包含标签 <code>zone:&lt;any value&gt;</code>的节点
+<code>whenUnsatisfiable: DoNotSchedul</code> 表示针对不满足约束的的 Pod， 调度器应该让其挂起</p>
+<p>如果调度器将 Pod 分配的 “zoneA”中， 则 Pod 分布就变成 [3,1], 这时偏差(skew)就为 2(3 - 1)
+这就与 <code>maxSkew: 1</code> 相违背。所以在本例中，新加入的 Pod 就只能被分配到  “zoneB”:</p>
+<pre><code>+---------------+---------------+      +---------------+---------------+
+|     zoneA     |     zoneB     |      |     zoneA     |     zoneB     |
++-------+-------+-------+-------+      +-------+-------+-------+-------+
+| node1 | node2 | node3 | node4 |  OR  | node1 | node2 | node3 | node4 |
++-------+-------+-------+-------+      +-------+-------+-------+-------+
+|   P   |   P   |   P   |   P   |      |   P   |   P   |  P P  |       |
++-------+-------+-------+-------+      +-------+-------+-------+-------+
+</code></pre><p>用户也可以通过调整配置实现不同的需求</p>
+<ul>
+<li>将 <code>maxSkew</code> 设置为大于 <code>2</code>， 这样新加入 Pod 也可以分配到 “zoneA”中</li>
+<li>将 <code>topologyKey</code> 设置为 &ldquo;node&rdquo;, 则 Pod 的均匀分布范围就从区域变为节点</li>
+<li>将 <code>whenUnsatisfiable</code> 设置为 <code>ScheduleAnyway</code> 来保证新加入的 Pod 都能被调度(假设满足其它的调度 API)
+但是，会被优先调度到匹配 Pod 少的拓扑域中(也要注意这个优先还需要连同其它内部调度优先级如资源使用率等一起考量)。</li>
+</ul>
+<!--
+### Example: Multiple TopologySpreadConstraints
+
+This builds upon the previous example. Suppose you have a 4-node cluster where 3 Pods labeled `foo:bar` are located in node1, node2 and node3 respectively (`P` represents Pod):
+
+```
++---------------+---------------+
+|     zoneA     |     zoneB     |
++-------+-------+-------+-------+
+| node1 | node2 | node3 | node4 |
++-------+-------+-------+-------+
+|   P   |   P   |   P   |       |
++-------+-------+-------+-------+
+```
+
+You can use 2 TopologySpreadConstraints to control the Pods spreading on both zone and node:
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="podstopology-spread-constraintstwo-constraintsyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/topology-spread-constraints/two-constraints.yaml" download="pods/topology-spread-constraints/two-constraints.yaml">
+                    <code>pods/topology-spread-constraints/two-constraints.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('podstopology-spread-constraintstwo-constraintsyaml')" title="Copy pods/topology-spread-constraints/two-constraints.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+<span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">mypod</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">foo</span>: <span style="color:#ae81ff">bar</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">topologySpreadConstraints</span>:
+  - <span style="color:#f92672">maxSkew</span>: <span style="color:#ae81ff">1</span>
+    <span style="color:#f92672">topologyKey</span>: <span style="color:#ae81ff">zone</span>
+    <span style="color:#f92672">whenUnsatisfiable</span>: <span style="color:#ae81ff">DoNotSchedule</span>
+    <span style="color:#f92672">labelSelector</span>:
+      <span style="color:#f92672">matchLabels</span>:
+        <span style="color:#f92672">foo</span>: <span style="color:#ae81ff">bar</span>
+  - <span style="color:#f92672">maxSkew</span>: <span style="color:#ae81ff">1</span>
+    <span style="color:#f92672">topologyKey</span>: <span style="color:#ae81ff">node</span>
+    <span style="color:#f92672">whenUnsatisfiable</span>: <span style="color:#ae81ff">DoNotSchedule</span>
+    <span style="color:#f92672">labelSelector</span>:
+      <span style="color:#f92672">matchLabels</span>:
+        <span style="color:#f92672">foo</span>: <span style="color:#ae81ff">bar</span>
+  <span style="color:#f92672">containers</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pause</span>
+    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">k8s.gcr.io/pause:3.1</span></code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+In this case, to match the first constraint, the incoming Pod can only be placed onto "zoneB"; while in terms of the second constraint, the incoming Pod can only be placed onto "node4". Then the results of 2 constraints are ANDed, so the only viable option is to place on "node4".
+
+Multiple constraints can lead to conflicts. Suppose you have a 3-node cluster across 2 zones:
+
+```
++---------------+-------+
+|     zoneA     | zoneB |
++-------+-------+-------+
+| node1 | node2 | node3 |
++-------+-------+-------+
+|  P P  |   P   |  P P  |
++-------+-------+-------+
+```
+
+If you apply "two-constraints.yaml" to this cluster, you will notice "mypod" stays in `Pending` state. This is because: to satisfy the first constraint, "mypod" can only be put to "zoneB"; while in terms of the second constraint, "mypod" can only put to "node2". Then a joint result of "zoneB" and "node2" returns nothing.
+
+To overcome this situation, you can either increase the `maxSkew` or modify one of the constraints to use `whenUnsatisfiable: ScheduleAnyway`.
+ -->
+<h3 id="示例-多个-topologyspreadconstraint">示例: 多个 TopologySpreadConstraint</h3>
+<p>与上一个示例相同， 假设有一个4节点的集群中有三个标签包含标签为 <code>foo:bar</code>的 Pod，
+分别分布在 1，2，3 号节点上 (一个 <code>P</code> 代表一个 Pod)</p>
+<pre><code>+---------------+---------------+
+|     zoneA     |     zoneB     |
++-------+-------+-------+-------+
+| node1 | node2 | node3 | node4 |
++-------+-------+-------+-------+
+|   P   |   P   |   P   |       |
++-------+-------+-------+-------+
+</code></pre><p>这次用两个 TopologySpreadConstraints， 同时通过 区域 和节点为控制 Pod 的分布</p>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="podstopology-spread-constraintstwo-constraintsyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/topology-spread-constraints/two-constraints.yaml" download="pods/topology-spread-constraints/two-constraints.yaml">
+                    <code>pods/topology-spread-constraints/two-constraints.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('podstopology-spread-constraintstwo-constraintsyaml')" title="Copy pods/topology-spread-constraints/two-constraints.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+<span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">mypod</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">foo</span>: <span style="color:#ae81ff">bar</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">topologySpreadConstraints</span>:
+  - <span style="color:#f92672">maxSkew</span>: <span style="color:#ae81ff">1</span>
+    <span style="color:#f92672">topologyKey</span>: <span style="color:#ae81ff">zone</span>
+    <span style="color:#f92672">whenUnsatisfiable</span>: <span style="color:#ae81ff">DoNotSchedule</span>
+    <span style="color:#f92672">labelSelector</span>:
+      <span style="color:#f92672">matchLabels</span>:
+        <span style="color:#f92672">foo</span>: <span style="color:#ae81ff">bar</span>
+  - <span style="color:#f92672">maxSkew</span>: <span style="color:#ae81ff">1</span>
+    <span style="color:#f92672">topologyKey</span>: <span style="color:#ae81ff">node</span>
+    <span style="color:#f92672">whenUnsatisfiable</span>: <span style="color:#ae81ff">DoNotSchedule</span>
+    <span style="color:#f92672">labelSelector</span>:
+      <span style="color:#f92672">matchLabels</span>:
+        <span style="color:#f92672">foo</span>: <span style="color:#ae81ff">bar</span>
+  <span style="color:#f92672">containers</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pause</span>
+    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">k8s.gcr.io/pause:3.1</span></code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<p>在这种情况下， 要符合第一个约束， 新加入的 Pod 就分被分配到 “zoneB”
+再要符合第二个约束，新加入的 Pod 就分被分配到  “node4”
+而这两个约束之间是逻辑与关系，也就最终可分配的就 “node4”。</p>
+<p>多个约束可能产生冲突。比如集群在两个区域中有三个节点:</p>
+<pre><code>+---------------+-------+
+|     zoneA     | zoneB |
++-------+-------+-------+
+| node1 | node2 | node3 |
++-------+-------+-------+
+|  P P  |   P   |  P P  |
++-------+-------+-------+
+</code></pre><p>如果在这个集群中执行 <code>two-constraints.yaml</code>， 就会发现名称为 <code>mypod</code> 的 Pod 状态一直是 <code>Pending</code>。
+这是因为，要符合第一个约束， 就只能分配到 “zoneB”， 同时要符合第二个约束， 就只能分配到 “node2”
+而 “zoneB” 与 “node2” 的交集为空集。</p>
+<p>要解决这种情况， 可以通过增加 <code>maxSkew</code> 的值，
+或 修改其中一个约束的 <code>whenUnsatisfiable</code>值为<code>ScheduleAnyway</code></p>
+<!--  
+### Conventions
+
+There are some implicit conventions worth noting here:
+
+- Only the Pods holding the same namespace as the incoming Pod can be matching candidates.
+
+- Nodes without `topologySpreadConstraints[*].topologyKey` present will be bypassed. It implies that:
+
+  1. the Pods located on those nodes do not impact `maxSkew` calculation - in the above example, suppose "node1" does not have label "zone", then the 2 Pods will be disregarded, hence the incoming Pod will be scheduled into "zoneA".
+  2. the incoming Pod has no chances to be scheduled onto this kind of nodes - in the above example, suppose a "node5" carrying label `{zone-typo: zoneC}` joins the cluster, it will be bypassed due to the absence of label key "zone".
+
+- Be aware of what will happen if the incomingPod’s `topologySpreadConstraints[*].labelSelector` doesn’t match its own labels. In the above example, if we remove the incoming Pod’s labels, it can still be placed onto "zoneB" since the constraints are still satisfied. However, after the placement, the degree of imbalance of the cluster remains unchanged - it’s still zoneA having 2 Pods which hold label {foo:bar}, and zoneB having 1 Pod which holds label {foo:bar}. So if this is not what you expect, we recommend the workload’s `topologySpreadConstraints[*].labelSelector` to match its own labels.
+
+- If the incoming Pod has `spec.nodeSelector` or `spec.affinity.nodeAffinity` defined, nodes not matching them will be bypassed.
+
+    Suppose you have a 5-node cluster ranging from zoneA to zoneC:
+
+    ```
+    +---------------+---------------+-------+
+    |     zoneA     |     zoneB     | zoneC |
+    +-------+-------+-------+-------+-------+
+    | node1 | node2 | node3 | node4 | node5 |
+    +-------+-------+-------+-------+-------+
+    |   P   |   P   |   P   |       |       |
+    +-------+-------+-------+-------+-------+
+    ```
+
+    and you know that "zoneC" must be excluded. In this case, you can compose the yaml as below, so that "mypod" will be placed onto "zoneB" instead of "zoneC". Similarly `spec.nodeSelector` is also respected.
+
+    
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="podstopology-spread-constraintsone-constraint-with-nodeaffinityyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/topology-spread-constraints/one-constraint-with-nodeaffinity.yaml" download="pods/topology-spread-constraints/one-constraint-with-nodeaffinity.yaml">
+                    <code>pods/topology-spread-constraints/one-constraint-with-nodeaffinity.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('podstopology-spread-constraintsone-constraint-with-nodeaffinityyaml')" title="Copy pods/topology-spread-constraints/one-constraint-with-nodeaffinity.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+<span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">mypod</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">foo</span>: <span style="color:#ae81ff">bar</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">topologySpreadConstraints</span>:
+  - <span style="color:#f92672">maxSkew</span>: <span style="color:#ae81ff">1</span>
+    <span style="color:#f92672">topologyKey</span>: <span style="color:#ae81ff">zone</span>
+    <span style="color:#f92672">whenUnsatisfiable</span>: <span style="color:#ae81ff">DoNotSchedule</span>
+    <span style="color:#f92672">labelSelector</span>:
+      <span style="color:#f92672">matchLabels</span>:
+        <span style="color:#f92672">foo</span>: <span style="color:#ae81ff">bar</span>
+  <span style="color:#f92672">affinity</span>:
+    <span style="color:#f92672">nodeAffinity</span>:
+      <span style="color:#f92672">requiredDuringSchedulingIgnoredDuringExecution</span>:
+        <span style="color:#f92672">nodeSelectorTerms</span>:
+        - <span style="color:#f92672">matchExpressions</span>:
+          - <span style="color:#f92672">key</span>: <span style="color:#ae81ff">zone</span>
+            <span style="color:#f92672">operator</span>: <span style="color:#ae81ff">NotIn</span>
+            <span style="color:#f92672">values</span>:
+            - <span style="color:#ae81ff">zoneC</span>
+  <span style="color:#f92672">containers</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pause</span>
+    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">k8s.gcr.io/pause:3.1</span></code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+-->
+<h3 id="约定">约定</h3>
+<p>以下为一些值得注意的隐性约定:</p>
+<ul>
+<li>
+<p>只有在同一个命名空间中的 Pod 才能作为匹配候选者</p>
+</li>
+<li>
+<p>没有 <code>topologySpreadConstraints[*].topologyKey</code> 的节点会被当作旁路，隐含的意思为:</p>
+<ol>
+<li>这些只点上的 Pod 不会被用于计算 <code>maxSkew</code>， 在上面的例子中，假设 <code>node1</code> 上没有标签 <code>zone</code>，
+这时其上的两个 Pod 会被忽略， 这样新加入的 Pod 就会被分配到  “zoneA”</li>
+<li>新加入的 Pod 也不会有机会被分配到此类节点上， 在上面的例子中，
+假设集群中加入了一个 “node5” 上面有个标签为 <code>zone-typo: zoneC</code>
+这个节点(区域)会因为没有标签键 <code>zone</code> 而被忽略</li>
+</ol>
+</li>
+<li>
+<p>还可能发生的一种情况是 新加入的 Pod 上的 <code>topologySpreadConstraints[*].labelSelector</code>
+与自身的标签不匹配。在上面的例子中， 如果删除新加入 Pod 上的标签，该 Pod 也会被分配到 “zoneB”。
+因为约束条件是满足的。 但是在 Pod 分配之后，集群的均衡程度并没有改变， 也就是 <code>zoneA</code> 中
+有两个包含标签 <code>foo:bar</code>的 Pod， <code>zoneB</code> 中 有一个包含标签 <code>foo:bar</code>的 Pod。 如果这不是预期的行为，
+官方推荐工作负载的 <code>topologySpreadConstraints[*].labelSelector</code> 需要匹配自身的标签。</p>
+</li>
+<li>
+<p>如果新加入的 Pod 还定义了 <code>spec.nodeSelector</code> 或 <code>spec.affinity.nodeAffinity</code>
+不匹配的节点也会被忽略。</p>
+<p>假如一个包含5个节点的集群，有A，B，C三个分区:</p>
+<pre><code>+---------------+---------------+-------+
+|     zoneA     |     zoneB     | zoneC |
++-------+-------+-------+-------+-------+
+| node1 | node2 | node3 | node4 | node5 |
++-------+-------+-------+-------+-------+
+|   P   |   P   |   P   |       |       |
++-------+-------+-------+-------+-------+
+</code></pre><p>如果想让 zoneC 被排除， 这时可以使用以下配置，让 <code>mypod</code> 被分配到 <code>zoneB</code> 而不是 <code>zoneC</code>
+同样的 spec.nodeSelector 也要考量</p>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="podstopology-spread-constraintsone-constraint-with-nodeaffinityyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/topology-spread-constraints/one-constraint-with-nodeaffinity.yaml" download="pods/topology-spread-constraints/one-constraint-with-nodeaffinity.yaml">
+                    <code>pods/topology-spread-constraints/one-constraint-with-nodeaffinity.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('podstopology-spread-constraintsone-constraint-with-nodeaffinityyaml')" title="Copy pods/topology-spread-constraints/one-constraint-with-nodeaffinity.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+<span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">mypod</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">foo</span>: <span style="color:#ae81ff">bar</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">topologySpreadConstraints</span>:
+  - <span style="color:#f92672">maxSkew</span>: <span style="color:#ae81ff">1</span>
+    <span style="color:#f92672">topologyKey</span>: <span style="color:#ae81ff">zone</span>
+    <span style="color:#f92672">whenUnsatisfiable</span>: <span style="color:#ae81ff">DoNotSchedule</span>
+    <span style="color:#f92672">labelSelector</span>:
+      <span style="color:#f92672">matchLabels</span>:
+        <span style="color:#f92672">foo</span>: <span style="color:#ae81ff">bar</span>
+  <span style="color:#f92672">affinity</span>:
+    <span style="color:#f92672">nodeAffinity</span>:
+      <span style="color:#f92672">requiredDuringSchedulingIgnoredDuringExecution</span>:
+        <span style="color:#f92672">nodeSelectorTerms</span>:
+        - <span style="color:#f92672">matchExpressions</span>:
+          - <span style="color:#f92672">key</span>: <span style="color:#ae81ff">zone</span>
+            <span style="color:#f92672">operator</span>: <span style="color:#ae81ff">NotIn</span>
+            <span style="color:#f92672">values</span>:
+            - <span style="color:#ae81ff">zoneC</span>
+  <span style="color:#f92672">containers</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pause</span>
+    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">k8s.gcr.io/pause:3.1</span></code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+</li>
+</ul>
+<!--
+### Cluster-level default constraints
+
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.18 [alpha]</code>
+</div>
+
+
+
+It is possible to set default topology spread constraints for a cluster. Default
+topology spread constraints are applied to a Pod if, and only if:
+
+- It doesn't define any constraints in its `.spec.topologySpreadConstraints`.
+- It belongs to a service, replication controller, replica set or stateful set.
+
+Default constraints can be set as part of the `PodTopologySpread` plugin args
+in a [scheduling profile](/docs/reference/scheduling/profiles).
+The constraints are specified with the same [API above](#api), except that
+`labelSelector` must be empty. The selectors are calculated from the services,
+replication controllers, replica sets or stateful sets that the Pod belongs to.
+
+An example configuration might look like follows:
+
+```yaml
+apiVersion: kubescheduler.config.k8s.io/v1alpha2
+kind: KubeSchedulerConfiguration
+
+profiles:
+  pluginConfig:
+    - name: PodTopologySpread
+      args:
+        defaultConstraints:
+          - maxSkew: 1
+            topologyKey: failure-domain.beta.kubernetes.io/zone
+            whenUnsatisfiable: ScheduleAnyway
+```
+
+<blockquote class="note">
+  <div><strong>说明：</strong> The score produced by default scheduling constraints might conflict with the
+score produced by the
+<a href="/docs/reference/scheduling/profiles/#scheduling-plugins"><code>DefaultPodTopologySpread</code> plugin</a>.
+It is recommended that you disable this plugin in the scheduling profile when
+using default constraints for <code>PodTopologySpread</code>.</div>
+</blockquote>
+
+ -->
+<h3 id="集群级的默认约束">集群级的默认约束</h3>
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.18 [alpha]</code>
+</div>
+
+
+<p>可以为一个集群设置默认的拓扑分布约束条件，默认拓扑分布约束条件能且仅能适用于:</p>
+<ul>
+<li>Pod 没有在 <code>.spec.topologySpreadConstraints</code> 中定义任何约束条件</li>
+<li>Pod 属于
+<a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
+</a>
+<a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-replication-controller' target='_blank'>ReplicationController<span class='tooltip-text'>一个 (废弃的) API 对象用于管理多副本应用</span>
+</a>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/replicaset/' target='_blank'>ReplicaSet<span class='tooltip-text'>ReplicaSet 保证在任意时间点上某个 Pod 有指定数量副本在运行</span>
+</a>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
+</a> 之一</li>
+</ul>
+<p>默认的约束条件可以作为 <a href="/k8sDocs/reference/scheduling/profiles">scheduling profile</a>
+中 <code>PodTopologySpread</code> 插件参数的一部分。 这些约束条件可以能过同 <a href="#api">API</a> 一样设置，
+除了 <code>labelSelector</code> 必须为空。 选择器通过 Pod 所属的<br>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
+</a>
+<a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-replication-controller' target='_blank'>ReplicationController<span class='tooltip-text'>一个 (废弃的) API 对象用于管理多副本应用</span>
+</a>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/replicaset/' target='_blank'>ReplicaSet<span class='tooltip-text'>ReplicaSet 保证在任意时间点上某个 Pod 有指定数量副本在运行</span>
+</a>
+<a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/controllers/statefulset/' target='_blank'>StatefulSet<span class='tooltip-text'>管理一个 Pod 集合的部署与容量伸缩， 这些 Pod 所以使用的存储是持久的(Pod 被替代后，新的 Pod 继承老 Pod 的存储)， Pod 的标识也是持久化的(重建 Pod 后名字不会变)</span>
+</a>
+计算得出。</p>
+<p>以下为示例:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">kubescheduler.config.k8s.io/v1alpha2</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">KubeSchedulerConfiguration</span>
+
+<span style="color:#f92672">profiles</span>:
+  <span style="color:#f92672">pluginConfig</span>:
+    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">PodTopologySpread</span>
+      <span style="color:#f92672">args</span>:
+        <span style="color:#f92672">defaultConstraints</span>:
+          - <span style="color:#f92672">maxSkew</span>: <span style="color:#ae81ff">1</span>
+            <span style="color:#f92672">topologyKey</span>: <span style="color:#ae81ff">failure-domain.beta.kubernetes.io/zone</span>
+            <span style="color:#f92672">whenUnsatisfiable</span>: <span style="color:#ae81ff">ScheduleAnyway</span>
+</code></pre></div><blockquote class="note">
+  <div><strong>说明：</strong> 由默认调度约束计算的结果可能与<a href="/k8sDocs/reference/scheduling/profiles/#scheduling-plugins"><code>DefaultPodTopologySpread</code> plugin</a>计算结果相冲突。
+建议用户在使用<code>PodTopologySpread</code>的默认约束时，关掉调度配置中的插件。</div>
+</blockquote>
+
+<!--
+## Comparison with PodAffinity/PodAntiAffiniaty
+
+In Kubernetes, directives related to "Affinity" control how Pods are
+scheduled - more packed or more scattered.
+
+- For `PodAffinity`, you can try to pack any number of Pods into qualifying
+  topology domain(s)
+- For `PodAntiAffinity`, only one Pod can be scheduled into a
+  single topology domain.
+
+The "EvenPodsSpread" feature provides flexible options to distribute Pods evenly across different
+topology domains - to achieve high availability or cost-saving. This can also help on rolling update
+workloads and scaling out replicas smoothly. See [Motivation](https://github.com/kubernetes/enhancements/tree/master/keps/sig-scheduling/895-pod-topology-spread#motivation) for more details.
+ -->
+<h2 id="约束条件-vs-podaffinitypodantiaffiniaty">约束条件 vs <code>PodAffinity/PodAntiAffiniaty</code></h2>
+<p>在 k8s 中， 与 <code>Affinity</code> 相关用于控制 Pod 怎么调度的指令，或集中或分散</p>
+<ul>
+<li>对于 <code>PodAffinity</code>， 用户可以尝试向有资格的拓扑域中塞进任意数量的 Pod</li>
+<li>对于 <code>PodAntiAffinity</code>， 一个 Pod 只能被调度到一个拓扑域中</li>
+</ul>
+<p><code>EvenPodsSpread</code> 特性提供了灵活的选项来让 Pod 均匀的分布到不同的拓扑域中，来达到高可用或减少开支的目的。
+这也可以让滚动发布和动态扩容变得更平滑。更多信息见
+<a href="https://github.com/kubernetes/enhancements/tree/master/keps/sig-scheduling/895-pod-topology-spread#motivation">Motivation</a></p>
+<!--
+## Known Limitations
+
+As of 1.18, at which this feature is Beta, there are some known limitations:
+
+- Scaling down a Deployment may result in imbalanced Pods distribution.
+- Pods matched on tainted nodes are respected. See [Issue 80921](https://github.com/kubernetes/kubernetes/issues/80921)
+ -->
+<h2 id="已知的限制">已知的限制</h2>
+<p>到 <code>1.18</code>，该特性还是 <code>Beta</code> 状态， 还有以下已知的限制:</p>
+<ul>
+<li>收缩 Deployment 的容量可能导致 Pod 分布的不均匀。</li>
+<li>匹配到有 <a class='glossary-tooltip' href='/docs/concepts/scheduling-eviction/taint-and-toleration/' target='_blank'>Taint<span class='tooltip-text'>A core object consisting of three required properties: key, value, and effect. Taints prevent the scheduling of pods on nodes or node groups.</span>
+</a> 节点也会被计入， 见<a href="https://github.com/kubernetes/kubernetes/issues/80921">Issue 80921</a></li>
+</ul>
+
+
+
+            
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 July 29, 2020
+</div>
+            
+          </main>
+          <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
+            
+
+
+
+
+
+
+
+
+
+
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#准备工作">准备工作</a>
+      <ul>
+        <li><a href="#打开功能开关">打开功能开关</a></li>
+        <li><a href="#为节点添加恰当的标签">为节点添加恰当的标签</a></li>
+      </ul>
+    </li>
+    <li><a href="#pod-的扩散约束">Pod 的扩散约束</a>
+      <ul>
+        <li><a href="#api">API</a></li>
+        <li><a href="#示例-单个-topologyspreadconstraint">示例: 单个 TopologySpreadConstraint</a></li>
+        <li><a href="#示例-多个-topologyspreadconstraint">示例: 多个 TopologySpreadConstraint</a></li>
+        <li><a href="#约定">约定</a></li>
+        <li><a href="#集群级的默认约束">集群级的默认约束</a></li>
+      </ul>
+    </li>
+    <li><a href="#约束条件-vs-podaffinitypodantiaffiniaty">约束条件 vs <code>PodAffinity/PodAntiAffiniaty</code></a></li>
+    <li><a href="#已知的限制">已知的限制</a></li>
+  </ul>
+</nav>
+
+
+
+          </div>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        
+        
+	
+		
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script src="/k8sDocs/js/main.min.446a2e681f8167f44314691b77368dd561bf0b67514487f3f0fd999316c6da4a.js" integrity="sha256-RGouaB&#43;BZ/RDFGkbdzaN1WG/C2dRRIfz8P2ZkxbG2ko=" crossorigin="anonymous"></script>
+
+
+
+
+  </body>
+</html>

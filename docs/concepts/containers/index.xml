@@ -1,0 +1,548 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubernetes – 容器</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/</link>
+    <description>Recent content in 容器 on Kubernetes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 19 Jul 2020 00:00:00 +0000</lastBuildDate>
+    
+	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: 镜像</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/00-images/</link>
+      <pubDate>Sun, 19 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/00-images/</guid>
+      <description>
+        
+        
+        &lt;!-- overview --&gt;
+&lt;p&gt;一个容器镜像就是构建应用的二进制数据和应用所以需要的依赖。 容器镜像是一个可独立运行的可执行软件包，并定义了清楚的运行环境。
+通常是用户创建一个应用的容器镜像，推送到镜像仓库，在 Pod 中引用这个镜像。&lt;/p&gt;
+&lt;p&gt;本文介绍容器镜像的主要概念&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;h2 id=&#34;镜像名称&#34;&gt;镜像名称&lt;/h2&gt;
+&lt;p&gt;镜像的名称通常是长成这些个样子的 &lt;code&gt;pause&lt;/code&gt;, &lt;code&gt;example/mycontainer&lt;/code&gt;, &lt;code&gt;kube-apiserver&lt;/code&gt;。 镜像名也可以带上镜像仓库的主机名(自建或第三方镜像仓库默认都要带上)，如：&lt;code&gt;fictional.registry.example/imagename&lt;/code&gt;。也可能有端口号，如: &lt;code&gt;fictional.registry.example:10443/imagename&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;如果镜像名称上没有镜像仓库的主机名， 则 k8s 认为使用的是 Docker 公共镜像仓库。&lt;/p&gt;
+&lt;p&gt;在镜像名称的后面通常还会有一个标签(&lt;code&gt;tag&lt;/code&gt;)(就和 &lt;code&gt;docker&lt;/code&gt; 与 &lt;code&gt;podman&lt;/code&gt; 命令用的的一样)。 标签用于区分同一系列镜像的不同版本。&lt;/p&gt;
+&lt;p&gt;标签名的命名规范为： 大小写字母，数字，下划线(&lt;code&gt;_&lt;/code&gt;)，点(&lt;code&gt;.&lt;/code&gt;)中划线(&lt;code&gt;-&lt;/code&gt;)，但分隔符(&lt;code&gt;_&lt;/code&gt;,&lt;code&gt;.&lt;/code&gt;,&lt;code&gt;-&lt;/code&gt;)有使用限制
+如果镜像名称后没有标签，则默认使用 &lt;code&gt;latest&lt;/code&gt; 作为标签。&lt;/p&gt;
+&lt;p&gt;{{ &lt;warning&gt; }}
+在生产环境部署中尽量避免使用 latest 标签。 这样很难跟踪当前运行的是哪个版本，要做版本回退就更难了。
+所以建议使用有含意的标签，如: &lt;code&gt;v1.42.0&lt;/code&gt;
+{{ &lt;/warning&gt; }}&lt;/p&gt;
+&lt;h2 id=&#34;镜像更新策略&#34;&gt;镜像更新策略&lt;/h2&gt;
+&lt;p&gt;默认的更新策略为 &lt;code&gt;IfNotPresent&lt;/code&gt;, 就是让 kubelet 在找不到镜像时才从仓库拉取。 如果想要每次都强制拉取，则可以通过以下任意一种方式实现：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;将容器 &lt;code&gt;imagePullPolicy&lt;/code&gt; 的值设置为 &lt;code&gt;Always&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;不设置 &lt;code&gt;imagePullPolicy&lt;/code&gt; 并让镜像使用 &lt;code&gt;latest&lt;/code&gt; 标签&lt;/li&gt;
+&lt;li&gt;不设置 &lt;code&gt;imagePullPolicy&lt;/code&gt; 并镜像也不设置标签&lt;/li&gt;
+&lt;li&gt;打开  &lt;a href=&#34;../../../reference/03-access-authn-authz/04-admission-controllers/#alwayspullimages&#34;&gt;AlwaysPullImages&lt;/a&gt; admission controller&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果配置了 &lt;code&gt;imagePullPolicy&lt;/code&gt; 但没有设置值，则默认为 &lt;code&gt;Always&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;带清单manifest的多架构镜像&#34;&gt;带清单(Manifest)的多架构镜像&lt;/h2&gt;
+&lt;p&gt;镜像仓库在提供二进制镜像的同时也可以提供 &lt;a href=&#34;https://github.com/opencontainers/image-spec/blob/master/manifest.md&#34;&gt;容器镜像清单&lt;/a&gt;, 这个清单中列举了不同架构的镜像引用层。这样虽然镜像只有一个名字(如: &lt;code&gt;pause&lt;/code&gt;, &lt;code&gt;example/mycontainer&lt;/code&gt;, &lt;code&gt;kube-apiserve&lt;/code&gt;), 但不同的操作系统架构可以拉取到对应架构的镜像。&lt;/p&gt;
+&lt;p&gt;在 k8s 中容器镜像名称是带有后缀 &lt;code&gt;-$(ARCH)&lt;/code&gt;的。 为了向后兼容， 请为旧的镜像添加后缀。 比如生成包含所有架构清单的镜像叫 &lt;code&gt;pause&lt;/code&gt;，&lt;code&gt;pause-amd64&lt;/code&gt; 就是为向后兼容旧的配置或可能存在于YAML配置文件中带后续硬编码镜像名&lt;/p&gt;
+&lt;h2 id=&#34;使用私有仓库&#34;&gt;使用私有仓库&lt;/h2&gt;
+&lt;p&gt;从私有仓库拉取镜像时一般都需要提供凭据。
+以下为提供凭据的几种方式:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;在节点上配置仓库认证&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;所有的 Pod 都对仓库有全部访问权限&lt;/li&gt;
+&lt;li&gt;需要集群管理员对节点进行配置&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;预先下载镜像&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;所有的 Pod 可以使用节点是缓存的镜像&lt;/li&gt;
+&lt;li&gt;需要在节点上以 root 用户配置&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;基于提供商或本地插件&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果使用自定义节点配置， 用户(或云提供商)可以自己在节点上实现向镜像仓库的认证&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;以下为对这些认证方式更详细的说明&lt;/p&gt;
+&lt;h3 id=&#34;在节点上配置仓库认证&#34;&gt;在节点上配置仓库认证&lt;/h3&gt;
+&lt;p&gt;如果节点上运行的是 Docker 用户可以通过配置 Docker 运行时向私有仓库进行认证
+这种方式适用于用于能近控制节点配置&lt;/p&gt;
+&lt;p&gt;{{ &lt;note&gt; }}
+k8s 只支持 Docker 配置的 &lt;code&gt;auths&lt;/code&gt; 和 &lt;code&gt;HttpHeaders&lt;/code&gt; 部分， Docker 凭据帮助工具(&lt;code&gt;credHelpers&lt;/code&gt; 或 &lt;code&gt;credsStore&lt;/code&gt;)是不支持的
+{{ &lt;/note&gt; }}&lt;/p&gt;
+&lt;p&gt;Docker 会将私有仓库的凭据存储在 &lt;code&gt;$HOME/.dockercfg&lt;/code&gt; 或 &lt;code&gt;$HOME/.docker/config.json&lt;/code&gt; 文件中，kubelet 在拉取镜像时也可以从以下列表中搜寻凭据配置文件:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;{--root-dir:-/var/lib/kubelet}/config.json&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;{cwd of kubelet}/config.json&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;${HOME}/.docker/config.json&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/.docker/config.json&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;{--root-dir:-/var/lib/kubelet}/.dockercfg&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;{cwd of kubelet}/.dockercfg&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;${HOME}/.dockercfg&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/.dockercfg&lt;/code&gt;
+{{ &lt;note&gt; }}
+用户可以在 kubelet 进行的环境变量上显示地设置 HOME=/root
+{{ &lt;/note&gt; }}&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;以下为为节点设置私有仓库凭据的推荐方式。 本示例运行在控制机/笔记本上：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;为每一个想要使用的凭据执行命令 &lt;code&gt;docker login [server]&lt;/code&gt;，该命令会更本机的 &lt;code&gt;$HOME/.docker/config.json&lt;/code&gt; 文件&lt;/li&gt;
+&lt;li&gt;在文本编辑器中查看 &lt;code&gt;$HOME/.docker/config.json&lt;/code&gt; 文件，保证其中只包含需要使用到的凭据。&lt;/li&gt;
+&lt;li&gt;获取节点列表; 例如:
+&lt;ul&gt;
+&lt;li&gt;获取节点名称: &lt;code&gt;nodes=$( kubectl get nodes -o jsonpath=&#39;{range.items[*].metadata}{.name} {end}&#39; )&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;获取节点IP: &lt;code&gt;nodes=$( kubectl get nodes -o jsonpath=&#39;{range .items[*].status.addresses[?(@.type==&amp;quot;ExternalIP&amp;quot;)]}{.address} {end}&#39; )&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;将本地 &lt;code&gt;.docker/config.json&lt;/code&gt; 文件拷贝到以上列举的节点的凭据搜索目录中的一个
+&lt;ul&gt;
+&lt;li&gt;例如: &lt;code&gt;for n in $nodes; do scp ~/.docker/config.json root@&amp;quot;$n&amp;quot;:/var/lib/kubelet/config.json; done&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;{{ &lt;note&gt; }}
+在生成环境集群中，使用配置管理工具来让配置拷贝到所有需要的节点上
+{{ &lt;/note&gt; }}&lt;/p&gt;
+&lt;p&gt;要验证配置是否正确，则使用私有仓库中的镜像来创建一个Pod，如：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl apply -f - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt;EOF
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;apiVersion: v1
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;kind: Pod
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  name: private-image-test-1
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;spec:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  containers:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    - name: uses-private-image
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;      image: $PRIVATE_IMAGE_NAME
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;      imagePullPolicy: Always
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;      command: [ &amp;#34;echo&amp;#34;, &amp;#34;SUCCESS&amp;#34; ]
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果所有配置正确，则在一会之后可以通过命令&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl logs private-image-test-1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SUCCESS
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如果怀疑命令失败，则执行命令:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl describe pods/private-image-test-1 | grep &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Failed&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果有失败则输出类似如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; Fri, 26 Jun 2015 15:36:13 -0700    Fri, 26 Jun 2015 15:39:13 -0700    19    {kubelet node-i2hq}    spec.containers{uses-private-image}    failed        Failed to pull image &amp;quot;user/privaterepo:v1&amp;quot;: Error: image user/privaterepo:v1 not found
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;必须要保证所有节点都是使用的同一个 &lt;code&gt;.docker/config.json&lt;/code&gt; 文件， 否则 Pod 可能在某些节点成功，某些节点则失败。 例如，在使用节点自动扩容时， 每个实例模板都需要包含 &lt;code&gt;.docker/config.json&lt;/code&gt; 或挂载包含该文件的盘
+当私有仓库的凭据被添加到&lt;code&gt;.docker/config.json&lt;/code&gt;后 所有的 Pod 都可以对其中配置的任意私有仓库中拉取镜像。&lt;/p&gt;
+&lt;h3 id=&#34;预先拉取镜像&#34;&gt;预先拉取镜像&lt;/h3&gt;
+&lt;p&gt;{{ &lt;note&gt; }}
+这种方式适用于用于用户有权限对节点配置的情况，而且不适用于节点由云提供商管理且能够自动扩容的情况
+{{ &lt;/note&gt; }}&lt;/p&gt;
+&lt;p&gt;默认情况下， kubelet 会尝试从指定镜像仓库拉取每一个镜像， 但是在容器 imagePullPolicy 属性的值被设置为 &lt;code&gt;IfNotPresent&lt;/code&gt; 或 &lt;code&gt;Never&lt;/code&gt;时，则会使用本地镜像。 (preferentially or exclusively, respectively).&lt;/p&gt;
+&lt;p&gt;如果想要用预先摘取的方式取代镜像仓库认证， 需要保证集群中所有节点上预先摘取到的所有镜像都必须一致。
+这种方式可用于预先取镜像来达到提速的目的或代替私有镜像仓库认证。
+所有的 Pod 都有权访问任意预先拉取的镜像&lt;/p&gt;
+&lt;h3 id=&#34;在-pod-上设置-imagepullsecrets&#34;&gt;在 Pod 上设置 &lt;code&gt;ImagePullSecrets&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;{{ &lt;note&gt; }}
+这是使用私有仓库镜像的推荐方式
+{{ &lt;/note&gt; }}&lt;/p&gt;
+&lt;p&gt;k8s 支持在 Pod 上配置私有镜像仓库凭据&lt;/p&gt;
+&lt;h4 id=&#34;创建带-docker-配置的-secret&#34;&gt;创建带 Docker 配置的 Secret&lt;/h4&gt;
+&lt;p&gt;替换命令中的大写值为对应的配置，并运行此命令:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create secret docker-registry &amp;lt;name&amp;gt; --docker-server&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;DOCKER_REGISTRY_SERVER --docker-username&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;DOCKER_USER --docker-password&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;DOCKER_PASSWORD --docker-email&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;DOCKER_EMAIL
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果已经有 Docker 凭据，可以不用以上命令，直接使用凭据文件创建对应的 Secret.
+具体配置见&lt;a href=&#34;../../../3-tasks/02-configure-pod-container/11-pull-image-private-registry/#registry-secret-existing-credentials&#34;&gt;这里&lt;/a&gt;
+这种配置方式尤其适用有多个私有镜像仓库的情况，因为 &lt;code&gt;kubectl create secret docker-registry&lt;/code&gt; 创建 Secret 的方式只适用于单个私有镜像仓库的情况。
+{{ &lt;note&gt; }}
+Pod 只能引用当前命名空间内的 &lt;code&gt;Secret&lt;/code&gt; , 因此需要在每个命名空间都需要创建 &lt;code&gt;Secret&lt;/code&gt;
+{{ &lt;/note&gt; }}&lt;/p&gt;
+&lt;h3 id=&#34;在-pod-中使用-imagepullsecrets&#34;&gt;在 Pod 中使用 &lt;code&gt;imagePullSecrets&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;当 &lt;code&gt;Secret&lt;/code&gt; 创建好后，可以配置 &lt;code&gt;imagePullSecrets&lt;/code&gt; 使用该 &lt;code&gt;Secret&lt;/code&gt;, 例如：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;cat &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt; pod.yaml
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;apiVersion: v1
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;kind: Pod
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  name: foo
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  namespace: awesomeapps
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;spec:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  containers:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    - name: foo
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;      image: janedoe/awesomeapp:v1
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  imagePullSecrets:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    - name: myregistrykey
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;EOF&lt;/span&gt;
+
+cat &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt;&amp;gt; ./kustomization.yaml
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;resources:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;- pod.yaml
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;需要在每个用到私有镜像仓库的 Pod 都需要该配置。
+也可以在 &lt;code&gt;ServiceAccount&lt;/code&gt; 设置 &lt;code&gt;imagePullSecrets&lt;/code&gt; 可以使用对应的 Pod 自动添加该属性
+在 &lt;code&gt;ServiceAccount&lt;/code&gt; 设置 &lt;code&gt;imagePullSecrets&lt;/code&gt;具体见&lt;a href=&#34;../../../3-tasks/02-configure-pod-container/10-configure-service-account/#add-imagepullsecrets-to-a-service-account&#34;&gt;这里&lt;/a&gt;
+这个配置可与节点上的 &lt;code&gt;.docker/config.json&lt;/code&gt; 配合使用，两个配置的凭据全合并到一起。&lt;/p&gt;
+&lt;h2 id=&#34;应用场景&#34;&gt;应用场景&lt;/h2&gt;
+&lt;p&gt;配置私有仓库镜像的方式有多种，以下为常用应用场景和推荐方案。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;集群只使用开放(如：开源)镜像， 不需要私有仓库。
+- 使用 Docker Hub 上的公有镜像
+&lt;ul&gt;
+&lt;li&gt;不需要配置&lt;/li&gt;
+&lt;li&gt;一些云提供商会自动缓存或镜像开放镜像， 可以提高可用性并减少拉取镜像的时间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;集群使用到的镜像对外私有，对内公开
+- 使用自建私有镜像仓库
+&lt;ul&gt;
+&lt;li&gt;可以托管在 Docker Hub 或其它地方&lt;/li&gt;
+&lt;li&gt;使用上面介结的在每个节点配置 &lt;code&gt;.docker/config.json&lt;/code&gt; 的方式
+- 在内网运行一个开放的内部私有镜像仓库&lt;/li&gt;
+&lt;li&gt;不需要在 k8s 上做配置
+- 使用一个有访问控制的镜像仓库&lt;/li&gt;
+&lt;li&gt;在节点自动扩容的场景下会比手动更佳
+- 在节点配置不方便的集群中使用 &lt;code&gt;imagePullSecrets&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;镜像仓库需要更严格的访问控制
+- 需要打开  &lt;a href=&#34;../../../reference/03-access-authn-authz/04-admission-controllers/#alwayspullimages&#34;&gt;AlwaysPullImages&lt;/a&gt; admission controller， 否则所有 Pod 默认对所有镜像有访问权限
+- 将敏感数据放的 Secret 中， 还是是打在镜像中&lt;/li&gt;
+&lt;li&gt;多租户集群，每个租户需要独立的私有镜像仓库
+- 需要打开  &lt;a href=&#34;../../../reference/03-access-authn-authz/04-admission-controllers/#alwayspullimages&#34;&gt;AlwaysPullImages&lt;/a&gt; admission controller， 否则所有租户的所有 Pod 默认对所有镜像有访问权限
+- 私有镜像仓库需要有认证系统
+- 为每个租户生成私有镜像仓库凭据，并在每个租户的命名空间中创建对应 Secret.
+- 各命名空间的租户将名称的 Secret 配置到 &lt;code&gt;imagePullSecrets&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;如果用到的多个私有镜像仓库， 可以对每个仓库创建一个 Secret, kubelet 会将所有 imagePullSecrets 合并到一个虚拟的 &lt;code&gt;.docker/config.json&lt;/code&gt; 中。&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 容器环境</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/01-container-environment/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/01-container-environment/</guid>
+      <description>
+        
+        
+        &lt;!-- overview --&gt;
+&lt;p&gt;本文主要介绍以环境提供容器的资源信息&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;h2 id=&#34;容器内的环境变量&#34;&gt;容器内的环境变量&lt;/h2&gt;
+&lt;p&gt;k8s 环境为容器提供了一些重要的资源信息：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一个包含&lt;a href=&#34;../00-images/&#34;&gt;镜像&lt;/a&gt;和一个或多个&lt;a href=&#34;../../05-storage/00-volumes/&#34;&gt;卷&lt;/a&gt;组合成的文件系统&lt;/li&gt;
+&lt;li&gt;关于容器自身的相关信息&lt;/li&gt;
+&lt;li&gt;关于集群中其它对象的相关信息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;容器信息&#34;&gt;容器信息&lt;/h3&gt;
+&lt;p&gt;容器的主机名，也就是容器运行的 Pod 的名称。 可以通过 &lt;code&gt;hostname&lt;/code&gt; 命令或 &lt;code&gt;libc&lt;/code&gt; 库中的 &lt;code&gt;gethostname&lt;/code&gt; 函数获得
+Pod 的名称和所在的命名空间可能 &lt;a href=&#34;../../../3-tasks/04-inject-data-application/04-downward-api-volume-expose-pod-information/#the-downward-api&#34;&gt;downward API&lt;/a&gt;以环境变量方式访问
+在 Pod 定义中用户自定义的环境变量和Docker 镜像中的环境变量都会成为容器中的环境变量。&lt;/p&gt;
+&lt;h3 id=&#34;集群信息&#34;&gt;集群信息&lt;/h3&gt;
+&lt;p&gt;在容器创建之前的所有 Service 列表会以环境变量方式加入容器。 这些环境变量与 Docker link 的语法一致。
+例如 在一个叫 bar 的容器中加一个叫 foo 的 Service, 会加入以下环境变量:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-env&#34; data-lang=&#34;env&#34;&gt;FOO_SERVICE_HOST=&amp;lt;the host the service is running on&amp;gt;
+FOO_SERVICE_PORT=&amp;lt;the port the service is running on&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如果集群开启了 &lt;a href=&#34;https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns/&#34;&gt;DNS 插件&lt;/a&gt;，容器也可能通过 DNS 方式获取 Service 的 IP 地址。&lt;/p&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;../03-container-lifecycle-hooks/&#34;&gt;容器生命周期钩子&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;../../../3-tasks/02-configure-pod-container/16-attach-handler-lifecycle-event/&#34;&gt;生命周期事件处理器&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Runtime Class</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/02-runtime-class/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/02-runtime-class/</guid>
+      <description>
+        
+        
+        &lt;!-- overview --&gt;
+&lt;p&gt;
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.14 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+本文介绍 &lt;code&gt;RuntimeClass&lt;/code&gt; 资源和运行时选择机制。
+&lt;code&gt;RuntimeClass&lt;/code&gt; 是一个选择容器运行时配置的特性。而容器运行时配置则用于运行 Pod 中的容器的。&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;h2 id=&#34;motivation&#34;&gt;Motivation&lt;/h2&gt;
+&lt;p&gt;用户可以在不同的 Pod 上配置不同的 &lt;code&gt;RuntimeClass&lt;/code&gt; 以达成性能与安全之间的平衡。 例如，有一部分工作负载需要一个高级别的信息安全保降。这时就需要选择装 Pod 调度到运行在物理虚拟化的容器运行时。 这样才有相对其它运行时更高的隔离级别同时也会有额外的资源开销。
+&lt;code&gt;RuntimeClass&lt;/code&gt; 也可以用于在同一个运行时上，对不同的 Pod 使用不同的配置。&lt;/p&gt;
+&lt;h2 id=&#34;设置&#34;&gt;设置&lt;/h2&gt;
+&lt;p&gt;确保 &lt;code&gt;RuntimeClass&lt;/code&gt; 功能特性是开启的(默认开启)。关于如何开启或关闭功能特性见&lt;a href=&#34;../../../reference/command-line-tools-reference/feature-gates/&#34;&gt;这里&lt;/a&gt;。 apiserver 和 kubelet 的&lt;code&gt;RuntimeClass&lt;/code&gt; 功能特性必须要开启。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;配置节点上的 CRI 实现(各种运行时配置方式不同)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;创建相应的 &lt;code&gt;RuntimeClass&lt;/code&gt; 资源&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;配置节点上的 CRI 实现&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;基于 RuntimeClass 的配置因 容器运行时接口(CRI)具体实现的不同而不同。 具体配置文档见&lt;a href=&#34;#cri-configuration&#34;&gt;下面章节&lt;/a&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 默认情况下 &lt;code&gt;RuntimeClass&lt;/code&gt; 假定整个集群中所有节点的配置是相同的(也就是说所有节点针对容器运行时的配置是一样的)，为了支持这样的配置请见&lt;a href=&#34;#scheduling&#34;&gt;下面章节-调度&lt;/a&gt;&lt;/div&gt;
+&lt;/blockquote&gt;
+
+配置上有一个想对应的 handler 的名称， 被 &lt;code&gt;RuntimeClass&lt;/code&gt; 所引用。 这个字段的命名必须符合 DNS-1123 标签的标准(字母，数字，中划线(&lt;code&gt;-&lt;/code&gt;)组成)&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;创建相应的 &lt;code&gt;RuntimeClass&lt;/code&gt; 资源&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;上一步提到的每个配置都有对应的 &lt;code&gt;handler&lt;/code&gt; 名称，用于区分不同的配置。 每一个 &lt;code&gt;handler&lt;/code&gt; 都会创建一个对就的 &lt;code&gt;RuntimeClass&lt;/code&gt; 对象。
+&lt;code&gt;RuntimeClass&lt;/code&gt; 资源目前只有两个有意义的字段： 名称 (&lt;code&gt;metadata.name&lt;/code&gt;)和处理器 (&lt;code&gt;handler&lt;/code&gt;), 对象定义类似如下:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;node.k8s.io/v1beta1  # RuntimeClass 定义在 node.k8s.io API 组中&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;RuntimeClass&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myclass  # The name the RuntimeClass will be referenced by&lt;/span&gt;
+  &lt;span style=&#34;color:#75715e&#34;&gt;# RuntimeClass is a non-namespaced resource&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;handler&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myconfiguration  # The name of the corresponding CRI configuration&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;RuntimeClass&lt;/code&gt; 对象命名必须是一个有效的 &lt;a href=&#34;../../00-overview/03-working-with-objects/01-names/#dns-subdomain-names&#34;&gt;DNS 子域名格式&lt;/a&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 建议只有集群管理员对 &lt;code&gt;RuntimeClass&lt;/code&gt; 对象有写权限(create/update/patch/delete). 一般情况这是默认配置。 更多信息见 &lt;a href=&#34;../../../reference/03-access-authn-authz/07-authorization/&#34;&gt;授权概览&lt;/a&gt;&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;h2 id=&#34;使用说明&#34;&gt;使用说明&lt;/h2&gt;
+&lt;p&gt;当在集群中配置好了 &lt;code&gt;RuntimeClasses&lt;/code&gt;， 使用就是一件简单的事情，只需要在 Pod 定义中添加 &lt;code&gt;runtimeClassName&lt;/code&gt;就行， 例：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mypod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;runtimeClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myclass&lt;/span&gt;
+  &lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这个配置会让 kublet 使用对应名称的 &lt;code&gt;RuntimeClass&lt;/code&gt; 来运行这个 Pod， 如果没有叫这个名称的 &lt;code&gt;RuntimeClass&lt;/code&gt;， 或者 CRI 不能运行这个名称对应的处理器，则这个进入 &lt;code&gt;Failed&lt;/code&gt; &lt;a href=&#34;../../03-workloads/00-pods/00-pod-lifecycle/#pod-phase&#34;&gt;状态&lt;/a&gt; 。 错误信息在对应的&lt;a href=&#34;../../../3-tasks/08-debug-application-cluster/00-debug-application-introspection/&#34;&gt;事件&lt;/a&gt;对象中
+如果没有 runtimeClassName 字段则使用默认的运行时处理器，与 &lt;code&gt;RuntimeClass&lt;/code&gt; 功能特性关闭等同&lt;/p&gt;
+&lt;h3 id=&#34;cri-配置&#34;&gt;CRI 配置&lt;/h3&gt;
+&lt;p&gt;更多关于 CRI 运行时配置见&lt;a href=&#34;../../../1-setup/02-production-environment/00-container-runtimes/&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+&lt;h4 id=&#34;dockershim&#34;&gt;dockershim&lt;/h4&gt;
+&lt;p&gt;k8s 内置的 dockershim CRI 不支持运行时处理器&lt;/p&gt;
+&lt;h4 id=&#34;containerd&#34;&gt;containerd&lt;/h4&gt;
+&lt;p&gt;运行时处理器通过 containerd 的 &lt;code&gt;/etc/containerd/config.toml&lt;/code&gt; 配置文件时行配置， 有效的处理器配置在运行时配置区:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;plugins&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;cri&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;containerd&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;runtimes&lt;/span&gt;.&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;$&lt;/span&gt;{&lt;span style=&#34;color:#a6e22e&#34;&gt;HANDLER_NAME&lt;/span&gt;}]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;更多 containerd 的配置见文档:  &lt;a href=&#34;https://github.com/containerd/cri/blob/master/docs/config.md&#34;&gt;https://github.com/containerd/cri/blob/master/docs/config.md&lt;/a&gt;&lt;/p&gt;
+&lt;h4 id=&#34;cri-o&#34;&gt;CRI-O&lt;/h4&gt;
+&lt;p&gt;运行时处理器通过 CRI-O 的 &lt;code&gt;/etc/crio/crio.conf&lt;/code&gt; 配置文件时行配置，有效的处理器配置在 &lt;a href=&#34;https://github.com/cri-o/cri-o/blob/master/docs/crio.conf.5.md#crioruntime-table&#34;&gt;crio.runtime table&lt;/a&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[crio.runtime.runtimes.${HANDLER_NAME}]
+  runtime_path = &amp;quot;${PATH_TO_BINARY}&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;更多 CRI-O 的配置见文档: &lt;a href=&#34;https://raw.githubusercontent.com/cri-o/cri-o/9f11d1d/docs/crio.conf.5.md&#34;&gt;https://raw.githubusercontent.com/cri-o/cri-o/9f11d1d/docs/crio.conf.5.md&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;调度&#34;&gt;调度&lt;/h2&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.16 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;k8s v1.16， RuntimeClass 通过 scheduling 字段实现了对异构系统集群的支持. 通过对这些字段的配置实现让带有对应 RuntimeClass Pod 被调度到受到支持的节点上。而要实现支持这个调度，需要开启 &lt;a href=&#34;../../../reference/03-access-authn-authz/04-admission-controllers/#runtimeclass&#34;&gt;RuntimeClass 准入控制器&lt;/a&gt;(k8s v1.16 默认开启)&lt;/p&gt;
+&lt;p&gt;为了保证 Pod 会落到 RuntimeClass 指定的节点上，需要要在节点上设置通用标签，让 &lt;code&gt;runtimeclass.scheduling.nodeSelector&lt;/code&gt; 可以选择到对应的节点。RuntimeClass 的节点选择器与 Pod 的节点选择器的交集会作为最终的节点选择条件。 如果两都有冲突，则 Pod 会被拒绝。
+&lt;blockquote&gt;
+  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
+&lt;/blockquote&gt;
+
+如果支持的节点上有防止其它 RuntimeClass 的 Pod 在其上运行的一毒点(Taint), 则需要在 RuntimeClass 上添加 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#39; target=&#39;_blank&#39;&gt;耐受(tolerations)&lt;span class=&#39;tooltip-text&#39;&gt;A core object consisting of three required properties: key, value, and effect. Tolerations enable the scheduling of pods on nodes or node groups that have a matching taint.&lt;/span&gt;
+&lt;/a&gt; 与 nodeSelector 相似， RuntimeClass 的耐受(tolerations) 会与 Pod 的 耐受(tolerations)的并集组成最终的节点&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#39; target=&#39;_blank&#39;&gt;耐受(tolerations)&lt;span class=&#39;tooltip-text&#39;&gt;A core object consisting of three required properties: key, value, and effect. Tolerations enable the scheduling of pods on nodes or node groups that have a matching taint.&lt;/span&gt;
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;要了解更多关于节点选择与&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#39; target=&#39;_blank&#39;&gt;耐受(tolerations)&lt;span class=&#39;tooltip-text&#39;&gt;A core object consisting of three required properties: key, value, and effect. Tolerations enable the scheduling of pods on nodes or node groups that have a matching taint.&lt;/span&gt;
+&lt;/a&gt;信息，见 &lt;a href=&#34;../../09-scheduling-eviction/02-assign-pod-node/&#34;&gt;分配 Pod 到节点&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;pod-overhead&#34;&gt;Pod Overhead&lt;/h2&gt;
+&lt;p&gt;
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.18 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+用户可以在 Pod 上配置 &lt;code&gt;overhead&lt;/code&gt; 进行资源限制。 声明 &lt;code&gt;overhead&lt;/code&gt; 可以让集群(包括调度器)在调度 Pod 时计算合适的资源。
+要使用 Pod &lt;code&gt;overhead&lt;/code&gt; 需要打开功&lt;a href=&#34;../../../reference/command-line-tools-reference/feature-gates/&#34;&gt;能特性开关&lt;/a&gt;(默认开启) PodOverhead
+Pod &lt;code&gt;overhead&lt;/code&gt; 是通过 RuntimeClass 的 overhead 字段进行定义的， 用户可以利用 RuntimeClass 来设置正在运行的 Pod的 &lt;code&gt;overhead&lt;/code&gt;， 并保证k8s 能够计算到这些 &lt;code&gt;overhead&lt;/code&gt;
+&lt;blockquote&gt;
+  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/runtime-class.md&#34;&gt;RuntimeClass Design&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/runtime-class-scheduling.md&#34;&gt;RuntimeClass Scheduling Design&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Read about the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-overhead/&#34;&gt;Pod Overhead&lt;/a&gt; concept&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/20190226-pod-overhead.md&#34;&gt;PodOverhead Feature Design&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 容器生命周期钩子</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/</guid>
+      <description>
+        
+        
+        &lt;!-- overview --&gt;
+&lt;!--
+This page describes how kubelet managed Containers can use the Container lifecycle hook framework
+to run code triggered by events during their management lifecycle.
+--&gt;
+&lt;p&gt;本文主要介绍如何使用容器生命周期钩子框架来实现由 kubelet 管理的容器通过在管理过程中的生命周期事件来触发代理运行。&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;h2 id=&#34;概述&#34;&gt;概述&lt;/h2&gt;
+&lt;!--
+Analogous to many programming language frameworks that have component lifecycle hooks, such as Angular,
+Kubernetes provides Containers with lifecycle hooks.
+The hooks enable Containers to be aware of events in their management lifecycle
+and run code implemented in a handler when the corresponding lifecycle hook is executed.
+--&gt;
+&lt;p&gt;与许多编程语言的框架的组件有生命周期钩子(如: &lt;code&gt;Angular&lt;/code&gt;)一样， k8s 也为容器提供了生命周期钩子。
+生命周期钩子可以是容器收到自身生命周期管理时发生的事件，当这些事件发生时就会触发对应的钩子调用执行处理器中的代码实现&lt;/p&gt;
+&lt;h2 id=&#34;容器钩子&#34;&gt;容器钩子&lt;/h2&gt;
+&lt;!--
+There are two hooks that are exposed to Containers:
+
+`PostStart`
+
+This hook executes immediately after a container is created.
+However, there is no guarantee that the hook will execute before the container ENTRYPOINT.
+No parameters are passed to the handler.
+
+`PreStop`
+
+This hook is called immediately before a container is terminated due to an API request or management event such as liveness probe failure, preemption, resource contention and others. A call to the preStop hook fails if the container is already in terminated or completed state.
+It is blocking, meaning it is synchronous,
+so it must complete before the call to delete the container can be sent.
+No parameters are passed to the handler.
+
+A more detailed description of the termination behavior can be found in
+[Termination of Pods](/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination).
+
+--&gt;
+&lt;p&gt;容器钩子有以下两个：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;PostStart&lt;/code&gt;
+这个钩子在容器创建后马上执行。
+但是不能保证鑫子会在容器执行 &lt;code&gt;ENTRYPOINT&lt;/code&gt; 之前执行。&lt;/p&gt;
+&lt;p&gt;这个钩子不会向处理器传递任何参数&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;PreStop&lt;/code&gt;
+在容器被终结，比如因为一个 API 请求或诸如存活探针失败，优先级较低，资源竞争等原因，会立即执行这个钩子。 如果容器已经为终止或完成状态则调用 &lt;code&gt;preStop&lt;/code&gt; 钩子会失败。
+该钩子会造成阻塞，也就是说它是同步的，所以必须在钩子调用处理器执行完成后，才能发送删除容器指令。&lt;/p&gt;
+&lt;p&gt;这个钩子不会向处理器传递任何参数&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;钩子处理器的实现方式&#34;&gt;钩子处理器的实现方式&lt;/h3&gt;
+&lt;!--
+Containers can access a hook by implementing and registering a handler for that hook.
+There are two types of hook handlers that can be implemented for Containers:
+
+* Exec - Executes a specific command, such as `pre-stop.sh`, inside the cgroups and namespaces of the Container.
+Resources consumed by the command are counted against the Container.
+* HTTP - Executes an HTTP request against a specific endpoint on the Container.
+--&gt;
+&lt;p&gt;容器可以用过为钩子实现并注册处理器来达成钩子的使用，以下为容器可实现的两种类型的钩子处理器&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Exec - 在容器的 &lt;code&gt;cgroups&lt;/code&gt; 和 &lt;code&gt;namespaces&lt;/code&gt; 权限内执行指定的命令，例如 &lt;code&gt;pre-stop.sh&lt;/code&gt;， 所需要的资源包含在容器申请的资源中&lt;/li&gt;
+&lt;li&gt;HTTP - 向容器上的指定接口发送一个请求&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;钩子处理器的执行&#34;&gt;钩子处理器的执行&lt;/h3&gt;
+&lt;!--
+When a Container lifecycle management hook is called,
+the Kubernetes management system executes the handler in the Container registered for that hook. 
+
+Hook handler calls are synchronous within the context of the Pod containing the Container.
+This means that for a `PostStart` hook,
+the Container ENTRYPOINT and hook fire asynchronously.
+However, if the hook takes too long to run or hangs,
+the Container cannot reach a `running` state.
+
+The behavior is similar for a `PreStop` hook.
+If the hook hangs during execution,
+the Pod phase stays in a `Terminating` state and is killed after `terminationGracePeriodSeconds` of pod ends.
+If a `PostStart` or `PreStop` hook fails,
+it kills the Container.
+
+Users should make their hook handlers as lightweight as possible.
+There are cases, however, when long running commands make sense,
+such as when saving state prior to stopping a Container.
+--&gt;
+&lt;p&gt;当一个容器的生命周期管理钩子被调用时， k8s 管理系统就会执行注册到那个钩子上的处理器。&lt;/p&gt;
+&lt;p&gt;钩子处理器调用在容器所在的 Pod 的上下文中是同步的。 也就是说对于一个 &lt;code&gt;PostStart&lt;/code&gt; 钩子， 它与容器的 &lt;code&gt;ENTRYPOINT&lt;/code&gt; 是异步执行的。
+但是，如果钩子执行时间过长或挂起，容器便不会进入到 &lt;code&gt;running&lt;/code&gt; 的状态。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;PreStop&lt;/code&gt; 钩子的行为模式也是相似的。 如果钩子在执行过程中挂起，则 Pod 在终结前的 &lt;code&gt;terminationGracePeriodSeconds&lt;/code&gt; 时间内都是 &lt;code&gt;Terminating&lt;/code&gt; 状态。
+如果 &lt;code&gt;PostStart&lt;/code&gt; 或 &lt;code&gt;PreStop&lt;/code&gt; 执行失败，会导致对应容器被杀死&lt;/p&gt;
+&lt;p&gt;用户应该尽可能地让钩子处理器越轻量越好。 但是也有些场景，运行长时间的钩子命令是有意义的，比如当保存状态比停止容器更重要时&lt;/p&gt;
+&lt;h3 id=&#34;钩子的送达可靠性&#34;&gt;钩子的送达可靠性&lt;/h3&gt;
+&lt;!--
+Hook delivery is intended to be *at least once*,
+which means that a hook may be called multiple times for any given event,
+such as for `PostStart` or `PreStop`.
+It is up to the hook implementation to handle this correctly.
+
+Generally, only single deliveries are made.
+If, for example, an HTTP hook receiver is down and is unable to take traffic,
+there is no attempt to resend.
+In some rare cases, however, double delivery may occur.
+For instance, if a kubelet restarts in the middle of sending a hook,
+the hook might be resent after the kubelet comes back up.
+--&gt;
+&lt;p&gt;对于 &lt;code&gt;PostStart&lt;/code&gt; 或 &lt;code&gt;PreStop&lt;/code&gt; 钩子投递被定为 &lt;em&gt;至少一次&lt;/em&gt;， 也就是说对于任意一个事件可能多次调用钩子。 这就需要实现的钩子处理器需要正确的应对这种情况。&lt;/p&gt;
+&lt;p&gt;通常情况下，只能投递一次。如果钩子所调用的 HTTP 目标接口不可用，这种情况下不会尝试重发。 在有些不常见的场景中，也可能发生两次投递的情况。到目前为止，如果 kubelet 在钩子发送过程中重启，这个钩子可能在 kubelet 启动后再次发送&lt;/p&gt;
+&lt;h3 id=&#34;如何调试钩子处理器&#34;&gt;如何调试钩子处理器&lt;/h3&gt;
+&lt;!--
+The logs for a Hook handler are not exposed in Pod events.
+If a handler fails for some reason, it broadcasts an event.
+For `PostStart`, this is the `FailedPostStartHook` event,
+and for `PreStop`, this is the `FailedPreStopHook` event.
+You can see these events by running `kubectl describe pod &lt;pod_name&gt;`.
+Here is some example output of events from running this command:
+--&gt;
+&lt;p&gt;钩子处理器的日志不会输出到 Pod 的事件中。 如果一个处理器因为某些原因失败，会发送一个广播事件。 &lt;code&gt;PostStart&lt;/code&gt; 是 &lt;code&gt;FailedPostStartHook&lt;/code&gt;事件， &lt;code&gt;PreStop&lt;/code&gt;是 &lt;code&gt;FailedPreStopHook&lt;/code&gt;事件。 可以通过执行命令 &lt;code&gt;kubectl describe pod &amp;lt;pod_name&amp;gt;&lt;/code&gt; 查看这些事件， 命令输出结果类似如下:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Events:
+  FirstSeen  LastSeen  Count  From                                                   SubObjectPath          Type      Reason               Message
+  ---------  --------  -----  ----                                                   -------------          --------  ------               -------
+  1m         1m        1      {default-scheduler }                                                          Normal    Scheduled            Successfully assigned test-1730497541-cq1d2 to gke-test-cluster-default-pool-a07e5d30-siqd
+  1m         1m        1      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}  spec.containers{main}  Normal    Pulling              pulling image &amp;quot;test:1.0&amp;quot;
+  1m         1m        1      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}  spec.containers{main}  Normal    Created              Created container with docker id 5c6a256a2567; Security:[seccomp=unconfined]
+  1m         1m        1      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}  spec.containers{main}  Normal    Pulled               Successfully pulled image &amp;quot;test:1.0&amp;quot;
+  1m         1m        1      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}  spec.containers{main}  Normal    Started              Started container with docker id 5c6a256a2567
+  38s        38s       1      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}  spec.containers{main}  Normal    Killing              Killing container with docker id 5c6a256a2567: PostStart handler: Error executing in Docker Container: 1
+  37s        37s       1      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}  spec.containers{main}  Normal    Killing              Killing container with docker id 8df9fdfd7054: PostStart handler: Error executing in Docker Container: 1
+  38s        37s       2      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}                         Warning   FailedSync           Error syncing pod, skipping: failed to &amp;quot;StartContainer&amp;quot; for &amp;quot;main&amp;quot; with RunContainerError: &amp;quot;PostStart handler: Error executing in Docker Container: 1&amp;quot;
+  1m         22s       2      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}  spec.containers{main}  Warning   FailedPostStartHook
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;实践指导
+&lt;a href=&#34;../../../3-tasks/02-configure-pod-container/16-attach-handler-lifecycle-event/&#34;&gt;挂载处理器到容器生命周期事件&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>
