@@ -2,7 +2,7 @@ baseURL: "https://lostsquirrel.github.io/k8sDocs"
 languageCode: "zh-cn"
 title: "K8S 文档笔记"
 defaultContentLanguage: "zh"
-theme: techdoc
+theme: docsy
 hascjklanguage: true
 metaDataFormat: yaml
 params:
@@ -19,6 +19,9 @@ params:
   version: "v1.19"
   githubbranch: "master"
   docsbranch: "master"
+  ui:
+    sidebar_menu_compact: true
+    breadcrumb_disable: false
 languages:
   zh:
     title: "Kubernetes"

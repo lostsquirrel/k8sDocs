@@ -2,7 +2,7 @@
 title: Cloud Controller Manager
 date: 2020-07-15
 publishdate: 2020-07-17
-weight: 20103
+weight: 130
 ---
 {{< feature-state for_k8s_version="v1.11" state="beta" >}}
 
