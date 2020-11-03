@@ -3445,6 +3445,1047 @@ spec:
     </item>
     
     <item>
+      <title>Docs: Persistent Volumes</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- jsafrane
+- saad-ali
+- thockin
+- msau42
+- xing-yang
+title: Persistent Volumes
+feature:
+  title: Storage orchestration
+  description: &gt;
+    Automatically mount the storage system of your choice, whether from local storage, a public cloud provider such as &lt;a href=&#34;https://cloud.google.com/storage/&#34;&gt;GCP&lt;/a&gt; or &lt;a href=&#34;https://aws.amazon.com/products/storage/&#34;&gt;AWS&lt;/a&gt;, or a network storage system such as NFS, iSCSI, Gluster, Ceph, Cinder, or Flocker.
+
+content_type: concept
+weight: 20
+---
+ --&gt;
+&lt;!-- overview --&gt;
+&lt;!--
+This document describes the current state of _persistent volumes_ in Kubernetes. Familiarity with [volumes](/docs/concepts/storage/volumes/) is suggested.
+ --&gt;
+&lt;p&gt;本文主要介绍当前 k8s 中 &lt;em&gt;持久化卷(persistent volume)&lt;/em&gt; 的状态。
+建议先熟悉 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/storage/volumes/&#34;&gt;volumes&lt;/a&gt;&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## Introduction
+
+Managing storage is a distinct problem from managing compute instances. The PersistentVolume subsystem provides an API for users and administrators that abstracts details of how storage is provided from how it is consumed. To do this, we introduce two new API resources:  PersistentVolume and PersistentVolumeClaim.
+
+A _PersistentVolume_ (PV) is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using [Storage Classes](/docs/concepts/storage/storage-classes/). It is a resource in the cluster just like a node is a cluster resource. PVs are volume plugins like Volumes, but have a lifecycle independent of any individual Pod that uses the PV. This API object captures the details of the implementation of the storage, be that NFS, iSCSI, or a cloud-provider-specific storage system.
+
+A _PersistentVolumeClaim_ (PVC) is a request for storage by a user. It is similar to a Pod. Pods consume node resources and PVCs consume PV resources. Pods can request specific levels of resources (CPU and Memory).  Claims can request specific size and access modes (e.g., they can be mounted ReadWriteOnce, ReadOnlyMany or ReadWriteMany, see [AccessModes](#access-modes)).
+
+While PersistentVolumeClaims allow a user to consume abstract storage resources, it is common that users need PersistentVolumes with varying properties, such as performance, for different problems. Cluster administrators need to be able to offer a variety of PersistentVolumes that differ in more ways than just size and access modes, without exposing users to the details of how those volumes are implemented. For these needs, there is the _StorageClass_ resource.
+
+See the [detailed walkthrough with working examples](/docs/tasks/configure-pod-container/configure-persistent-volume-storage/).
+ --&gt;
+&lt;h2 id=&#34;介绍&#34;&gt;介绍&lt;/h2&gt;
+&lt;p&gt;管理存储和管理实例是两个不同的问题。 PersistentVolume 子系统为用户和管理员提供了一套 API 将
+存储是怎么提供的细节从存储使用中抽象出来。 而为了做到这一个我们要介绍两个新的 API 资源:
+PersistentVolume 和 PersistentVolumeClaim.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;PersistentVolume&lt;/em&gt; (PV) 是集群中的一块存储，它可能由管理员管理或使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-classes/&#34;&gt;StorageClass&lt;/a&gt;
+动态管理。它是集群中的一个资源，就像节点是集群中的一个资源一样。 PV 是与卷(Volume)类似的卷插件，
+但它的生命周期与使用它的 Pod 的生命周期是相互独立的。这个 API 对象中包含了存储的实现细节，包含
+NFS, iSCSI, 云服务提供的存储系统。&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;PersistentVolumeClaim&lt;/em&gt; (PVC) 是一个用户对存储的请求。 它就像是一个 Pod。Pod 使用的是节点上的资源
+而 PVC 使用的是 PV 资源。 Pod 可以申请指定级别的资源(CPU 和 Memory)。 PVC 可以申请指定容量的存储
+和访问模式 (如，它们可以以 &lt;code&gt;ReadWriteOnce&lt;/code&gt;, &lt;code&gt;ReadOnlyMany&lt;/code&gt; 或 &lt;code&gt;ReadWriteMany&lt;/code&gt; 方式挂载，
+见 &lt;a href=&#34;#access-modes&#34;&gt;AccessMode&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;因为 &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; 允许用户使用抽象的存储资源，通常用户都需要 PersistentVolume
+中包含许多属性，如性能，来应对不同的问题。 集群管理员需要能够提供多样的 PersistentVolume，而不
+仅仅是容量和访问模式，还需要向用户提供这些卷的实现细节。 为了满足这些需求，我们就有了 &lt;em&gt;StorageClass&lt;/em&gt; 资源。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/configure-pod-container/configure-persistent-volume-storage/&#34;&gt;亲自上手试试&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+## Lifecycle of a volume and claim
+
+PVs are resources in the cluster. PVCs are requests for those resources and also act as claim checks to the resource. The interaction between PVs and PVCs follows this lifecycle:
+ --&gt;
+&lt;h2 id=&#34;pv-和-pvc-的生命周期&#34;&gt;PV 和 PVC 的生命周期&lt;/h2&gt;
+&lt;p&gt;PV 是集群中的资源。 PVC 是对这些资源的申请同时也表现为对这些资源的检查声明。PV 和 PVC 之间的
+相互影响遵守以下生命周期:&lt;/p&gt;
+&lt;!--
+### Provisioning
+
+There are two ways PVs may be provisioned: statically or dynamically.
+ --&gt;
+&lt;h3 id=&#34;供给&#34;&gt;供给&lt;/h3&gt;
+&lt;p&gt;PV 可以被两个方式提供: 静态供给 或 动态供给&lt;/p&gt;
+&lt;!--
+#### Static
+
+A cluster administrator creates a number of PVs. They carry the details of the real storage, which is available for use by cluster users. They exist in the Kubernetes API and are available for consumption.
+ --&gt;
+&lt;h4 id=&#34;静态供给&#34;&gt;静态供给&lt;/h4&gt;
+&lt;p&gt;集群管理创建一系列 PV。 它们包含真实存储的细节，可以被集群用户使用。
+它们存在于 k8s API 中，可以被取用。&lt;/p&gt;
+&lt;!--
+#### Dynamic
+
+When none of the static PVs the administrator created match a user&#39;s PersistentVolumeClaim,
+the cluster may try to dynamically provision a volume specially for the PVC.
+This provisioning is based on StorageClasses: the PVC must request a
+[storage class](/docs/concepts/storage/storage-classes/) and
+the administrator must have created and configured that class for dynamic
+provisioning to occur. Claims that request the class `&#34;&#34;` effectively disable
+dynamic provisioning for themselves.
+
+To enable dynamic storage provisioning based on storage class, the cluster administrator
+needs to enable the `DefaultStorageClass` [admission controller](/docs/reference/access-authn-authz/admission-controllers/#defaultstorageclass)
+on the API server. This can be done, for example, by ensuring that `DefaultStorageClass` is
+among the comma-delimited, ordered list of values for the `--enable-admission-plugins` flag of
+the API server component. For more information on API server command-line flags,
+check [kube-apiserver](/docs/admin/kube-apiserver/) documentation.
+ --&gt;
+&lt;h4 id=&#34;动态供给&#34;&gt;动态供给&lt;/h4&gt;
+&lt;p&gt;当管理创建的 PV 不能满足用户的 PersistentVolumeClaim 时，集群可能就会尝试为这个 PVC 动态
+提供一个卷。这种供给基于 &lt;code&gt;StorageClass&lt;/code&gt;: PVC 必须要申请一个
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/storage/storage-classes/&#34;&gt;StorageClass&lt;/a&gt;
+并且在动态供给发生之前管理员必须要完成该 &lt;code&gt;StorageClass&lt;/code&gt; 的创建和配置。
+如果 PVC 的 &lt;code&gt;StorageClass&lt;/code&gt; 被设置为 &lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt; 实际上表示关闭自身的动态供给。&lt;/p&gt;
+&lt;p&gt;要启用基于 &lt;code&gt;StorageClass&lt;/code&gt; 的动态存储供给需要集群管理在 api-server 中的
+&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#defaultstorageclass&#34;&gt;准入控制&lt;/a&gt;
+中启用 &lt;code&gt;DefaultStorageClass&lt;/code&gt;。 具体的配置方法就是确认 api-server 组件的 &lt;code&gt;--enable-admission-plugins&lt;/code&gt; 选项
+的值中有没有 &lt;code&gt;DefaultStorageClass&lt;/code&gt;。 更多关于 api-server 命令行参数见
+&lt;a href=&#34;https://kubernetes.io/docs/admin/kube-apiserver/&#34;&gt;kube-apiserver&lt;/a&gt; 文档&lt;/p&gt;
+&lt;!--
+### Binding
+
+A user creates, or in the case of dynamic provisioning, has already created, a PersistentVolumeClaim with a specific amount of storage requested and with certain access modes. A control loop in the master watches for new PVCs, finds a matching PV (if possible), and binds them together. If a PV was dynamically provisioned for a new PVC, the loop will always bind that PV to the PVC. Otherwise, the user will always get at least what they asked for, but the volume may be in excess of what was requested. Once bound, PersistentVolumeClaim binds are exclusive, regardless of how they were bound. A PVC to PV binding is a one-to-one mapping, using a ClaimRef which is a bi-directional binding between the PersistentVolume and the PersistentVolumeClaim.
+
+Claims will remain unbound indefinitely if a matching volume does not exist. Claims will be bound as matching volumes become available. For example, a cluster provisioned with many 50Gi PVs would not match a PVC requesting 100Gi. The PVC can be bound when a 100Gi PV is added to the cluster.
+ --&gt;
+&lt;h3 id=&#34;绑定&#34;&gt;绑定&lt;/h3&gt;
+&lt;p&gt;当一个指定容量和访问模式的 &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; 被创建后。 主控中心中的一个控制回环会监控新创建的 PVC，
+如果有匹配的 PV 存在，则将它们绑定在一起。 如果这个 PV 是动态供给给这个新建的 PVC 的， 那么控制
+回环将会始终将这个 PV 绑定到这个 PVC。 否则用户会得到至少满足其请求的卷，但这个卷容量可能实际是超出请求的。
+当绑定完成，就会确定绑定关系，不管它们是怎么绑定的。 PVC 到 PV 的绑定是一对一关系，PV 使用的 &lt;code&gt;spec.claimRef&lt;/code&gt;
+实现 &lt;code&gt;PersistentVolume&lt;/code&gt; 与 &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; 的双向绑定。&lt;/p&gt;
+&lt;p&gt;如果没有匹配的 PV 存在，PVC 会永远保持在未绑定状态。 当有可用的匹配 PV 出现时 PVC 就会绑定。
+例如， 集群中提供许多 50Gi PV 是不会被一个申请 100Gi 的 PVC 匹配到的。当集群中添加了一个
+100Gi PV 时，这个 PVC 就可以绑定了。&lt;/p&gt;
+&lt;!--
+### Using
+
+Pods use claims as volumes. The cluster inspects the claim to find the bound volume and mounts that volume for a Pod. For volumes that support multiple access modes, the user specifies which mode is desired when using their claim as a volume in a Pod.
+
+Once a user has a claim and that claim is bound, the bound PV belongs to the user for as long as they need it. Users schedule Pods and access their claimed PVs by including a `persistentVolumeClaim` section in a Pod&#39;s `volumes` block. See [Claims As Volumes](#claims-as-volumes) for more details on this.
+ --&gt;
+&lt;h3 id=&#34;使用&#34;&gt;使用&lt;/h3&gt;
+&lt;p&gt;Pod 会将 PVC 当作卷来使用。 集群会检视这个 PVC 找到它绑定的 PV 然后将这个 PV 挂载到 Pod 中。
+对于支持多次访问模式的卷，用户在 Pod 当作卷的 PVC 中指定需要的访问模式。&lt;/p&gt;
+&lt;p&gt;当一个用户拥有一个 PVC 并且这个 PVC 完成绑定，则这个被绑定的 PV 在用户需要时始终属于该用户。
+用户通过 Pod 中的 &lt;code&gt;volumes&lt;/code&gt; 配置区中添加 &lt;code&gt;persistentVolumeClaim&lt;/code&gt; 配置区来访问这些由
+PVC 管理的 PV。
+更多信息见 &lt;a href=&#34;#claims-as-volumes&#34;&gt;将 PVC 当作卷(PV)&lt;/a&gt;&lt;/p&gt;
+&lt;!--
+### Storage Object in Use Protection
+The purpose of the Storage Object in Use Protection feature is to ensure that PersistentVolumeClaims (PVCs) in active use by a Pod and PersistentVolume (PVs) that are bound to PVCs are not removed from the system, as this may result in data loss.
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; PVC is in active use by a Pod when a Pod object exists that is using the PVC.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+If a user deletes a PVC in active use by a Pod, the PVC is not removed immediately. PVC removal is postponed until the PVC is no longer actively used by any Pods. Also, if an admin deletes a PV that is bound to a PVC, the PV is not removed immediately. PV removal is postponed until the PV is no longer bound to a PVC.
+
+You can see that a PVC is protected when the PVC&#39;s status is `Terminating` and the `Finalizers` list includes `kubernetes.io/pvc-protection`:
+
+```shell
+kubectl describe pvc hostpath
+Name:          hostpath
+Namespace:     default
+StorageClass:  example-hostpath
+Status:        Terminating
+Volume:
+Labels:        &lt;none&gt;
+Annotations:   volume.beta.kubernetes.io/storage-class=example-hostpath
+               volume.beta.kubernetes.io/storage-provisioner=example.com/hostpath
+Finalizers:    [kubernetes.io/pvc-protection]
+...
+```
+
+You can see that a PV is protected when the PV&#39;s status is `Terminating` and the `Finalizers` list includes `kubernetes.io/pv-protection` too:
+
+```shell
+kubectl describe pv task-pv-volume
+Name:            task-pv-volume
+Labels:          type=local
+Annotations:     &lt;none&gt;
+Finalizers:      [kubernetes.io/pv-protection]
+StorageClass:    standard
+Status:          Terminating
+Claim:
+Reclaim Policy:  Delete
+Access Modes:    RWO
+Capacity:        1Gi
+Message:
+Source:
+    Type:          HostPath (bare host directory volume)
+    Path:          /tmp/data
+    HostPathType:
+Events:            &lt;none&gt;
+```
+ --&gt;
+&lt;h3 id=&#34;使用保护模式的存储对象&#34;&gt;使用保护模式的存储对象&lt;/h3&gt;
+&lt;p&gt;保护模式的存储对象特性的目的是保证被 Pod 使用的有效的 PVC 和与 PVC 绑定的 PV 能会被系统删除，
+从而可能导致数据丢失。
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 当一个使用 PVC 的 Pod 对象存在时就表示 PVC 被 Pod 有效使用。&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;p&gt;如果用户删除了一个被 Pod 有效使用的 PVC， 这个 PVC 不会立马被删除。 PVC 会延迟到没有被任何
+Pod 有效使用后才会删除。 同样，如果管理员删除了一个与 PVC 绑定的 PV， 这个 PV 也不会被立马删除，
+PV 的删除行为会被延迟到不再与 PVC 绑定时。&lt;/p&gt;
+&lt;p&gt;当 PVC 的状态是 &lt;code&gt;Terminating&lt;/code&gt; 并且 &lt;code&gt;Finalizers&lt;/code&gt; 列表中包含 &lt;code&gt;kubernetes.io/pvc-protection&lt;/code&gt;
+就表示这个 PVC 是被保护的。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl describe pvc hostpath
+Name:          hostpath
+Namespace:     default
+StorageClass:  example-hostpath
+Status:        Terminating
+Volume:
+Labels:        &amp;lt;none&amp;gt;
+Annotations:   volume.beta.kubernetes.io/storage-class&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;example-hostpath
+               volume.beta.kubernetes.io/storage-provisioner&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;example.com/hostpath
+Finalizers:    &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;kubernetes.io/pvc-protection&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;同样，当 PV 的状态是 &lt;code&gt;Terminating&lt;/code&gt; 并且 &lt;code&gt;Finalizers&lt;/code&gt; 列表中包含 &lt;code&gt;kubernetes.io/pvc-protection&lt;/code&gt;
+就表示这个 PV 是被保护的。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl describe pv task-pv-volume
+Name:            task-pv-volume
+Labels:          type&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;local
+Annotations:     &amp;lt;none&amp;gt;
+Finalizers:      &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;kubernetes.io/pv-protection&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
+StorageClass:    standard
+Status:          Terminating
+Claim:
+Reclaim Policy:  Delete
+Access Modes:    RWO
+Capacity:        1Gi
+Message:
+Source:
+    Type:          HostPath &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;bare host directory volume&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+    Path:          /tmp/data
+    HostPathType:
+Events:            &amp;lt;none&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;reclaiming&#34;&gt;Reclaiming&lt;/h3&gt;
+&lt;p&gt;When a user is done with their volume, they can delete the PVC objects from the API that allows reclamation of the resource. The reclaim policy for a PersistentVolume tells the cluster what to do with the volume after it has been released of its claim. Currently, volumes can either be Retained, Recycled, or Deleted.&lt;/p&gt;
+&lt;h4 id=&#34;retain&#34;&gt;Retain&lt;/h4&gt;
+&lt;p&gt;The &lt;code&gt;Retain&lt;/code&gt; reclaim policy allows for manual reclamation of the resource. When the PersistentVolumeClaim is deleted, the PersistentVolume still exists and the volume is considered &amp;ldquo;released&amp;rdquo;. But it is not yet available for another claim because the previous claimant&amp;rsquo;s data remains on the volume. An administrator can manually reclaim the volume with the following steps.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Delete the PersistentVolume. The associated storage asset in external infrastructure (such as an AWS EBS, GCE PD, Azure Disk, or Cinder volume) still exists after the PV is deleted.&lt;/li&gt;
+&lt;li&gt;Manually clean up the data on the associated storage asset accordingly.&lt;/li&gt;
+&lt;li&gt;Manually delete the associated storage asset, or if you want to reuse the same storage asset, create a new PersistentVolume with the storage asset definition.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;delete&#34;&gt;Delete&lt;/h4&gt;
+&lt;p&gt;For volume plugins that support the &lt;code&gt;Delete&lt;/code&gt; reclaim policy, deletion removes both the PersistentVolume object from Kubernetes, as well as the associated storage asset in the external infrastructure, such as an AWS EBS, GCE PD, Azure Disk, or Cinder volume. Volumes that were dynamically provisioned inherit the &lt;a href=&#34;#reclaim-policy&#34;&gt;reclaim policy of their StorageClass&lt;/a&gt;, which defaults to &lt;code&gt;Delete&lt;/code&gt;. The administrator should configure the StorageClass according to users&#39; expectations; otherwise, the PV must be edited or patched after it is created. See &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/change-pv-reclaim-policy/&#34;&gt;Change the Reclaim Policy of a PersistentVolume&lt;/a&gt;.&lt;/p&gt;
+&lt;h4 id=&#34;recycle&#34;&gt;Recycle&lt;/h4&gt;
+&lt;blockquote class=&#34;warning&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;警告：&lt;/strong&gt; The &lt;code&gt;Recycle&lt;/code&gt; reclaim policy is deprecated. Instead, the recommended approach is to use dynamic provisioning.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If supported by the underlying volume plugin, the &lt;code&gt;Recycle&lt;/code&gt; reclaim policy performs a basic scrub (&lt;code&gt;rm -rf /thevolume/*&lt;/code&gt;) on the volume and makes it available again for a new claim.&lt;/p&gt;
+&lt;p&gt;However, an administrator can configure a custom recycler Pod template using
+the Kubernetes controller manager command line arguments as described in the
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/kube-controller-manager/&#34;&gt;reference&lt;/a&gt;.
+The custom recycler Pod template must contain a &lt;code&gt;volumes&lt;/code&gt; specification, as
+shown in the example below:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pv-recycler&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;namespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;default&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;restartPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Never&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;vol&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;hostPath&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/any/path/it/will/be/replaced&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pv-recycler&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;k8s.gcr.io/busybox&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;command&lt;/span&gt;: [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/bin/sh&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;-c&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;test -e /scrub &amp;amp;&amp;amp; rm -rf /scrub/..?* /scrub/.[!.]* /scrub/*  &amp;amp;&amp;amp; test -z \&amp;#34;$(ls -A /scrub)\&amp;#34; || exit 1&amp;#34;&lt;/span&gt;]
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;vol&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/scrub&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;However, the particular path specified in the custom recycler Pod template in the &lt;code&gt;volumes&lt;/code&gt; part is replaced with the particular path of the volume that is being recycled.&lt;/p&gt;
+&lt;h3 id=&#34;reserving-a-persistentvolume&#34;&gt;Reserving a PersistentVolume&lt;/h3&gt;
+&lt;p&gt;The control plane can &lt;a href=&#34;#binding&#34;&gt;bind PersistentVolumeClaims to matching PersistentVolumes&lt;/a&gt; in the
+cluster. However, if you want a PVC to bind to a specific PV, you need to pre-bind them.&lt;/p&gt;
+&lt;p&gt;By specifying a PersistentVolume in a PersistentVolumeClaim, you declare a binding between that specific PV and PVC.
+If the PersistentVolume exists and has not reserved PersistentVolumeClaims through its &lt;code&gt;claimRef&lt;/code&gt; field, then the PersistentVolume and PersistentVolumeClaim will be bound.&lt;/p&gt;
+&lt;p&gt;The binding happens regardless of some volume matching criteria, including node affinity.
+The control plane still checks that &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-classes/&#34;&gt;storage class&lt;/a&gt;, access modes, and requested storage size are valid.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolumeClaim&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;foo-pvc&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;namespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;foo&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;storageClassName&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# Empty string must be explicitly set otherwise default StorageClass will be set&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumeName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;foo-pv&lt;/span&gt;
+  &lt;span style=&#34;color:#ae81ff&#34;&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This method does not guarantee any binding privileges to the PersistentVolume. If other PersistentVolumeClaims could use the PV that you specify, you first need to reserve that storage volume. Specify the relevant PersistentVolumeClaim in the &lt;code&gt;claimRef&lt;/code&gt; field of the PV so that other PVCs can not bind to it.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolume&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;foo-pv&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;storageClassName&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;claimRef&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;foo-pvc&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;namespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;foo&lt;/span&gt;
+  &lt;span style=&#34;color:#ae81ff&#34;&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This is useful if you want to consume PersistentVolumes that have their &lt;code&gt;claimPolicy&lt;/code&gt; set
+to &lt;code&gt;Retain&lt;/code&gt;, including cases where you are reusing an existing PV.&lt;/p&gt;
+&lt;h3 id=&#34;expanding-persistent-volumes-claims&#34;&gt;Expanding Persistent Volumes Claims&lt;/h3&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.11 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;Support for expanding PersistentVolumeClaims (PVCs) is now enabled by default. You can expand
+the following types of volumes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;gcePersistentDisk&lt;/li&gt;
+&lt;li&gt;awsElasticBlockStore&lt;/li&gt;
+&lt;li&gt;Cinder&lt;/li&gt;
+&lt;li&gt;glusterfs&lt;/li&gt;
+&lt;li&gt;rbd&lt;/li&gt;
+&lt;li&gt;Azure File&lt;/li&gt;
+&lt;li&gt;Azure Disk&lt;/li&gt;
+&lt;li&gt;Portworx&lt;/li&gt;
+&lt;li&gt;FlexVolumes&lt;/li&gt;
+&lt;li&gt;CSI&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You can only expand a PVC if its storage class&amp;rsquo;s &lt;code&gt;allowVolumeExpansion&lt;/code&gt; field is set to true.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;storage.k8s.io/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;StorageClass&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;gluster-vol-default&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;provisioner&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kubernetes.io/glusterfs&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;parameters&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;resturl&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://192.168.10.100:8080&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;restuser&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;secretNamespace&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;secretName&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;allowVolumeExpansion&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To request a larger volume for a PVC, edit the PVC object and specify a larger
+size. This triggers expansion of the volume that backs the underlying PersistentVolume. A
+new PersistentVolume is never created to satisfy the claim. Instead, an existing volume is resized.&lt;/p&gt;
+&lt;h4 id=&#34;csi-volume-expansion&#34;&gt;CSI Volume expansion&lt;/h4&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.16 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;Support for expanding CSI volumes is enabled by default but it also requires a specific CSI driver to support volume expansion. Refer to documentation of the specific CSI driver for more information.&lt;/p&gt;
+&lt;h4 id=&#34;resizing-a-volume-containing-a-file-system&#34;&gt;Resizing a volume containing a file system&lt;/h4&gt;
+&lt;p&gt;You can only resize volumes containing a file system if the file system is XFS, Ext3, or Ext4.&lt;/p&gt;
+&lt;p&gt;When a volume contains a file system, the file system is only resized when a new Pod is using
+the PersistentVolumeClaim in &lt;code&gt;ReadWrite&lt;/code&gt; mode. File system expansion is either done when a Pod is starting up
+or when a Pod is running and the underlying file system supports online expansion.&lt;/p&gt;
+&lt;p&gt;FlexVolumes allow resize if the driver is set with the &lt;code&gt;RequiresFSResize&lt;/code&gt; capability to &lt;code&gt;true&lt;/code&gt;.
+The FlexVolume can be resized on Pod restart.&lt;/p&gt;
+&lt;h4 id=&#34;resizing-an-in-use-persistentvolumeclaim&#34;&gt;Resizing an in-use PersistentVolumeClaim&lt;/h4&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.15 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Expanding in-use PVCs is available as beta since Kubernetes 1.15, and as alpha since 1.11. The &lt;code&gt;ExpandInUsePersistentVolumes&lt;/code&gt; feature must be enabled, which is the case automatically for many clusters for beta features. Refer to the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;feature gate&lt;/a&gt; documentation for more information.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In this case, you don&amp;rsquo;t need to delete and recreate a Pod or deployment that is using an existing PVC.
+Any in-use PVC automatically becomes available to its Pod as soon as its file system has been expanded.
+This feature has no effect on PVCs that are not in use by a Pod or deployment. You must create a Pod that
+uses the PVC before the expansion can complete.&lt;/p&gt;
+&lt;p&gt;Similar to other volume types - FlexVolume volumes can also be expanded when in-use by a Pod.&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; FlexVolume resize is possible only when the underlying driver supports resize.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Expanding EBS volumes is a time-consuming operation. Also, there is a per-volume quota of one modification every 6 hours.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&#34;recovering-from-failure-when-expanding-volumes&#34;&gt;Recovering from Failure when Expanding Volumes&lt;/h4&gt;
+&lt;p&gt;If expanding underlying storage fails, the cluster administrator can manually recover the Persistent Volume Claim (PVC) state and cancel the resize requests. Otherwise, the resize requests are continuously retried by the controller without administrator intervention.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Mark the PersistentVolume(PV) that is bound to the PersistentVolumeClaim(PVC) with &lt;code&gt;Retain&lt;/code&gt; reclaim policy.&lt;/li&gt;
+&lt;li&gt;Delete the PVC. Since PV has &lt;code&gt;Retain&lt;/code&gt; reclaim policy - we will not lose any data when we recreate the PVC.&lt;/li&gt;
+&lt;li&gt;Delete the &lt;code&gt;claimRef&lt;/code&gt; entry from PV specs, so as new PVC can bind to it. This should make the PV &lt;code&gt;Available&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Re-create the PVC with smaller size than PV and set &lt;code&gt;volumeName&lt;/code&gt; field of the PVC to the name of the PV. This should bind new PVC to existing PV.&lt;/li&gt;
+&lt;li&gt;Don&amp;rsquo;t forget to restore the reclaim policy of the PV.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;types-of-persistent-volumes&#34;&gt;Types of Persistent Volumes&lt;/h2&gt;
+&lt;p&gt;PersistentVolume types are implemented as plugins.  Kubernetes currently supports the following plugins:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;GCEPersistentDisk&lt;/li&gt;
+&lt;li&gt;AWSElasticBlockStore&lt;/li&gt;
+&lt;li&gt;AzureFile&lt;/li&gt;
+&lt;li&gt;AzureDisk&lt;/li&gt;
+&lt;li&gt;CSI&lt;/li&gt;
+&lt;li&gt;FC (Fibre Channel)&lt;/li&gt;
+&lt;li&gt;FlexVolume&lt;/li&gt;
+&lt;li&gt;Flocker&lt;/li&gt;
+&lt;li&gt;NFS&lt;/li&gt;
+&lt;li&gt;iSCSI&lt;/li&gt;
+&lt;li&gt;RBD (Ceph Block Device)&lt;/li&gt;
+&lt;li&gt;CephFS&lt;/li&gt;
+&lt;li&gt;Cinder (OpenStack block storage)&lt;/li&gt;
+&lt;li&gt;Glusterfs&lt;/li&gt;
+&lt;li&gt;VsphereVolume&lt;/li&gt;
+&lt;li&gt;Quobyte Volumes&lt;/li&gt;
+&lt;li&gt;HostPath (Single node testing only &amp;ndash; local storage is not supported in any way and WILL NOT WORK in a multi-node cluster)&lt;/li&gt;
+&lt;li&gt;Portworx Volumes&lt;/li&gt;
+&lt;li&gt;ScaleIO Volumes&lt;/li&gt;
+&lt;li&gt;StorageOS&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;persistent-volumes&#34;&gt;Persistent Volumes&lt;/h2&gt;
+&lt;p&gt;Each PV contains a spec and status, which is the specification and status of the volume.
+The name of a PersistentVolume object must be a valid
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS subdomain name&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolume&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pv0003&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;capacity&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;storage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;5Gi&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumeMode&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Filesystem&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;accessModes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#ae81ff&#34;&gt;ReadWriteOnce&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;persistentVolumeReclaimPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Recycle&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;storageClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;slow&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;mountOptions&lt;/span&gt;:
+    - &lt;span style=&#34;color:#ae81ff&#34;&gt;hard&lt;/span&gt;
+    - &lt;span style=&#34;color:#ae81ff&#34;&gt;nfsvers=4.1&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;nfs&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/tmp&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;server&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;172.17.0.2&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Helper programs relating to the volume type may be required for consumption of a PersistentVolume within a cluster.  In this example, the PersistentVolume is of type NFS and the helper program /sbin/mount.nfs is required to support the mounting of NFS filesystems.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;capacity&#34;&gt;Capacity&lt;/h3&gt;
+&lt;p&gt;Generally, a PV will have a specific storage capacity.  This is set using the PV&amp;rsquo;s &lt;code&gt;capacity&lt;/code&gt; attribute.  See the Kubernetes &lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/scheduling/resources.md&#34;&gt;Resource Model&lt;/a&gt; to understand the units expected by &lt;code&gt;capacity&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Currently, storage size is the only resource that can be set or requested.  Future attributes may include IOPS, throughput, etc.&lt;/p&gt;
+&lt;h3 id=&#34;volume-mode&#34;&gt;Volume Mode&lt;/h3&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.18 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;Kubernetes supports two &lt;code&gt;volumeModes&lt;/code&gt; of PersistentVolumes: &lt;code&gt;Filesystem&lt;/code&gt; and &lt;code&gt;Block&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;volumeMode&lt;/code&gt; is an optional API parameter.
+&lt;code&gt;Filesystem&lt;/code&gt; is the default mode used when &lt;code&gt;volumeMode&lt;/code&gt; parameter is omitted.&lt;/p&gt;
+&lt;p&gt;A volume with &lt;code&gt;volumeMode: Filesystem&lt;/code&gt; is &lt;em&gt;mounted&lt;/em&gt; into Pods into a directory. If the volume
+is backed by a block device and the device is empty, Kuberneretes creates a filesystem
+on the device before mounting it for the first time.&lt;/p&gt;
+&lt;p&gt;You can set the value of &lt;code&gt;volumeMode&lt;/code&gt; to &lt;code&gt;Block&lt;/code&gt; to use a volume as a raw block device.
+Such volume is presented into a Pod as a block device, without any filesystem on it.
+This mode is useful to provide a Pod the fastest possible way to access a volume, without
+any filesystem layer between the Pod and the volume. On the other hand, the application
+running in the Pod must know how to handle a raw block device.
+See &lt;a href=&#34;#raw-block-volume-support&#34;&gt;Raw Block Volume Support&lt;/a&gt;
+for an example on how to use a volume with &lt;code&gt;volumeMode: Block&lt;/code&gt; in a Pod.&lt;/p&gt;
+&lt;h3 id=&#34;access-modes&#34;&gt;Access Modes&lt;/h3&gt;
+&lt;p&gt;A PersistentVolume can be mounted on a host in any way supported by the resource provider. As shown in the table below, providers will have different capabilities and each PV&amp;rsquo;s access modes are set to the specific modes supported by that particular volume.  For example, NFS can support multiple read/write clients, but a specific NFS PV might be exported on the server as read-only. Each PV gets its own set of access modes describing that specific PV&amp;rsquo;s capabilities.&lt;/p&gt;
+&lt;p&gt;The access modes are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ReadWriteOnce &amp;ndash; the volume can be mounted as read-write by a single node&lt;/li&gt;
+&lt;li&gt;ReadOnlyMany &amp;ndash; the volume can be mounted read-only by many nodes&lt;/li&gt;
+&lt;li&gt;ReadWriteMany &amp;ndash; the volume can be mounted as read-write by many nodes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In the CLI, the access modes are abbreviated to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;RWO - ReadWriteOnce&lt;/li&gt;
+&lt;li&gt;ROX - ReadOnlyMany&lt;/li&gt;
+&lt;li&gt;RWX - ReadWriteMany&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Important!&lt;/strong&gt; A volume can only be mounted using one access mode at a time, even if it supports many.  For example, a GCEPersistentDisk can be mounted as ReadWriteOnce by a single node or ReadOnlyMany by many nodes, but not at the same time.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;Volume Plugin&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;ReadWriteOnce&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;ReadOnlyMany&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;ReadWriteMany&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;AWSElasticBlockStore&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;AzureFile&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;AzureDisk&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;CephFS&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Cinder&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;CSI&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;depends on the driver&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;depends on the driver&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;depends on the driver&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;FC&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;FlexVolume&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;depends on the driver&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Flocker&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;GCEPersistentDisk&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Glusterfs&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;HostPath&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;iSCSI&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;Quobyte&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;NFS&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;RBD&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;VsphereVolume&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;- (works when Pods are collocated)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;PortworxVolume&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;ScaleIO&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;StorageOS&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;✓&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;class&#34;&gt;Class&lt;/h3&gt;
+&lt;p&gt;A PV can have a class, which is specified by setting the
+&lt;code&gt;storageClassName&lt;/code&gt; attribute to the name of a
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-classes/&#34;&gt;StorageClass&lt;/a&gt;.
+A PV of a particular class can only be bound to PVCs requesting
+that class. A PV with no &lt;code&gt;storageClassName&lt;/code&gt; has no class and can only be bound
+to PVCs that request no particular class.&lt;/p&gt;
+&lt;p&gt;In the past, the annotation &lt;code&gt;volume.beta.kubernetes.io/storage-class&lt;/code&gt; was used instead
+of the &lt;code&gt;storageClassName&lt;/code&gt; attribute. This annotation is still working; however,
+it will become fully deprecated in a future Kubernetes release.&lt;/p&gt;
+&lt;h3 id=&#34;reclaim-policy&#34;&gt;Reclaim Policy&lt;/h3&gt;
+&lt;p&gt;Current reclaim policies are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Retain &amp;ndash; manual reclamation&lt;/li&gt;
+&lt;li&gt;Recycle &amp;ndash; basic scrub (&lt;code&gt;rm -rf /thevolume/*&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;Delete &amp;ndash; associated storage asset such as AWS EBS, GCE PD, Azure Disk, or OpenStack Cinder volume is deleted&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Currently, only NFS and HostPath support recycling. AWS EBS, GCE PD, Azure Disk, and Cinder volumes support deletion.&lt;/p&gt;
+&lt;h3 id=&#34;mount-options&#34;&gt;Mount Options&lt;/h3&gt;
+&lt;p&gt;A Kubernetes administrator can specify additional mount options for when a Persistent Volume is mounted on a node.&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Not all Persistent Volume types support mount options.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The following volume types support mount options:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;AWSElasticBlockStore&lt;/li&gt;
+&lt;li&gt;AzureDisk&lt;/li&gt;
+&lt;li&gt;AzureFile&lt;/li&gt;
+&lt;li&gt;CephFS&lt;/li&gt;
+&lt;li&gt;Cinder (OpenStack block storage)&lt;/li&gt;
+&lt;li&gt;GCEPersistentDisk&lt;/li&gt;
+&lt;li&gt;Glusterfs&lt;/li&gt;
+&lt;li&gt;NFS&lt;/li&gt;
+&lt;li&gt;Quobyte Volumes&lt;/li&gt;
+&lt;li&gt;RBD (Ceph Block Device)&lt;/li&gt;
+&lt;li&gt;StorageOS&lt;/li&gt;
+&lt;li&gt;VsphereVolume&lt;/li&gt;
+&lt;li&gt;iSCSI&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Mount options are not validated, so mount will simply fail if one is invalid.&lt;/p&gt;
+&lt;p&gt;In the past, the annotation &lt;code&gt;volume.beta.kubernetes.io/mount-options&lt;/code&gt; was used instead
+of the &lt;code&gt;mountOptions&lt;/code&gt; attribute. This annotation is still working; however,
+it will become fully deprecated in a future Kubernetes release.&lt;/p&gt;
+&lt;h3 id=&#34;node-affinity&#34;&gt;Node Affinity&lt;/h3&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; For most volume types, you do not need to set this field. It is automatically populated for &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/#awselasticblockstore&#34;&gt;AWS EBS&lt;/a&gt;, &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/#gcepersistentdisk&#34;&gt;GCE PD&lt;/a&gt; and &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/#azuredisk&#34;&gt;Azure Disk&lt;/a&gt; volume block types. You need to explicitly set this for &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/#local&#34;&gt;local&lt;/a&gt; volumes.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;A PV can specify &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubernetes-api/v1.19/#volumenodeaffinity-v1-core&#34;&gt;node affinity&lt;/a&gt; to define constraints that limit what nodes this volume can be accessed from. Pods that use a PV will only be scheduled to nodes that are selected by the node affinity.&lt;/p&gt;
+&lt;h3 id=&#34;phase&#34;&gt;Phase&lt;/h3&gt;
+&lt;p&gt;A volume will be in one of the following phases:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Available &amp;ndash; a free resource that is not yet bound to a claim&lt;/li&gt;
+&lt;li&gt;Bound &amp;ndash; the volume is bound to a claim&lt;/li&gt;
+&lt;li&gt;Released &amp;ndash; the claim has been deleted, but the resource is not yet reclaimed by the cluster&lt;/li&gt;
+&lt;li&gt;Failed &amp;ndash; the volume has failed its automatic reclamation&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The CLI will show the name of the PVC bound to the PV.&lt;/p&gt;
+&lt;h2 id=&#34;persistentvolumeclaims&#34;&gt;PersistentVolumeClaims&lt;/h2&gt;
+&lt;p&gt;Each PVC contains a spec and status, which is the specification and status of the claim.
+The name of a PersistentVolumeClaim object must be a valid
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS subdomain name&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolumeClaim&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myclaim&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;accessModes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#ae81ff&#34;&gt;ReadWriteOnce&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumeMode&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Filesystem&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;requests&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;storage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;8Gi&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;storageClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;slow&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;release&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;stable&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+      - {&lt;span style=&#34;color:#f92672&#34;&gt;key: environment, operator: In, values&lt;/span&gt;: [&lt;span style=&#34;color:#ae81ff&#34;&gt;dev]}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;access-modes-1&#34;&gt;Access Modes&lt;/h3&gt;
+&lt;p&gt;Claims use the same conventions as volumes when requesting storage with specific access modes.&lt;/p&gt;
+&lt;h3 id=&#34;volume-modes&#34;&gt;Volume Modes&lt;/h3&gt;
+&lt;p&gt;Claims use the same convention as volumes to indicate the consumption of the volume as either a filesystem or block device.&lt;/p&gt;
+&lt;h3 id=&#34;resources&#34;&gt;Resources&lt;/h3&gt;
+&lt;p&gt;Claims, like Pods, can request specific quantities of a resource. In this case, the request is for storage. The same &lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/scheduling/resources.md&#34;&gt;resource model&lt;/a&gt; applies to both volumes and claims.&lt;/p&gt;
+&lt;h3 id=&#34;selector&#34;&gt;Selector&lt;/h3&gt;
+&lt;p&gt;Claims can specify a &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/labels/#label-selectors&#34;&gt;label selector&lt;/a&gt; to further filter the set of volumes. Only the volumes whose labels match the selector can be bound to the claim. The selector can consist of two fields:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;matchLabels&lt;/code&gt; - the volume must have a label with this value&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;matchExpressions&lt;/code&gt; - a list of requirements made by specifying key, list of values, and operator that relates the key and values. Valid operators include In, NotIn, Exists, and DoesNotExist.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;All of the requirements, from both &lt;code&gt;matchLabels&lt;/code&gt; and &lt;code&gt;matchExpressions&lt;/code&gt;, are ANDed together – they must all be satisfied in order to match.&lt;/p&gt;
+&lt;h3 id=&#34;class-1&#34;&gt;Class&lt;/h3&gt;
+&lt;p&gt;A claim can request a particular class by specifying the name of a
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-classes/&#34;&gt;StorageClass&lt;/a&gt;
+using the attribute &lt;code&gt;storageClassName&lt;/code&gt;.
+Only PVs of the requested class, ones with the same &lt;code&gt;storageClassName&lt;/code&gt; as the PVC, can
+be bound to the PVC.&lt;/p&gt;
+&lt;p&gt;PVCs don&amp;rsquo;t necessarily have to request a class. A PVC with its &lt;code&gt;storageClassName&lt;/code&gt; set
+equal to &lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt; is always interpreted to be requesting a PV with no class, so it
+can only be bound to PVs with no class (no annotation or one set equal to
+&lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt;). A PVC with no &lt;code&gt;storageClassName&lt;/code&gt; is not quite the same and is treated differently
+by the cluster, depending on whether the
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/admission-controllers/#defaultstorageclass&#34;&gt;&lt;code&gt;DefaultStorageClass&lt;/code&gt; admission plugin&lt;/a&gt;
+is turned on.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;If the admission plugin is turned on, the administrator may specify a
+default StorageClass. All PVCs that have no &lt;code&gt;storageClassName&lt;/code&gt; can be bound only to
+PVs of that default. Specifying a default StorageClass is done by setting the
+annotation &lt;code&gt;storageclass.kubernetes.io/is-default-class&lt;/code&gt; equal to &lt;code&gt;true&lt;/code&gt; in
+a StorageClass object. If the administrator does not specify a default, the
+cluster responds to PVC creation as if the admission plugin were turned off. If
+more than one default is specified, the admission plugin forbids the creation of
+all PVCs.&lt;/li&gt;
+&lt;li&gt;If the admission plugin is turned off, there is no notion of a default
+StorageClass. All PVCs that have no &lt;code&gt;storageClassName&lt;/code&gt; can be bound only to PVs that
+have no class. In this case, the PVCs that have no &lt;code&gt;storageClassName&lt;/code&gt; are treated the
+same way as PVCs that have their &lt;code&gt;storageClassName&lt;/code&gt; set to &lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Depending on installation method, a default StorageClass may be deployed
+to a Kubernetes cluster by addon manager during installation.&lt;/p&gt;
+&lt;p&gt;When a PVC specifies a &lt;code&gt;selector&lt;/code&gt; in addition to requesting a StorageClass,
+the requirements are ANDed together: only a PV of the requested class and with
+the requested labels may be bound to the PVC.&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Currently, a PVC with a non-empty &lt;code&gt;selector&lt;/code&gt; can&amp;rsquo;t have a PV dynamically provisioned for it.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In the past, the annotation &lt;code&gt;volume.beta.kubernetes.io/storage-class&lt;/code&gt; was used instead
+of &lt;code&gt;storageClassName&lt;/code&gt; attribute. This annotation is still working; however,
+it won&amp;rsquo;t be supported in a future Kubernetes release.&lt;/p&gt;
+&lt;!--
+## Claims As Volumes
+
+Pods access storage by using the claim as a volume. Claims must exist in the same namespace as the Pod using the claim. The cluster finds the claim in the Pod&#39;s namespace and uses it to get the PersistentVolume backing the claim. The volume is then mounted to the host and into the Pod.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+    - name: myfrontend
+      image: nginx
+      volumeMounts:
+      - mountPath: &#34;/var/www/html&#34;
+        name: mypd
+  volumes:
+    - name: mypd
+      persistentVolumeClaim:
+        claimName: myclaim
+```
+ --&gt;
+&lt;h2 id=&#34;claims-as-volumes&#34;&gt;将 PVC 当作卷(PV)&lt;/h2&gt;
+&lt;p&gt;Pods access storage by using the claim as a volume. Claims must exist in the same namespace as the Pod using the claim. The cluster finds the claim in the Pod&amp;rsquo;s namespace and uses it to get the PersistentVolume backing the claim. The volume is then mounted to the host and into the Pod.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mypod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myfrontend&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/var/www/html&amp;#34;&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mypd&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mypd&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;persistentVolumeClaim&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;claimName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myclaim&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;a-note-on-namespaces&#34;&gt;A Note on Namespaces&lt;/h3&gt;
+&lt;p&gt;PersistentVolumes binds are exclusive, and since PersistentVolumeClaims are namespaced objects, mounting claims with &amp;ldquo;Many&amp;rdquo; modes (&lt;code&gt;ROX&lt;/code&gt;, &lt;code&gt;RWX&lt;/code&gt;) is only possible within one namespace.&lt;/p&gt;
+&lt;h2 id=&#34;raw-block-volume-support&#34;&gt;Raw Block Volume Support&lt;/h2&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.18 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;The following volume plugins support raw block volumes, including dynamic provisioning where
+applicable:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;AWSElasticBlockStore&lt;/li&gt;
+&lt;li&gt;AzureDisk&lt;/li&gt;
+&lt;li&gt;CSI&lt;/li&gt;
+&lt;li&gt;FC (Fibre Channel)&lt;/li&gt;
+&lt;li&gt;GCEPersistentDisk&lt;/li&gt;
+&lt;li&gt;iSCSI&lt;/li&gt;
+&lt;li&gt;Local volume&lt;/li&gt;
+&lt;li&gt;OpenStack Cinder&lt;/li&gt;
+&lt;li&gt;RBD (Ceph Block Device)&lt;/li&gt;
+&lt;li&gt;VsphereVolume&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;persistent-volume-using-a-raw-block-volume&#34;&gt;PersistentVolume using a Raw Block Volume&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolume&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;block-pv&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;capacity&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;storage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10Gi&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;accessModes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#ae81ff&#34;&gt;ReadWriteOnce&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumeMode&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Block&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;persistentVolumeReclaimPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Retain&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;fc&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;targetWWNs&lt;/span&gt;: [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;50060e801049cfd1&amp;#34;&lt;/span&gt;]
+    &lt;span style=&#34;color:#f92672&#34;&gt;lun&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;readOnly&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;persistent-volume-claim-requesting-a-raw-block-volume&#34;&gt;PersistentVolumeClaim requesting a Raw Block Volume&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolumeClaim&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;block-pvc&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;accessModes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#ae81ff&#34;&gt;ReadWriteOnce&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumeMode&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Block&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;requests&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;storage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10Gi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;pod-specification-adding-raw-block-device-path-in-container&#34;&gt;Pod specification adding Raw Block Device path in container&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pod-with-block-volume&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;fc-container&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;fedora:26&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;command&lt;/span&gt;: [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/bin/sh&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;-c&amp;#34;&lt;/span&gt;]
+      &lt;span style=&#34;color:#f92672&#34;&gt;args&lt;/span&gt;: [ &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tail -f /dev/null&amp;#34;&lt;/span&gt; ]
+      &lt;span style=&#34;color:#f92672&#34;&gt;volumeDevices&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;data&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;devicePath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/dev/xvda&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;data&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;persistentVolumeClaim&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;claimName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;block-pvc&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; When adding a raw block device for a Pod, you specify the device path in the container instead of a mount path.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;binding-block-volumes&#34;&gt;Binding Block Volumes&lt;/h3&gt;
+&lt;p&gt;If a user requests a raw block volume by indicating this using the &lt;code&gt;volumeMode&lt;/code&gt; field in the PersistentVolumeClaim spec, the binding rules differ slightly from previous releases that didn&amp;rsquo;t consider this mode as part of the spec.
+Listed is a table of possible combinations the user and admin might specify for requesting a raw block device. The table indicates if the volume will be bound or not given the combinations:
+Volume binding matrix for statically provisioned volumes:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;PV volumeMode&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;PVC volumeMode&lt;/th&gt;
+&lt;th style=&#34;text-align:right&#34;&gt;Result&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;unspecified&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;unspecified&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;BIND&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;unspecified&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;Block&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;NO BIND&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;unspecified&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;Filesystem&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;BIND&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Block&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;unspecified&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;NO BIND&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Block&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;Block&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;BIND&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Block&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;Filesystem&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;NO BIND&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Filesystem&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;Filesystem&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;BIND&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Filesystem&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;Block&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;NO BIND&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Filesystem&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;unspecified&lt;/td&gt;
+&lt;td style=&#34;text-align:right&#34;&gt;BIND&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Only statically provisioned volumes are supported for alpha release. Administrators should take care to consider these values when working with raw block devices.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;volume-snapshot-and-restore-volume-from-snapshot-support&#34;&gt;Volume Snapshot and Restore Volume from Snapshot Support&lt;/h2&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.17 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;Volume snapshot feature was added to support CSI Volume Plugins only. For details, see &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-snapshots/&#34;&gt;volume snapshots&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;To enable support for restoring a volume from a volume snapshot data source, enable the
+&lt;code&gt;VolumeSnapshotDataSource&lt;/code&gt; feature gate on the apiserver and controller-manager.&lt;/p&gt;
+&lt;h3 id=&#34;create-persistent-volume-claim-from-volume-snapshot&#34;&gt;Create a PersistentVolumeClaim from a Volume Snapshot&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolumeClaim&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;restore-pvc&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;storageClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;csi-hostpath-sc&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;dataSource&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;new-snapshot-test&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;VolumeSnapshot&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;apiGroup&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;snapshot.storage.k8s.io&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;accessModes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#ae81ff&#34;&gt;ReadWriteOnce&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;requests&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;storage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10Gi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;volume-cloning&#34;&gt;Volume Cloning&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-pvc-datasource/&#34;&gt;Volume Cloning&lt;/a&gt; only available for CSI volume plugins.&lt;/p&gt;
+&lt;h3 id=&#34;create-persistent-volume-claim-from-an-existing-pvc&#34;&gt;Create PersistentVolumeClaim from an existing PVC&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolumeClaim&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;cloned-pvc&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;storageClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-csi-plugin&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;dataSource&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;existing-src-pvc-name&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolumeClaim&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;accessModes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#ae81ff&#34;&gt;ReadWriteOnce&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;requests&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;storage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10Gi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;writing-portable-configuration&#34;&gt;Writing Portable Configuration&lt;/h2&gt;
+&lt;p&gt;If you&amp;rsquo;re writing configuration templates or examples that run on a wide range of clusters
+and need persistent storage, it is recommended that you use the following pattern:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Include PersistentVolumeClaim objects in your bundle of config (alongside
+Deployments, ConfigMaps, etc).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Do not include PersistentVolume objects in the config, since the user instantiating
+the config may not have permission to create PersistentVolumes.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Give the user the option of providing a storage class name when instantiating
+the template.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;If the user provides a storage class name, put that value into the
+&lt;code&gt;persistentVolumeClaim.storageClassName&lt;/code&gt; field.
+This will cause the PVC to match the right storage
+class if the cluster has StorageClasses enabled by the admin.&lt;/li&gt;
+&lt;li&gt;If the user does not provide a storage class name, leave the
+&lt;code&gt;persistentVolumeClaim.storageClassName&lt;/code&gt; field as nil. This will cause a
+PV to be automatically provisioned for the user with the default StorageClass
+in the cluster. Many cluster environments have a default StorageClass installed,
+or administrators can create their own default StorageClass.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;In your tooling, watch for PVCs that are not getting bound after some time
+and surface this to the user, as this may indicate that the cluster has no
+dynamic storage support (in which case the user should create a matching PV)
+or the cluster has no storage system (in which case the user cannot deploy
+config requiring PVCs).&lt;/p&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;Learn more about &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-persistentvolume&#34;&gt;Creating a PersistentVolume&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Learn more about &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/configure-pod-container/configure-persistent-volume-storage/#create-a-persistentvolumeclaim&#34;&gt;Creating a PersistentVolumeClaim&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Read the &lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/storage/persistent-storage.md&#34;&gt;Persistent Storage design document&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;reference&#34;&gt;Reference&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubernetes-api/v1.19/#persistentvolume-v1-core&#34;&gt;PersistentVolume&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubernetes-api/v1.19/#persistentvolumespec-v1-core&#34;&gt;PersistentVolumeSpec&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubernetes-api/v1.19/#persistentvolumeclaim-v1-core&#34;&gt;PersistentVolumeClaim&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubernetes-api/v1.19/#persistentvolumeclaimspec-v1-core&#34;&gt;PersistentVolumeClaimSpec&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: Service 和 Pod 的 DNS</title>
       <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/dns-pod-service/</link>
       <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>

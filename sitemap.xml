@@ -46,6 +46,10 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/</loc>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/dns-pod-service/</loc>
     <lastmod>2020-06-30T00:00:00+00:00</lastmod>
   </url>
