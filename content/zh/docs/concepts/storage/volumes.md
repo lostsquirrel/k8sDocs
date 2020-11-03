@@ -2391,7 +2391,7 @@ to [this FAQ](https://github.com/kubernetes/community/blob/master/sig-storage/vo
 
 在引入 CSI 和 FlexVolume 之前， 所有的卷插件(像所有前面列举的那些)都是内置的，它们在构建，连接
 编译，发布都是与 k8s 核心二进制文件在一起的并且扩展了 k8s 核心 API。 这意味着如果我们要添加
-一种新的存储系统(一个卷插件)到 k8s中时，需要将其代码检入到 k8s 核心代码库中。
+一种新的存储系统(一个卷插件)到 k8s 中时，需要将其代码检入到 k8s 核心代码库中。
 
 CSI 和 FlexVolume 都允许独立于 k8s 核心代码独立开发卷插件，并且独立以插件的方式部署(安装)
 到 k8s 集群中。
