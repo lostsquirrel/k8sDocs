@@ -138,7 +138,7 @@ A user creates, or in the case of dynamic provisioning, has already created, a P
 Claims will remain unbound indefinitely if a matching volume does not exist. Claims will be bound as matching volumes become available. For example, a cluster provisioned with many 50Gi PVs would not match a PVC requesting 100Gi. The PVC can be bound when a 100Gi PV is added to the cluster.
  -->
 
-### 绑定
+### 绑定 {#binding}
 
 当一个指定容量和访问模式的 `PersistentVolumeClaim` 被创建后。 主控中心中的一个控制回环会监控新创建的 PVC，
 如果有匹配的 PV 存在，则将它们绑定在一起。 如果这个 PV 是动态供给给这个新建的 PVC 的， 那么控制
@@ -266,11 +266,18 @@ Source:
     HostPathType:
 Events:            <none>
 ```
-
+<!--
 ### Reclaiming
 
 When a user is done with their volume, they can delete the PVC objects from the API that allows reclamation of the resource. The reclaim policy for a PersistentVolume tells the cluster what to do with the volume after it has been released of its claim. Currently, volumes can either be Retained, Recycled, or Deleted.
+ -->
 
+### 回收
+
+当用于不再需要一个卷时，可以通过 API 删除这个 PVC 对象，这样就允许对对应资源的回收。 PV 的回收
+策略让集群可以在 PV 释放以后使用对应的方式回收。 目前，卷的回收策略有 保留(`Retain`),
+循环使用(`Recycle`), 删除 (`Delete`).
+<!--
 #### Retain
 
 The `Retain` reclaim policy allows for manual reclamation of the resource. When the PersistentVolumeClaim is deleted, the PersistentVolume still exists and the volume is considered "released". But it is not yet available for another claim because the previous claimant's data remains on the volume. An administrator can manually reclaim the volume with the following steps.
@@ -278,11 +285,30 @@ The `Retain` reclaim policy allows for manual reclamation of the resource. When 
 1. Delete the PersistentVolume. The associated storage asset in external infrastructure (such as an AWS EBS, GCE PD, Azure Disk, or Cinder volume) still exists after the PV is deleted.
 1. Manually clean up the data on the associated storage asset accordingly.
 1. Manually delete the associated storage asset, or if you want to reuse the same storage asset, create a new PersistentVolume with the storage asset definition.
+ -->
+#### 保留(`Retained`)
 
+保留(`Retained`) 回收策略允许对资源手动回收。 当 PVC 被删除后，其之前绑定的 PV 依然存在并被
+认为是已经释放。 但是它还不被另一个 PVC 使用，因为其中还有上一个 PVC 时的数据。 管理员可以
+通过以下步骤手动回收这个卷:
+
+1. 删除 PV 对象。 它所关联的外部存储设施(如 AWS EBS, GCE PD, Azure Disk, Cinder 卷)依然存在。
+2. 根据需要手动清理对应存储资源上的数据
+3. 手动删除对应的存储资源，如果想要重新使用该存储资源，可以再创建一个新的 PV 对象与之关联。
+<!--
 #### Delete
 
 For volume plugins that support the `Delete` reclaim policy, deletion removes both the PersistentVolume object from Kubernetes, as well as the associated storage asset in the external infrastructure, such as an AWS EBS, GCE PD, Azure Disk, or Cinder volume. Volumes that were dynamically provisioned inherit the [reclaim policy of their StorageClass](#reclaim-policy), which defaults to `Delete`. The administrator should configure the StorageClass according to users' expectations; otherwise, the PV must be edited or patched after it is created. See [Change the Reclaim Policy of a PersistentVolume](/docs/tasks/administer-cluster/change-pv-reclaim-policy/).
+ -->
 
+#### 删除 (`Delete`)
+
+对于支持 删除 (`Delete`) 回收策略的卷插件，在删除 PVC 对象之后与其郑的 PV 对象也会被删除，
+而且对应的外部存储资源，如 AWS EBS, GCE PD, Azure Disk, Cinder 卷也会一同被删除。
+动态提供的卷的回收策略继承自 [它们的 StorageClass 的回收策略](#reclaim-policy)，默认为 删除 (`Delete`)
+管理应该根据用户期望设置 StorageClass 的回收策略，否则 PV 在创建后再需要再次修改才行。
+见 [修改 PersistentVolume 的回收策略](/k8sDocs/tasks/administer-cluster/change-pv-reclaim-policy/).
+<!--
 #### Recycle
 
 {{< warning >}}
@@ -319,7 +345,44 @@ spec:
 ```
 
 However, the particular path specified in the custom recycler Pod template in the `volumes` part is replaced with the particular path of the volume that is being recycled.
+-->
 
+#### 循环使用(`Recycle`)
+
+{{< warning >}}
+循环使用(`Recycle`) 回收策略已经废弃。 推荐使用动态供给方式。
+{{< /warning >}}
+
+如果底层卷插件支持， 循环使用(`Recycle`) 回收策略在卷上执行基础的清理操作 (`rm -rf /thevolume/*`)
+然后它就可以再次被新的 PVC 使用了。
+
+但是，管理也可以使用 k8s 控制管理器的命令行参数配置一个自定义的回收器 Pod 模板。具体见
+[这里]({{<base-origin path="/docs/reference/command-line-tools-reference/kube-controller-manager/">}}).
+这个自定义的回收器 Pod 模板必须要包含 `volumes` 定义，下面就是一个示例:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pv-recycler
+  namespace: default
+spec:
+  restartPolicy: Never
+  volumes:
+  - name: vol
+    hostPath:
+      path: /any/path/it/will/be/replaced
+  containers:
+  - name: pv-recycler
+    image: "k8s.gcr.io/busybox"
+    command: ["/bin/sh", "-c", "test -e /scrub && rm -rf /scrub/..?* /scrub/.[!.]* /scrub/*  && test -z \"$(ls -A /scrub)\" || exit 1"]
+    volumeMounts:
+    - name: vol
+      mountPath: /scrub
+```
+
+回收器 Pod 模板中的 `volumes` 部分指定的路径，就是要被回收的卷
+<!--
 ### Reserving a PersistentVolume
 
 The control plane can [bind PersistentVolumeClaims to matching PersistentVolumes](#binding) in the
@@ -360,7 +423,51 @@ spec:
 
 This is useful if you want to consume PersistentVolumes that have their `claimPolicy` set
 to `Retain`, including cases where you are reusing an existing PV.
+ -->
 
+### 保留 `PersistentVolume`
+
+控制中心可以在集群中将[ `PersistentVolumeClaim` 与匹配的 `PersistentVolume` 绑定](#binding)。
+但是，如果想要将 PVC 与指定 PV 绑定， 则需要预先绑定(而不是自动绑定)。
+
+通过在 `PersistentVolumeClaim` 中指定一个 `PersistentVolume`，就可以将 PV 绑定到这个 PVC 上。
+如果 PV 已经存在， 可能通过设置它的 `claimRef` 字段指定一个 `PersistentVolumeClaim`，
+这样 PV 和 PVC 就会绑定。
+
+这种绑定会忽略一些卷匹配条件，包括节点亲和性。 控制中心还是会检测，
+[StorageClass](/k8sDocs/concepts/storage/storage-classes/), 访问模式，申请容量是否是有效的。
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: foo-pvc
+  namespace: foo
+spec:
+  storageClassName: "" # 这里必须要显示地设置，否则就会使用默认的 StorageClass
+  volumeName: foo-pv
+  ...
+```
+
+这种方式不对绑定 PV 的优先级做任何保证。 如果其它的 PVC 能够使用过这个 PV，必须要先保留存储卷。
+在需要绑定的 PV `claimRef` 的 PVC 这样其它的 PVC 才不能绑定这个 PV。
+
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: foo-pv
+spec:
+  storageClassName: ""
+  claimRef:
+    name: foo-pvc
+    namespace: foo
+  ...
+```
+
+如果想要使用 `claimPolicy` 是 `Retain` 的 PV 这一招很有用， 包括重复使用那些已经存在的 PV。
+<!--
 ### Expanding Persistent Volumes Claims
 
 {{< feature-state for_k8s_version="v1.11" state="beta" >}}
@@ -398,14 +505,58 @@ allowVolumeExpansion: true
 To request a larger volume for a PVC, edit the PVC object and specify a larger
 size. This triggers expansion of the volume that backs the underlying PersistentVolume. A
 new PersistentVolume is never created to satisfy the claim. Instead, an existing volume is resized.
+ -->
 
+### 扩展 PVC
+
+{{< feature-state for_k8s_version="v1.11" state="beta" >}}
+
+对 PVC 的扩展默认是启用的。 可以对以下类型的卷进行扩展:
+
+* gcePersistentDisk
+* awsElasticBlockStore
+* Cinder
+* glusterfs
+* rbd
+* Azure File
+* Azure Disk
+* Portworx
+* FlexVolumes
+* CSI
+
+只能对 StorageClass 的 `allowVolumeExpansion` 字段为 `true` PVC 进行扩展
+
+``` yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gluster-vol-default
+provisioner: kubernetes.io/glusterfs
+parameters:
+  resturl: "http://192.168.10.100:8080"
+  restuser: ""
+  secretNamespace: ""
+  secretName: ""
+allowVolumeExpansion: true
+```
+
+想要为 PVC 申请一个更大的卷，只需要修改 PVC 对象，设置一个更大的容量。 这会触发卷底层的 PV 的扩充。
+这样做不会创建一个新的 PV 来满足这个 PVC， 而是通过修改原来的容量来实现。
+<!--
 #### CSI Volume expansion
 
 {{< feature-state for_k8s_version="v1.16" state="beta" >}}
 
 Support for expanding CSI volumes is enabled by default but it also requires a specific CSI driver to support volume expansion. Refer to documentation of the specific CSI driver for more information.
+ -->
 
+#### CSI 卷扩容
 
+{{< feature-state for_k8s_version="v1.16" state="beta" >}}
+
+对 CSI 卷扩展 扩容默认是开启的，但也是需要相应的 CSI 驱动支持卷扩容。 具体信息请参阅相应
+CSI 驱动的文档。
+<!--
 #### Resizing a volume containing a file system
 
 You can only resize volumes containing a file system if the file system is XFS, Ext3, or Ext4.
@@ -416,7 +567,20 @@ or when a Pod is running and the underlying file system supports online expansio
 
 FlexVolumes allow resize if the driver is set with the `RequiresFSResize` capability to `true`.
 The FlexVolume can be resized on Pod restart.
+ -->
 
+#### 修改包含文件系统的卷的容量
+
+如果郑文件系统是  XFS, Ext3, Ext4 之一，则可以修改其容量。
+
+当卷中包含文件文件系统时，只有在
+新的 Pod 使用 `ReadWrite` 模式的 PVC 时才会变更容量。文件系统的扩容只有在 Pod 启动或
+正在运行的 Pod 底层的文件系统支持在线扩容时才能生效。
+
+FlexVolume 允许在 驱动的 `RequiresFSResize` 设置为 `true` 时变更容量。
+FlexVolume 的容量变更只能在 Pod 重启时生效。
+
+<!--
 #### Resizing an in-use PersistentVolumeClaim
 
 {{< feature-state for_k8s_version="v1.15" state="beta" >}}
@@ -440,7 +604,32 @@ FlexVolume resize is possible only when the underlying driver supports resize.
 {{< note >}}
 Expanding EBS volumes is a time-consuming operation. Also, there is a per-volume quota of one modification every 6 hours.
 {{< /note >}}
+ -->
 
+#### 对使用中的 PersistentVolumeClaim 变更容量
+
+{{< feature-state for_k8s_version="v1.15" state="beta" >}}
+
+{{< note >}}
+对使用中的 PersistentVolumeClaim 变更容量 在 k8s `v1.15` 是 `beta` 状态，
+`v1.11` 是 `alpha` 状态, `ExpandInUsePersistentVolumes` 在 `beta` 时是默认打开的。
+更多信息请见
+[功能阀]({{<base-origin path="/docs/reference/command-line-tools-reference/feature-gates/">}})
+{{< /note >}}
+
+在这种情况下，不需要删除或重新创建使用现有 PVC 的 Pod 或 Deployment. 任意使用中的 PVC 在
+文件系统扩容后在 Pod 中自动变得可用。 这个特性对那些没有被 Pod 或 Deployment 的 PVC 无效。
+要想扩容生效必须要有一个使用 PVC 的 Pod。
+
+与其它的卷类型类似， FlexVolume 也可以在被 Pod 使用时扩容。
+{{< note >}}
+FlexVolume 变量容量只能在底层驱动支持的情况下才行。
+{{< /note >}}
+
+{{< note >}}
+对 EBS 卷扩容是一个耗时的操作。并且还有一个每个卷每 6 个小时只能扩容的限制
+{{< /note >}}
+<!--
 #### Recovering from Failure when Expanding Volumes
 
 If expanding underlying storage fails, the cluster administrator can manually recover the Persistent Volume Claim (PVC) state and cancel the resize requests. Otherwise, the resize requests are continuously retried by the controller without administrator intervention.
@@ -450,7 +639,19 @@ If expanding underlying storage fails, the cluster administrator can manually re
 3. Delete the `claimRef` entry from PV specs, so as new PVC can bind to it. This should make the PV `Available`.
 4. Re-create the PVC with smaller size than PV and set `volumeName` field of the PVC to the name of the PV. This should bind new PVC to existing PV.
 5. Don't forget to restore the reclaim policy of the PV.
+ -->
 
+#### 从卷扩展失败中恢复
+
+如果底层存储扩容的失败，集群管理可以通过手动恢复 PVC 的状态，取消扩容请求。否则，在没管理员中止
+的情况下控制器会不断地重试容量变更请求。
+
+1. 将与 PersistentVolumeClaim(PVC) 绑定的 PersistentVolume(PV) 回收策略改为 `Retain`
+2. 删除 PVC。 因为 PV 的回收策略是 `Retain`，所以在重新创建 PVC 之前数据不会丢失。
+3. 删除 PV 对象中的 `claimRef` 实体， 这样新的 PVC 才可以与它绑定， 可以可以将 PV 变为 `Available`
+4. 以小于 PV 的容量重新创建一个 PVC，这个 PVC 的 `volumeName` 设置 PV 的名称。这样就可以将
+原来的 PV 绑定到新的 PVC 上
+5. 不要忘记将 PV 的回收策略也改加原来的值
 
 ## Types of Persistent Volumes
 
@@ -589,8 +790,19 @@ to PVCs that request no particular class.
 In the past, the annotation `volume.beta.kubernetes.io/storage-class` was used instead
 of the `storageClassName` attribute. This annotation is still working; however,
 it will become fully deprecated in a future Kubernetes release.
-
+<!--
 ### Reclaim Policy
+
+Current reclaim policies are:
+
+* Retain -- manual reclamation
+* Recycle -- basic scrub (`rm -rf /thevolume/*`)
+* Delete -- associated storage asset such as AWS EBS, GCE PD, Azure Disk, or OpenStack Cinder volume is deleted
+
+Currently, only NFS and HostPath support recycling. AWS EBS, GCE PD, Azure Disk, and Cinder volumes support deletion.
+ -->
+
+### 回收策略 {#reclain-policy}
 
 Current reclaim policies are:
 
