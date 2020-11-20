@@ -31,8 +31,8 @@ time. In other words, a ReplicationController makes sure that a pod or a homogen
 always up and available.
 -->
 {{< note >}}
-使用 [`Deployment`](/k8sDocs/concepts/workloads/controllers/deployment/) 管理
-[`ReplicaSet`](/k8sDocs/concepts/workloads/controllers/replicaset/)
+使用 [`Deployment`](/k8sDocs/docs/concepts/workloads/controllers/deployment/) 管理
+[`ReplicaSet`](/k8sDocs/docs/concepts/workloads/controllers/replicaset/)
 是目前推荐的运行多副本的方式。
 {{< /note >}}
 ``
@@ -216,9 +216,9 @@ A ReplicationController also needs a [`.spec` section](https://git.k8s.io/commun
 
 与所以其它的 k8s 配置一样， ReplicationController 必要字段有 `apiVersion`, `kind`, `metadata`。
 ReplicationController 对象的名称必须是一个有效的
-[DNS 子域名](/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+[DNS 子域名](/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
 更多编写配置文件所需要的信息，见
-[对象管理 ](/k8sDocs/concepts/overview/working-with-objects/object-management/).
+[对象管理 ](/k8sDocs/docs/concepts/overview/working-with-objects/object-management/).
 ReplicationController 还需要一个 [`.spec` 配置区](https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status).
 <!--
 ### Pod Template
@@ -287,7 +287,7 @@ will have to manage the deletion yourself (see [below](#working-with-replication
 ### Pod 选择器 {#pod-selector}
 
 `.spec.selector` 字段是一个
-[标签选择器](/k8sDocs/concepts/overview/working-with-objects/labels/#label-selectors).
+[标签选择器](/k8sDocs/docs/concepts/overview/working-with-objects/labels/#label-selectors).
 ReplicationController 会管理所有匹配它的选择器的 Pod。 不会区分这些 Pod 是由它自己创建或删除
 还是由别的人或进行创建或删除的 Pod。 这让 ReplicationController 可以在不影响运行 Pod 的情况下被替换。
 
@@ -541,15 +541,15 @@ safe to terminate when the machine is otherwise ready to be rebooted/shutdown.
 
 ### ReplicaSet
 
-[`ReplicaSet`](/k8sDocs/concepts/workloads/controllers/replicaset/)  
+[`ReplicaSet`](/k8sDocs/docs/concepts/workloads/controllers/replicaset/)  
 是下一代的 ReplicationController， 它支持新的
-[基于集合的标签选择器](/k8sDocs/concepts/overview/working-with-objects/labels/#set-based-requirement).
-它主要被 [Deployment](/k8sDocs/concepts/workloads/controllers/deployment/) 用于编排 Pod 创建，删除，更新的一个机制。
+[基于集合的标签选择器](/k8sDocs/docs/concepts/overview/working-with-objects/labels/#set-based-requirement).
+它主要被 [Deployment](/k8sDocs/docs/concepts/workloads/controllers/deployment/) 用于编排 Pod 创建，删除，更新的一个机制。
 还要注意的是我们推荐使用 Deployment 而不是直接使用 ReplicaSet，除非你需要自定义的更新编排或者完全不需要更新。
 
 ### Deployment (推荐)
 
-[`Deployment`](/k8sDocs/concepts/workloads/controllers/deployment/)
+[`Deployment`](/k8sDocs/docs/concepts/workloads/controllers/deployment/)
 是一个更高级别的 API 对象，用于更新它下层的 ReplicaSet 和它们的 Pod。
 如果想要使用滚动更新推荐使用 Deployment， 因为它们是声明式的，服务端的，还有其它额外的特性。
 
@@ -563,7 +563,7 @@ ReplicationController 委托节点上的一些代理(如 kubelet 或 Docker)来�
 ### Job
 
 如果 Pod 计划中会自己终止(如，批量任务)就应该使用  
-[`Job`](/k8sDocs/concepts/workloads/controllers/job/)
+[`Job`](/k8sDocs/docs/concepts/workloads/controllers/job/)
 而不是 ReplicationController
 
 ### DaemonSet
@@ -574,7 +574,7 @@ to a machine lifetime: the pod needs to be running on the machine before other p
 safe to terminate when the machine is otherwise ready to be rebooted/shutdown.
 
 如果 Pod 提供的是机器级别的功能，如机器监控，机器日志。就应该使用
-[`DaemonSet`](/k8sDocs/concepts/workloads/controllers/daemonset/)
+[`DaemonSet`](/k8sDocs/docs/concepts/workloads/controllers/daemonset/)
 而不是 ReplicationController。 这些 Pod 的生命期与机器绑定: 这些 Pod 需要先于其它的 Pod
 在机器上运行， 且它们只有在机器准备重启或关机时才是终止的时候。
 

@@ -57,8 +57,8 @@ StatefulSet 适用于那些满足以下一个或多个条件的应用.
 
 在上面的条件中，稳定是指在 Pod 调度(或重新调度)后依然不变(功能上).
 如果一个应用不需要任何稳定的标识或顺序的部署，删除，伸缩容量，用户应该使用那些无状态的工作负载对象。
-[Deployment](/k8sDocs/concepts/workloads/controllers/deployment/) 或
-[ReplicaSet](/k8sDocs/concepts/workloads/controllers/replicaset/) 可能就更适合用于无状态的需求。
+[Deployment](/k8sDocs/docs/concepts/workloads/controllers/deployment/) 或
+[ReplicaSet](/k8sDocs/docs/concepts/workloads/controllers/replicaset/) 可能就更适合用于无状态的需求。
 <!--
 ## Limitations
 
@@ -75,7 +75,7 @@ StatefulSet 适用于那些满足以下一个或多个条件的应用.
 
 - 给予某个指定 Pod 的存储必须要由 [PersistentVolume Provisioner](https://github.com/kubernetes/examples/tree/{{< param "githubbranch" >}}/staging/persistent-volume-provisioning/README.md) 基于 `storage class` 的请求或由管理员预先创建好。
 - 删除或收缩 StatefulSet 的副本数 *不会* 删除与这个 StatefulSet 相关联的卷。 这么做是为了保证数据这险，相对与自动删除所有 StatefulSet 相关资源，这样保留下来通常更有意义。
-- StatefulSet 目前还需要一个 [Headless Service](/k8sDocs/concepts/services-networking/service/#headless-services)  来作为这些 Pod 的网络标识。
+- StatefulSet 目前还需要一个 [Headless Service](/k8sDocs/docs/concepts/services-networking/service/#headless-services)  来作为这些 Pod 的网络标识。
   需要用户负责创建。
 - 当删除一个 StatefulSet 时，并不能对 Pod 的终结提供任何保障。 而要达成有序和平滑的终止，将 StatefulSet 的副本设置为 0 比直接删除更有保障。
 - 在使用基于 [Pod 管理策略](#pod-management-policies) (`OrderedReady`) 的 [Rolling Updates](#rolling-updates)时，
@@ -204,11 +204,11 @@ spec:
 
 - 一个 Headless Service， 名称为 `nginx`， 用来控制网络域
 - StatefulSet， 名称为 `web`， 在定义中指定有 3 个副本的 nginx 的容器启动在不同的 Pod 中
-- `volumeClaimTemplates` 通过 PersistentVolume 提供者提供的 [PersistentVolumes](/k8sDocs/concepts/storage/persistent-volumes/)
+- `volumeClaimTemplates` 通过 PersistentVolume 提供者提供的 [PersistentVolumes](/k8sDocs/docs/concepts/storage/persistent-volumes/)
   提供稳定存储
 
 StatefulSet 的名称必须是一个有效的
-[DNS 子域名](/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+[DNS 子域名](/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
 <!--
 ## Pod Selector
 
@@ -288,7 +288,7 @@ Cluster Domain will be set to `cluster.local` unless
 
 StatefulSet 中 Pod 的主机名由 StatefulSet 名称和 Pod 的序号组成。 格式为 `$(statefulset name)-$(ordinal)`
 如果 Pod 数量为 3 则名称依次为 `web-0,web-1,web-2`.
-StatefulSet 可以使用一个 [Headless Service](/k8sDocs/concepts/services-networking/service/#headless-services)
+StatefulSet 可以使用一个 [Headless Service](/k8sDocs/docs/concepts/services-networking/service/#headless-services)
 来控制其 Pod 的网络域。 Service 的域名格式为 `$(service name).$(namespace).svc.cluster.local`
 `cluster.local` 为集群域。
 当每个 Pod 被创建后，都会获得一个相应的 DNS 子域名，格式为 `$(podname).$(governing service domain)`
@@ -302,7 +302,7 @@ StatefulSet 可以使用一个 [Headless Service](/k8sDocs/concepts/services-net
 - 直接查询 k8s API(例如通过 watch), 而不是信赖 DNS 查询
 - 减少 k8s DNS 提供者(通常是修改 CoreDNS 的配置， 当前配置的缓存时间是 30s)的缓存时间
 
-在 [限制](#limitations) 一节种提到，需要用户在负责创建用于 Pod 网络标识的 [Headless Service](/k8sDocs/concepts/services-networking/service/#headless-services)。
+在 [限制](#limitations) 一节种提到，需要用户在负责创建用于 Pod 网络标识的 [Headless Service](/k8sDocs/docs/concepts/services-networking/service/#headless-services)。
 
 以下为怎么设置 集群域，Service 命名， StatefulSet 命名，以及这命名对 StatefulSet 的 Pod 的 DNS 记录的影响:
 
@@ -313,7 +313,7 @@ Cluster Domain | Service (ns/name) | StatefulSet (ns/name)  | StatefulSet Domain
  kube.local    | foo/nginx         | foo/web                | nginx.foo.svc.kube.local        | web-{0..N-1}.nginx.foo.svc.kube.local        | web-{0..N-1} |
 
 {{< note >}}
-如果没有 [其它的配置](/k8sDocs/concepts/services-networking/dns-pod-service/) 集群域会是 `cluster.local`
+如果没有 [其它的配置](/k8sDocs/docs/concepts/services-networking/dns-pod-service/) 集群域会是 `cluster.local`
 {{< /note >}}
 <!--
 ### Stable Storage
@@ -329,7 +329,7 @@ This must be done manually.
  -->
 ### 稳定的存储
 
-k8s 会依照 VolumeClaimTemplate 为每个 Pod 创建一个 [PersistentVolume](/k8sDocs/concepts/storage/persistent-volumes/)
+k8s 会依照 VolumeClaimTemplate 为每个 Pod 创建一个 [PersistentVolume](/k8sDocs/docs/concepts/storage/persistent-volumes/)
 在上面的示例中， 每个 Pod 都会收到一个 StorageClass 为 `my-storage-class` 容量为 1G 的 PersistentVolume。
 如果没有配置 StorageClass， 则会使用默认的 StorageClass。 当一个 Pod 被(重新)调度到一个节点时，它的 `volumeMounts`
 挂载 PersistentVolumeClaim 中对应的 PersistentVolume。 要注意与 PersistentVolumeClaim 关联的 PersistentVolume
@@ -380,7 +380,7 @@ until web-0 is Running and Ready.
 StatefulSet 不应该配置 `pod.Spec.TerminationGracePeriodSeconds` 为 0. 这个操作是不安全的，强烈建议不要这样搞。
 更多解决请见 [强制删除 StatefulSet 的 Pod](/k8sDocs/tasks/run-application/force-delete-stateful-set-pod/)
 
-在上面的例子中， 三个 Pod 会以 web-0, web-1, web-2 的顺序创建， web-1 不会在 web-0 [运行并就绪](/k8sDocs/concepts/workloads/pods/pod-lifecycle/)
+在上面的例子中， 三个 Pod 会以 web-0, web-1, web-2 的顺序创建， web-1 不会在 web-0 [运行并就绪](/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/)
 之前部署。 如果 web-0 在 web-1 运行并就绪后挂了，则 web-2 在 web-0 重新成功启动然后运行并就绪之前不会启动。
 
 在上面的例子中，三个副本成功运行后，用户设置 `replicas=1`。 web-2 会先终止。 web-1 会在 web-2 关闭并删除后

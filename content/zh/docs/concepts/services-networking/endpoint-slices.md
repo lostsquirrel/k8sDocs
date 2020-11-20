@@ -117,7 +117,7 @@ improvement for services with large numbers of endpoints.
 的 Service 创建 EndpointSlice。 这些 EndpointSlice 包含所有匹配该 Service 的 Pod 的引用。
 EndpointSlice 通过协议，端口号，Service 名称的唯一组合将这些网络端点组织在一起。
 EndpointSlice 对象的名称必须是一个
-[DNS 子域名](/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+[DNS 子域名](/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
 
 下面的例子中，是一个叫 `example` 的 Service 的 EndpointSlice 资源的简单示例:
 
@@ -362,4 +362,4 @@ EndpointSlice 的实现必须要能处理这种同一个网络端点出现在多
 ## {{% heading "whatsnext" %}}
 
 * 实践 [开启 EndpointSlices](/k8sDocs/tasks/administer-cluster/enabling-endpointslices)
-* 概念 [通过 Service 连接应用](/k8sDocs/concepts/services-networking/connect-applications-service/)
+* 概念 [通过 Service 连接应用](/k8sDocs/docs/concepts/services-networking/connect-applications-service/)

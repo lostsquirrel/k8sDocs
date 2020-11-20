@@ -27,7 +27,7 @@ status for a Pod object consists of a set of [Pod conditions](#pod-conditions).
 You can also inject [custom readiness information](#pod-readiness-gate) into the
 condition data for a Pod, if that is useful to your application.
 
-Pods are only [scheduled](/k8sDocs/concepts/scheduling-eviction/) once in their lifetime.
+Pods are only [scheduled](/k8sDocs/docs/concepts/scheduling-eviction/) once in their lifetime.
 Once a Pod is scheduled (assigned) to a Node, the Pod runs on that Node until it stops
 or is [terminated](#pod-termination).
 
@@ -50,7 +50,7 @@ or is [terminated](#pod-termination).
 
 Like individual application containers, Pods are considered to be relatively
 ephemeral (rather than durable) entities. Pods are created, assigned a unique
-ID ([UID](/k8sDocs/concepts/overview/working-with-objects/names/#uids)), and scheduled
+ID ([UID](/k8sDocs/docs/concepts/overview/working-with-objects/names/#uids)), and scheduled
 to nodes where they remain until termination (according to restart policy) or
 deletion.  
 If a {{< glossary_tooltip term_id="node" >}} dies, the Pods scheduled to that node
@@ -84,7 +84,7 @@ web server that uses a persistent volume for shared storage between the containe
 ## Pod 的一生
 
 与单独使用应用容器一样, Pod 可以被认为是一个相对临时(而不是长期存在)的实体. Pod 在创建时会被分配
-一个唯一的 ID([UID](/k8sDocs/concepts/overview/working-with-objects/names/#uids)),
+一个唯一的 ID([UID](/k8sDocs/docs/concepts/overview/working-with-objects/names/#uids)),
 然后被到一个 {{< glossary_tooltip text="node" term_id="node" >}} 上,直到被终止(依照重启策略)或者被删除.
 如果一个 {{< glossary_tooltip text="node" term_id="node" >}} 挂了, 这个节点上的 Pod 会在超时后
 [因删除被调度](#pod-garbage-collection).
@@ -158,7 +158,7 @@ Pod 的人生阶段的数量与意义与其值都是很有限的. 除了以下�
 
 As well as the [phase](#pod-phase) of the Pod overall, Kubernetes tracks the state of
 each container inside a Pod. You can use
-[container lifecycle hooks](/k8sDocs/concepts/containers/container-lifecycle-hooks/) to
+[container lifecycle hooks](/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/) to
 trigger events to run at certain points in a container's lifecycle.
 
 Once the {{< glossary_tooltip text="scheduler" term_id="kube-scheduler" >}}
@@ -262,7 +262,7 @@ through which the Pod has or has not passed:
 
 * `PodScheduled`: the Pod has been scheduled to a node.
 * `ContainersReady`: all containers in the Pod are ready.
-* `Initialized`: all [init containers](/k8sDocs/concepts/workloads/pods/init-containers/)
+* `Initialized`: all [init containers](/k8sDocs/docs/concepts/workloads/pods/init-containers/)
   have started successfully.
 * `Ready`: the Pod is able to serve requests and should be added to the load
   balancing pools of all matching Services.
@@ -334,7 +334,7 @@ status:
 ...
 ```
 
-The Pod conditions you add must have names that meet the Kubernetes [label key format](/k8sDocs/concepts/overview/working-with-objects/labels/#syntax-and-character-set).
+The Pod conditions you add must have names that meet the Kubernetes [label key format](/k8sDocs/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set).
   -->
 
 ### Pod 就绪阀 {#pod-readiness-gate}
@@ -363,7 +363,7 @@ status:
       ready: true
 ...
 ```
-用户添加的条件在命名是需要符合 k8s 的 [标签命名格式](/k8sDocs/concepts/overview/working-with-objects/labels/#syntax-and-character-set)
+用户添加的条件在命名是需要符合 k8s 的 [标签命名格式](/k8sDocs/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set)
 
 <!--
 ### Status for Pod readiness {#pod-readiness-status}
@@ -614,7 +614,7 @@ An example flow:
    as terminating (a graceful shutdown duration has been set), the kubelet begins the local Pod
    shutdown process.
    1. If one of the Pod's containers has defined a `preStop`
-      [hook](/k8sDocs/concepts/containers/container-lifecycle-hooks/#hook-details), the kubelet
+      [hook](/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/#hook-details), the kubelet
       runs that hook inside of the container. If the `preStop` hook is still running after the
       grace period expires, the kubelet requests a small, one-off grace period extension of 2
       seconds.
@@ -664,7 +664,7 @@ kubelet 或 {{< glossary_tooltip term_id="container-runtime">}} 发生重启， 
   Pod 对象就会更新，并标记为已经挂了。 如果使用 `kubectl describe` 查看正在删除的 Pod，
   看到它的状态应该是 `Terminating`。 在 Pod 所在的节点上： 当 kubelet 看到 Pod 被标记为终止时(添加一个平滑关闭标记)
   kubelet 就开始并本地的 Pod 的进程。
-    1. 如果 Pod 中有任意容器配置了[钩子](/k8sDocs/concepts/containers/container-lifecycle-hooks/#hook-details) `preStop`,
+    1. 如果 Pod 中有任意容器配置了[钩子](/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/#hook-details) `preStop`,
       kubelet 会在对应容器中执行这个钩子。 如果在预期时间到达时 `preStop` 钩子仍在运行，则 kubelet 一次性多给 2 秒。
       {{< note >}}
       如果 `preStop` 需要比默认的预期时间更长的时间，则需要设置一个合适的 `terminationGracePeriodSeconds` 值
@@ -763,7 +763,7 @@ This avoids a resource leak as Pods are created and terminated over time.
 * 这溃
   [configuring Liveness, Readiness and Startup Probes](/k8sDocs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/).
 
-* 了解[container lifecycle hooks](/k8sDocs/concepts/containers/container-lifecycle-hooks/).
+* 了解[container lifecycle hooks](/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/).
 
 * 更多关于 Pod / Container 状态的 API, 见 [PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#podstatus-v1-core),
 [ContainerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#containerstatus-v1-core).

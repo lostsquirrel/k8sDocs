@@ -151,7 +151,7 @@ spec:
   - `DoNotSchedule` (默认) 让调度器不要调度该 Pod
   - `ScheduleAnyway` 让调度器仍然调度，但调度到不均匀度(skew)最低的节点
 - **labelSelector** 用于找到匹配的 Pod。 匹配到的 Pod 会作为对应拓扑域的的一员(参与数量统计)
-  更多标签和选择器见 [标签和选择器](/k8sDocs/concepts/overview/working-with-objects/labels/#label-selectors)
+  更多标签和选择器见 [标签和选择器](/k8sDocs/docs/concepts/overview/working-with-objects/labels/#label-selectors)
 
 更新多关于该字段的信息请查看 `kubectl explain Pod.spec.topologySpreadConstraints` 命令结果。
 <!--

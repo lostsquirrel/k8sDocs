@@ -46,7 +46,7 @@ specific service do not need to know all the details about that service.
 ## 理解 Pod 预设信息
 
 PodPreset 是在Pod 创建时向其中注入的运行环境需要的额外信息的 API 对象资源。
-用户可以通过 [label selectors](/k8sDocs/concepts/overview/working-with-objects/labels/#label-selectors)
+用户可以通过 [label selectors](/k8sDocs/docs/concepts/overview/working-with-objects/labels/#label-selectors)
 来指定哪些 PodPreset 要用到该 Pod 上面。
 
 PodPreset 可以让 Pod 模板的创建者不必要为每个 Pod 提供都提供所有信息。

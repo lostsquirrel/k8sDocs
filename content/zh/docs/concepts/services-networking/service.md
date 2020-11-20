@@ -178,7 +178,7 @@ Each port definition can have the same `protocol`, or a different one.
 Service 在 k8s 中是一个 `REST` 对象， 与 Pod 类似。 与其它所有 `REST` 对象一样，
 可以通过 `POST` 请求将 Service 定义发送到 api-server 来创建一个新的实例。
 Service 的名称必须是一个有效的
-[DNS 标签名称](/k8sDocs/concepts/overview/working-with-objects/names#dns-label-names).
+[DNS 标签名称](/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-label-names).
 
 例如， 假如有一组 Pod， 每个 Pod 监听的端口都是 `9376`， 都打着一个标签为 `app=MyApp`:
 
@@ -263,7 +263,7 @@ subsets:
 ```
 
 Endpoint 对象的名称必以是一个有效的
-[DNS 子域名](/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+[DNS 子域名](/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
 {{< note >}}
 Endpoint 对象所用的 IP _必须不能_ 是: 回环地址 (127.0.0.0/8 IPv4, ::1/128 IPv6)，或
 链路本地(link-local) (169.254.0.0/16 和 224.0.0.0/24  IPv4, fe80::/64 IPv6).
@@ -301,7 +301,7 @@ EndpointSlice 是一种可比 Endpoint 提供更新好伸缩性替代方案的 A
 的网络末端数量达到 100 时就认为是 "满了", 这时候就会创建新的 EndpointSlice 来存储更多的网络末端。
 
 更多 EndpointSlice 提供的属性和功能请见
-[EndpointSlices](/k8sDocs/concepts/services-networking/endpoint-slices/).
+[EndpointSlices](/k8sDocs/docs/concepts/services-networking/endpoint-slices/).
 <!--
 ### Application protocol
 
@@ -438,7 +438,7 @@ kernelspace 之间来回切换。 这种方式也可能更加可靠。
 地尝试其它的后端 Pod。
 
 可以使用
-[就绪探针](/k8sDocs/concepts/workloads/pods/pod-lifecycle/#container-probes)
+[就绪探针](/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#container-probes)
 来验证后端的 Pod 是在正常工作的， 因此 kube-proxy 在 iptables 模式下只会看到检测结果为健康的
 后端 Pod。 这么做的意义在于避免了通过 kube-proxy 将流量发送到已经知道挂了的 Pod 上。
 ![Services overview diagram for iptables proxy](/k8sDocs/images/docs/services-iptables-overview.svg)
@@ -736,7 +736,7 @@ You can find more information about `ExternalName` resolution in
 ### DNS
 
 用户可以(并且几乎绝大多时候应该)通过使用
-[插件](/k8sDocs/concepts/cluster-administration/addons/).
+[插件](/k8sDocs/docs/concepts/cluster-administration/addons/).
 为你的集群设置 DNS 服务。
 
 一个可感知集群的 DNS 服务， 例如 CoreDNS， 会监听 k8s API 创建的 Service 并创建对应的 DNS 记录。
@@ -754,7 +754,7 @@ k8s 还支持命名端口的 DNS SRV (Service) 记录。 如果叫 `"my-service.
 得到 `"http"` 对应的端口号和 IP 地址。
 
 k8s DNS 服务是访问 `ExternalName` Service 的唯一方式。更多关于 `ExternalName` 的信息见
-[DNS Pod 和 Service](/k8sDocs/concepts/services-networking/dns-pod-service/).
+[DNS Pod 和 Service](/k8sDocs/docs/concepts/services-networking/dns-pod-service/).
 <!--
 ## Headless Services
 
@@ -876,7 +876,7 @@ k8s 可以通过 `ServiceTypes` 来指定想要创建的 Service 类型， 默�
   如果使用 `ExternalName` 类型，需要 kube-dns `v1.7+` 或 CoreDNS `v0.0.8+`
   {{< /note >}}
 
-用户也可以使用 [Ingress](/k8sDocs/concepts/services-networking/ingress/) 来暴露 Service。
+用户也可以使用 [Ingress](/k8sDocs/docs/concepts/services-networking/ingress/) 来暴露 Service。
 Ingress 不是 Service 的一个类型， 但它扮演的是集群切入点的角色。 它让路由规则可以统一为一个资源。
 并可以在同一个IP地址上暴露多个 Service
 <!--
@@ -2302,6 +2302,6 @@ SCTP 多重连接的 NAT 需要在对应的逻辑模块中有特殊逻辑
 ## {{% heading "whatsnext" %}}
 
 
-* 概念 [通过 Service 连接应用](/k8sDocs/concepts/services-networking/connect-applications-service/)
-* 概念 [Ingress](/k8sDocs/concepts/services-networking/ingress/)
-* 概念 [EndpointSlices](/k8sDocs/concepts/services-networking/endpoint-slices/)
+* 概念 [通过 Service 连接应用](/k8sDocs/docs/concepts/services-networking/connect-applications-service/)
+* 概念 [Ingress](/k8sDocs/docs/concepts/services-networking/ingress/)
+* 概念 [EndpointSlices](/k8sDocs/docs/concepts/services-networking/endpoint-slices/)

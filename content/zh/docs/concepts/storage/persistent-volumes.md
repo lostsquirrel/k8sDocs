@@ -32,7 +32,7 @@ weight: 20
 This document describes the current state of _persistent volumes_ in Kubernetes. Familiarity with [volumes](/docs/concepts/storage/volumes/) is suggested.
  -->
 本文主要介绍当前 k8s 中 _持久化卷(persistent volume)_ 的状态。
-建议先熟悉 [volumes](/k8sDocs/concepts/storage/volumes/)
+建议先熟悉 [volumes](/k8sDocs/docs/concepts/storage/volumes/)
 <!-- body -->
 <!--
 ## Introduction
@@ -121,7 +121,7 @@ check [kube-apiserver](/docs/admin/kube-apiserver/) documentation.
 
 当管理创建的 PV 不能满足用户的 PersistentVolumeClaim 时，集群可能就会尝试为这个 PVC 动态
 提供一个卷。这种供给基于 `StorageClass`: PVC 必须要申请一个
-[StorageClass](/k8sDocs/concepts/storage/storage-classes/)
+[StorageClass](/k8sDocs/docs/concepts/storage/storage-classes/)
 并且在动态供给发生之前管理员必须要完成该 `StorageClass` 的创建和配置。
 如果 PVC 的 `StorageClass` 被设置为 `""` 实际上表示关闭自身的动态供给。
 
@@ -435,7 +435,7 @@ to `Retain`, including cases where you are reusing an existing PV.
 这样 PV 和 PVC 就会绑定。
 
 这种绑定会忽略一些卷匹配条件，包括节点亲和性。 控制中心还是会检测，
-[StorageClass](/k8sDocs/concepts/storage/storage-classes/), 访问模式，申请容量是否是有效的。
+[StorageClass](/k8sDocs/docs/concepts/storage/storage-classes/), 访问模式，申请容量是否是有效的。
 
 ```yaml
 apiVersion: v1
@@ -740,7 +740,7 @@ Helper programs relating to the volume type may be required for consumption of a
 
 每个 PV 包含一个 `spec` 和 `status`, 分别是对这个卷的配置定义和状态。 `PersistentVolume`
 对象的名称必须是一个有效的
-[DNS 子域名](/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+[DNS 子域名](/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
 
 ```yaml
 apiVersion: v1
@@ -930,7 +930,7 @@ it will become fully deprecated in a future Kubernetes release.
 ### 类别 {#class}
 
 一个 PV 可以有一个类别， 可以通过 `storageClassName` 属性来设置一个
-[StorageClass](/k8sDocs/concepts/storage/storage-classes/).
+[StorageClass](/k8sDocs/docs/concepts/storage/storage-classes/).
 一个指定类别的 PV 只能与请求对应类的 PVC 相绑定。 没有设置 `storageClassName` 的 PV 是没有类别的
 并且只能与没有请求类别的 PVC 绑定。
 
@@ -1031,12 +1031,12 @@ A PV can specify [node affinity](/docs/reference/generated/kubernetes-api/{{< pa
 
 {{< note >}}
 对于大多数卷类型， 是不需要设置这个字段的。
-[AWS EBS](/k8sDocs/concepts/storage/volumes/#awselasticblockstore),
-[GCE PD](/k8sDocs/concepts/storage/volumes/#gcepersistentdisk),
-[Azure Disk](/k8sDocs/concepts/storage/volumes/#azuredisk)
+[AWS EBS](/k8sDocs/docs/concepts/storage/volumes/#awselasticblockstore),
+[GCE PD](/k8sDocs/docs/concepts/storage/volumes/#gcepersistentdisk),
+[Azure Disk](/k8sDocs/docs/concepts/storage/volumes/#azuredisk)
 卷块设备会自动添加。
 但需要为
-[local](/k8sDocs/concepts/storage/volumes/#local)
+[local](/k8sDocs/docs/concepts/storage/volumes/#local)
 卷需要显示设置该字段
 {{< /note >}}
 
@@ -1099,7 +1099,7 @@ spec:
 
 每个 PVC 包含 `spec` 和 `status`, 其中包含 PVC 的配置定义和状态。
 `PersistentVolumeClaim` 对象的名称必须是一个有效的
-[DNS 子域名](/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+[DNS 子域名](/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
 
 ```yaml
 apiVersion: v1
@@ -1164,7 +1164,7 @@ All of the requirements, from both `matchLabels` and `matchExpressions`, are AND
 ### 选择器
 
 PVC 可以指定一个
-[标签选择器](/k8sDocs/concepts/overview/working-with-objects/labels/#label-selectors)
+[标签选择器](/k8sDocs/docs/concepts/overview/working-with-objects/labels/#label-selectors)
 来选择卷集合。 只有与选择器匹配的卷可以与 PVC 绑定。 选择器可以包含以下两个字段
 
 * `matchLabels` - 卷必须要拥有与其对应的标签
@@ -1529,12 +1529,12 @@ To enable support for restoring a volume from a volume snapshot data source, ena
 `VolumeSnapshotDataSource` feature gate on the apiserver and controller-manager.
  -->
 
-## 卷快照和快照恢复支持
+## 卷快照和快照恢复支持 {#volume-snapshot-and-restore-volume-from-snapshot-support}
 
 {{< feature-state for_k8s_version="v1.17" state="beta" >}}
 
 卷快照特性只对 CSI 卷插件支持。详细信息见
- [卷快照](/k8sDocs/concepts/storage/volume-snapshots/).
+ [卷快照](/k8sDocs/docs/concepts/storage/volume-snapshots/).
 要启用对从卷快照恢复的支持，需要在 `apiserver` `controller-manager` 打开
 `VolumeSnapshotDataSource` 功能阀
 <!--
@@ -1586,7 +1586,7 @@ spec:
 
 ## 卷克隆
 
-[卷克隆](/k8sDocs/concepts/storage/volume-pvc-datasource/) 只存在于 CSI 卷插件
+[卷克隆](/k8sDocs/docs/concepts/storage/volume-pvc-datasource/) 只存在于 CSI 卷插件
 <!--
 ### Create PersistentVolumeClaim from an existing PVC {#create-persistent-volume-claim-from-an-existing-pvc}
 

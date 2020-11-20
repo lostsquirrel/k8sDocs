@@ -441,7 +441,7 @@ A ReplicaSet also needs a [`.spec` section](https://git.k8s.io/community/contrib
 在 k8s v1.9+ `apiVersion` 字段的值为 `apps/v1`，默认开启。 API 版本 `apps/v1beta2` 被废弃。
 具体可以看之前示例中 `frontend.yaml` 文件内容。
 
-`ReplicaSet` 名称必须是一个有效的 [DNS 子域名](/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+`ReplicaSet` 名称必须是一个有效的 [DNS 子域名](/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
 `ReplicaSet` 还必须要有一个
 [`.spec` 字段](https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status).
 <!--
@@ -456,7 +456,7 @@ For the template's [restart policy](/docs/concepts/workloads/Pods/pod-lifecycle/
  -->
 ### Pod 模板
 
-`.spec.template` 字段就是 [pod template](/k8sDocs/concepts/workloads/Pods/pod-overview/#pod-templates) 而且其中还必须要定义标签.
+`.spec.template` 字段就是 [pod template](/k8sDocs/docs/concepts/workloads/Pods/pod-overview/#pod-templates) 而且其中还必须要定义标签.
 在示例中的 `frontend.yaml` 打的标签是: `tier: frontend`.
 注意不能与其它控制器的选择器相重叠，以免它们会争抢这个 Pod
 
@@ -483,7 +483,7 @@ For 2 ReplicaSets specifying the same `.spec.selector` but different `.spec.temp
  -->
 ### Pod 选择器
 
-`.spec.selector` 字段是一个 [标签选择器](/k8sDocs/concepts/overview/working-with-objects/labels/)
+`.spec.selector` 字段是一个 [标签选择器](/k8sDocs/docs/concepts/overview/working-with-objects/labels/)
 [之前](#how-a-replicaset-works)讨论过，这些标签用于识别潜在的捕获对象。 在之前示例中 `frontend.yaml`
 定义的选择器如下:
 
@@ -580,7 +580,7 @@ curl -X DELETE  'localhost:8080/apis/apps/v1/namespaces/default/replicasets/fron
 
 当原来的 `ReplicaSet` 就可以创建一个新的来替代它。 新创建的 ReplicaSet 的 `.spec.selector` 需要与原来的一样， 这样它就能接管这些 Pod。
 但是它不会让旧的 Pod 使用新的模板。
-而想要以控制器方式更新 Pod 的模板，需要使用 [Deployment](/k8sDocs/concepts/workloads/controllers/deployment/#creating-a-deployment)
+而想要以控制器方式更新 Pod 的模板，需要使用 [Deployment](/k8sDocs/docs/concepts/workloads/controllers/deployment/#creating-a-deployment)
 因为 `ReplicaSet` 不支持直接的滚动更新。
 
 <!--
@@ -662,7 +662,7 @@ As such, it is recommended to use Deployments when you want ReplicaSets.
 
 ### Deployment (推荐)
 
-[`Deployment`](/k8sDocs/concepts/workloads/controllers/deployment/) 对象可以包含 `ReplicaSet` 并且可以通过声明方式更新自身及所属的 Pod，
+[`Deployment`](/k8sDocs/docs/concepts/workloads/controllers/deployment/) 对象可以包含 `ReplicaSet` 并且可以通过声明方式更新自身及所属的 Pod，
 服务端滚动更新。 虽然 ReplicaSet 可以独立使用，但是现在主要是使用 Deployment 作为组织 Pod 创建，删除，更新的方式。
 当用户使用 `Deployment` 不需要关心它所创建的 `ReplicaSet`， `Deployment` 会管理所属的 `ReplicaSet`
 因此用户在想要使用 `ReplicaSet` 时推荐使用 `Deployment` 代替。
@@ -685,7 +685,7 @@ Use a [`Job`](/docs/concepts/jobs/run-to-completion-finite-workloads/) instead o
  -->
 ### Job
 
-在运行那会在有限时间内自己运行结束后自动终止的 Pod(批处理任务)，请使用 [`Job`](/k8sDocs/concepts/jobs/run-to-completion-finite-workloads/),就不要用 `ReplicaSet`了
+在运行那会在有限时间内自己运行结束后自动终止的 Pod(批处理任务)，请使用 [`Job`](/k8sDocs/docs/concepts/jobs/run-to-completion-finite-workloads/),就不要用 `ReplicaSet`了
 <!--
 ### DaemonSet
 
@@ -696,7 +696,7 @@ safe to terminate when the machine is otherwise ready to be rebooted/shutdown.
  -->
 ### DaemonSet
 
-当 Pod 需要使用到机器级别的功能，如机器监控或机器日志时，使用 [`DaemonSet`](/k8sDocs/concepts/workloads/controllers/daemonset/)
+当 Pod 需要使用到机器级别的功能，如机器监控或机器日志时，使用 [`DaemonSet`](/k8sDocs/docs/concepts/workloads/controllers/daemonset/)
 因为这些 Pod 的生存期会与对应机器的生存期绑定在一起: 这些 Pod 需要在机器上其它 Pod 运行之前就在节点上运行， 只有在机器准备重启或关机时才能
 安全的终止。
 <!--
@@ -709,7 +709,7 @@ As such, ReplicaSets are preferred over ReplicationControllers
  -->
 ### ReplicationController
 
-ReplicaSet 是  [_ReplicationControllers_](/k8sDocs/concepts/workloads/controllers/replicationcontroller/) 的继任者。
+ReplicaSet 是  [_ReplicationControllers_](/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/) 的继任者。
 它们两个可以达成相同的目的，而且行为方式也相似， 除了 `ReplicationController` 不支持像
-[标签使用](/k8sDocs/concepts/overview/working-with-objects/labels/#label-selectors) 中介绍的基于集合的选择器。
+[标签使用](/k8sDocs/docs/concepts/overview/working-with-objects/labels/#label-selectors) 中介绍的基于集合的选择器。
 因此相对于 ReplicationControllers 推荐使用 `ReplicaSet`

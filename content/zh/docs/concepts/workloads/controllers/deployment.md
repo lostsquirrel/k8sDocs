@@ -2039,8 +2039,8 @@ The name of a Deployment object must be a valid
 A Deployment also needs a [`.spec` section](https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status).
 与所以其它的 k8s 配置一样，Deployment 必须要有  `.apiVersion`, `.kind`, `.metadata` 字段。
 配置文件的通用信息见 [部署应用](/k8sDocs/tasks/run-application/run-stateless-application-deployment/),
-配置容器， [使用 kubect 管理资源](/k8sDocs/concepts/overview/working-with-objects/object-management/).
-Deployment 对象的名称必须是一个有效的 [DNS 子域名](/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names)
+配置容器， [使用 kubect 管理资源](/k8sDocs/docs/concepts/overview/working-with-objects/object-management/).
+Deployment 对象的名称必须是一个有效的 [DNS 子域名](/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names)
 
 Deployment 还需要有一个 [`.spec` 定义区](https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status).
 <!--
@@ -2060,12 +2060,12 @@ allowed, which is the default if not specified.
 
 `.spec` 的必要字段仅有 `.spec.template` 和 `.spec.selector`两个。
 
-`.spec.template` 字段就是一个 [Pod 模板](/k8sDocs/concepts/workloads/pods/#pod-templates)对象。定义规范与 {{< glossary_tooltip text="Pod" term_id="pod" >}}
+`.spec.template` 字段就是一个 [Pod 模板](/k8sDocs/docs/concepts/workloads/pods/#pod-templates)对象。定义规范与 {{< glossary_tooltip text="Pod" term_id="pod" >}}
 完全一样， 除了因为它嵌套的 Deployment 中所以没 `apiVersion` 或 `kind` 字段。
 
 相对裸 Pod 所以需要的字段， Deployment 中的 Pod 模板需要指定适当的标签和重启策略。 对于标签定义，需要注意不要与其它的控制器重叠了。 见 [selector](#selector)
 
-[`.spec.template.spec.restartPolicy`](/k8sDocs/concepts/workloads/pods/pod-lifecycle/#restart-policy) 的值只能是 `Always`， 这也是默认值。
+[`.spec.template.spec.restartPolicy`](/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy) 的值只能是 `Always`， 这也是默认值。
 <!--
 ### Replicas
 
@@ -2099,7 +2099,7 @@ other and won't behave correctly.
  -->
 ### 选择器
 
-`.spec.selector` 是一个必要字段，用于定义 [标签选择器](/k8sDocs/concepts/overview/working-with-objects/labels/), 标签选择器用于选择 Deployment 下属的 Pod
+`.spec.selector` 是一个必要字段，用于定义 [标签选择器](/k8sDocs/docs/concepts/overview/working-with-objects/labels/), 标签选择器用于选择 Deployment 下属的 Pod
 
 `.spec.selector` 必须与 `.spec.template.metadata.labels`配置, 否则 API 会拒绝.
 
@@ -2148,7 +2148,7 @@ replacement will be created immediately (even if the old Pod is still in a Termi
 这个策略只能保证终止旧 Pod 的操作在创建新 Pod 的操作之前。 如果用户更新的一个 Deployment， 所以旧的 Pod 就会马上被标记为终止产状。
 成功删除则要等到有任意一个新版本的 Pod 创建成功之后。 如果在这之前，用户手动删除了一个 Pod， 这时它的生命周期还受 ReplicaSet 控制，
 所以会立马又创建一个旧的(尽管旧的 Pod 依然处于终止中的状态)。 如果用户需要 “最大的” 保证， 则建议考虑使用
-[StatefulSet](/k8sDocs/concepts/workloads/controllers/statefulset/)
+[StatefulSet](/k8sDocs/docs/concepts/workloads/controllers/statefulset/)
 {{< /note >}}
 <!--
 #### Rolling Update Deployment
@@ -2233,7 +2233,7 @@ a Pod is considered ready, see [Container Probes](/docs/concepts/workloads/pods/
 ### 最小就绪时间
 
 `.spec.minReadySeconds` 是一个可选字段， 用于设置一个新创建的 Pod 在没有任何容器崩掉的情况下达成就绪到被认为可用的最小时限(单位秒)
-默认是 0 (Pod 在就绪后就认为可用)。 了解更多关于 Pod 被认为就绪的信息，见[容器探针](/k8sDocs/concepts/workloads/pods/pod-lifecycle/#container-probes).
+默认是 0 (Pod 在就绪后就认为可用)。 了解更多关于 Pod 被认为就绪的信息，见[容器探针](/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#container-probes).
 <!--
 ### Revision History Limit
 

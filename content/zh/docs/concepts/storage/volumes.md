@@ -33,7 +33,7 @@ Familiarity with [Pods](/docs/concepts/workloads/pods/pod/) is suggested.
 崩溃后，kubelet 会将其重启，但其所写的文件会全部丢失 - 容器会以全新的状态启动。 第二个问题是
 在一个 `Pod` 中的不同容器之间需要共享文件。 k8s 的 `Volume` 抽象概念就是解决这些问题的。
 
-建议先看看 [Pods](/k8sDocs/concepts/workloads/pods/pod/)
+建议先看看 [Pods](/k8sDocs/docs/concepts/workloads/pods/pod/)
 <!-- body -->
 <!--
 ## Background
@@ -1317,7 +1317,7 @@ PersistentVolume 的 `volumeMode` 可以被设置为 "Block" (而不是默认值
 
 当使用 `local` 卷时， 推荐在创建 StorageClass 时将 `volumeBindingMode` 设置为 `WaitForFirstConsumer`。
 可以见
-[示例](/k8sDocs/concepts/storage/storage-classes/#local).
+[示例](/k8sDocs/docs/concepts/storage/storage-classes/#local).
 卷延迟绑定确定 PersistentVolumeClaim 在作绑定决策时检查 Pod 可能有的其它的节点约束，如果节点
 的资源需求，节点的选择器，Pod 的亲和性和反亲和性。
 
@@ -1368,10 +1368,10 @@ details.
 ### persistentVolumeClaim {#persistentvolumeclaim}
 
 `persistentVolumeClaim` 卷用于将
-[PersistentVolume](/k8sDocs/concepts/storage/persistent-volumes/) 挂载到 Pod 中。
+[PersistentVolume](/k8sDocs/docs/concepts/storage/persistent-volumes/) 挂载到 Pod 中。
 `PersistentVolumeClaim` 是用户"声明"持久存储(如GCE PersistentDisk 或 iSCSI 卷)时不需要
 知道具体云环境细节的一种方式
-更多信息见 [PersistentVolumes 示例](/k8sDocs/concepts/storage/persistent-volumes/)
+更多信息见 [PersistentVolumes 示例](/k8sDocs/docs/concepts/storage/persistent-volumes/)
 <!--
 ### projected {#projected}
 
@@ -1837,7 +1837,7 @@ For further detail, please see the [ScaleIO examples](https://github.com/kuberne
 
 `ScaleIO` 是一个基于软件的存储平台，它可以使用已经存在的硬件来创建可扩展的共享块网络存储集群。
 `scaleIO` 卷插件让 Pod 可以使用 已经存在的 ScaleIO 卷(也可以为 持久化卷声明(PersistentVolumeClaim)
-动态地创建新的卷， 见 [ScaleIO 持久化卷](/k8sDocs/concepts/storage/persistent-volumes/#scaleio))
+动态地创建新的卷， 见 [ScaleIO 持久化卷](/k8sDocs/docs/concepts/storage/persistent-volumes/#scaleio))
 
 {{< caution >}}
 在使用 `ScaleIO` 卷之前，需要先部署配置运行 ScaleIO 集群。
@@ -1904,7 +1904,7 @@ Secrets are described in more detail [here](/docs/concepts/configuration/secret/
 一个以 [subPath](#using-subpath) 挂载 Secret 的容器不会接收到 Secret 的更新。
 {{< /note >}}
 
-更多关于 Secret 的信息见 [这里](/k8sDocs/concepts/configuration/secret/).
+更多关于 Secret 的信息见 [这里](/k8sDocs/docs/concepts/configuration/secret/).
 <!--
 ### storageOS {#storageos}
 
@@ -2360,7 +2360,7 @@ several media types.
 之间也没有限离。
 
 在将来，我们预计将通过
-[资源](/k8sDocs/concepts/configuration/manage-resources-containers/)
+[资源](/k8sDocs/docs/concepts/configuration/manage-resources-containers/)
 来确定 `emptyDir` 和 `hostPath` 请求确定数量的空间，如果集群中有多种介质也 选择要使用的介质
 <!--
 ## Out-of-Tree Volume Plugins
@@ -2561,7 +2561,7 @@ as usual, without any CSI specific changes.
 有外部 CSI 驱动的供应商可以实现对 k8s 工作负载原生块卷的支持
 
 用户可以在不作任何 CSI 配置修改的情况下
-[设置支持原生块卷的 PV/PVC](/k8sDocs/concepts/storage/persistent-volumes/#raw-block-volume-support)
+[设置支持原生块卷的 PV/PVC](/k8sDocs/docs/concepts/storage/persistent-volumes/#raw-block-volume-support)
 <!--
 #### CSI ephemeral volumes
 

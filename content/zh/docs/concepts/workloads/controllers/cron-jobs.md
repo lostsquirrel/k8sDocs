@@ -56,7 +56,7 @@ _CronJob_ 可以定时重复地创建 {{< glossary_tooltip term_id="job" >}}
 {{< /caution >}}
 
 在创建 CronJob 资源的配置定义时，要确保其名称是一个有效的
-[DNS 子域名](/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+[DNS 子域名](/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
 名称不能多于 52 个字符。 因为 CronJob 会自动在它创建的 Job 的名称是自身的名称再加 11 个字符，
 这样 Job 的名称就不会超过 63 个字符的限制。
 

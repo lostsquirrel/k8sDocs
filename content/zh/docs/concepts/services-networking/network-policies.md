@@ -55,7 +55,7 @@ Network policies are implemented by the [network plugin](/docs/concepts/extend-k
 ## 前置条件
 
 网络策略是由
-[网络插件](/k8sDocs/concepts/extend-kubernetes/compute-storage-net/network-plugins/)
+[网络插件](/k8sDocs/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/)
 实现的。 要使用网络策略，就必要使用一个支持网络策略的网络解决方案。 创建一个没有实现的控制器的
 `NetworkPolicy` 资源是没有效果的
 <!--
@@ -206,7 +206,7 @@ spec:
 __必要字段__: 与其它所有的 k8s 配置一样， NetworkPolicy 必须有 `apiVersion`, `kind`, `metadata`
 字段。 配置文件常用信息请见
 [使用 ConfigMap 配置容器](/k8sDocs/tasks/configure-pod-container/configure-pod-configmap/),
-和 [对象管理](/k8sDocs/concepts/overview/working-with-objects/object-management).
+和 [对象管理](/k8sDocs/docs/concepts/overview/working-with-objects/object-management).
 
 __spec__: NetworkPolicy [spec](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status) 包含了在指定命名空间创建特定网络策略的所有信息
 

@@ -70,7 +70,7 @@ The TTL seconds can be set at any time. Here are some examples for setting the
 ## TTL 控制器
 
 目前 TTL 控制器只支持 Job。 集群管理员可以通过该特性来自动清理已完成的 Job(无论 `Complete` 或 `Failed`)，
-只需要在 Job 对象上设置 `.spec.ttlSecondsAfterFinished`， 见 [示例](/k8sDocs/concepts/workloads/controllers/job/#clean-up-finished-jobs-automatically).
+只需要在 Job 对象上设置 `.spec.ttlSecondsAfterFinished`， 见 [示例](/k8sDocs/docs/concepts/workloads/controllers/job/#clean-up-finished-jobs-automatically).
 TTL 控制器假定一个资源在完成后 TTL 秒之后就是能够被回收的，换句话来说，就是当 TTL 过期的时候。
 当 TTL 控制器清理一个资源时，会级联地删除，也就是说会连同它的从属对象一起删除。 要注意当一个资源被删除时，
 它的生命周期保证，如析构器，就会被触发。
@@ -124,6 +124,6 @@ very small. Please be aware of this risk when setting a non-zero TTL.
 
 ## {{% heading "whatsnext" %}}
 
-* [自动清理 Job](/k8sDocs/concepts/workloads/controllers/job/#clean-up-finished-jobs-automatically)
+* [自动清理 Job](/k8sDocs/docs/concepts/workloads/controllers/job/#clean-up-finished-jobs-automatically)
 
 * [设置文稿](https://github.com/kubernetes/enhancements/blob/master/keps/sig-apps/0026-ttl-after-finish.md)

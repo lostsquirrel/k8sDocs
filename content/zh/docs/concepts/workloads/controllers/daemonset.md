@@ -90,9 +90,9 @@ A DaemonSet also needs a [`.spec`](https://git.k8s.io/community/contributors/dev
 
 与其它所有其它的 k8s 配置一样， DaemonSet 必须有 `apiVersion`, `kind`, `metadata` 字段，
 关于配置文件的通用信息见 [运行无状态应用](/k8sDocs/tasks/run-application/run-stateless-application-deployment/),
-[配置容器](/k8sDocs/tasks/), [使用 kubectl 管理对象](/k8sDocs/concepts/overview/working-with-objects/object-management/)
+[配置容器](/k8sDocs/tasks/), [使用 kubectl 管理对象](/k8sDocs/docs/concepts/overview/working-with-objects/object-management/)
 DaemonSet 的名称必须是一个有效的
-[DNS 子域名](/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+[DNS 子域名](/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
 
 DaemonSet 也是必须要有一个 [`.spec`](https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status) 配置区.
 
@@ -113,12 +113,12 @@ A Pod Template in a DaemonSet must have a [`RestartPolicy`](/docs/concepts/workl
 
 `.spec.template` 是 `.spec` 中的一个必要字段.
 
-`.spec.template` 是一个 [pod 模板](/k8sDocs/concepts/workloads/pods/#pod-templates).
+`.spec.template` 是一个 [pod 模板](/k8sDocs/docs/concepts/workloads/pods/#pod-templates).
 除了因为嵌套没有 `apiVersion` 或 `kind`字段外，与 {{< glossary_tooltip term_id="pod" >}}的定义完全相同,
 
 相较与裸 Pod 增加的字段还有 DaemonSet 需要设置恰当的标签 (见 [Pod 选择器](#pod-selector))
 
-DaemonSet 中的 Pod 模板必须要有 [`RestartPolicy`](/k8sDocs/concepts/workloads/pods/pod-lifecycle/#restart-policy)
+DaemonSet 中的 Pod 模板必须要有 [`RestartPolicy`](/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy)
 且值为 `Always` 或 留空，然后默认为 `Always`
 <!--
 ### Pod Selector
@@ -150,7 +150,7 @@ create a Pod with a different value on a node for testing.
  -->
 ### Pod 选择器 {#pod-selector}
 
-`.spec.selector` 字段是一个 Pod 选择器.  与 [Job](/k8sDocs/concepts/workloads/controllers/job/) 的 `.spec.selector` 是一样的。
+`.spec.selector` 字段是一个 Pod 选择器.  与 [Job](/k8sDocs/docs/concepts/workloads/controllers/job/) 的 `.spec.selector` 是一样的。
 
 从 k8s 1.8 开始，用户必须要设置一个与 `.spec.template` 中标签相匹配的标签选择器。不再是留空会添加默认值。
 选择器默认添加的行为与 `kubectl apply` 不兼容。 并且，当一个 DaemonSet 创建后，`.spec.selector` 字段将不可变。
@@ -158,7 +158,7 @@ create a Pod with a different value on a node for testing.
 
 `.spec.selector` 对象由以下两个字段组成:
 
-* `matchLabels` - 与 [ReplicationController](/k8sDocs/concepts/workloads/controllers/replicationcontroller/) 中的 `.spec.selector` 作用一样。
+* `matchLabels` - 与 [ReplicationController](/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/) 中的 `.spec.selector` 作用一样。
 * `matchExpressions` - 能通过键与对应的值列表，操作符组成更复杂的选择器
 如果以上两个字段都有设置，它们之间是逻辑与关系
 
@@ -178,8 +178,8 @@ If you do not specify either, then the DaemonSet controller will create Pods on 
  -->
 ### 只在选定的节点上运行 Pod
 
-如果指定了 `.spec.template.spec.nodeSelector`， 则 DaemonSet 控制器只会在那些匹配 [节点选择器](/k8sDocs/concepts/scheduling-eviction/assign-pod-node/)
-节点上创建 Pod。 类似地，如果指定了 `.spec.template.spec.affinity` 控制器只会在那些匹配 [node affinity](/k8sDocs/concepts/scheduling-eviction/assign-pod-node/)
+如果指定了 `.spec.template.spec.nodeSelector`， 则 DaemonSet 控制器只会在那些匹配 [节点选择器](/k8sDocs/docs/concepts/scheduling-eviction/assign-pod-node/)
+节点上创建 Pod。 类似地，如果指定了 `.spec.template.spec.affinity` 控制器只会在那些匹配 [node affinity](/k8sDocs/docs/concepts/scheduling-eviction/assign-pod-node/)
 节点上创建 Pod。如果一个都没指定，则 DaemonSet 控制器会在所有的节点上创建 Pod。
 <!--
 ## How Daemon Pods are scheduled
@@ -234,7 +234,7 @@ DaemonSet 会确保所有合适的节点者会运行一个 Pod 的副本。 通�
 由此也引出了一些问题:
 
 - Pod 的行为不一致: 普通的 Pod 在创建和等待调度时的状态是 `Pending`，但 DaemonSet 的 Pod 创建时不是 `Pending` 状态，这对用户来说比较费解。
-- [Pod preemption](/k8sDocs/concepts/configuration/pod-priority-preemption/) 是由默认调度器处理的。 当 优先权被开启时， DaemonSet
+- [Pod preemption](/k8sDocs/docs/concepts/configuration/pod-priority-preemption/) 是由默认调度器处理的。 当 优先权被开启时， DaemonSet
 控制器在进行调度决策时不会考虑 Pod 的优先级(priority)和优先权(preemption)(这俩有啥区别？)
 
 `ScheduleDaemonSetPods` 允许用户可以让默认调度器来调度 DaemonSet 的 Pod，而不是 DaemonSet 的控制来调度，
@@ -280,7 +280,7 @@ the related features.
  -->
 ### 毒点(Taint)与耐受(Toleration)
 
-尽管 DaemonSet 的 Pod 是遵守 [毒点与耐受](/k8sDocs/concepts/scheduling-eviction/taint-and-toleration/)的,
+尽管 DaemonSet 的 Pod 是遵守 [毒点与耐受](/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/)的,
 但以下耐受会根据相关的特性自动添加到 DaemonSet 的 Pod 上。
 
 | Toleration Key                           | Effect     | Version | Description |
@@ -311,7 +311,7 @@ Some possible patterns for communicating with Pods in a DaemonSet are:
 
 - **Push**: DaemonSet 中的 Pod 配置为向另一个服务发送更新， 如 一个状态数据。 它们没有客户端。
 - **NodeIP and Known Port**: DaemonSet 中的 Pod 可以使用 `hostPort`， 这样就可以通过节点IP来访问这些 Pod。 客户端可以通过某些方便的方式获得节点的IP 和端口。
-- **DNS**: 创建一个有相同 Pod 选择器的 [headless Service](/k8sDocs/concepts/services-networking/service/#headless-services), 这样就可以通过 `endpoints` 找到 DaemonSet 或 通过 DNS 找到一个 A 记录列表
+- **DNS**: 创建一个有相同 Pod 选择器的 [headless Service](/k8sDocs/docs/concepts/services-networking/service/#headless-services), 这样就可以通过 `endpoints` 找到 DaemonSet 或 通过 DNS 找到一个 A 记录列表
 - **Service**: 创建个拥有相同 Pod 选择器的 Service , 通过 Service 随机访问一个节点上的 Pod(但没办法直接访问指定节点)
 
 <!--
@@ -406,7 +406,7 @@ all or certain hosts, and when it needs to start before other Pods.
  -->
 ### Deployment
 
-DaemonSet 与 [Deployment](/k8sDocs/concepts/workloads/controllers/deployment/) 类似, 它们都可以创建 Pod
+DaemonSet 与 [Deployment](/k8sDocs/docs/concepts/workloads/controllers/deployment/) 类似, 它们都可以创建 Pod
 并且这些 Pod 运行的都是不应该被终止的进程(如, web 服务器,存储服务器)
 
 Deployment 用于无状态的服务, 如前端,可以通过副本数来扩容或缩减容量, 发布更新比控制 Pod 在哪个主机上运行更重要.

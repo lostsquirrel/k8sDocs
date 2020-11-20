@@ -232,7 +232,7 @@ PDB 不能阻止 [计划内故障](#voluntary-and-involuntary-disruptions)的发
 由应用滚动更新造成的 Pod 删除或不可用是遵照故障预算的， 但工作负载(如 Deployment 和 StatefulSet)
 的滚动更新则不受 PDB 限制。 而是由工作负载中的配置来处理更新失败的。
 
-当一个 Pod 因使用 驱逐 API而被驱逐， 会平滑地被 [终止](/k8sDocs/concepts/workloads/pods/pod-lifecycle/#pod-termination)
+当一个 Pod 因使用 驱逐 API而被驱逐， 会平滑地被 [终止](/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination)
 或  [PodSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#podspec-v1-core).)
 中配置的 `terminationGracePeriodSeconds` 后被杀死。
 
@@ -476,5 +476,5 @@ the nodes in your cluster, such as a node or system software upgrade, here are s
  -->
 - 实践 [配置 PodDisruptionBudget](/k8sDocs/tasks/run-application/configure-pdb/).
 - 实践 [节点清场](/k8sDocs/tasks/administer-cluster/safely-drain-node/)
-- 了解 [更新 Deployment](/k8sDocs/concepts/workloads/controllers/deployment/#updating-a-deployment)
+- 了解 [更新 Deployment](/k8sDocs/docs/concepts/workloads/controllers/deployment/#updating-a-deployment)
   包括在回滚时用哪些步骤保持其可用性

@@ -117,7 +117,7 @@ podIP: 10.244.2.5
 它的 IP 访问它。 与 Docker 一样， 端口也可以发布到主机的网卡上， 因为网络模型的原因，应该尽量减少这
 种方式的使用。
 
-如果用户比较好奇这个是怎么实现的见 [这里](/k8sDocs/concepts/cluster-administration/networking/#how-to-achieve-this)
+如果用户比较好奇这个是怎么实现的见 [这里](/k8sDocs/docs/concepts/cluster-administration/networking/#how-to-achieve-this)
 <!--
 ## Creating a Service
 
@@ -263,7 +263,7 @@ my-nginx   10.244.2.5:80,10.244.3.4:80   1m
 
 这个时候就能在集群中的任意一个 Pod 中通过 curl 访问 `<CLUSTER-IP>:<PORT>` 来访问这个 nginx
 的 Service.  要注意 Service 的 IP 完全是虚拟的。 如果用户对此有兴趣可以看看
-[service proxy](/k8sDocs/concepts/services-networking/service/#virtual-ips-and-service-proxies).
+[service proxy](/k8sDocs/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies).
 <!--
 ## Accessing the Service
 

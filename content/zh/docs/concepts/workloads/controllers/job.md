@@ -199,7 +199,7 @@ A Job also needs a [`.spec` section](https://git.k8s.io/community/contributors/d
 ## 编写 Job 配置
 
 与其它所有 k8s 配置一样， Job 的必要字段有 `apiVersion`, `kind`, `metadata`。
-它的名字必须是一个有效的 [DNS 子域名](/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+它的名字必须是一个有效的 [DNS 子域名](/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
 
 Job 还是需要有一个 [`.spec`](https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status) 配置区域
 
@@ -220,12 +220,12 @@ Only a [`RestartPolicy`](/docs/concepts/workloads/pods/pod-lifecycle/#restart-po
 ### Pod Template
 
 `.spec.template` 是 `.spec` 唯一必要字段。
-`.spec.template` 是一个 [Pod 模板](/k8sDocs/concepts/workloads/pods/#pod-templates)
+`.spec.template` 是一个 [Pod 模板](/k8sDocs/docs/concepts/workloads/pods/#pod-templates)
 除了因为嵌套没有 `apiVersion` 或 `kind` 字段外， 与 {{< glossary_tooltip text="Pod" term_id="pod" >}} 的配置格式完全一样。
 
 相对于 Pod 新增的字段是 Job 中的 Pod 模板需要有恰当的标签 (见 [Pod 选择器](#pod-selector)) 和重启策略。
 
-[`RestartPolicy`](/k8sDocs/concepts/workloads/pods/pod-lifecycle/#restart-policy) 的值只能是 `Never` 或 `OnFailure`
+[`RestartPolicy`](/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy) 的值只能是 `Never` 或 `OnFailure`
 <!--  
 ### Pod selector
 
@@ -360,7 +360,7 @@ multiple pods running at once.  Therefore, your pods must also be tolerant of co
 Pod 中的容器可能因为几种原因失败， 例如因为容器内的进程以非 0 的返回码退出， 或容器因为超出内存限制而退出，等。
 如果发生了这些情况，并且 `.spec.template.spec.restartPolicy = "OnFailure"`， 这个 Pod 会留在原有的节点上，但容器会重启。
 因此，用户的应用程序需要通过应对这种在本地的重新启动，或都设置 `.spec.template.spec.restartPolicy = "Never"`
-更多关于重启策略(`restartPolicy`)的信息见 [Pod 生命周期](/k8sDocs/concepts/workloads/pods/pod-lifecycle/#example-states)
+更多关于重启策略(`restartPolicy`)的信息见 [Pod 生命周期](/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#example-states)
 
 整个 Pod 也可能整个挂掉，也可能有几种原因， 例如当 Pod 被从节点上踢出(节点在更新，重启，删除，等)， 或者 Pod 中的容器挂了而
 `.spec.template.spec.restartPolicy = "Never"`。 当一个 Pod 挂掉，Job 控制器会重启一个新的 Pod。 也就是说用户的应用能够
@@ -481,7 +481,7 @@ spec:
       restartPolicy: Never
 ```
 
-注意 Job 本身的配置和 Job 内的 [Pod 模板配置](/k8sDocs/concepts/workloads/pods/init-containers/#detailed-behavior)
+注意 Job 本身的配置和 Job 内的 [Pod 模板配置](/k8sDocs/docs/concepts/workloads/pods/init-containers/#detailed-behavior)
 都有 `activeDeadlineSeconds` 字段， 要注意设置的是哪个。
 
 还要注意重启策略(`restartPolicy`) 是应用在 Pod 上的，而不是在 Job 上面: 当 Job 状态是 `type: Failed` 时是没有怎么重启的。
@@ -498,7 +498,7 @@ cleaned up by CronJobs based on the specified capacity-based cleanup policy.
 ## 自动清理已经完成的 Job
 
 完成的 Job 通常不需要再留在系统中。 把它们留在系统中会增加 api-server 的压力。 如果 Job 是由
-更高级的控制器，如 [CronJobs](/k8sDocs/concepts/workloads/controllers/cron-jobs/),
+更高级的控制器，如 [CronJobs](/k8sDocs/docs/concepts/workloads/controllers/cron-jobs/),
 Job 可以被 CronJob 基于指定容量的清理策略来清除。
 <!--
 ### TTL mechanism for finished Jobs
@@ -580,7 +580,7 @@ spec:
 则这个 Job 在结束后不会被 TTL 控制器清除。
 
 要注意 这个 TTL 机器还在 `alpha` 状态， 需要使用 `TTLAfterFinished` 功能阀启用。
-更多相关信息见 [TTL 控制器](/k8sDocs/concepts/workloads/controllers/ttlafterfinished/)
+更多相关信息见 [TTL 控制器](/k8sDocs/docs/concepts/workloads/controllers/ttlafterfinished/)
 <!--
 ## Job patterns
 
@@ -840,11 +840,11 @@ object, but maintains complete control over what Pods are created and how work i
 
 ### `ReplicationController`
 
-Job 与 [ReplicationController](/k8sDocs/concepts/workloads/controllers/replicationcontroller/)是互补的.
+Job 与 [ReplicationController](/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/)是互补的.
 ReplicationController 管理那些不期望被终止的 Pod (如 web 服务)，
 Job 管理那些预期要终止的 Pod (如 批量任务)
 
-就如在 [Pod 生命周期](/k8sDocs/concepts/workloads/pods/pod-lifecycle/)中讨论的，
+就如在 [Pod 生命周期](/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/)中讨论的，
 `Job` 是唯一适合将 Pod 重启策略(`RestartPolicy`) 设置为 在失败时(`OnFailure`) 或 永不(`Never`) (重启)的。
 {{<note>}}
 如果 `RestartPolicy` 没有设置，则默认值为 总是(`Always`)重启

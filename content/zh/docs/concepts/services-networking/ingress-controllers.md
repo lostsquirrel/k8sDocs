@@ -170,5 +170,5 @@ Make sure you review your ingress controller's documentation to understand the c
 ## {{% heading "whatsnext" %}}
 
 
-* 概念 [Ingress](/k8sDocs/concepts/services-networking/ingress/).
+* 概念 [Ingress](/k8sDocs/docs/concepts/services-networking/ingress/).
 * 实践 [使用 NGINX 控制器在 Minikube 上设置 Ingress](/k8sDocs/tasks/access-application-cluster/ingress-minikube).
