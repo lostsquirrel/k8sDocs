@@ -654,6 +654,12 @@
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragepersistent-volumes" href="/k8sDocs/docs/concepts/storage/persistent-volumes/">持久化卷(PV)</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshots" href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -1008,7 +1014,7 @@ A Job also needs a [`.spec` section](https://git.k8s.io/community/contributors/d
  -->
 <h2 id="编写-job-配置">编写 Job 配置</h2>
 <p>与其它所有 k8s 配置一样， Job 的必要字段有 <code>apiVersion</code>, <code>kind</code>, <code>metadata</code>。
-它的名字必须是一个有效的 <a href="/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.</p>
+它的名字必须是一个有效的 <a href="/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.</p>
 <p>Job 还是需要有一个 <a href="https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status"><code>.spec</code></a> 配置区域</p>
 <!--
 ### Pod Template
@@ -1026,11 +1032,11 @@ Only a [`RestartPolicy`](/docs/concepts/workloads/pods/pod-lifecycle/#restart-po
  -->
 <h3 id="pod-template">Pod Template</h3>
 <p><code>.spec.template</code> 是 <code>.spec</code> 唯一必要字段。
-<code>.spec.template</code> 是一个 <a href="/k8sDocs/concepts/workloads/pods/#pod-templates">Pod 模板</a>
+<code>.spec.template</code> 是一个 <a href="/k8sDocs/docs/concepts/workloads/pods/#pod-templates">Pod 模板</a>
 除了因为嵌套没有 <code>apiVersion</code> 或 <code>kind</code> 字段外， 与 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a> 的配置格式完全一样。</p>
 <p>相对于 Pod 新增的字段是 Job 中的 Pod 模板需要有恰当的标签 (见 <a href="#pod-selector">Pod 选择器</a>) 和重启策略。</p>
-<p><a href="/k8sDocs/concepts/workloads/pods/pod-lifecycle/#restart-policy"><code>RestartPolicy</code></a> 的值只能是 <code>Never</code> 或 <code>OnFailure</code></p>
+<p><a href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy"><code>RestartPolicy</code></a> 的值只能是 <code>Never</code> 或 <code>OnFailure</code></p>
 <!--  
 ### Pod selector
 
@@ -1166,7 +1172,7 @@ multiple pods running at once.  Therefore, your pods must also be tolerant of co
 <p>Pod 中的容器可能因为几种原因失败， 例如因为容器内的进程以非 0 的返回码退出， 或容器因为超出内存限制而退出，等。
 如果发生了这些情况，并且 <code>.spec.template.spec.restartPolicy = &quot;OnFailure&quot;</code>， 这个 Pod 会留在原有的节点上，但容器会重启。
 因此，用户的应用程序需要通过应对这种在本地的重新启动，或都设置 <code>.spec.template.spec.restartPolicy = &quot;Never&quot;</code>
-更多关于重启策略(<code>restartPolicy</code>)的信息见 <a href="/k8sDocs/concepts/workloads/pods/pod-lifecycle/#example-states">Pod 生命周期</a></p>
+更多关于重启策略(<code>restartPolicy</code>)的信息见 <a href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#example-states">Pod 生命周期</a></p>
 <p>整个 Pod 也可能整个挂掉，也可能有几种原因， 例如当 Pod 被从节点上踢出(节点在更新，重启，删除，等)， 或者 Pod 中的容器挂了而
 <code>.spec.template.spec.restartPolicy = &quot;Never&quot;</code>。 当一个 Pod 挂掉，Job 控制器会重启一个新的 Pod。 也就是说用户的应用能够
 处理这种在新 Pod 重启的情况。特别是要能够处理临时文件，锁，未完成的输出和与前一次运行相似的原因(这意思不太明白?)</p>
@@ -1274,7 +1280,7 @@ That is, the Job termination mechanisms activated with `.spec.activeDeadlineSeco
         <span style="color:#f92672">image</span>: <span style="color:#ae81ff">perl</span>
         <span style="color:#f92672">command</span>: [<span style="color:#e6db74">&#34;perl&#34;</span>,  <span style="color:#e6db74">&#34;-Mbignum=bpi&#34;</span>, <span style="color:#e6db74">&#34;-wle&#34;</span>, <span style="color:#e6db74">&#34;print bpi(2000)&#34;</span>]
       <span style="color:#f92672">restartPolicy</span>: <span style="color:#ae81ff">Never</span>
-</code></pre></div><p>注意 Job 本身的配置和 Job 内的 <a href="/k8sDocs/concepts/workloads/pods/init-containers/#detailed-behavior">Pod 模板配置</a>
+</code></pre></div><p>注意 Job 本身的配置和 Job 内的 <a href="/k8sDocs/docs/concepts/workloads/pods/init-containers/#detailed-behavior">Pod 模板配置</a>
 都有 <code>activeDeadlineSeconds</code> 字段， 要注意设置的是哪个。</p>
 <p>还要注意重启策略(<code>restartPolicy</code>) 是应用在 Pod 上的，而不是在 Job 上面: 当 Job 状态是 <code>type: Failed</code> 时是没有怎么重启的。
 也就是当 Job 被 <code>.spec.activeDeadlineSeconds</code> 和 <code>.spec.backoffLimit</code> 机制触发了之后， Job 就会进行永久的失败状态，需要人工介入才能解决。</p>
@@ -1289,7 +1295,7 @@ cleaned up by CronJobs based on the specified capacity-based cleanup policy.
  -->
 <h2 id="自动清理已经完成的-job">自动清理已经完成的 Job</h2>
 <p>完成的 Job 通常不需要再留在系统中。 把它们留在系统中会增加 api-server 的压力。 如果 Job 是由
-更高级的控制器，如 <a href="/k8sDocs/concepts/workloads/controllers/cron-jobs/">CronJobs</a>,
+更高级的控制器，如 <a href="/k8sDocs/docs/concepts/workloads/controllers/cron-jobs/">CronJobs</a>,
 Job 可以被 CronJob 基于指定容量的清理策略来清除。</p>
 <!--
 ### TTL mechanism for finished Jobs
@@ -1380,7 +1386,7 @@ finished resources.
 <p>这个这个字段的值设置为 <code>0</code>， 则这个 Job 会在执行完成之后马上就被自动删除了。 如果没有设置这个字段
 则这个 Job 在结束后不会被 TTL 控制器清除。</p>
 <p>要注意 这个 TTL 机器还在 <code>alpha</code> 状态， 需要使用 <code>TTLAfterFinished</code> 功能阀启用。
-更多相关信息见 <a href="/k8sDocs/concepts/workloads/controllers/ttlafterfinished/">TTL 控制器</a></p>
+更多相关信息见 <a href="/k8sDocs/docs/concepts/workloads/controllers/ttlafterfinished/">TTL 控制器</a></p>
 <!--
 ## Job patterns
 
@@ -1676,10 +1682,10 @@ object, but maintains complete control over what Pods are created and how work i
 <p>当 Pod 所在的节点重启或挂掉时， Pod 就会终止并不会被重启。 但 Job 会创建新的 Job 来代替被终止掉的。
 因为这个原因， 我们推荐用户使用 Job 而不是裸 Pod， 即使该应用只需要一个 Pod。</p>
 <h3 id="replicationcontroller"><code>ReplicationController</code></h3>
-<p>Job 与 <a href="/k8sDocs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a>是互补的.
+<p>Job 与 <a href="/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a>是互补的.
 ReplicationController 管理那些不期望被终止的 Pod (如 web 服务)，
 Job 管理那些预期要终止的 Pod (如 批量任务)</p>
-<p>就如在 <a href="/k8sDocs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a>中讨论的，
+<p>就如在 <a href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a>中讨论的，
 <code>Job</code> 是唯一适合将 Pod 重启策略(<code>RestartPolicy</code>) 设置为 在失败时(<code>OnFailure</code>) 或 永不(<code>Never</code>) (重启)的。
 <blockquote class="note">
   <div><strong>说明：</strong> 如果 <code>RestartPolicy</code> 没有设置，则默认值为 总是(<code>Always</code>)重启</div>

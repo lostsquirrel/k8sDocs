@@ -654,6 +654,12 @@
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragepersistent-volumes" href="/k8sDocs/docs/concepts/storage/persistent-volumes/">持久化卷(PV)</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshots" href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -934,7 +940,7 @@ podIP: 10.244.2.5
 上使用一样的 <code>containerPort</code> 运行多个 nginx 的 Pod， 并且可以从集群中任意 Pod 或 节点使用
 它的 IP 访问它。 与 Docker 一样， 端口也可以发布到主机的网卡上， 因为网络模型的原因，应该尽量减少这
 种方式的使用。</p>
-<p>如果用户比较好奇这个是怎么实现的见 <a href="/k8sDocs/concepts/cluster-administration/networking/#how-to-achieve-this">这里</a></p>
+<p>如果用户比较好奇这个是怎么实现的见 <a href="/k8sDocs/docs/concepts/cluster-administration/networking/#how-to-achieve-this">这里</a></p>
 <!--
 ## Creating a Service
 
@@ -1145,7 +1151,7 @@ Events:              &lt;none&gt;
 my-nginx   10.244.2.5:80,10.244.3.4:80   1m
 </code></pre><p>这个时候就能在集群中的任意一个 Pod 中通过 curl 访问 <code>&lt;CLUSTER-IP&gt;:&lt;PORT&gt;</code> 来访问这个 nginx
 的 Service.  要注意 Service 的 IP 完全是虚拟的。 如果用户对此有兴趣可以看看
-<a href="/k8sDocs/concepts/services-networking/service/#virtual-ips-and-service-proxies">service proxy</a>.</p>
+<a href="/k8sDocs/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies">service proxy</a>.</p>
 <!--
 ## Accessing the Service
 

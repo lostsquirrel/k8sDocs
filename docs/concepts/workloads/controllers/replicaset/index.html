@@ -654,6 +654,12 @@
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragepersistent-volumes" href="/k8sDocs/docs/concepts/storage/persistent-volumes/">持久化卷(PV)</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshots" href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -1334,7 +1340,7 @@ A ReplicaSet also needs a [`.spec` section](https://git.k8s.io/community/contrib
 对于 <code>ReplicaSet</code>， <code>kind</code> 字段就一直是 <code>ReplicaSet</code>。
 在 k8s v1.9+ <code>apiVersion</code> 字段的值为 <code>apps/v1</code>，默认开启。 API 版本 <code>apps/v1beta2</code> 被废弃。
 具体可以看之前示例中 <code>frontend.yaml</code> 文件内容。</p>
-<p><code>ReplicaSet</code> 名称必须是一个有效的 <a href="/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.
+<p><code>ReplicaSet</code> 名称必须是一个有效的 <a href="/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.
 <code>ReplicaSet</code> 还必须要有一个
 <a href="https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status"><code>.spec</code> 字段</a>.</p>
 <!--
@@ -1348,7 +1354,7 @@ For the template's [restart policy](/docs/concepts/workloads/Pods/pod-lifecycle/
 `.spec.template.spec.restartPolicy`, the only allowed value is `Always`, which is the default.
  -->
 <h3 id="pod-模板">Pod 模板</h3>
-<p><code>.spec.template</code> 字段就是 <a href="/k8sDocs/concepts/workloads/Pods/pod-overview/#pod-templates">pod template</a> 而且其中还必须要定义标签.
+<p><code>.spec.template</code> 字段就是 <a href="/k8sDocs/docs/concepts/workloads/Pods/pod-overview/#pod-templates">pod template</a> 而且其中还必须要定义标签.
 在示例中的 <code>frontend.yaml</code> 打的标签是: <code>tier: frontend</code>.
 注意不能与其它控制器的选择器相重叠，以免它们会争抢这个 Pod</p>
 <p>模板中的 <a href="/docs/concepts/workloads/Pods/pod-lifecycle/#restart-policy">重启策略</a> 字段,
@@ -1373,7 +1379,7 @@ be rejected by the API.
 
  -->
 <h3 id="pod-选择器">Pod 选择器</h3>
-<p><code>.spec.selector</code> 字段是一个 <a href="/k8sDocs/concepts/overview/working-with-objects/labels/">标签选择器</a>
+<p><code>.spec.selector</code> 字段是一个 <a href="/k8sDocs/docs/concepts/overview/working-with-objects/labels/">标签选择器</a>
 <a href="#how-a-replicaset-works">之前</a>讨论过，这些标签用于识别潜在的捕获对象。 在之前示例中 <code>frontend.yaml</code>
 定义的选择器如下:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">matchLabels</span>:
@@ -1453,7 +1459,7 @@ curl -X DELETE  <span style="color:#e6db74">&#39;localhost:8080/apis/apps/v1/nam
 </span><span style="color:#ae81ff"></span>&gt; -H <span style="color:#e6db74">&#34;Content-Type: application/json&#34;</span>
 </code></pre></div><p>当原来的 <code>ReplicaSet</code> 就可以创建一个新的来替代它。 新创建的 ReplicaSet 的 <code>.spec.selector</code> 需要与原来的一样， 这样它就能接管这些 Pod。
 但是它不会让旧的 Pod 使用新的模板。
-而想要以控制器方式更新 Pod 的模板，需要使用 <a href="/k8sDocs/concepts/workloads/controllers/deployment/#creating-a-deployment">Deployment</a>
+而想要以控制器方式更新 Pod 的模板，需要使用 <a href="/k8sDocs/docs/concepts/workloads/controllers/deployment/#creating-a-deployment">Deployment</a>
 因为 <code>ReplicaSet</code> 不支持直接的滚动更新。</p>
 <!--
 ### Isolating Pods from a ReplicaSet
@@ -1610,7 +1616,7 @@ As such, it is recommended to use Deployments when you want ReplicaSets.
  -->
 <h2 id="replicaset-替代方案"><code>ReplicaSet</code> 替代方案</h2>
 <h3 id="deployment-推荐">Deployment (推荐)</h3>
-<p><a href="/k8sDocs/concepts/workloads/controllers/deployment/"><code>Deployment</code></a> 对象可以包含 <code>ReplicaSet</code> 并且可以通过声明方式更新自身及所属的 Pod，
+<p><a href="/k8sDocs/docs/concepts/workloads/controllers/deployment/"><code>Deployment</code></a> 对象可以包含 <code>ReplicaSet</code> 并且可以通过声明方式更新自身及所属的 Pod，
 服务端滚动更新。 虽然 ReplicaSet 可以独立使用，但是现在主要是使用 Deployment 作为组织 Pod 创建，删除，更新的方式。
 当用户使用 <code>Deployment</code> 不需要关心它所创建的 <code>ReplicaSet</code>， <code>Deployment</code> 会管理所属的 <code>ReplicaSet</code>
 因此用户在想要使用 <code>ReplicaSet</code> 时推荐使用 <code>Deployment</code> 代替。</p>
@@ -1630,7 +1636,7 @@ Use a [`Job`](/docs/concepts/jobs/run-to-completion-finite-workloads/) instead o
 (that is, batch jobs).
  -->
 <h3 id="job">Job</h3>
-<p>在运行那会在有限时间内自己运行结束后自动终止的 Pod(批处理任务)，请使用 <a href="/k8sDocs/concepts/jobs/run-to-completion-finite-workloads/"><code>Job</code></a>,就不要用 <code>ReplicaSet</code>了</p>
+<p>在运行那会在有限时间内自己运行结束后自动终止的 Pod(批处理任务)，请使用 <a href="/k8sDocs/docs/concepts/jobs/run-to-completion-finite-workloads/"><code>Job</code></a>,就不要用 <code>ReplicaSet</code>了</p>
 <!--
 ### DaemonSet
 
@@ -1640,7 +1646,7 @@ to a machine lifetime: the Pod needs to be running on the machine before other P
 safe to terminate when the machine is otherwise ready to be rebooted/shutdown.
  -->
 <h3 id="daemonset">DaemonSet</h3>
-<p>当 Pod 需要使用到机器级别的功能，如机器监控或机器日志时，使用 <a href="/k8sDocs/concepts/workloads/controllers/daemonset/"><code>DaemonSet</code></a>
+<p>当 Pod 需要使用到机器级别的功能，如机器监控或机器日志时，使用 <a href="/k8sDocs/docs/concepts/workloads/controllers/daemonset/"><code>DaemonSet</code></a>
 因为这些 Pod 的生存期会与对应机器的生存期绑定在一起: 这些 Pod 需要在机器上其它 Pod 运行之前就在节点上运行， 只有在机器准备重启或关机时才能
 安全的终止。</p>
 <!--
@@ -1652,9 +1658,9 @@ selector requirements as described in the [labels user guide](/docs/concepts/ove
 As such, ReplicaSets are preferred over ReplicationControllers
  -->
 <h3 id="replicationcontroller">ReplicationController</h3>
-<p>ReplicaSet 是  <a href="/k8sDocs/concepts/workloads/controllers/replicationcontroller/"><em>ReplicationControllers</em></a> 的继任者。
+<p>ReplicaSet 是  <a href="/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/"><em>ReplicationControllers</em></a> 的继任者。
 它们两个可以达成相同的目的，而且行为方式也相似， 除了 <code>ReplicationController</code> 不支持像
-<a href="/k8sDocs/concepts/overview/working-with-objects/labels/#label-selectors">标签使用</a> 中介绍的基于集合的选择器。
+<a href="/k8sDocs/docs/concepts/overview/working-with-objects/labels/#label-selectors">标签使用</a> 中介绍的基于集合的选择器。
 因此相对于 ReplicationControllers 推荐使用 <code>ReplicaSet</code></p>
 
 

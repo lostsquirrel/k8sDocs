@@ -55,6 +55,10 @@
   </url>
   
   <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-snapshots/</loc>
+  </url>
+  
+  <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/connect-applications-service/</loc>
     <lastmod>2020-09-14T00:00:00+00:00</lastmod>
   </url>

@@ -654,6 +654,12 @@
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragepersistent-volumes" href="/k8sDocs/docs/concepts/storage/persistent-volumes/">持久化卷(PV)</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshots" href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -781,7 +787,7 @@ For clarity, this guide defines the following terms:
 中，集群中的节点是不在公网上的。</li>
 <li>边缘路由: 一个为集群执行防火墙策略的路由。 可以是由云提供商管理的网关或一个物理硬件。</li>
 <li>集群网络: 一组逻辑的或物理的连接，这些连接根据 k8s
-<a href="/k8sDocs/concepts/cluster-administration/networking/">网络模型</a>简化集群内的通信</li>
+<a href="/k8sDocs/docs/concepts/cluster-administration/networking/">网络模型</a>简化集群内的通信</li>
 <li>Service: 一个 k8s <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
 </a> 就是使用
 <a class='glossary-tooltip' href='/k8sDocs/concepts/overview/working-with-objects/labels' target='_blank'>标签<span class='tooltip-text'>在对象上标上对用户有意义和有关联的属性</span>
@@ -812,7 +818,7 @@ uses a service of type [Service.Type=NodePort](/docs/concepts/services-networkin
 <h2 id="ingress-是什么">Ingress 是什么?</h2>
 <p><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#ingress-v1-networking-k8s-io">Ingress</a>
 将集群内部的
-<a href="/k8sDocs/concepts/services-networking/service/" target="_blank">Service</a>
+<a href="/k8sDocs/docs/concepts/services-networking/service/" target="_blank">Service</a>
 通过 HTTP 和 HTTPS 路由暴露到集群外部。
 流量路由由 Ingress 资源内部定义的规则控制。</p>
 <pre><code class="language-none" data-lang="none">    internet
@@ -822,12 +828,12 @@ uses a service of type [Service.Type=NodePort](/docs/concepts/services-networkin
    [ Services ]
 </code></pre><p>可以配置一个 Ingress 为 Service 提供外部可以访问的 URL, 负载均衡，SSL / TLS, 提供基于名称的
 虚拟主机名。
-<a href="/k8sDocs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>将负责
+<a href="/k8sDocs/docs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>将负责
 实现 Ingress， 通常是通过负载均衡器，也可能是通过配置边缘路由或额外的前端组件来帮助处理流量。</p>
 <p>Ingress 不是暴露任意的端口或协议。 要暴露非 HTTP / HTTPS 的 Service 通常使用
-<a href="/k8sDocs/concepts/services-networking/service/#nodeport">Service.Type=NodePort</a>
+<a href="/k8sDocs/docs/concepts/services-networking/service/#nodeport">Service.Type=NodePort</a>
 或
-<a href="/k8sDocs/concepts/services-networking/service/#loadbalancer">Service.Type=LoadBalancer</a>.</p>
+<a href="/k8sDocs/docs/concepts/services-networking/service/#loadbalancer">Service.Type=LoadBalancer</a>.</p>
 <!--
 ## Prerequisites
 
@@ -846,12 +852,12 @@ controllers operate slightly differently.
  -->
 <h2 id="前置条件">前置条件</h2>
 <p>要使用 Ingress 首先得有一个
-<a href="/k8sDocs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>。
+<a href="/k8sDocs/docs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>。
 不然只创建一个 Ingress 资源是没有效果的。</p>
 <p>需要部署一个 Ingress 控制器，例如
 <a href="https://kubernetes.github.io/ingress-nginx/deploy/">ingress-nginx</a>.
 也可以从
-<a href="/k8sDocs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>
+<a href="/k8sDocs/docs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>
 中选几个.</p>
 <p>理想情况下，所有的 Ingress 控制器都应该是符合参考规格说明的。 实际上，不同的 Ingress 运转方式
 各自都有点不同。
@@ -987,11 +993,11 @@ for directing HTTP(S) traffic.
 </p>
 <p>与所有其它的 k8s 资源一样， 一个 Ingress 的必要字段有 <code>apiVersion</code>, <code>kind</code>, <code>metadata</code>。
 Ingress 对象的名称必须是一个有效的
-<a href="/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.
+<a href="/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.
 关于配置文件的通用信息见
 <a href="/k8sDocs/tasks/run-application/run-stateless-application-deployment/">部署应用</a>,
 <a href="/k8sDocs/tasks/configure-pod-container/configure-pod-configmap/">配置容器</a>,
-<a href="/k8sDocs/concepts/cluster-administration/manage-deployment/">管理资源</a>.
+<a href="/k8sDocs/docs/concepts/cluster-administration/manage-deployment/">管理资源</a>.
 Ingress 经常使用注解(annotation) 来配置一些基于 Ingress 控制器的可选配置，这里有一个例子
 <a href="https://github.com/kubernetes/ingress-nginx/blob/master/docs/examples/rewrite/README.md">rewrite-target 注解</a>.
 不同的
@@ -1051,7 +1057,7 @@ routed to your default backend.
  -->
 <h3 id="default-backend">默认后端(DefaultBackend)</h3>
 <p>一个没有任何规则的 Ingress 会将所有的流量发送到一个默认的后端。 <code>defaultBackend</code> 是一个很方便
-的配置在  <a href="/k8sDocs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>
+的配置在  <a href="/k8sDocs/docs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>
 并不需要在 Ingress 中配置。</p>
 <p>如果没有一个 Ingress 中的主机名或路径匹配到的 HTTP 请求，这些请求就会路由到默认后端</p>
 <!--
@@ -2168,7 +2174,7 @@ Events:
   <div><strong>说明：</strong> 基于使用的
 <a href="/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a>
 可能需要创建一个 default-http-backend
-<a href="/k8sDocs/concepts/services-networking/service/">Service</a>.</div>
+<a href="/k8sDocs/docs/concepts/services-networking/service/">Service</a>.</div>
 </blockquote>
 
 <!--
@@ -2848,7 +2854,7 @@ Please check the documentation of the relevant [Ingress controller](/docs/concep
  -->
 <h2 id="跨可用区失效">跨可用区失效</h2>
 <p>在故障域之间传播流量的方法在各家云提供商上的方式都不一样。
-请查看 <a href="/k8sDocs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>文档了解详细信息</p>
+请查看 <a href="/k8sDocs/docs/concepts/services-networking/ingress-controllers">Ingress 控制器</a>文档了解详细信息</p>
 <!--
 ## Alternatives
 
@@ -2860,13 +2866,13 @@ You can expose a Service in multiple ways that don't directly involve the Ingres
 <h2 id="alternatives">替代方案</h2>
 <p>在不直接使用 Ingress 的情况下还有几种暴露 Service 的方法:</p>
 <ul>
-<li>使用 <a href="/k8sDocs/concepts/services-networking/service/#loadbalancer">Service.Type=LoadBalancer</a></li>
-<li>使用 <a href="/k8sDocs/concepts/services-networking/service/#nodeport">Service.Type=NodePort</a></li>
+<li>使用 <a href="/k8sDocs/docs/concepts/services-networking/service/#loadbalancer">Service.Type=LoadBalancer</a></li>
+<li>使用 <a href="/k8sDocs/docs/concepts/services-networking/service/#nodeport">Service.Type=NodePort</a></li>
 </ul>
 <h2 id="相关资料">相关资料</h2>
 <ul>
 <li>查阅 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#ingress-v1beta1-networking-k8s-io">Ingress API</a></li>
-<li>概念 <a href="/k8sDocs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a></li>
+<li>概念 <a href="/k8sDocs/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a></li>
 <li>实践 <a href="/k8sDocs/tasks/access-application-cluster/ingress-minikube/">使用 NGINX 控制器在 Minikube 上设置 Ingress</a></li>
 </ul>
 

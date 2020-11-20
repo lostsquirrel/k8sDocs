@@ -654,6 +654,12 @@
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragepersistent-volumes" href="/k8sDocs/docs/concepts/storage/persistent-volumes/">持久化卷(PV)</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshots" href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -787,7 +793,7 @@ Network policies are implemented by the [network plugin](/docs/concepts/extend-k
 -->
 <h2 id="前置条件">前置条件</h2>
 <p>网络策略是由
-<a href="/k8sDocs/concepts/extend-kubernetes/compute-storage-net/network-plugins/">网络插件</a>
+<a href="/k8sDocs/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/">网络插件</a>
 实现的。 要使用网络策略，就必要使用一个支持网络策略的网络解决方案。 创建一个没有实现的控制器的
 <code>NetworkPolicy</code> 资源是没有效果的</p>
 <!--
@@ -928,7 +934,7 @@ See the [Declare Network Policy](/docs/tasks/administer-cluster/declare-network-
 <p><strong>必要字段</strong>: 与其它所有的 k8s 配置一样， NetworkPolicy 必须有 <code>apiVersion</code>, <code>kind</code>, <code>metadata</code>
 字段。 配置文件常用信息请见
 <a href="/k8sDocs/tasks/configure-pod-container/configure-pod-configmap/">使用 ConfigMap 配置容器</a>,
-和 <a href="/k8sDocs/concepts/overview/working-with-objects/object-management">对象管理</a>.</p>
+和 <a href="/k8sDocs/docs/concepts/overview/working-with-objects/object-management">对象管理</a>.</p>
 <p><strong>spec</strong>: NetworkPolicy <a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status">spec</a> 包含了在指定命名空间创建特定网络策略的所有信息</p>
 <p><strong>podSelector</strong>: 每个 NetworkPolicy 都包含了一个 <code>podSelector</code> 字段，用户选择应用该策略的 Pod 组。
 上面例子中的策略选择包含 &ldquo;<code>role=db</code>&rdquo; 标签的 Pod。 如果 <code>podSelector</code> 是空则选择该命名空间中所有的 Pod。</p>

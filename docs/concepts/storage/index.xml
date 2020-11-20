@@ -46,7 +46,7 @@ weight: 20
 This document describes the current state of _persistent volumes_ in Kubernetes. Familiarity with [volumes](/docs/concepts/storage/volumes/) is suggested.
  --&gt;
 &lt;p&gt;本文主要介绍当前 k8s 中 &lt;em&gt;持久化卷(persistent volume)&lt;/em&gt; 的状态。
-建议先熟悉 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/storage/volumes/&#34;&gt;volumes&lt;/a&gt;&lt;/p&gt;
+建议先熟悉 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/&#34;&gt;volumes&lt;/a&gt;&lt;/p&gt;
 &lt;!-- body --&gt;
 &lt;!--
 ## Introduction
@@ -122,7 +122,7 @@ check [kube-apiserver](/docs/admin/kube-apiserver/) documentation.
 &lt;h4 id=&#34;动态供给&#34;&gt;动态供给&lt;/h4&gt;
 &lt;p&gt;当管理创建的 PV 不能满足用户的 PersistentVolumeClaim 时，集群可能就会尝试为这个 PVC 动态
 提供一个卷。这种供给基于 &lt;code&gt;StorageClass&lt;/code&gt;: PVC 必须要申请一个
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/storage/storage-classes/&#34;&gt;StorageClass&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/storage-classes/&#34;&gt;StorageClass&lt;/a&gt;
 并且在动态供给发生之前管理员必须要完成该 &lt;code&gt;StorageClass&lt;/code&gt; 的创建和配置。
 如果 PVC 的 &lt;code&gt;StorageClass&lt;/code&gt; 被设置为 &lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt; 实际上表示关闭自身的动态供给。&lt;/p&gt;
 &lt;p&gt;要启用基于 &lt;code&gt;StorageClass&lt;/code&gt; 的动态存储供给需要集群管理在 api-server 中的
@@ -407,7 +407,7 @@ to `Retain`, including cases where you are reusing an existing PV.
 如果 PV 已经存在， 可能通过设置它的 &lt;code&gt;claimRef&lt;/code&gt; 字段指定一个 &lt;code&gt;PersistentVolumeClaim&lt;/code&gt;，
 这样 PV 和 PVC 就会绑定。&lt;/p&gt;
 &lt;p&gt;这种绑定会忽略一些卷匹配条件，包括节点亲和性。 控制中心还是会检测，
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/storage/storage-classes/&#34;&gt;StorageClass&lt;/a&gt;, 访问模式，申请容量是否是有效的。&lt;/p&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/storage-classes/&#34;&gt;StorageClass&lt;/a&gt;, 访问模式，申请容量是否是有效的。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolumeClaim&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -739,7 +739,7 @@ spec:
 &lt;h2 id=&#34;persistentvolume&#34;&gt;PersistentVolume&lt;/h2&gt;
 &lt;p&gt;每个 PV 包含一个 &lt;code&gt;spec&lt;/code&gt; 和 &lt;code&gt;status&lt;/code&gt;, 分别是对这个卷的配置定义和状态。 &lt;code&gt;PersistentVolume&lt;/code&gt;
 对象的名称必须是一个有效的
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolume&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -1041,7 +1041,7 @@ it will become fully deprecated in a future Kubernetes release.
  --&gt;
 &lt;h3 id=&#34;class&#34;&gt;类别&lt;/h3&gt;
 &lt;p&gt;一个 PV 可以有一个类别， 可以通过 &lt;code&gt;storageClassName&lt;/code&gt; 属性来设置一个
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/storage/storage-classes/&#34;&gt;StorageClass&lt;/a&gt;.
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/storage-classes/&#34;&gt;StorageClass&lt;/a&gt;.
 一个指定类别的 PV 只能与请求对应类的 PVC 相绑定。 没有设置 &lt;code&gt;storageClassName&lt;/code&gt; 的 PV 是没有类别的
 并且只能与没有请求类别的 PVC 绑定。&lt;/p&gt;
 &lt;p&gt;在过去是通过 &lt;code&gt;volume.beta.kubernetes.io/storage-class&lt;/code&gt; 注解设置类别而不是 &lt;code&gt;storageClassName&lt;/code&gt;。
@@ -1136,12 +1136,12 @@ A PV can specify [node affinity](/docs/reference/generated/kubernetes-api/v1.19/
 &lt;h3 id=&#34;节点亲和性&#34;&gt;节点亲和性&lt;/h3&gt;
 &lt;blockquote class=&#34;note&#34;&gt;
   &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 对于大多数卷类型， 是不需要设置这个字段的。
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/storage/volumes/#awselasticblockstore&#34;&gt;AWS EBS&lt;/a&gt;,
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/storage/volumes/#gcepersistentdisk&#34;&gt;GCE PD&lt;/a&gt;,
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/storage/volumes/#azuredisk&#34;&gt;Azure Disk&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#awselasticblockstore&#34;&gt;AWS EBS&lt;/a&gt;,
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#gcepersistentdisk&#34;&gt;GCE PD&lt;/a&gt;,
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#azuredisk&#34;&gt;Azure Disk&lt;/a&gt;
 卷块设备会自动添加。
 但需要为
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/storage/volumes/#local&#34;&gt;local&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#local&#34;&gt;local&lt;/a&gt;
 卷需要显示设置该字段&lt;/div&gt;
 &lt;/blockquote&gt;
 
@@ -1200,7 +1200,7 @@ spec:
 &lt;h2 id=&#34;persistentvolumeclaim&#34;&gt;PersistentVolumeClaim&lt;/h2&gt;
 &lt;p&gt;每个 PVC 包含 &lt;code&gt;spec&lt;/code&gt; 和 &lt;code&gt;status&lt;/code&gt;, 其中包含 PVC 的配置定义和状态。
 &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; 对象的名称必须是一个有效的
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolumeClaim&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -1254,7 +1254,7 @@ All of the requirements, from both `matchLabels` and `matchExpressions`, are AND
  --&gt;
 &lt;h3 id=&#34;选择器&#34;&gt;选择器&lt;/h3&gt;
 &lt;p&gt;PVC 可以指定一个
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/overview/working-with-objects/labels/#label-selectors&#34;&gt;标签选择器&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/labels/#label-selectors&#34;&gt;标签选择器&lt;/a&gt;
 来选择卷集合。 只有与选择器匹配的卷可以与 PVC 绑定。 选择器可以包含以下两个字段&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;matchLabels&lt;/code&gt; - 卷必须要拥有与其对应的标签&lt;/li&gt;
@@ -1664,7 +1664,7 @@ Volume snapshot feature was added to support CSI Volume Plugins only. For detail
 To enable support for restoring a volume from a volume snapshot data source, enable the
 `VolumeSnapshotDataSource` feature gate on the apiserver and controller-manager.
  --&gt;
-&lt;h2 id=&#34;卷快照和快照恢复支持&#34;&gt;卷快照和快照恢复支持&lt;/h2&gt;
+&lt;h2 id=&#34;volume-snapshot-and-restore-volume-from-snapshot-support&#34;&gt;卷快照和快照恢复支持&lt;/h2&gt;
 
 
 
@@ -1676,7 +1676,7 @@ To enable support for restoring a volume from a volume snapshot data source, ena
 
 
 &lt;p&gt;卷快照特性只对 CSI 卷插件支持。详细信息见
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/storage/volume-snapshots/&#34;&gt;卷快照&lt;/a&gt;.
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volume-snapshots/&#34;&gt;卷快照&lt;/a&gt;.
 要启用对从卷快照恢复的支持，需要在 &lt;code&gt;apiserver&lt;/code&gt; &lt;code&gt;controller-manager&lt;/code&gt; 打开
 &lt;code&gt;VolumeSnapshotDataSource&lt;/code&gt; 功能阀&lt;/p&gt;
 &lt;!--
@@ -1722,7 +1722,7 @@ spec:
 [Volume Cloning](/docs/concepts/storage/volume-pvc-datasource/) only available for CSI volume plugins.
  --&gt;
 &lt;h2 id=&#34;卷克隆&#34;&gt;卷克隆&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/storage/volume-pvc-datasource/&#34;&gt;卷克隆&lt;/a&gt; 只存在于 CSI 卷插件&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volume-pvc-datasource/&#34;&gt;卷克隆&lt;/a&gt; 只存在于 CSI 卷插件&lt;/p&gt;
 &lt;!--
 ### Create PersistentVolumeClaim from an existing PVC {#create-persistent-volume-claim-from-an-existing-pvc}
 
@@ -1834,6 +1834,331 @@ and need persistent storage, it is recommended that you use the following patter
 &lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#persistentvolumeclaim-v1-core&#34;&gt;PersistentVolumeClaim&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#persistentvolumeclaimspec-v1-core&#34;&gt;PersistentVolumeClaimSpec&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 卷快照</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-snapshots/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-snapshots/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- saad-ali
+- thockin
+- msau42
+- jingxu97
+- xing-yang
+- yuxiangqian
+title: Volume Snapshots
+content_type: concept
+weight: 20
+---
+--&gt;
+&lt;!-- overview --&gt;
+&lt;!--
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.17 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+In Kubernetes, a _VolumeSnapshot_ represents a snapshot of a volume on a storage system. This document assumes that you are already familiar with Kubernetes [persistent volumes](/docs/concepts/storage/persistent-volumes/).
+ --&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.17 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;在 k8s 中， &lt;em&gt;VolumeSnapshot&lt;/em&gt; 代表存储系统中一个卷的快照。 在阅读此文之间需要熟悉 k8s
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/persistent-volumes/&#34;&gt;持久化卷(PV)&lt;/a&gt;.&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## Introduction
+
+Similar to how API resources `PersistentVolume` and `PersistentVolumeClaim` are used to provision volumes for users and administrators, `VolumeSnapshotContent` and `VolumeSnapshot` API resources are provided to create volume snapshots for users and administrators.
+
+A `VolumeSnapshotContent` is a snapshot taken from a volume in the cluster that has been provisioned by an administrator. It is a resource in the cluster just like a PersistentVolume is a cluster resource.
+
+A `VolumeSnapshot` is a request for snapshot of a volume by a user. It is similar to a PersistentVolumeClaim.
+
+`VolumeSnapshotClass` allows you to specify different attributes belonging to a `VolumeSnapshot`. These attributes may differ among snapshots taken from the same volume on the storage system and therefore cannot be expressed by using the same `StorageClass` of a `PersistentVolumeClaim`.
+
+Volume snapshots provide Kubernetes users with a standardized way to copy a volume&#39;s contents at a particular point in time without creating an entirely new volume. This functionality enables, for example, database administrators to backup databases before performing edit or delete modifications.
+
+Users need to be aware of the following when using this feature:
+
+* API Objects `VolumeSnapshot`, `VolumeSnapshotContent`, and `VolumeSnapshotClass` are &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/&#39; target=&#39;_blank&#39;&gt;CRDs&lt;span class=&#39;tooltip-text&#39;&gt;Custom code that defines a resource to add to your Kubernetes API server without building a complete custom server.&lt;/span&gt;
+&lt;/a&gt;, not part of the core API.
+* `VolumeSnapshot` support is only available for CSI drivers.
+* As part of the deployment process in the beta version of `VolumeSnapshot`, the Kubernetes team provides a snapshot controller to be deployed into the control plane, and a sidecar helper container called csi-snapshotter to be deployed together with the CSI driver.  The snapshot controller watches `VolumeSnapshot` and `VolumeSnapshotContent` objects and is responsible for the creation and deletion of `VolumeSnapshotContent` object in dynamic provisioning.  The sidecar csi-snapshotter watches `VolumeSnapshotContent` objects and triggers `CreateSnapshot` and `DeleteSnapshot` operations against a CSI endpoint.
+* CSI drivers may or may not have implemented the volume snapshot functionality. The CSI drivers that have provided support for volume snapshot will likely use the csi-snapshotter. See [CSI Driver documentation](https://kubernetes-csi.github.io/docs/) for details.
+* The CRDs and snapshot controller installations are the responsibility of the Kubernetes distribution.
+ --&gt;
+&lt;h2 id=&#34;介绍&#34;&gt;介绍&lt;/h2&gt;
+&lt;p&gt;与 &lt;code&gt;PersistentVolume&lt;/code&gt; 和 &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; API 资源用来为用户和管理员管理卷相似，
+&lt;code&gt;VolumeSnapshotContent&lt;/code&gt; 和 &lt;code&gt;VolumeSnapshot&lt;/code&gt; API 资源是用来为用户和管理员创建卷快照的。&lt;/p&gt;
+&lt;p&gt;一个 &lt;code&gt;VolumeSnapshotContent&lt;/code&gt; 是一个由管理员管理的从集群中一个卷创建的快照。
+它是一个与  &lt;code&gt;PersistentVolume&lt;/code&gt; 类似的集群资源。&lt;/p&gt;
+&lt;p&gt;一个 &lt;code&gt;VolumeSnapshot&lt;/code&gt; 是由用户申请的对一个卷的快照。 与 PVC 类似。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;VolumeSnapshotClass&lt;/code&gt; 可以指定属于 &lt;code&gt;VolumeSnapshot&lt;/code&gt; 的许多属性。 这些属性可能与其它来自
+同一个卷打的快照不一样， 因此不能由使用同样 &lt;code&gt;StorageClass&lt;/code&gt; 的 &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; 表现。&lt;/p&gt;
+&lt;p&gt;卷快照为 k8s 用户提供了一种拷贝特定时间点的卷内容，而不用创建新的卷的标准方式。 这个功能可以
+用于数据库管理员在做变更或删除操作之前备份数据库。&lt;/p&gt;
+&lt;p&gt;用户在使用该特性时要注意以下几点:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;VolumeSnapshot&lt;/code&gt;, &lt;code&gt;VolumeSnapshotContent&lt;/code&gt;, &lt;code&gt;VolumeSnapshotClass&lt;/code&gt; API 对象是
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/&#39; target=&#39;_blank&#39;&gt;CRDs&lt;span class=&#39;tooltip-text&#39;&gt;Custom code that defines a resource to add to your Kubernetes API server without building a complete custom server.&lt;/span&gt;
+&lt;/a&gt;，
+不是核心 API 的对象。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;VolumeSnapshot&lt;/code&gt; 只支持 CSI 驱动。&lt;/li&gt;
+&lt;li&gt;作为 &lt;code&gt;VolumeSnapshot&lt;/code&gt; beta 版本的部署里程， k8s 团队提供了一个部署到控制中心的快照控制器，
+和一个叫做 &lt;code&gt;csi-snapshotter&lt;/code&gt; 的边车工具容器和 CSI 驱动部署在一起。 快照控制器监测
+&lt;code&gt;VolumeSnapshot&lt;/code&gt; 和 &lt;code&gt;VolumeSnapshotContent&lt;/code&gt; 对象，并负责动态管理的 &lt;code&gt;VolumeSnapshotContent&lt;/code&gt;
+对象的创建和删除。 csi-snapshotter 边车，则监测 &lt;code&gt;VolumeSnapshotContent&lt;/code&gt; 对象并触发
+到 CSI 接口的 &lt;code&gt;CreateSnapshot&lt;/code&gt; 和 &lt;code&gt;DeleteSnapshot&lt;/code&gt; 操作。&lt;/li&gt;
+&lt;li&gt;CSI 驱动有可能实现也有可能没有实现快照功能。 提供了卷快照支持的 CSI 驱动通常会使用 &lt;code&gt;csi-snapshotter&lt;/code&gt;。
+详细信息见 &lt;a href=&#34;https://kubernetes-csi.github.io/docs/&#34;&gt;CSI 驱动文档&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;CRD 和 快照控制器的安装由 k8s 发行版本负责&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+## Lifecycle of a volume snapshot and volume snapshot content
+
+`VolumeSnapshotContents` are resources in the cluster. `VolumeSnapshots` are requests for those resources. The interaction between `VolumeSnapshotContents` and `VolumeSnapshots` follow this lifecycle:
+ --&gt;
+&lt;h2 id=&#34;volumesnapshot-和-volumesnapshotcontent-的生命周期&#34;&gt;&lt;code&gt;VolumeSnapshot&lt;/code&gt; 和 &lt;code&gt;VolumeSnapshotContent&lt;/code&gt; 的生命周期&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;VolumeSnapshotContents&lt;/code&gt; 是集群中的资源。 &lt;code&gt;VolumeSnapshots&lt;/code&gt; 是对这些资源的申请。
+&lt;code&gt;VolumeSnapshotContents&lt;/code&gt; 与 &lt;code&gt;VolumeSnapshots&lt;/code&gt; 交互遵循以下周期:&lt;/p&gt;
+&lt;!--
+### Provisioning Volume Snapshot
+
+There are two ways snapshots may be provisioned: pre-provisioned or dynamically provisioned.
+ --&gt;
+&lt;h3 id=&#34;卷快照管理&#34;&gt;卷快照管理&lt;/h3&gt;
+&lt;p&gt;卷快照管理有两种方式: 静态管理 或 动态管理&lt;/p&gt;
+&lt;!--
+#### Pre-provisioned {#static}
+A cluster administrator creates a number of `VolumeSnapshotContents`. They carry the details of the real volume snapshot on the storage system which is available for use by cluster users. They exist in the Kubernetes API and are available for consumption.
+ --&gt;
+&lt;h4 id=&#34;static&#34;&gt;静态管理&lt;/h4&gt;
+&lt;p&gt;由集群管理员创建一定数据的 &lt;code&gt;VolumeSnapshotContents&lt;/code&gt;。 其中包含存储系统中可以被集群用户使用的
+真实卷快照的详细信息。 它们存在于 k8s API 并可被消费。&lt;/p&gt;
+&lt;!--
+#### Dynamic
+Instead of using a pre-existing snapshot, you can request that a snapshot to be dynamically taken from a PersistentVolumeClaim. The [VolumeSnapshotClass](/docs/concepts/storage/volume-snapshot-classes/) specifies storage provider-specific parameters to use when taking a snapshot.
+ --&gt;
+&lt;h4 id=&#34;动态管理&#34;&gt;动态管理&lt;/h4&gt;
+&lt;p&gt;与使用静态快照管理不同，可以申请从 PVC 动态创建快照。
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volume-snapshot-classes/&#34;&gt;VolumeSnapshotClass&lt;/a&gt; 可以在
+做快照时指定存储提供者相关的参数&lt;/p&gt;
+&lt;!--
+### Binding
+
+The snapshot controller handles the binding of a `VolumeSnapshot` object with an appropriate `VolumeSnapshotContent` object, in both pre-provisioned and dynamically provisioned scenarios. The binding is a one-to-one mapping.
+
+In the case of pre-provisioned binding, the VolumeSnapshot will remain unbound until the requested VolumeSnapshotContent object is created.
+ --&gt;
+&lt;h3 id=&#34;绑定&#34;&gt;绑定&lt;/h3&gt;
+&lt;p&gt;在静态管理和动态管理的情况下，快照控制器会处理 &lt;code&gt;VolumeSnapshot&lt;/code&gt; 对象与恰当的 &lt;code&gt;VolumeSnapshotContent&lt;/code&gt;
+的绑定。 这种绑定关系是一对一的。&lt;/p&gt;
+&lt;p&gt;在静态管理绑定时， &lt;code&gt;VolumeSnapshot&lt;/code&gt; 在 &lt;code&gt;VolumeSnapshotContent&lt;/code&gt; 创建之前都是未绑定状态&lt;/p&gt;
+&lt;!--
+### Persistent Volume Claim as Snapshot Source Protection
+
+The purpose of this protection is to ensure that in-use
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/&#39; target=&#39;_blank&#39;&gt;PersistentVolumeClaim&lt;span class=&#39;tooltip-text&#39;&gt;Claims storage resources defined in a PersistentVolume so that it can be mounted as a volume in a container.&lt;/span&gt;
+&lt;/a&gt;
+API objects are not removed from the system while a snapshot is being taken from it (as this may result in data loss).
+
+While a snapshot is being taken of a PersistentVolumeClaim, that PersistentVolumeClaim is in-use. If you delete a PersistentVolumeClaim API object in active use as a snapshot source, the PersistentVolumeClaim object is not removed immediately. Instead, removal of the PersistentVolumeClaim object is postponed until the snapshot is readyToUse or aborted.
+ --&gt;
+&lt;h3 id=&#34;当-pvc-作为快照源的保护机制&#34;&gt;当 PVC 作为快照源的保护机制&lt;/h3&gt;
+&lt;p&gt;这个保护机制的目的是确保使用中的
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/&#39; target=&#39;_blank&#39;&gt;PersistentVolumeClaim&lt;span class=&#39;tooltip-text&#39;&gt;Claims storage resources defined in a PersistentVolume so that it can be mounted as a volume in a container.&lt;/span&gt;
+&lt;/a&gt;
+API 对象在做快照的过程中不会被从系统中删除(因为这可能会导致数据丢失)。&lt;/p&gt;
+&lt;p&gt;当一个 &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; 在用于做快照，则它就在使用中状态。 如果删除了一个正在作为快照
+源的 &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; 对象，它不会马上被删除。 这个删除行为会被延迟到快照的状态
+变为 &lt;code&gt;readyToUse&lt;/code&gt; 或 中止(&lt;code&gt;aborted&lt;/code&gt;) 之后。&lt;/p&gt;
+&lt;!--
+### Delete
+
+Deletion is triggered by deleting the `VolumeSnapshot` object, and the `DeletionPolicy` will be followed. If the `DeletionPolicy` is `Delete`, then the underlying storage snapshot will be deleted along with the `VolumeSnapshotContent` object. If the `DeletionPolicy` is `Retain`, then both the underlying snapshot and `VolumeSnapshotContent` remain.
+ --&gt;
+&lt;h3 id=&#34;删除&#34;&gt;删除&lt;/h3&gt;
+&lt;p&gt;删除由删除 &lt;code&gt;VolumeSnapshot&lt;/code&gt; 对象触发， 会依照 &lt;code&gt;DeletionPolicy&lt;/code&gt; 进行。 如果 &lt;code&gt;DeletionPolicy&lt;/code&gt;
+是删除(&lt;code&gt;Delete&lt;/code&gt;)， 则底层的存储快照会连同 &lt;code&gt;VolumeSnapshotContent&lt;/code&gt; 对象一起删除。 如果
+&lt;code&gt;DeletionPolicy&lt;/code&gt; 是保留(&lt;code&gt;Retain&lt;/code&gt;), 则 底层的存储快照 和 &lt;code&gt;VolumeSnapshotContent&lt;/code&gt; 对象都保留&lt;/p&gt;
+&lt;!--
+## VolumeSnapshots
+
+Each VolumeSnapshot contains a spec and a status.
+
+```yaml
+apiVersion: snapshot.storage.k8s.io/v1beta1
+kind: VolumeSnapshot
+metadata:
+  name: new-snapshot-test
+spec:
+  volumeSnapshotClassName: csi-hostpath-snapclass
+  source:
+    persistentVolumeClaimName: pvc-test
+```
+
+`persistentVolumeClaimName` is the name of the PersistentVolumeClaim data source for the snapshot. This field is required for dynamically provisioning a snapshot.
+
+A volume snapshot can request a particular class by specifying the name of a
+[VolumeSnapshotClass](/docs/concepts/storage/volume-snapshot-classes/)
+using the attribute `volumeSnapshotClassName`. If nothing is set, then the default class is used if available.
+
+For pre-provisioned snapshots, you need to specify a `volumeSnapshotContentName` as the source for the snapshot as shown in the following example. The `volumeSnapshotContentName` source field is required for pre-provisioned snapshots.
+
+```yaml
+apiVersion: snapshot.storage.k8s.io/v1beta1
+kind: VolumeSnapshot
+metadata:
+  name: test-snapshot
+spec:
+  source:
+    volumeSnapshotContentName: test-content
+```
+ --&gt;
+&lt;h2 id=&#34;volumesnapshot&#34;&gt;&lt;code&gt;VolumeSnapshot&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;每个 &lt;code&gt;VolumeSnapshot&lt;/code&gt; 包含一个 &lt;code&gt;spec&lt;/code&gt; 和一个 &lt;code&gt;status&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;snapshot.storage.k8s.io/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;VolumeSnapshot&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;new-snapshot-test&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumeSnapshotClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;csi-hostpath-snapclass&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;source&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;persistentVolumeClaimName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pvc-test&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;persistentVolumeClaimName&lt;/code&gt; is the name of the PersistentVolumeClaim data source for the snapshot. This field is required for dynamically provisioning a snapshot.
+&lt;code&gt;persistentVolumeClaimName&lt;/code&gt; 是作为快照数据源的 PVC 的名称。 这个字段在动态管理快照时是必要的。&lt;/p&gt;
+&lt;p&gt;A volume snapshot can request a particular class by specifying the name of a
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/docs/concepts/storage/volume-snapshot-classes/&#34;&gt;VolumeSnapshotClass&lt;/a&gt;
+using the attribute &lt;code&gt;volumeSnapshotClassName&lt;/code&gt;. If nothing is set, then the default class is used if available.
+卷快照时可以通过 &lt;code&gt;volumeSnapshotClassName&lt;/code&gt; 设置一个
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volume-snapshot-classes/&#34;&gt;VolumeSnapshotClass&lt;/a&gt;
+名称来指定特定的类别。
+如果没有设置，在有默认的类别时就使用默认的&lt;/p&gt;
+&lt;p&gt;对于静态管理的快照，需要向下面例子中所示的指定一个 &lt;code&gt;volumeSnapshotContentName&lt;/code&gt; 作为快照源。
+在静态管理快照时 &lt;code&gt;volumeSnapshotContentName&lt;/code&gt; 源字段是必要的。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;snapshot.storage.k8s.io/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;VolumeSnapshot&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-snapshot&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;source&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeSnapshotContentName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-content&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+## Volume Snapshot Contents
+
+Each VolumeSnapshotContent contains a spec and status. In dynamic provisioning, the snapshot common controller creates `VolumeSnapshotContent` objects. Here is an example:
+
+```yaml
+apiVersion: snapshot.storage.k8s.io/v1beta1
+kind: VolumeSnapshotContent
+metadata:
+  name: snapcontent-72d9a349-aacd-42d2-a240-d775650d2455
+spec:
+  deletionPolicy: Delete
+  driver: hostpath.csi.k8s.io
+  source:
+    volumeHandle: ee0cfb94-f8d4-11e9-b2d8-0242ac110002
+  volumeSnapshotClassName: csi-hostpath-snapclass
+  volumeSnapshotRef:
+    name: new-snapshot-test
+    namespace: default
+    uid: 72d9a349-aacd-42d2-a240-d775650d2455
+```
+
+`volumeHandle` is the unique identifier of the volume created on the storage backend and returned by the CSI driver during the volume creation. This field is required for dynamically provisioning a snapshot. It specifies the volume source of the snapshot.
+
+For pre-provisioned snapshots, you (as cluster administrator) are responsible for creating the `VolumeSnapshotContent` object as follows.
+
+```yaml
+apiVersion: snapshot.storage.k8s.io/v1beta1
+kind: VolumeSnapshotContent
+metadata:
+  name: new-snapshot-content-test
+spec:
+  deletionPolicy: Delete
+  driver: hostpath.csi.k8s.io
+  source:
+    snapshotHandle: 7bdd0de3-aaeb-11e8-9aae-0242ac110002
+  volumeSnapshotRef:
+    name: new-snapshot-test
+    namespace: default
+```
+
+`snapshotHandle` is the unique identifier of the volume snapshot created on the storage backend. This field is required for the pre-provisioned snapshots. It specifies the CSI snapshot id on the storage system that this `VolumeSnapshotContent` represents.
+ --&gt;
+&lt;h2 id=&#34;volumesnapshotcontent&#34;&gt;&lt;code&gt;VolumeSnapshotContent&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;每个 VolumeSnapshotContent 都包含一个 &lt;code&gt;spec&lt;/code&gt; 和一个 &lt;code&gt;status&lt;/code&gt;， 在动态管理时，
+快照控制器创建 &lt;code&gt;VolumeSnapshotContent&lt;/code&gt; 对象，下面是一个示例:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;snapshot.storage.k8s.io/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;VolumeSnapshotContent&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;snapcontent-72d9a349-aacd-42d2-a240-d775650d2455&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;deletionPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Delete&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;driver&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;hostpath.csi.k8s.io&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;source&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeHandle&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ee0cfb94-f8d4-11e9-b2d8-0242ac110002&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumeSnapshotClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;csi-hostpath-snapclass&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumeSnapshotRef&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;new-snapshot-test&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;namespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;default&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;uid&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;72d9a349-aacd-42d2-a240-d775650d2455&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;volumeHandle&lt;/code&gt; 是卷在存储后台上的唯一标识，由 CSI 创建卷时返回。 这个字段在动态管理快照时是必要的。
+它指定了快照的源(卷)&lt;/p&gt;
+&lt;p&gt;对于静态管理的乜是， 集群管理员负责创建如下 &lt;code&gt;VolumeSnapshotContent&lt;/code&gt; 对象。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;snapshot.storage.k8s.io/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;VolumeSnapshotContent&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;new-snapshot-content-test&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;deletionPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Delete&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;driver&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;hostpath.csi.k8s.io&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;source&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;snapshotHandle&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;7bdd0de3-aaeb-11e8-9aae-0242ac110002&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumeSnapshotRef&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;new-snapshot-test&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;namespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;default&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;volumeHandle&lt;/code&gt; 是卷在存储后台上的唯一标识， 这个字段在静态管理快照时是必要的。 它指定这个
+&lt;code&gt;VolumeSnapshotContent&lt;/code&gt; 在存储系统所代表的 CSI 快照的ID&lt;/p&gt;
+&lt;!--
+## Provisioning Volumes from Snapshots
+
+You can provision a new volume, pre-populated with data from a snapshot, by using
+the *dataSource* field in the `PersistentVolumeClaim` object.
+
+For more details, see
+[Volume Snapshot and Restore Volume from Snapshot](/docs/concepts/storage/persistent-volumes/#volume-snapshot-and-restore-volume-from-snapshot-support).
+ --&gt;
+&lt;h2 id=&#34;基于快照创建卷&#34;&gt;基于快照创建卷&lt;/h2&gt;
+&lt;p&gt;You can provision a new volume, pre-populated with data from a snapshot, by using
+the &lt;em&gt;dataSource&lt;/em&gt; field in the &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; object.
+可以通过 &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; 对象的 &lt;em&gt;dataSource&lt;/em&gt; 指定一个快照，将快照的数据预先添加
+到新创建的卷中。&lt;/p&gt;
+&lt;p&gt;更多详细信息见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/persistent-volumes/#volume-snapshot-and-restore-volume-from-snapshot-support&#34;&gt;卷快照和从快照中恢复卷&lt;/a&gt;.&lt;/p&gt;
 
       </description>
     </item>

@@ -47,7 +47,7 @@ status for a Pod object consists of a set of [Pod conditions](#pod-conditions).
 You can also inject [custom readiness information](#pod-readiness-gate) into the
 condition data for a Pod, if that is useful to your application.
 
-Pods are only [scheduled](/k8sDocs/concepts/scheduling-eviction/) once in their lifetime.
+Pods are only [scheduled](/k8sDocs/docs/concepts/scheduling-eviction/) once in their lifetime.
 Once a Pod is scheduled (assigned) to a Node, the Pod runs on that Node until it stops
 or is [terminated](#pod-termination).
 
@@ -67,7 +67,7 @@ or is [terminated](#pod-termination).
 
 Like individual application containers, Pods are considered to be relatively
 ephemeral (rather than durable) entities. Pods are created, assigned a unique
-ID ([UID](/k8sDocs/concepts/overview/working-with-objects/names/#uids)), and scheduled
+ID ([UID](/k8sDocs/docs/concepts/overview/working-with-objects/names/#uids)), and scheduled
 to nodes where they remain until termination (according to restart policy) or
 deletion.  
 If a &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/2-concepts/01-architecture/00-nodes/&#39; target=&#39;_blank&#39;&gt;节点&lt;span class=&#39;tooltip-text&#39;&gt;一个节点就是 k8s 中的一个工作机&lt;/span&gt;
@@ -109,7 +109,7 @@ web server that uses a persistent volume for shared storage between the containe
  --&gt;
 &lt;h2 id=&#34;pod-的一生&#34;&gt;Pod 的一生&lt;/h2&gt;
 &lt;p&gt;与单独使用应用容器一样, Pod 可以被认为是一个相对临时(而不是长期存在)的实体. Pod 在创建时会被分配
-一个唯一的 ID(&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/overview/working-with-objects/names/#uids&#34;&gt;UID&lt;/a&gt;),
+一个唯一的 ID(&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/names/#uids&#34;&gt;UID&lt;/a&gt;),
 然后被到一个 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/2-concepts/01-architecture/00-nodes/&#39; target=&#39;_blank&#39;&gt;node&lt;span class=&#39;tooltip-text&#39;&gt;一个节点就是 k8s 中的一个工作机&lt;/span&gt;
 &lt;/a&gt; 上,直到被终止(依照重启策略)或者被删除.
 如果一个 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/2-concepts/01-architecture/00-nodes/&#39; target=&#39;_blank&#39;&gt;node&lt;span class=&#39;tooltip-text&#39;&gt;一个节点就是 k8s 中的一个工作机&lt;/span&gt;
@@ -209,7 +209,7 @@ Pod 的人生阶段并不是对容器或 Pod 状态的容易理解的总结, 也
 
 As well as the [phase](#pod-phase) of the Pod overall, Kubernetes tracks the state of
 each container inside a Pod. You can use
-[container lifecycle hooks](/k8sDocs/concepts/containers/container-lifecycle-hooks/) to
+[container lifecycle hooks](/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/) to
 trigger events to run at certain points in a container&#39;s lifecycle.
 
 Once the &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kube-scheduler/&#39; target=&#39;_blank&#39;&gt;scheduler&lt;span class=&#39;tooltip-text&#39;&gt;Control plane component that watches for newly created pods with no assigned node, and selects a node for them to run on.&lt;/span&gt;
@@ -313,7 +313,7 @@ through which the Pod has or has not passed:
 
 * `PodScheduled`: the Pod has been scheduled to a node.
 * `ContainersReady`: all containers in the Pod are ready.
-* `Initialized`: all [init containers](/k8sDocs/concepts/workloads/pods/init-containers/)
+* `Initialized`: all [init containers](/k8sDocs/docs/concepts/workloads/pods/init-containers/)
   have started successfully.
 * `Ready`: the Pod is able to serve requests and should be added to the load
   balancing pools of all matching Services.
@@ -419,7 +419,7 @@ status:
 ...
 ```
 
-The Pod conditions you add must have names that meet the Kubernetes [label key format](/k8sDocs/concepts/overview/working-with-objects/labels/#syntax-and-character-set).
+The Pod conditions you add must have names that meet the Kubernetes [label key format](/k8sDocs/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set).
   --&gt;
 &lt;h3 id=&#34;pod-readiness-gate&#34;&gt;Pod 就绪阀&lt;/h3&gt;
 &lt;p&gt;用户可以向应用中注入额外的反馈或信号到 &lt;code&gt;PodStatus&lt;/code&gt;: Pod readiness. 要使用该特性，需要在 Pod 的 &lt;code&gt;spec&lt;/code&gt; 子对象上设置 &lt;code&gt;readinessGates&lt;/code&gt;，定义追加额外的就绪条件到 k8s 检测 Pod 就绪条件列表中。&lt;/p&gt;
@@ -444,7 +444,7 @@ The Pod conditions you add must have names that meet the Kubernetes [label key f
     - &lt;span style=&#34;color:#f92672&#34;&gt;containerID&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;docker://abcd...&lt;/span&gt;
       &lt;span style=&#34;color:#f92672&#34;&gt;ready&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
 ...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;用户添加的条件在命名是需要符合 k8s 的 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/overview/working-with-objects/labels/#syntax-and-character-set&#34;&gt;标签命名格式&lt;/a&gt;&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;用户添加的条件在命名是需要符合 k8s 的 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set&#34;&gt;标签命名格式&lt;/a&gt;&lt;/p&gt;
 &lt;!--
 ### Status for Pod readiness {#pod-readiness-status}
 
@@ -752,7 +752,7 @@ An example flow:
    as terminating (a graceful shutdown duration has been set), the kubelet begins the local Pod
    shutdown process.
    1. If one of the Pod&#39;s containers has defined a `preStop`
-      [hook](/k8sDocs/concepts/containers/container-lifecycle-hooks/#hook-details), the kubelet
+      [hook](/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/#hook-details), the kubelet
       runs that hook inside of the container. If the `preStop` hook is still running after the
       grace period expires, the kubelet requests a small, one-off grace period extension of 2
       seconds.
@@ -808,7 +808,7 @@ Pod 对象就会更新，并标记为已经挂了。 如果使用 &lt;code&gt;ku
 看到它的状态应该是 &lt;code&gt;Terminating&lt;/code&gt;。 在 Pod 所在的节点上： 当 kubelet 看到 Pod 被标记为终止时(添加一个平滑关闭标记)
 kubelet 就开始并本地的 Pod 的进程。
 &lt;ol&gt;
-&lt;li&gt;如果 Pod 中有任意容器配置了&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/containers/container-lifecycle-hooks/#hook-details&#34;&gt;钩子&lt;/a&gt; &lt;code&gt;preStop&lt;/code&gt;,
+&lt;li&gt;如果 Pod 中有任意容器配置了&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/#hook-details&#34;&gt;钩子&lt;/a&gt; &lt;code&gt;preStop&lt;/code&gt;,
 kubelet 会在对应容器中执行这个钩子。 如果在预期时间到达时 &lt;code&gt;preStop&lt;/code&gt; 钩子仍在运行，则 kubelet 一次性多给 2 秒。
 &lt;blockquote class=&#34;note&#34;&gt;
   &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 如果 &lt;code&gt;preStop&lt;/code&gt; 需要比默认的预期时间更长的时间，则需要设置一个合适的 &lt;code&gt;terminationGracePeriodSeconds&lt;/code&gt; 值&lt;/div&gt;
@@ -922,7 +922,7 @@ This avoids a resource leak as Pods are created and terminated over time.
 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/&#34;&gt;configuring Liveness, Readiness and Startup Probes&lt;/a&gt;.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;了解&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/containers/container-lifecycle-hooks/&#34;&gt;container lifecycle hooks&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;了解&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/&#34;&gt;container lifecycle hooks&lt;/a&gt;.&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;更多关于 Pod / Container 状态的 API, 见 &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podstatus-v1-core&#34;&gt;PodStatus&lt;/a&gt;,
@@ -1661,7 +1661,7 @@ spec:
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;labelSelector&lt;/strong&gt; 用于找到匹配的 Pod。 匹配到的 Pod 会作为对应拓扑域的的一员(参与数量统计)
-更多标签和选择器见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/overview/working-with-objects/labels/#label-selectors&#34;&gt;标签和选择器&lt;/a&gt;&lt;/li&gt;
+更多标签和选择器见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/labels/#label-selectors&#34;&gt;标签和选择器&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;更新多关于该字段的信息请查看 &lt;code&gt;kubectl explain Pod.spec.topologySpreadConstraints&lt;/code&gt; 命令结果。&lt;/p&gt;
 &lt;!--
@@ -2411,7 +2411,7 @@ specific service do not need to know all the details about that service.
 --&gt;
 &lt;h2 id=&#34;理解-pod-预设信息&#34;&gt;理解 Pod 预设信息&lt;/h2&gt;
 &lt;p&gt;PodPreset 是在Pod 创建时向其中注入的运行环境需要的额外信息的 API 对象资源。
-用户可以通过 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/overview/working-with-objects/labels/#label-selectors&#34;&gt;label selectors&lt;/a&gt;
+用户可以通过 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/labels/#label-selectors&#34;&gt;label selectors&lt;/a&gt;
 来指定哪些 PodPreset 要用到该 Pod 上面。&lt;/p&gt;
 &lt;p&gt;PodPreset 可以让 Pod 模板的创建者不必要为每个 Pod 提供都提供所有信息。
 通过这种方式，Pod 模板的创建者在消费特定服务时，不需要知道该服务的所有细节&lt;/p&gt;
@@ -2762,7 +2762,7 @@ PDB 会限制在计划内故障时应用副本的 Pod 同时挂掉的数量。�
 但可以让它发生在预算控制内。&lt;/p&gt;
 &lt;p&gt;由应用滚动更新造成的 Pod 删除或不可用是遵照故障预算的， 但工作负载(如 Deployment 和 StatefulSet)
 的滚动更新则不受 PDB 限制。 而是由工作负载中的配置来处理更新失败的。&lt;/p&gt;
-&lt;p&gt;当一个 Pod 因使用 驱逐 API而被驱逐， 会平滑地被 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/pods/pod-lifecycle/#pod-termination&#34;&gt;终止&lt;/a&gt;
+&lt;p&gt;当一个 Pod 因使用 驱逐 API而被驱逐， 会平滑地被 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination&#34;&gt;终止&lt;/a&gt;
 或  &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podspec-v1-core&#34;&gt;PodSpec&lt;/a&gt;.)
 中配置的 &lt;code&gt;terminationGracePeriodSeconds&lt;/code&gt; 后被杀死。&lt;/p&gt;
 &lt;blockquote&gt;
@@ -3103,7 +3103,7 @@ the nodes in your cluster, such as a node or system software upgrade, here are s
 &lt;ul&gt;
 &lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/run-application/configure-pdb/&#34;&gt;配置 PodDisruptionBudget&lt;/a&gt;.&lt;/li&gt;
 &lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/administer-cluster/safely-drain-node/&#34;&gt;节点清场&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;了解 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/controllers/deployment/#updating-a-deployment&#34;&gt;更新 Deployment&lt;/a&gt;
+&lt;li&gt;了解 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/deployment/#updating-a-deployment&#34;&gt;更新 Deployment&lt;/a&gt;
 包括在回滚时用哪些步骤保持其可用性&lt;/li&gt;
 &lt;/ul&gt;
 

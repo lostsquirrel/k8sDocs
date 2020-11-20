@@ -654,6 +654,12 @@
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragepersistent-volumes" href="/k8sDocs/docs/concepts/storage/persistent-volumes/">持久化卷(PV)</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshots" href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -912,7 +918,7 @@ Each port definition can have the same `protocol`, or a different one.
 <p>Service 在 k8s 中是一个 <code>REST</code> 对象， 与 Pod 类似。 与其它所有 <code>REST</code> 对象一样，
 可以通过 <code>POST</code> 请求将 Service 定义发送到 api-server 来创建一个新的实例。
 Service 的名称必须是一个有效的
-<a href="/k8sDocs/concepts/overview/working-with-objects/names#dns-label-names">DNS 标签名称</a>.</p>
+<a href="/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-label-names">DNS 标签名称</a>.</p>
 <p>例如， 假如有一组 Pod， 每个 Pod 监听的端口都是 <code>9376</code>， 都打着一个标签为 <code>app=MyApp</code>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
 <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
@@ -977,7 +983,7 @@ For example:
     <span style="color:#f92672">ports</span>:
       - <span style="color:#f92672">port</span>: <span style="color:#ae81ff">9376</span>
 </code></pre></div><p>Endpoint 对象的名称必以是一个有效的
-<a href="/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.
+<a href="/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.
 <blockquote class="note">
   <div><strong>说明：</strong> <p>Endpoint 对象所用的 IP <em>必须不能</em> 是: 回环地址 (127.0.0.0/8 IPv4, ::1/128 IPv6)，或
 链路本地(link-local) (169.254.0.0/16 和 224.0.0.0/24  IPv4, fe80::/64 IPv6).</p>
@@ -1030,7 +1036,7 @@ described in detail in [EndpointSlices](/docs/concepts/services-networking/endpo
 很相近， EndpointSlice 允许对铆中资源的网络末端进行分发. 默认情况下当一个 EndpointSlice
 的网络末端数量达到 100 时就认为是 &ldquo;满了&rdquo;, 这时候就会创建新的 EndpointSlice 来存储更多的网络末端。</p>
 <p>更多 EndpointSlice 提供的属性和功能请见
-<a href="/k8sDocs/concepts/services-networking/endpoint-slices/">EndpointSlices</a>.</p>
+<a href="/k8sDocs/docs/concepts/services-networking/endpoint-slices/">EndpointSlices</a>.</p>
 <!--
 ### Application protocol
 
@@ -1171,7 +1177,7 @@ kernelspace 之间来回切换。 这种方式也可能更加可靠。</p>
 这与 userspace 模式不同： 在这种场景下， kube-proxy 会检测到第一个 Pod 的连接失败了，会自动
 地尝试其它的后端 Pod。</p>
 <p>可以使用
-<a href="/k8sDocs/concepts/workloads/pods/pod-lifecycle/#container-probes">就绪探针</a>
+<a href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#container-probes">就绪探针</a>
 来验证后端的 Pod 是在正常工作的， 因此 kube-proxy 在 iptables 模式下只会看到检测结果为健康的
 后端 Pod。 这么做的意义在于避免了通过 kube-proxy 将流量发送到已经知道挂了的 Pod 上。
 <img src="/k8sDocs/images/docs/services-iptables-overview.svg" alt="Services overview diagram for iptables proxy"></p>
@@ -1468,7 +1474,7 @@ You can find more information about `ExternalName` resolution in
 -->
 <h3 id="dns">DNS</h3>
 <p>用户可以(并且几乎绝大多时候应该)通过使用
-<a href="/k8sDocs/concepts/cluster-administration/addons/">插件</a>.
+<a href="/k8sDocs/docs/concepts/cluster-administration/addons/">插件</a>.
 为你的集群设置 DNS 服务。</p>
 <p>一个可感知集群的 DNS 服务， 例如 CoreDNS， 会监听 k8s API 创建的 Service 并创建对应的 DNS 记录。
 如果集群启用的 DNS 服务，则所以的 Pod 都应该会自动地通过 DNS 名称解析 Service。</p>
@@ -1481,7 +1487,7 @@ You can find more information about `ExternalName` resolution in
 有一个叫 <code>&quot;http&quot;</code> 的 <code>TCP</code> 端口， 就可以使用 <code>DNS SRV</code> 查询 <code>_http._tcp.my-service.my-ns</code>
 得到 <code>&quot;http&quot;</code> 对应的端口号和 IP 地址。</p>
 <p>k8s DNS 服务是访问 <code>ExternalName</code> Service 的唯一方式。更多关于 <code>ExternalName</code> 的信息见
-<a href="/k8sDocs/concepts/services-networking/dns-pod-service/">DNS Pod 和 Service</a>.</p>
+<a href="/k8sDocs/docs/concepts/services-networking/dns-pod-service/">DNS Pod 和 Service</a>.</p>
 <!--
 ## Headless Services
 
@@ -1599,7 +1605,7 @@ You can also use [Ingress](/docs/concepts/services-networking/ingress/) to expos
 </p>
 </li>
 </ul>
-<p>用户也可以使用 <a href="/k8sDocs/concepts/services-networking/ingress/">Ingress</a> 来暴露 Service。
+<p>用户也可以使用 <a href="/k8sDocs/docs/concepts/services-networking/ingress/">Ingress</a> 来暴露 Service。
 Ingress 不是 Service 的一个类型， 但它扮演的是集群切入点的角色。 它让路由规则可以统一为一个资源。
 并可以在同一个IP地址上暴露多个 Service</p>
 <!--
@@ -2882,9 +2888,9 @@ SCTP 多重连接的 NAT 需要在对应的逻辑模块中有特殊逻辑</div>
 
 <h2 id="相关资料">相关资料</h2>
 <ul>
-<li>概念 <a href="/k8sDocs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a></li>
-<li>概念 <a href="/k8sDocs/concepts/services-networking/ingress/">Ingress</a></li>
-<li>概念 <a href="/k8sDocs/concepts/services-networking/endpoint-slices/">EndpointSlices</a></li>
+<li>概念 <a href="/k8sDocs/docs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a></li>
+<li>概念 <a href="/k8sDocs/docs/concepts/services-networking/ingress/">Ingress</a></li>
+<li>概念 <a href="/k8sDocs/docs/concepts/services-networking/endpoint-slices/">EndpointSlices</a></li>
 </ul>
 
 

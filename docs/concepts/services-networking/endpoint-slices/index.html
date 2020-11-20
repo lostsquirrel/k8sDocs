@@ -654,6 +654,12 @@
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragepersistent-volumes" href="/k8sDocs/docs/concepts/storage/persistent-volumes/">持久化卷(PV)</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshots" href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -863,7 +869,7 @@ improvement for services with large numbers of endpoints.
 的 Service 创建 EndpointSlice。 这些 EndpointSlice 包含所有匹配该 Service 的 Pod 的引用。
 EndpointSlice 通过协议，端口号，Service 名称的唯一组合将这些网络端点组织在一起。
 EndpointSlice 对象的名称必须是一个
-<a href="/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.</p>
+<a href="/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.</p>
 <p>下面的例子中，是一个叫 <code>example</code> 的 Service 的 EndpointSlice 资源的简单示例:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">discovery.k8s.io/v1beta1</span>
 <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">EndpointSlice</span>
@@ -1091,7 +1097,7 @@ EndpointSlice 的实现必须要能处理这种同一个网络端点出现在多
 <h2 id="相关资料">相关资料</h2>
 <ul>
 <li>实践 <a href="/k8sDocs/tasks/administer-cluster/enabling-endpointslices">开启 EndpointSlices</a></li>
-<li>概念 <a href="/k8sDocs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a></li>
+<li>概念 <a href="/k8sDocs/docs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a></li>
 </ul>
 
 

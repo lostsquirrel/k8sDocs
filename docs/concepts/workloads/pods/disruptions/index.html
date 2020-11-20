@@ -654,6 +654,12 @@
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragepersistent-volumes" href="/k8sDocs/docs/concepts/storage/persistent-volumes/">持久化卷(PV)</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshots" href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -980,7 +986,7 @@ PDB 会限制在计划内故障时应用副本的 Pod 同时挂掉的数量。�
 但可以让它发生在预算控制内。</p>
 <p>由应用滚动更新造成的 Pod 删除或不可用是遵照故障预算的， 但工作负载(如 Deployment 和 StatefulSet)
 的滚动更新则不受 PDB 限制。 而是由工作负载中的配置来处理更新失败的。</p>
-<p>当一个 Pod 因使用 驱逐 API而被驱逐， 会平滑地被 <a href="/k8sDocs/concepts/workloads/pods/pod-lifecycle/#pod-termination">终止</a>
+<p>当一个 Pod 因使用 驱逐 API而被驱逐， 会平滑地被 <a href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination">终止</a>
 或  <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podspec-v1-core">PodSpec</a>.)
 中配置的 <code>terminationGracePeriodSeconds</code> 后被杀死。</p>
 <blockquote>
@@ -1321,7 +1327,7 @@ the nodes in your cluster, such as a node or system software upgrade, here are s
 <ul>
 <li>实践 <a href="/k8sDocs/tasks/run-application/configure-pdb/">配置 PodDisruptionBudget</a>.</li>
 <li>实践 <a href="/k8sDocs/tasks/administer-cluster/safely-drain-node/">节点清场</a></li>
-<li>了解 <a href="/k8sDocs/concepts/workloads/controllers/deployment/#updating-a-deployment">更新 Deployment</a>
+<li>了解 <a href="/k8sDocs/docs/concepts/workloads/controllers/deployment/#updating-a-deployment">更新 Deployment</a>
 包括在回滚时用哪些步骤保持其可用性</li>
 </ul>
 

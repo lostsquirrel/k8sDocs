@@ -654,6 +654,12 @@
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragepersistent-volumes" href="/k8sDocs/docs/concepts/storage/persistent-volumes/">持久化卷(PV)</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshots" href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -832,7 +838,7 @@ The TTL seconds can be set at any time. Here are some examples for setting the
  -->
 <h2 id="ttl-控制器">TTL 控制器</h2>
 <p>目前 TTL 控制器只支持 Job。 集群管理员可以通过该特性来自动清理已完成的 Job(无论 <code>Complete</code> 或 <code>Failed</code>)，
-只需要在 Job 对象上设置 <code>.spec.ttlSecondsAfterFinished</code>， 见 <a href="/k8sDocs/concepts/workloads/controllers/job/#clean-up-finished-jobs-automatically">示例</a>.
+只需要在 Job 对象上设置 <code>.spec.ttlSecondsAfterFinished</code>， 见 <a href="/k8sDocs/docs/concepts/workloads/controllers/job/#clean-up-finished-jobs-automatically">示例</a>.
 TTL 控制器假定一个资源在完成后 TTL 秒之后就是能够被回收的，换句话来说，就是当 TTL 过期的时候。
 当 TTL 控制器清理一个资源时，会级联地删除，也就是说会连同它的从属对象一起删除。 要注意当一个资源被删除时，
 它的生命周期保证，如析构器，就会被触发。
@@ -890,7 +896,7 @@ very small. Please be aware of this risk when setting a non-zero TTL.
 <h2 id="相关资料">相关资料</h2>
 <ul>
 <li>
-<p><a href="/k8sDocs/concepts/workloads/controllers/job/#clean-up-finished-jobs-automatically">自动清理 Job</a></p>
+<p><a href="/k8sDocs/docs/concepts/workloads/controllers/job/#clean-up-finished-jobs-automatically">自动清理 Job</a></p>
 </li>
 <li>
 <p><a href="https://github.com/kubernetes/enhancements/blob/master/keps/sig-apps/0026-ttl-after-finish.md">设置文稿</a></p>

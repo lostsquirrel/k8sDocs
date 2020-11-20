@@ -198,7 +198,7 @@ Each port definition can have the same `protocol`, or a different one.
 &lt;p&gt;Service 在 k8s 中是一个 &lt;code&gt;REST&lt;/code&gt; 对象， 与 Pod 类似。 与其它所有 &lt;code&gt;REST&lt;/code&gt; 对象一样，
 可以通过 &lt;code&gt;POST&lt;/code&gt; 请求将 Service 定义发送到 api-server 来创建一个新的实例。
 Service 的名称必须是一个有效的
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/overview/working-with-objects/names#dns-label-names&#34;&gt;DNS 标签名称&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-label-names&#34;&gt;DNS 标签名称&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;例如， 假如有一组 Pod， 每个 Pod 监听的端口都是 &lt;code&gt;9376&lt;/code&gt;， 都打着一个标签为 &lt;code&gt;app=MyApp&lt;/code&gt;:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Service&lt;/span&gt;
@@ -263,7 +263,7 @@ For example:
     &lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:
       - &lt;span style=&#34;color:#f92672&#34;&gt;port&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;9376&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Endpoint 对象的名称必以是一个有效的
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;.
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;.
 &lt;blockquote class=&#34;note&#34;&gt;
   &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;p&gt;Endpoint 对象所用的 IP &lt;em&gt;必须不能&lt;/em&gt; 是: 回环地址 (127.0.0.0/8 IPv4, ::1/128 IPv6)，或
 链路本地(link-local) (169.254.0.0/16 和 224.0.0.0/24  IPv4, fe80::/64 IPv6).&lt;/p&gt;
@@ -316,7 +316,7 @@ described in detail in [EndpointSlices](/docs/concepts/services-networking/endpo
 很相近， EndpointSlice 允许对铆中资源的网络末端进行分发. 默认情况下当一个 EndpointSlice
 的网络末端数量达到 100 时就认为是 &amp;ldquo;满了&amp;rdquo;, 这时候就会创建新的 EndpointSlice 来存储更多的网络末端。&lt;/p&gt;
 &lt;p&gt;更多 EndpointSlice 提供的属性和功能请见
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/endpoint-slices/&#34;&gt;EndpointSlices&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/endpoint-slices/&#34;&gt;EndpointSlices&lt;/a&gt;.&lt;/p&gt;
 &lt;!--
 ### Application protocol
 
@@ -457,7 +457,7 @@ kernelspace 之间来回切换。 这种方式也可能更加可靠。&lt;/p&gt;
 这与 userspace 模式不同： 在这种场景下， kube-proxy 会检测到第一个 Pod 的连接失败了，会自动
 地尝试其它的后端 Pod。&lt;/p&gt;
 &lt;p&gt;可以使用
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/pods/pod-lifecycle/#container-probes&#34;&gt;就绪探针&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#container-probes&#34;&gt;就绪探针&lt;/a&gt;
 来验证后端的 Pod 是在正常工作的， 因此 kube-proxy 在 iptables 模式下只会看到检测结果为健康的
 后端 Pod。 这么做的意义在于避免了通过 kube-proxy 将流量发送到已经知道挂了的 Pod 上。
 &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/docs/services-iptables-overview.svg&#34; alt=&#34;Services overview diagram for iptables proxy&#34;&gt;&lt;/p&gt;
@@ -754,7 +754,7 @@ You can find more information about `ExternalName` resolution in
 --&gt;
 &lt;h3 id=&#34;dns&#34;&gt;DNS&lt;/h3&gt;
 &lt;p&gt;用户可以(并且几乎绝大多时候应该)通过使用
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/cluster-administration/addons/&#34;&gt;插件&lt;/a&gt;.
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/cluster-administration/addons/&#34;&gt;插件&lt;/a&gt;.
 为你的集群设置 DNS 服务。&lt;/p&gt;
 &lt;p&gt;一个可感知集群的 DNS 服务， 例如 CoreDNS， 会监听 k8s API 创建的 Service 并创建对应的 DNS 记录。
 如果集群启用的 DNS 服务，则所以的 Pod 都应该会自动地通过 DNS 名称解析 Service。&lt;/p&gt;
@@ -767,7 +767,7 @@ You can find more information about `ExternalName` resolution in
 有一个叫 &lt;code&gt;&amp;quot;http&amp;quot;&lt;/code&gt; 的 &lt;code&gt;TCP&lt;/code&gt; 端口， 就可以使用 &lt;code&gt;DNS SRV&lt;/code&gt; 查询 &lt;code&gt;_http._tcp.my-service.my-ns&lt;/code&gt;
 得到 &lt;code&gt;&amp;quot;http&amp;quot;&lt;/code&gt; 对应的端口号和 IP 地址。&lt;/p&gt;
 &lt;p&gt;k8s DNS 服务是访问 &lt;code&gt;ExternalName&lt;/code&gt; Service 的唯一方式。更多关于 &lt;code&gt;ExternalName&lt;/code&gt; 的信息见
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/dns-pod-service/&#34;&gt;DNS Pod 和 Service&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/dns-pod-service/&#34;&gt;DNS Pod 和 Service&lt;/a&gt;.&lt;/p&gt;
 &lt;!--
 ## Headless Services
 
@@ -885,7 +885,7 @@ You can also use [Ingress](/docs/concepts/services-networking/ingress/) to expos
 &lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;用户也可以使用 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/ingress/&#34;&gt;Ingress&lt;/a&gt; 来暴露 Service。
+&lt;p&gt;用户也可以使用 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/ingress/&#34;&gt;Ingress&lt;/a&gt; 来暴露 Service。
 Ingress 不是 Service 的一个类型， 但它扮演的是集群切入点的角色。 它让路由规则可以统一为一个资源。
 并可以在同一个IP地址上暴露多个 Service&lt;/p&gt;
 &lt;!--
@@ -2168,9 +2168,9 @@ SCTP 多重连接的 NAT 需要在对应的逻辑模块中有特殊逻辑&lt;/di
 
 &lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/connect-applications-service/&#34;&gt;通过 Service 连接应用&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/ingress/&#34;&gt;Ingress&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/endpoint-slices/&#34;&gt;EndpointSlices&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/connect-applications-service/&#34;&gt;通过 Service 连接应用&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/ingress/&#34;&gt;Ingress&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/endpoint-slices/&#34;&gt;EndpointSlices&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>
@@ -3437,7 +3437,7 @@ podIP: 10.244.2.5
 上使用一样的 &lt;code&gt;containerPort&lt;/code&gt; 运行多个 nginx 的 Pod， 并且可以从集群中任意 Pod 或 节点使用
 它的 IP 访问它。 与 Docker 一样， 端口也可以发布到主机的网卡上， 因为网络模型的原因，应该尽量减少这
 种方式的使用。&lt;/p&gt;
-&lt;p&gt;如果用户比较好奇这个是怎么实现的见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/cluster-administration/networking/#how-to-achieve-this&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;如果用户比较好奇这个是怎么实现的见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/cluster-administration/networking/#how-to-achieve-this&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
 &lt;!--
 ## Creating a Service
 
@@ -3648,7 +3648,7 @@ Events:              &amp;lt;none&amp;gt;
 my-nginx   10.244.2.5:80,10.244.3.4:80   1m
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;这个时候就能在集群中的任意一个 Pod 中通过 curl 访问 &lt;code&gt;&amp;lt;CLUSTER-IP&amp;gt;:&amp;lt;PORT&amp;gt;&lt;/code&gt; 来访问这个 nginx
 的 Service.  要注意 Service 的 IP 完全是虚拟的。 如果用户对此有兴趣可以看看
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/service/#virtual-ips-and-service-proxies&#34;&gt;service proxy&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies&#34;&gt;service proxy&lt;/a&gt;.&lt;/p&gt;
 &lt;!--
 ## Accessing the Service
 
@@ -4581,7 +4581,7 @@ improvement for services with large numbers of endpoints.
 的 Service 创建 EndpointSlice。 这些 EndpointSlice 包含所有匹配该 Service 的 Pod 的引用。
 EndpointSlice 通过协议，端口号，Service 名称的唯一组合将这些网络端点组织在一起。
 EndpointSlice 对象的名称必须是一个
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;下面的例子中，是一个叫 &lt;code&gt;example&lt;/code&gt; 的 Service 的 EndpointSlice 资源的简单示例:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;discovery.k8s.io/v1beta1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;EndpointSlice&lt;/span&gt;
@@ -4809,7 +4809,7 @@ EndpointSlice 的实现必须要能处理这种同一个网络端点出现在多
 &lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/administer-cluster/enabling-endpointslices&#34;&gt;开启 EndpointSlices&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/connect-applications-service/&#34;&gt;通过 Service 连接应用&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/connect-applications-service/&#34;&gt;通过 Service 连接应用&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>
@@ -4867,7 +4867,7 @@ For clarity, this guide defines the following terms:
 中，集群中的节点是不在公网上的。&lt;/li&gt;
 &lt;li&gt;边缘路由: 一个为集群执行防火墙策略的路由。 可以是由云提供商管理的网关或一个物理硬件。&lt;/li&gt;
 &lt;li&gt;集群网络: 一组逻辑的或物理的连接，这些连接根据 k8s
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/cluster-administration/networking/&#34;&gt;网络模型&lt;/a&gt;简化集群内的通信&lt;/li&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/cluster-administration/networking/&#34;&gt;网络模型&lt;/a&gt;简化集群内的通信&lt;/li&gt;
 &lt;li&gt;Service: 一个 k8s &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/service/&#39; target=&#39;_blank&#39;&gt;Service&lt;span class=&#39;tooltip-text&#39;&gt;以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式&lt;/span&gt;
 &lt;/a&gt; 就是使用
 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/overview/working-with-objects/labels&#39; target=&#39;_blank&#39;&gt;标签&lt;span class=&#39;tooltip-text&#39;&gt;在对象上标上对用户有意义和有关联的属性&lt;/span&gt;
@@ -4898,7 +4898,7 @@ uses a service of type [Service.Type=NodePort](/docs/concepts/services-networkin
 &lt;h2 id=&#34;ingress-是什么&#34;&gt;Ingress 是什么?&lt;/h2&gt;
 &lt;p&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#ingress-v1-networking-k8s-io&#34;&gt;Ingress&lt;/a&gt;
 将集群内部的
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/service/&#34; target=&#34;_blank&#34;&gt;Service&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/service/&#34; target=&#34;_blank&#34;&gt;Service&lt;/a&gt;
 通过 HTTP 和 HTTPS 路由暴露到集群外部。
 流量路由由 Ingress 资源内部定义的规则控制。&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&#34;language-none&#34; data-lang=&#34;none&#34;&gt;    internet
@@ -4908,12 +4908,12 @@ uses a service of type [Service.Type=NodePort](/docs/concepts/services-networkin
    [ Services ]
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;可以配置一个 Ingress 为 Service 提供外部可以访问的 URL, 负载均衡，SSL / TLS, 提供基于名称的
 虚拟主机名。
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/ingress-controllers&#34;&gt;Ingress 控制器&lt;/a&gt;将负责
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/ingress-controllers&#34;&gt;Ingress 控制器&lt;/a&gt;将负责
 实现 Ingress， 通常是通过负载均衡器，也可能是通过配置边缘路由或额外的前端组件来帮助处理流量。&lt;/p&gt;
 &lt;p&gt;Ingress 不是暴露任意的端口或协议。 要暴露非 HTTP / HTTPS 的 Service 通常使用
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/service/#nodeport&#34;&gt;Service.Type=NodePort&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/service/#nodeport&#34;&gt;Service.Type=NodePort&lt;/a&gt;
 或
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/service/#loadbalancer&#34;&gt;Service.Type=LoadBalancer&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/service/#loadbalancer&#34;&gt;Service.Type=LoadBalancer&lt;/a&gt;.&lt;/p&gt;
 &lt;!--
 ## Prerequisites
 
@@ -4932,12 +4932,12 @@ controllers operate slightly differently.
  --&gt;
 &lt;h2 id=&#34;前置条件&#34;&gt;前置条件&lt;/h2&gt;
 &lt;p&gt;要使用 Ingress 首先得有一个
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/ingress-controllers&#34;&gt;Ingress 控制器&lt;/a&gt;。
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/ingress-controllers&#34;&gt;Ingress 控制器&lt;/a&gt;。
 不然只创建一个 Ingress 资源是没有效果的。&lt;/p&gt;
 &lt;p&gt;需要部署一个 Ingress 控制器，例如
 &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/deploy/&#34;&gt;ingress-nginx&lt;/a&gt;.
 也可以从
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/ingress-controllers&#34;&gt;Ingress 控制器&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/ingress-controllers&#34;&gt;Ingress 控制器&lt;/a&gt;
 中选几个.&lt;/p&gt;
 &lt;p&gt;理想情况下，所有的 Ingress 控制器都应该是符合参考规格说明的。 实际上，不同的 Ingress 运转方式
 各自都有点不同。
@@ -5073,11 +5073,11 @@ for directing HTTP(S) traffic.
 &lt;/p&gt;
 &lt;p&gt;与所有其它的 k8s 资源一样， 一个 Ingress 的必要字段有 &lt;code&gt;apiVersion&lt;/code&gt;, &lt;code&gt;kind&lt;/code&gt;, &lt;code&gt;metadata&lt;/code&gt;。
 Ingress 对象的名称必须是一个有效的
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;.
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;.
 关于配置文件的通用信息见
 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/run-application/run-stateless-application-deployment/&#34;&gt;部署应用&lt;/a&gt;,
 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/configure-pod-container/configure-pod-configmap/&#34;&gt;配置容器&lt;/a&gt;,
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/cluster-administration/manage-deployment/&#34;&gt;管理资源&lt;/a&gt;.
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/cluster-administration/manage-deployment/&#34;&gt;管理资源&lt;/a&gt;.
 Ingress 经常使用注解(annotation) 来配置一些基于 Ingress 控制器的可选配置，这里有一个例子
 &lt;a href=&#34;https://github.com/kubernetes/ingress-nginx/blob/master/docs/examples/rewrite/README.md&#34;&gt;rewrite-target 注解&lt;/a&gt;.
 不同的
@@ -5137,7 +5137,7 @@ routed to your default backend.
  --&gt;
 &lt;h3 id=&#34;default-backend&#34;&gt;默认后端(DefaultBackend)&lt;/h3&gt;
 &lt;p&gt;一个没有任何规则的 Ingress 会将所有的流量发送到一个默认的后端。 &lt;code&gt;defaultBackend&lt;/code&gt; 是一个很方便
-的配置在  &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/ingress-controllers&#34;&gt;Ingress 控制器&lt;/a&gt;
+的配置在  &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/ingress-controllers&#34;&gt;Ingress 控制器&lt;/a&gt;
 并不需要在 Ingress 中配置。&lt;/p&gt;
 &lt;p&gt;如果没有一个 Ingress 中的主机名或路径匹配到的 HTTP 请求，这些请求就会路由到默认后端&lt;/p&gt;
 &lt;!--
@@ -6254,7 +6254,7 @@ Events:
   &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 基于使用的
 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/ingress-controllers/&#34;&gt;Ingress 控制器&lt;/a&gt;
 可能需要创建一个 default-http-backend
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/service/&#34;&gt;Service&lt;/a&gt;.&lt;/div&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/service/&#34;&gt;Service&lt;/a&gt;.&lt;/div&gt;
 &lt;/blockquote&gt;
 
 &lt;!--
@@ -6934,7 +6934,7 @@ Please check the documentation of the relevant [Ingress controller](/docs/concep
  --&gt;
 &lt;h2 id=&#34;跨可用区失效&#34;&gt;跨可用区失效&lt;/h2&gt;
 &lt;p&gt;在故障域之间传播流量的方法在各家云提供商上的方式都不一样。
-请查看 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/ingress-controllers&#34;&gt;Ingress 控制器&lt;/a&gt;文档了解详细信息&lt;/p&gt;
+请查看 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/ingress-controllers&#34;&gt;Ingress 控制器&lt;/a&gt;文档了解详细信息&lt;/p&gt;
 &lt;!--
 ## Alternatives
 
@@ -6946,13 +6946,13 @@ You can expose a Service in multiple ways that don&#39;t directly involve the In
 &lt;h2 id=&#34;alternatives&#34;&gt;替代方案&lt;/h2&gt;
 &lt;p&gt;在不直接使用 Ingress 的情况下还有几种暴露 Service 的方法:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;使用 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/service/#loadbalancer&#34;&gt;Service.Type=LoadBalancer&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;使用 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/service/#nodeport&#34;&gt;Service.Type=NodePort&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;使用 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/service/#loadbalancer&#34;&gt;Service.Type=LoadBalancer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;使用 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/service/#nodeport&#34;&gt;Service.Type=NodePort&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;查阅 &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#ingress-v1beta1-networking-k8s-io&#34;&gt;Ingress API&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/ingress-controllers/&#34;&gt;Ingress 控制器&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/ingress-controllers/&#34;&gt;Ingress 控制器&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/access-application-cluster/ingress-minikube/&#34;&gt;使用 NGINX 控制器在 Minikube 上设置 Ingress&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -7121,7 +7121,7 @@ controllers operate slightly differently.
 
 &lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/services-networking/ingress/&#34;&gt;Ingress&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/ingress/&#34;&gt;Ingress&lt;/a&gt;.&lt;/li&gt;
 &lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/access-application-cluster/ingress-minikube&#34;&gt;使用 NGINX 控制器在 Minikube 上设置 Ingress&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -7186,7 +7186,7 @@ Network policies are implemented by the [network plugin](/docs/concepts/extend-k
 --&gt;
 &lt;h2 id=&#34;前置条件&#34;&gt;前置条件&lt;/h2&gt;
 &lt;p&gt;网络策略是由
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/extend-kubernetes/compute-storage-net/network-plugins/&#34;&gt;网络插件&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/&#34;&gt;网络插件&lt;/a&gt;
 实现的。 要使用网络策略，就必要使用一个支持网络策略的网络解决方案。 创建一个没有实现的控制器的
 &lt;code&gt;NetworkPolicy&lt;/code&gt; 资源是没有效果的&lt;/p&gt;
 &lt;!--
@@ -7327,7 +7327,7 @@ See the [Declare Network Policy](/docs/tasks/administer-cluster/declare-network-
 &lt;p&gt;&lt;strong&gt;必要字段&lt;/strong&gt;: 与其它所有的 k8s 配置一样， NetworkPolicy 必须有 &lt;code&gt;apiVersion&lt;/code&gt;, &lt;code&gt;kind&lt;/code&gt;, &lt;code&gt;metadata&lt;/code&gt;
 字段。 配置文件常用信息请见
 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/configure-pod-container/configure-pod-configmap/&#34;&gt;使用 ConfigMap 配置容器&lt;/a&gt;,
-和 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/overview/working-with-objects/object-management&#34;&gt;对象管理&lt;/a&gt;.&lt;/p&gt;
+和 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/object-management&#34;&gt;对象管理&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;spec&lt;/strong&gt;: NetworkPolicy &lt;a href=&#34;https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status&#34;&gt;spec&lt;/a&gt; 包含了在指定命名空间创建特定网络策略的所有信息&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;podSelector&lt;/strong&gt;: 每个 NetworkPolicy 都包含了一个 &lt;code&gt;podSelector&lt;/code&gt; 字段，用户选择应用该策略的 Pod 组。
 上面例子中的策略选择包含 &amp;ldquo;&lt;code&gt;role=db&lt;/code&gt;&amp;rdquo; 标签的 Pod。 如果 &lt;code&gt;podSelector&lt;/code&gt; 是空则选择该命名空间中所有的 Pod。&lt;/p&gt;

@@ -652,6 +652,12 @@
       <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsstoragepersistent-volumes" href="/k8sDocs/docs/concepts/storage/persistent-volumes/">持久化卷(PV)</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshots" href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -759,7 +765,7 @@ weight: 20
 This document describes the current state of _persistent volumes_ in Kubernetes. Familiarity with [volumes](/docs/concepts/storage/volumes/) is suggested.
  -->
 <p>本文主要介绍当前 k8s 中 <em>持久化卷(persistent volume)</em> 的状态。
-建议先熟悉 <a href="/k8sDocs/concepts/storage/volumes/">volumes</a></p>
+建议先熟悉 <a href="/k8sDocs/docs/concepts/storage/volumes/">volumes</a></p>
 <!-- body -->
 <!--
 ## Introduction
@@ -835,7 +841,7 @@ check [kube-apiserver](/docs/admin/kube-apiserver/) documentation.
 <h4 id="动态供给">动态供给</h4>
 <p>当管理创建的 PV 不能满足用户的 PersistentVolumeClaim 时，集群可能就会尝试为这个 PVC 动态
 提供一个卷。这种供给基于 <code>StorageClass</code>: PVC 必须要申请一个
-<a href="/k8sDocs/concepts/storage/storage-classes/">StorageClass</a>
+<a href="/k8sDocs/docs/concepts/storage/storage-classes/">StorageClass</a>
 并且在动态供给发生之前管理员必须要完成该 <code>StorageClass</code> 的创建和配置。
 如果 PVC 的 <code>StorageClass</code> 被设置为 <code>&quot;&quot;</code> 实际上表示关闭自身的动态供给。</p>
 <p>要启用基于 <code>StorageClass</code> 的动态存储供给需要集群管理在 api-server 中的
@@ -1120,7 +1126,7 @@ to `Retain`, including cases where you are reusing an existing PV.
 如果 PV 已经存在， 可能通过设置它的 <code>claimRef</code> 字段指定一个 <code>PersistentVolumeClaim</code>，
 这样 PV 和 PVC 就会绑定。</p>
 <p>这种绑定会忽略一些卷匹配条件，包括节点亲和性。 控制中心还是会检测，
-<a href="/k8sDocs/concepts/storage/storage-classes/">StorageClass</a>, 访问模式，申请容量是否是有效的。</p>
+<a href="/k8sDocs/docs/concepts/storage/storage-classes/">StorageClass</a>, 访问模式，申请容量是否是有效的。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
 <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolumeClaim</span>
 <span style="color:#f92672">metadata</span>:
@@ -1452,7 +1458,7 @@ spec:
 <h2 id="persistentvolume">PersistentVolume</h2>
 <p>每个 PV 包含一个 <code>spec</code> 和 <code>status</code>, 分别是对这个卷的配置定义和状态。 <code>PersistentVolume</code>
 对象的名称必须是一个有效的
-<a href="/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.</p>
+<a href="/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
 <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolume</span>
 <span style="color:#f92672">metadata</span>:
@@ -1754,7 +1760,7 @@ it will become fully deprecated in a future Kubernetes release.
  -->
 <h3 id="class">类别</h3>
 <p>一个 PV 可以有一个类别， 可以通过 <code>storageClassName</code> 属性来设置一个
-<a href="/k8sDocs/concepts/storage/storage-classes/">StorageClass</a>.
+<a href="/k8sDocs/docs/concepts/storage/storage-classes/">StorageClass</a>.
 一个指定类别的 PV 只能与请求对应类的 PVC 相绑定。 没有设置 <code>storageClassName</code> 的 PV 是没有类别的
 并且只能与没有请求类别的 PVC 绑定。</p>
 <p>在过去是通过 <code>volume.beta.kubernetes.io/storage-class</code> 注解设置类别而不是 <code>storageClassName</code>。
@@ -1849,12 +1855,12 @@ A PV can specify [node affinity](/docs/reference/generated/kubernetes-api/v1.19/
 <h3 id="节点亲和性">节点亲和性</h3>
 <blockquote class="note">
   <div><strong>说明：</strong> 对于大多数卷类型， 是不需要设置这个字段的。
-<a href="/k8sDocs/concepts/storage/volumes/#awselasticblockstore">AWS EBS</a>,
-<a href="/k8sDocs/concepts/storage/volumes/#gcepersistentdisk">GCE PD</a>,
-<a href="/k8sDocs/concepts/storage/volumes/#azuredisk">Azure Disk</a>
+<a href="/k8sDocs/docs/concepts/storage/volumes/#awselasticblockstore">AWS EBS</a>,
+<a href="/k8sDocs/docs/concepts/storage/volumes/#gcepersistentdisk">GCE PD</a>,
+<a href="/k8sDocs/docs/concepts/storage/volumes/#azuredisk">Azure Disk</a>
 卷块设备会自动添加。
 但需要为
-<a href="/k8sDocs/concepts/storage/volumes/#local">local</a>
+<a href="/k8sDocs/docs/concepts/storage/volumes/#local">local</a>
 卷需要显示设置该字段</div>
 </blockquote>
 
@@ -1913,7 +1919,7 @@ spec:
 <h2 id="persistentvolumeclaim">PersistentVolumeClaim</h2>
 <p>每个 PVC 包含 <code>spec</code> 和 <code>status</code>, 其中包含 PVC 的配置定义和状态。
 <code>PersistentVolumeClaim</code> 对象的名称必须是一个有效的
-<a href="/k8sDocs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.</p>
+<a href="/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
 <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolumeClaim</span>
 <span style="color:#f92672">metadata</span>:
@@ -1967,7 +1973,7 @@ All of the requirements, from both `matchLabels` and `matchExpressions`, are AND
  -->
 <h3 id="选择器">选择器</h3>
 <p>PVC 可以指定一个
-<a href="/k8sDocs/concepts/overview/working-with-objects/labels/#label-selectors">标签选择器</a>
+<a href="/k8sDocs/docs/concepts/overview/working-with-objects/labels/#label-selectors">标签选择器</a>
 来选择卷集合。 只有与选择器匹配的卷可以与 PVC 绑定。 选择器可以包含以下两个字段</p>
 <ul>
 <li><code>matchLabels</code> - 卷必须要拥有与其对应的标签</li>
@@ -2377,7 +2383,7 @@ Volume snapshot feature was added to support CSI Volume Plugins only. For detail
 To enable support for restoring a volume from a volume snapshot data source, enable the
 `VolumeSnapshotDataSource` feature gate on the apiserver and controller-manager.
  -->
-<h2 id="卷快照和快照恢复支持">卷快照和快照恢复支持</h2>
+<h2 id="volume-snapshot-and-restore-volume-from-snapshot-support">卷快照和快照恢复支持</h2>
 
 
 
@@ -2389,7 +2395,7 @@ To enable support for restoring a volume from a volume snapshot data source, ena
 
 
 <p>卷快照特性只对 CSI 卷插件支持。详细信息见
-<a href="/k8sDocs/concepts/storage/volume-snapshots/">卷快照</a>.
+<a href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>.
 要启用对从卷快照恢复的支持，需要在 <code>apiserver</code> <code>controller-manager</code> 打开
 <code>VolumeSnapshotDataSource</code> 功能阀</p>
 <!--
@@ -2435,7 +2441,7 @@ spec:
 [Volume Cloning](/docs/concepts/storage/volume-pvc-datasource/) only available for CSI volume plugins.
  -->
 <h2 id="卷克隆">卷克隆</h2>
-<p><a href="/k8sDocs/concepts/storage/volume-pvc-datasource/">卷克隆</a> 只存在于 CSI 卷插件</p>
+<p><a href="/k8sDocs/docs/concepts/storage/volume-pvc-datasource/">卷克隆</a> 只存在于 CSI 卷插件</p>
 <!--
 ### Create PersistentVolumeClaim from an existing PVC {#create-persistent-volume-claim-from-an-existing-pvc}
 
@@ -2617,7 +2623,7 @@ and need persistent storage, it is recommended that you use the following patter
         <li><a href="#绑定块设备">绑定块设备</a></li>
       </ul>
     </li>
-    <li><a href="#卷快照和快照恢复支持">卷快照和快照恢复支持</a>
+    <li><a href="#volume-snapshot-and-restore-volume-from-snapshot-support">卷快照和快照恢复支持</a>
       <ul>
         <li><a href="#create-persistent-volume-claim-from-volume-snapshot">基于卷快照创建 PVC</a></li>
       </ul>
