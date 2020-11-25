@@ -5,7 +5,7 @@
     <description>Recent content in Documentation on Kubernetes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 09 Oct 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 12 Oct 2020 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/docs/index.xml" rel="self" type="application/rss+xml" />
     
@@ -928,6 +928,2835 @@ This avoids a resource leak as Pods are created and terminated over time.
 &lt;p&gt;更多关于 Pod / Container 状态的 API, 见 &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podstatus-v1-core&#34;&gt;PodStatus&lt;/a&gt;,
 &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#containerstatus-v1-core&#34;&gt;ContainerStatus&lt;/a&gt;.&lt;/p&gt;
 &lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Volumes</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/</link>
+      <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- jsafrane
+- saad-ali
+- thockin
+- msau42
+title: Volumes
+content_type: concept
+weight: 10
+--- --&gt;
+&lt;!-- overview --&gt;
+&lt;!--
+On-disk files in a Container are ephemeral, which presents some problems for
+non-trivial applications when running in Containers.  First, when a Container
+crashes, kubelet will restart it, but the files will be lost - the
+Container starts with a clean state.  Second, when running Containers together
+in a `Pod` it is often necessary to share files between those Containers.  The
+Kubernetes `Volume` abstraction solves both of these problems.
+
+Familiarity with [Pods](/docs/concepts/workloads/pods/pod/) is suggested.
+ --&gt;
+&lt;p&gt;容器中写到硬盘的文件是临时的，这会导致有些需要写入硬盘文件的应用出现一些问题。第一个问题是当一个容器
+崩溃后，kubelet 会将其重启，但其所写的文件会全部丢失 - 容器会以全新的状态启动。 第二个问题是
+在一个 &lt;code&gt;Pod&lt;/code&gt; 中的不同容器之间需要共享文件。 k8s 的 &lt;code&gt;Volume&lt;/code&gt; 抽象概念就是解决这些问题的。&lt;/p&gt;
+&lt;p&gt;建议先看看 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/pods/pod/&#34;&gt;Pods&lt;/a&gt;&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## Background
+
+Docker also has a concept of
+[volumes](https://docs.docker.com/storage/), though it is
+somewhat looser and less managed.  In Docker, a volume is simply a directory on
+disk or in another Container.  Lifetimes are not managed and until very
+recently there were only local-disk-backed volumes.  Docker now provides volume
+drivers, but the functionality is very limited for now (e.g. as of Docker 1.7
+only one volume driver is allowed per Container and there is no way to pass
+parameters to volumes).
+
+A Kubernetes volume, on the other hand, has an explicit lifetime - the same as
+the Pod that encloses it.  Consequently, a volume outlives any Containers that run
+within the Pod, and data is preserved across Container restarts. Of course, when a
+Pod ceases to exist, the volume will cease to exist, too.  Perhaps more
+importantly than this, Kubernetes supports many types of volumes, and a Pod can
+use any number of them simultaneously.
+
+At its core, a volume is just a directory, possibly with some data in it, which
+is accessible to the Containers in a Pod.  How that directory comes to be, the
+medium that backs it, and the contents of it are determined by the particular
+volume type used.
+
+To use a volume, a Pod specifies what volumes to provide for the Pod (the
+`.spec.volumes`
+field) and where to mount those into Containers (the
+`.spec.containers[*].volumeMounts`
+field).
+
+A process in a container sees a filesystem view composed from their Docker
+image and volumes.  The [Docker
+image](https://docs.docker.com/userguide/dockerimages/) is at the root of the
+filesystem hierarchy, and any volumes are mounted at the specified paths within
+the image.  Volumes can not mount onto other volumes or have hard links to
+other volumes.  Each Container in the Pod must independently specify where to
+mount each volume.
+ --&gt;
+&lt;h2 id=&#34;背景&#34;&gt;背景&lt;/h2&gt;
+&lt;p&gt;Docker 同样有 &lt;a href=&#34;https://docs.docker.com/storage/&#34;&gt;volumes&lt;/a&gt; 概念，但是 Docker 的数据卷(volume)
+不那么好管理。在 Docker 中，一个数据卷就是简单地在磁盘上或另一个容器中的一个目录。存在期不受管理，
+并且直到最近(文档最早提交为 2018年5月6日)都只支持本地磁盘的数据卷。 现在 Docker 提供了数据卷
+驱动， 但其功能也还是相当有限(例如，Docker v1.7 中每个容器只支持一个数据卷驱动，并且没办法向
+数据卷传递参数)。&lt;/p&gt;
+&lt;p&gt;k8s 的数据卷，相对来说就更加强大，拥有明确的生命期 - 与其绑定的 Pod 相同。 因此，一个数据卷可能
+比 Pod 中所有的容器的命都长， 并且在容器重启之后数据依然存在。 当然，当 Pod 不存在进，与其绑定的
+数据卷也就不存在了。 可能比这些更重要的是 k8s 支持许多类型的数据卷，并且一个 Pod 可以同时使用
+任意类型任意数量的数据卷。&lt;/p&gt;
+&lt;p&gt;数据卷的核心也只是一个目录，可能其中还有数据，它可以被 Pod 中的容器访问。 这个目录是怎么来的，
+它所用的介质是什么，它其中的内存是什么，这些都是由数据卷所使用的类型所决定的。&lt;/p&gt;
+&lt;p&gt;要使用一个数据卷，需要在 Pod 配置文件中 &lt;code&gt;.spec.volumes&lt;/code&gt; 字段上配置可用数据卷，并在容器的
+&lt;code&gt;.spec.containers[*].volumeMounts&lt;/code&gt; 字段指定数据卷和在容器内的挂载点&lt;/p&gt;
+&lt;p&gt;在一个容器内的进程看到的文件系统是由它们的 Docker 镜像和数据卷共同组成的。 &lt;a href=&#34;https://docs.docker.com/userguide/dockerimages/&#34;&gt;Docker
+镜像&lt;/a&gt;位于文件系统层级的底层， 然后各个
+数据卷挂载到镜像内相应的目录上。 数据卷不能再挂载到其它的数据卷上，也不创建硬连接到其它的数据卷。
+Pod 中的每个容器都需要独立的指定每个数据卷的挂载点。&lt;/p&gt;
+&lt;!--
+## Types of Volumes
+
+Kubernetes supports several types of Volumes:
+
+   * [awsElasticBlockStore](#awselasticblockstore)
+   * [azureDisk](#azuredisk)
+   * [azureFile](#azurefile)
+   * [cephfs](#cephfs)
+   * [cinder](#cinder)
+   * [configMap](#configmap)
+   * [csi](#csi)
+   * [downwardAPI](#downwardapi)
+   * [emptyDir](#emptydir)
+   * [fc (fibre channel)](#fc)
+   * [flexVolume](#flexVolume)
+   * [flocker](#flocker)
+   * [gcePersistentDisk](#gcepersistentdisk)
+   * [gitRepo (deprecated)](#gitrepo)
+   * [glusterfs](#glusterfs)
+   * [hostPath](#hostpath)
+   * [iscsi](#iscsi)
+   * [local](#local)
+   * [nfs](#nfs)
+   * [persistentVolumeClaim](#persistentvolumeclaim)
+   * [projected](#projected)
+   * [portworxVolume](#portworxvolume)
+   * [quobyte](#quobyte)
+   * [rbd](#rbd)
+   * [scaleIO](#scaleio)
+   * [secret](#secret)
+   * [storageos](#storageos)
+   * [vsphereVolume](#vspherevolume)
+
+We welcome additional contributions.
+
+ --&gt;
+&lt;h2 id=&#34;types-of-volumes&#34;&gt;数据卷(Volume)的类型&lt;/h2&gt;
+&lt;p&gt;以下为 k8s 支持的数据卷(Volume)类型:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#awselasticblockstore&#34;&gt;awsElasticBlockStore&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#azuredisk&#34;&gt;azureDisk&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#azurefile&#34;&gt;azureFile&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#cephfs&#34;&gt;cephfs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#cinder&#34;&gt;cinder&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#configmap&#34;&gt;configMap&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#csi&#34;&gt;csi&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#downwardapi&#34;&gt;downwardAPI&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#emptydir&#34;&gt;emptyDir&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#fc&#34;&gt;fc (fibre channel)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#flexVolume&#34;&gt;flexVolume&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#flocker&#34;&gt;flocker&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#gcepersistentdisk&#34;&gt;gcePersistentDisk&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#gitrepo&#34;&gt;gitRepo (deprecated)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#glusterfs&#34;&gt;glusterfs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#hostpath&#34;&gt;hostPath&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#iscsi&#34;&gt;iscsi&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#local&#34;&gt;local&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#nfs&#34;&gt;nfs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#persistentvolumeclaim&#34;&gt;persistentVolumeClaim&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#projected&#34;&gt;projected&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#portworxvolume&#34;&gt;portworxVolume&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#quobyte&#34;&gt;quobyte&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#rbd&#34;&gt;rbd&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#scaleio&#34;&gt;scaleIO&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#secret&#34;&gt;secret&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#storageos&#34;&gt;storageos&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#vspherevolume&#34;&gt;vsphereVolume&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;欢迎贡献更多类型.&lt;/p&gt;
+&lt;!--
+### awsElasticBlockStore {#awselasticblockstore}
+
+An `awsElasticBlockStore` volume mounts an Amazon Web Services (AWS) [EBS
+Volume](https://aws.amazon.com/ebs/) into your Pod.  Unlike
+`emptyDir`, which is erased when a Pod is removed, the contents of an EBS
+volume are preserved and the volume is merely unmounted.  This means that an
+EBS volume can be pre-populated with data, and that data can be &#34;handed off&#34;
+between Pods.
+
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; You must create an EBS volume using &lt;code&gt;aws ec2 create-volume&lt;/code&gt; or the AWS API before you can use it.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+There are some restrictions when using an `awsElasticBlockStore` volume:
+
+* the nodes on which Pods are running must be AWS EC2 instances
+* those instances need to be in the same region and availability-zone as the EBS volume
+* EBS only supports a single EC2 instance mounting a volume
+ --&gt;
+&lt;h3 id=&#34;awselasticblockstore&#34;&gt;awsElasticBlockStore&lt;/h3&gt;
+&lt;p&gt;一个 &lt;code&gt;awsElasticBlockStore&lt;/code&gt; 数据卷会挂载一个 AWS 的 &lt;a href=&#34;https://aws.amazon.com/ebs/&#34;&gt;EBS 卷&lt;/a&gt;
+到 Pod 中。 与 &lt;code&gt;emptyDir&lt;/code&gt; 在 Pod 删除时清除数据不同， 在 EBS 卷中的内存会在卸载后依然会保存
+其中的内容。也就是说一个 EBS 卷 可以预先存在数据，其中的数据也可以在不同的 Pod 之间传递。&lt;/p&gt;
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 必须要先使用 &lt;code&gt;aws ec2 create-volume&lt;/code&gt; 或 AWS API 创建一个 EBS 卷 才能在 &lt;code&gt;awsElasticBlockStore&lt;/code&gt; 中使用。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;使用 &lt;code&gt;awsElasticBlockStore&lt;/code&gt; 卷有如下限制:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Pod 运行的节点必须是 AWS EC2 实例&lt;/li&gt;
+&lt;li&gt;节点实例必须与 EBS 卷 在同一个地址或可用域&lt;/li&gt;
+&lt;li&gt;EBS 只支持一个 EC2 实例挂载一个卷&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+#### Creating an EBS volume
+
+Before you can use an EBS volume with a Pod, you need to create it.
+
+```shell
+aws ec2 create-volume --availability-zone=eu-west-1a --size=10 --volume-type=gp2
+```
+
+Make sure the zone matches the zone you brought up your cluster in.  (And also check that the size and EBS volume
+type are suitable for your use!)
+ --&gt;
+&lt;h4 id=&#34;创建一个-ebs-卷&#34;&gt;创建一个 EBS 卷&lt;/h4&gt;
+&lt;p&gt;在 Pod 中使用一个 EBS 卷 之前需要先创建。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;aws ec2 create-volume --availability-zone&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;eu-west-1a --size&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt; --volume-type&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;gp2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;需要确保卷所在的可用区域与集群所在的可用区域相同。(同时还要检查卷的大小和类型是合用的)&lt;/p&gt;
+&lt;!--
+#### AWS EBS Example configuration
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-ebs
+spec:
+  containers:
+  - image: k8s.gcr.io/test-webserver
+    name: test-container
+    volumeMounts:
+    - mountPath: /test-ebs
+      name: test-volume
+  volumes:
+  - name: test-volume
+    # This AWS EBS volume must already exist.
+    awsElasticBlockStore:
+      volumeID: &lt;volume-id&gt;
+      fsType: ext4
+```
+ --&gt;
+&lt;h4 id=&#34;一个使用-aws-ebs-的配置示例&#34;&gt;一个使用 AWS EBS 的配置示例&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-ebs&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;k8s.gcr.io/test-webserver&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-container&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/test-ebs&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-volume&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-volume&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# This AWS EBS volume must already exist.&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;awsElasticBlockStore&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;volumeID&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;volume-id&amp;gt;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;fsType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ext4&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+#### CSI Migration
+
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.17 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+
+The CSI Migration feature for awsElasticBlockStore, when enabled, shims all plugin operations
+from the existing in-tree plugin to the `ebs.csi.aws.com` Container
+Storage Interface (CSI) Driver. In order to use this feature, the [AWS EBS CSI
+Driver](https://github.com/kubernetes-sigs/aws-ebs-csi-driver)
+must be installed on the cluster and the `CSIMigration` and `CSIMigrationAWS`
+Beta features must be enabled.
+ --&gt;
+&lt;h4 id=&#34;csi-迁移&#34;&gt;CSI 迁移&lt;/h4&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.17 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;awsElasticBlockStore&lt;/code&gt; 的 CSI 迁移特性，在启用时，会将来自已经存在的插件的插件操作转移到
+&lt;code&gt;ebs.csi.aws.com&lt;/code&gt; 容器存储接口(CSI)驱动。 为了使用该特性， 需要在集群中先安装
+&lt;a href=&#34;https://github.com/kubernetes-sigs/aws-ebs-csi-driver&#34;&gt;AWS EBS CSI 驱动&lt;/a&gt;
+同时启用 &lt;code&gt;CSIMigration&lt;/code&gt; 和 &lt;code&gt;CSIMigrationAWS&lt;/code&gt; 两个 &lt;code&gt;beta&lt;/code&gt; 特性&lt;/p&gt;
+&lt;!--
+#### CSI Migration Complete
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.17 [alpha]&lt;/code&gt;
+&lt;/div&gt;
+
+
+
+To turn off the awsElasticBlockStore storage plugin from being loaded by controller manager and kubelet, you need to set this feature flag to true. This requires `ebs.csi.aws.com` Container Storage Interface (CSI) driver being installed on all worker nodes.
+ --&gt;
+&lt;h4 id=&#34;csi-迁移完成&#34;&gt;CSI 迁移完成&lt;/h4&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.17 [alpha]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;为了关闭由控制器管理器和 kubelet 加载的 &lt;code&gt;awsElasticBlockStore&lt;/code&gt; 存储插件， 需要将这个标记设置
+为 &lt;code&gt;true&lt;/code&gt;. 这需要在所有的工作节点安装 &lt;code&gt;ebs.csi.aws.com&lt;/code&gt; 容器存储接口(CSI)驱动&lt;/p&gt;
+&lt;!--
+### azureDisk {#azuredisk}
+
+A `azureDisk` is used to mount a Microsoft Azure [Data Disk](https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-about-disks-vhds/) into a Pod.
+
+More details can be found [here](https://github.com/kubernetes/examples/tree/master/staging/volumes/azure_disk/README.md).
+ --&gt;
+&lt;h3 id=&#34;azuredisk&#34;&gt;azureDisk&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;azureDisk&lt;/code&gt; 是用来将微软 Azure 的
+&lt;a href=&#34;https://azure.microsoft.com/en-us/documentation/articles/virtual-machines-linux-about-disks-vhds/&#34;&gt;Data Disk&lt;/a&gt;
+数据盘挂载到 Pod 中的。
+更多信息见 &lt;a href=&#34;https://github.com/kubernetes/examples/tree/master/staging/volumes/azure_disk/README.md&#34;&gt;这里&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+#### CSI Migration
+
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.19 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+
+The CSI Migration feature for azureDisk, when enabled, shims all plugin operations
+from the existing in-tree plugin to the `disk.csi.azure.com` Container
+Storage Interface (CSI) Driver. In order to use this feature, the [Azure Disk CSI
+Driver](https://github.com/kubernetes-sigs/azuredisk-csi-driver)
+must be installed on the cluster and the `CSIMigration` and `CSIMigrationAzureDisk`
+features must be enabled.
+ --&gt;
+&lt;h4 id=&#34;csi-迁移-1&#34;&gt;CSI 迁移&lt;/h4&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.19 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;azureDisk&lt;/code&gt; 的 CSI 迁移特性，在启用时，会将来自已经存在的插件的插件操作转移到
+&lt;code&gt;disk.csi.azure.com&lt;/code&gt;  容器存储接口(CSI)驱动。 为了使用该特性， 需要在集群中先安装
+&lt;a href=&#34;https://github.com/kubernetes-sigs/azuredisk-csi-driver&#34;&gt;Azure Disk CSI Driver&lt;/a&gt;
+同时启用 &lt;code&gt;CSIMigration&lt;/code&gt; 和 &lt;code&gt;CSIMigrationAzureDisk&lt;/code&gt; 两个特性&lt;/p&gt;
+&lt;!--
+### azureFile {#azurefile}
+
+A `azureFile` is used to mount a Microsoft Azure File Volume (SMB 2.1 and 3.0)
+into a Pod.
+
+More details can be found [here](https://github.com/kubernetes/examples/tree/master/staging/volumes/azure_file/README.md).
+ --&gt;
+&lt;h3 id=&#34;azurefile&#34;&gt;azureFile&lt;/h3&gt;
+&lt;p&gt;A &lt;code&gt;azureFile&lt;/code&gt; is used to mount a Microsoft Azure File Volume (SMB 2.1 and 3.0)
+into a Pod.
+&lt;code&gt;azureFile&lt;/code&gt; 用于将微软 Azure 文件卷(SMB 2.1 and 3.0) 挂载到 Pod 中。
+更多信息见 &lt;a href=&#34;https://github.com/kubernetes/examples/tree/master/staging/volumes/azure_file/README.md&#34;&gt;这里&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+#### CSI Migration
+
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.15 [alpha]&lt;/code&gt;
+&lt;/div&gt;
+
+
+
+The CSI Migration feature for azureFile, when enabled, shims all plugin operations
+from the existing in-tree plugin to the `file.csi.azure.com` Container
+Storage Interface (CSI) Driver. In order to use this feature, the [Azure File CSI
+Driver](https://github.com/kubernetes-sigs/azurefile-csi-driver)
+must be installed on the cluster and the `CSIMigration` and `CSIMigrationAzureFile`
+Alpha features must be enabled.
+ --&gt;
+&lt;h4 id=&#34;csi-迁移-2&#34;&gt;CSI 迁移&lt;/h4&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.15 [alpha]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;azureFile&lt;/code&gt; 的 CSI 迁移特性，在启用时，会将来自已经存在的插件的插件操作转移到
+&lt;code&gt;file.csi.azure.com&lt;/code&gt;  容器存储接口(CSI)驱动。 为了使用该特性， 需要在集群中先安装
+&lt;a href=&#34;https://github.com/kubernetes-sigs/azurefile-csi-driver&#34;&gt;Azure File CSI Driver&lt;/a&gt;
+同时启用 &lt;code&gt;CSIMigration&lt;/code&gt; 和 &lt;code&gt;CSIMigrationAzureFile&lt;/code&gt; 两个 &lt;code&gt;Alpha&lt;/code&gt; 特性&lt;/p&gt;
+&lt;h3 id=&#34;cephfs&#34;&gt;cephfs&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;cephfs&lt;/code&gt; 卷可以将一个已经存在的 CephFS 卷挂载到一个 Pod 中。
+与 &lt;code&gt;emptyDir&lt;/code&gt; 在 Pod 删除时清除数据不同， 在 &lt;code&gt;cephfs&lt;/code&gt; 卷中的内存会在卸载后依然会保存
+其中的内容。也就是说一个 &lt;code&gt;cephfs&lt;/code&gt; 卷可以预先存在数据，其中的数据也可以在不同的 Pod 之间传递。
+CephFS 还可以被同时多个挂载拥有写权限&lt;/p&gt;
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 在使用之前需要有自己的 Ceph 服务在运行，并且相应的分离已经配置好&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;更多信息见 &lt;a href=&#34;https://github.com/kubernetes/examples/tree/master/volumes/cephfs/&#34;&gt;CephFS 示例&lt;/a&gt;&lt;/p&gt;
+&lt;!--
+### cinder {#cinder}
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Prerequisite: Kubernetes with OpenStack Cloud Provider configured.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+`cinder` is used to mount OpenStack Cinder Volume into your Pod.
+ --&gt;
+&lt;h3 id=&#34;cinder&#34;&gt;cinder&lt;/h3&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 前置条件: 配置好 OpenStack 云提供商的 k8s 集群。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;code&gt;cinder&lt;/code&gt; 用于将 OpenStack Cinder 卷挂载到 Pod.&lt;/p&gt;
+&lt;!--
+#### Cinder Volume Example configuration
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-cinder
+spec:
+  containers:
+  - image: k8s.gcr.io/test-webserver
+    name: test-cinder-container
+    volumeMounts:
+    - mountPath: /test-cinder
+      name: test-volume
+  volumes:
+  - name: test-volume
+    # This OpenStack volume must already exist.
+    cinder:
+      volumeID: &lt;volume-id&gt;
+      fsType: ext4
+```
+--&gt;
+&lt;h4 id=&#34;cinder-volume-配置示例&#34;&gt;Cinder Volume 配置示例&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-cinder&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;k8s.gcr.io/test-webserver&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-cinder-container&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/test-cinder&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-volume&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-volume&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# 这个 OpenStack 卷必须已经存在.&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;cinder&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;volumeID&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;volume-id&amp;gt;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;fsType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ext4&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;csi-迁移-3&#34;&gt;CSI 迁移&lt;/h4&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.18 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;Cinder&lt;/code&gt; 的 CSI 迁移特性，在启用时，会将来自已经存在的插件的插件操作转移到 &lt;code&gt;cinder.csi.openstack.org&lt;/code&gt;  容器存储接口(CSI)驱动。 为了使用该特性， 需要在集群中先安装
+&lt;a href=&#34;https://github.com/kubernetes/cloud-provider-openstack/blob/master/docs/using-cinder-csi-plugin.md&#34;&gt;Openstack Cinder CSI
+Driver&lt;/a&gt;
+同时启用 &lt;code&gt;CSIMigration&lt;/code&gt; 和 &lt;code&gt;CSIMigrationOpenStack&lt;/code&gt; 两个 &lt;code&gt;beta&lt;/code&gt; 特性&lt;/p&gt;
+&lt;!--
+### configMap {#configmap}
+
+The [`configMap`](/docs/tasks/configure-pod-container/configure-pod-configmap/) resource
+provides a way to inject configuration data into Pods.
+The data stored in a `ConfigMap` object can be referenced in a volume of type
+`configMap` and then consumed by containerized applications running in a Pod.
+
+When referencing a `configMap` object, you can simply provide its name in the
+volume to reference it. You can also customize the path to use for a specific
+entry in the ConfigMap.
+For example, to mount the `log-config` ConfigMap onto a Pod called `configmap-pod`,
+you might use the YAML below:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-pod
+spec:
+  containers:
+    - name: test
+      image: busybox
+      volumeMounts:
+        - name: config-vol
+          mountPath: /etc/config
+  volumes:
+    - name: config-vol
+      configMap:
+        name: log-config
+        items:
+          - key: log_level
+            path: log_level
+```
+
+The `log-config` ConfigMap is mounted as a volume, and all contents stored in
+its `log_level` entry are mounted into the Pod at path &#34;`/etc/config/log_level`&#34;.
+Note that this path is derived from the volume&#39;s `mountPath` and the `path`
+keyed with `log_level`.
+
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; You must create a &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/configure-pod-container/configure-pod-configmap/&#34;&gt;ConfigMap&lt;/a&gt; before you can use it.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; A Container using a ConfigMap as a &lt;a href=&#34;#using-subpath&#34;&gt;subPath&lt;/a&gt; volume mount will not
+receive ConfigMap updates.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Text data is exposed as files using the UTF-8 character encoding. To use some other character encoding, use binaryData.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+ --&gt;
+&lt;h3 id=&#34;configmap&#34;&gt;configMap&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/configure-pod-container/configure-pod-configmap/&#34;&gt;&lt;code&gt;configMap&lt;/code&gt;&lt;/a&gt; 资源提供了一种将配置数据注入 Pod 的方式。&lt;/p&gt;
+&lt;p&gt;存在于 &lt;code&gt;ConfigMap&lt;/code&gt; 对象中的数据可以通过 &lt;code&gt;configMap&lt;/code&gt; 类型的数据卷被 Pod 引用，然后被存在于 Pod 中的容器化应用所使用。&lt;/p&gt;
+&lt;p&gt;在引用 &lt;code&gt;configMap&lt;/code&gt; 对象时，只需要提供这个对象的名称在引用它的卷上面。
+也可以通过自定义路径的方式使用 ConfigMap 中指定的条目。
+例如， 将一个叫 &lt;code&gt;log-config&lt;/code&gt; ConfigMap 挂载到一个 叫 &lt;code&gt;configmap-pod&lt;/code&gt; 的 Pod上，配置 YAML 如下:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;configmap-pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;busybox&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;config-vol&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/etc/config&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;config-vol&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;configMap&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;log-config&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;items&lt;/span&gt;:
+          - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;log_level&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;log_level&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;log-config&lt;/code&gt; ConfigMap 以卷的方式挂载， 其中所有存在于条目 &lt;code&gt;log_level&lt;/code&gt; 的内容会被挂载到 Pod 的 &lt;code&gt;/etc/config/log_level&lt;/code&gt; 上
+其中这个路径继承了卷上面的 &lt;code&gt;mountPath&lt;/code&gt; 和 键名为 &lt;code&gt;log_level&lt;/code&gt; 的
+&lt;code&gt;path&lt;/code&gt; 的值 -  &lt;code&gt;log_level&lt;/code&gt;&lt;/p&gt;
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 在使用之前必须要先创建对应的
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/configure-pod-container/configure-pod-configmap/&#34;&gt;ConfigMap&lt;/a&gt;&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 一个以 &lt;a href=&#34;#using-subpath&#34;&gt;subPath&lt;/a&gt; 卷方式使用 ConfigMap 的容器是
+不能接收到 ConfigMap 的更新的&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 文本内存数据以 UTF-8编码的文件方式提供。 要使用其它的编码方式请使用
+二进制数据(&lt;code&gt;binaryData&lt;/code&gt;)&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;!--
+### downwardAPI {#downwardapi}
+
+A `downwardAPI` volume is used to make downward API data available to applications.
+It mounts a directory and writes the requested data in plain text files.
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; A Container using Downward API as a &lt;a href=&#34;#using-subpath&#34;&gt;subPath&lt;/a&gt; volume mount will not
+receive Downward API updates.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+See the [`downwardAPI` volume example](/docs/tasks/inject-data-application/downward-api-volume-expose-pod-information/)  for more details.
+
+ --&gt;
+&lt;h3 id=&#34;downwardapi&#34;&gt;downwardAPI&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;downwardAPI&lt;/code&gt; 卷用来让 downward API 的数据在应用中可用。
+它通过挂载一个目录然后将请求的数据以纯文本文件的形式写在这个目录中。
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 一个以 &lt;a href=&#34;#using-subpath&#34;&gt;subPath&lt;/a&gt; 卷方式使用 Downward API 的容器是 不能接收到 Downward API 的更新的&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;p&gt;更多信息见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/inject-data-application/downward-api-volume-expose-pod-information/&#34;&gt;&lt;code&gt;downwardAPI&lt;/code&gt; 卷示例&lt;/a&gt;&lt;/p&gt;
+&lt;!--
+
+### emptyDir {#emptydir}
+
+An `emptyDir` volume is first created when a Pod is assigned to a Node, and
+exists as long as that Pod is running on that node.  As the name says, it is
+initially empty.  Containers in the Pod can all read and write the same
+files in the `emptyDir` volume, though that volume can be mounted at the same
+or different paths in each Container.  When a Pod is removed from a node for
+any reason, the data in the `emptyDir` is deleted forever.
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; A Container crashing does &lt;em&gt;NOT&lt;/em&gt; remove a Pod from a node, so the data in an &lt;code&gt;emptyDir&lt;/code&gt; volume is safe across Container crashes.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+Some uses for an `emptyDir` are:
+
+* scratch space, such as for a disk-based merge sort
+* checkpointing a long computation for recovery from crashes
+* holding files that a content-manager Container fetches while a webserver
+  Container serves the data
+
+By default, `emptyDir` volumes are stored on whatever medium is backing the
+node - that might be disk or SSD or network storage, depending on your
+environment.  However, you can set the `emptyDir.medium` field to `&#34;Memory&#34;`
+to tell Kubernetes to mount a tmpfs (RAM-backed filesystem) for you instead.
+While tmpfs is very fast, be aware that unlike disks, tmpfs is cleared on
+node reboot and any files you write will count against your Container&#39;s
+memory limit.
+ --&gt;
+&lt;h3 id=&#34;emptydir&#34;&gt;emptyDir&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;emptyDir&lt;/code&gt; 卷在 Pod 分配到节点时创建，只要这个 Pod 还在这个节点上运行，
+那么这个郑就会存在。 就像名称所示，它就是个空目录，所以初始化时是空的。
+Pod 中 所有的容器都可以读写这个 &lt;code&gt;emptyDir&lt;/code&gt; 卷中的文件， 这个卷可以挂载到每个
+容器的同一个路径或不同的路径。当 Pod 因为任何原因从节点移除时， 存在于  &lt;code&gt;emptyDir&lt;/code&gt;
+中的数据会被永久删除。
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 容器崩溃并 &lt;em&gt;不会&lt;/em&gt; 导致 Pod 从节点删除，所以容器崩溃并不会导致 &lt;code&gt;emptyDir&lt;/code&gt; 中的数据丢失。&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;p&gt;Some uses for an &lt;code&gt;emptyDir&lt;/code&gt; are:
+一些用到 &lt;code&gt;emptyDir&lt;/code&gt; 的地方:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;临时空间，例如基于磁盘的合并排序&lt;/li&gt;
+&lt;li&gt;作为一个恢复崩溃的长时计划的检查点
+Container serves the data&lt;/li&gt;
+&lt;li&gt;存放由 内容管理容器抓取然后用于 web 服务器使用的数据&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;默认情况下， &lt;code&gt;emptyDir&lt;/code&gt; 卷使用所在节点所使用的介质存储数据，基于环境可能是机械硬盘
+SSD 或 网络存储。 但是，用户可以通过设置 &lt;code&gt;emptyDir.medium&lt;/code&gt; 字段值为 &lt;code&gt;&amp;quot;Memory&amp;quot;&lt;/code&gt;
+让 k8s 将其挂载为 tmpfs (基于内存的文件系统)。
+因为 tmpfs 的速度很快，但要注意与磁盘不同， tmpfs 会在节点重启时被清除，
+可用空间的大小受内存大小限制。&lt;/p&gt;
+&lt;h4 id=&#34;示例&#34;&gt;示例&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-pd&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;k8s.gcr.io/test-webserver&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-container&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/cache&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;cache-volume&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;cache-volume&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;emptyDir&lt;/span&gt;: {}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;fc&#34;&gt;fc (fibre channel)&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;fc&lt;/code&gt; 卷可以将光纤信道(fibre channel)卷挂载到 Pod 中。 可以在卷的配置中使用
+&lt;code&gt;targetWWNs&lt;/code&gt; 参数指定一个或多个目标全局名称(World Wide Names).
+如果指定了多个 WWNs， targetWWNs 使用的是那些来自 multi-path 连接的  WWNs
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 必须要预先配置 FC SAN Zoning 分配并且标记这些目标 WWN 的 LUNs (卷)
+这样 k8s 主机才能访问它们&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;p&gt;更多信息见 &lt;a href=&#34;https://github.com/kubernetes/examples/tree/master/staging/volumes/fibre_channel&#34;&gt;FC 示例&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;flocker&#34;&gt;flocker&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/ClusterHQ/flocker&#34;&gt;Flocker&lt;/a&gt; 是一个开源的集群
+容器数据卷管理器。 它提供了管理和编排多种存储后端的数据卷&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;flocker&lt;/code&gt; 让 Flocker 数据集可以被挂载到 Pod 中。 如果数据集还没有存在于 Flocker， 必须要使用 Flocker
+CLI 或 Flocker API 创建。 如果数据集已经存在于 Flocker， 当 Pod 被调度到
+节点时会被重新通过 Flocker 挂载。这就是说这些数据可以在需要的 Pod 传递。&lt;/p&gt;
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 必须要在使用之前先安装运行 Flocker&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;更多信息见 &lt;a href=&#34;https://github.com/kubernetes/examples/tree/master/staging/volumes/flocker&#34;&gt;Flocker 示例&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;gcepersistentdisk&#34;&gt;gcePersistentDisk&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;gcePersistentDisk&lt;/code&gt; 卷可以将 Google 计算引擎(GCE)
+&lt;a href=&#34;https://cloud.google.com/compute/docs/disks&#34;&gt;持久化磁盘(PD)&lt;/a&gt;
+挂载到 Pod 中。 与 &lt;code&gt;emptyDir&lt;/code&gt; 在 Pod 删除时同时删除不同， PD 中的内存会依旧保留 仅仅卸载卷。 这就是说 PD 可以预先添加数据，并且可以在不同 Pod 之间传递。&lt;/p&gt;
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 必须要先使用 &lt;code&gt;gcloud&lt;/code&gt; 或 GCE API 或 UI 创建 PD 才能使用。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;使用 &lt;code&gt;gcePersistentDisk&lt;/code&gt; 有如下限制:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Pod 运行的节点必须是 GCE 虚拟机&lt;/li&gt;
+&lt;li&gt;这些虚拟机必须与 PD 在同一个 GCE 项目和区域&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;PD 有一个特性是如果要同时挂载到多个 Pod 只能以只读方式挂载。
+也就是可以预先将数据存入 PD 中，然后就可以在需要的任意个多 Pod 中使用。
+不幸的是只能以读写方式挂载一次，不能以写方式多次挂载
+在一个用 ReplicationController 管理的 Pod 中使用 PD 时，只有在 PD 为只读
+或副本数为 0 或 1 时才能成功否则就会失败。&lt;/p&gt;
+&lt;!--
+#### Creating a PD
+
+Before you can use a GCE PD with a Pod, you need to create it.
+
+```shell
+gcloud compute disks create --size=500GB --zone=us-central1-a my-data-disk
+```
+
+#### Example Pod
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pd
+spec:
+  containers:
+  - image: k8s.gcr.io/test-webserver
+    name: test-container
+    volumeMounts:
+    - mountPath: /test-pd
+      name: test-volume
+  volumes:
+  - name: test-volume
+    # This GCE PD must already exist.
+    gcePersistentDisk:
+      pdName: my-data-disk
+      fsType: ext4
+```
+ --&gt;
+&lt;h4 id=&#34;创建-pd&#34;&gt;创建 PD&lt;/h4&gt;
+&lt;p&gt;在 Pod 中使用 GCE PD 前需要先创建&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;gcloud compute disks create --size&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;500GB --zone&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;us-central1-a my-data-disk
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;示例-pod&#34;&gt;示例 Pod&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-pd&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;k8s.gcr.io/test-webserver&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-container&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/test-pd&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-volume&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-volume&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# 这个 GCE PD 必须要先存在&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;gcePersistentDisk&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;pdName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-data-disk&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;fsType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ext4&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+#### Regional Persistent Disks
+The [Regional Persistent Disks](https://cloud.google.com/compute/docs/disks/#repds) feature allows the creation of Persistent Disks that are available in two zones within the same region. In order to use this feature, the volume must be provisioned as a PersistentVolume; referencing the volume directly from a pod is not supported.
+ --&gt;
+&lt;h4 id=&#34;地区性持久化磁盘&#34;&gt;地区性持久化磁盘&lt;/h4&gt;
+&lt;p&gt;&lt;a href=&#34;https://cloud.google.com/compute/docs/disks/#repds&#34;&gt;地区性持久化磁盘&lt;/a&gt; 特性允许在同一个地区的两个区域创建 地区性持久化磁盘。
+要使用这个特性， 这个卷必须由 PersistentVolume 管理；不支持在 Pod 直接使用&lt;/p&gt;
+&lt;!--
+#### Manually provisioning a Regional PD PersistentVolume
+Dynamic provisioning is possible using a [StorageClass for GCE PD](/docs/concepts/storage/storage-classes/#gce).
+Before creating a PersistentVolume, you must create the PD:
+```shell
+gcloud compute disks create --size=500GB my-data-disk
+    --region us-central1
+    --replica-zones us-central1-a,us-central1-b
+```
+Example PersistentVolume spec:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: test-volume
+spec:
+  capacity:
+    storage: 400Gi
+  accessModes:
+  - ReadWriteOnce
+  gcePersistentDisk:
+    pdName: my-data-disk
+    fsType: ext4
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: failure-domain.beta.kubernetes.io/zone
+          operator: In
+          values:
+          - us-central1-a
+          - us-central1-b
+```
+ --&gt;
+&lt;h4 id=&#34;手动管理一个地区性-pd-persistentvolume&#34;&gt;手动管理一个地区性 PD PersistentVolume&lt;/h4&gt;
+&lt;p&gt;动态管理使用 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-classes/#gce&#34;&gt;StorageClass for GCE PD&lt;/a&gt;.
+在创建 PersistentVolume 之前，需要先创建 PD:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;gcloud compute disks create --size&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;500GB my-data-disk
+    --region us-central1
+    --replica-zones us-central1-a,us-central1-b
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;示例 PersistentVolume spec:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolume&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-volume&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;capacity&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;storage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;400Gi&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;accessModes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;ReadWriteOnce&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;gcePersistentDisk&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;pdName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-data-disk&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;fsType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ext4&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;nodeAffinity&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;required&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;nodeSelectorTerms&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;failure-domain.beta.kubernetes.io/zone&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
+          - &lt;span style=&#34;color:#ae81ff&#34;&gt;us-central1-a&lt;/span&gt;
+          - &lt;span style=&#34;color:#ae81ff&#34;&gt;us-central1-b&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+#### CSI Migration
+
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.17 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+
+The CSI Migration feature for GCE PD, when enabled, shims all plugin operations
+from the existing in-tree plugin to the `pd.csi.storage.gke.io` Container
+Storage Interface (CSI) Driver. In order to use this feature, the [GCE PD CSI
+Driver](https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver)
+must be installed on the cluster and the `CSIMigration` and `CSIMigrationGCE`
+Beta features must be enabled.
+ --&gt;
+&lt;h4 id=&#34;csi-迁移-4&#34;&gt;CSI 迁移&lt;/h4&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.17 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;GCE PD 的 CSI 迁移特性，在启用时，会将来自已经存在的插件的插件操作转移到 &lt;code&gt;pd.csi.storage.gke.io&lt;/code&gt;  容器存储接口(CSI)驱动。 为了使用该特性， 需要在集群中先安装
+&lt;a href=&#34;https://github.com/kubernetes-sigs/gcp-compute-persistent-disk-csi-driver&#34;&gt;GCE PD CSI
+Driver&lt;/a&gt;
+同时启用 &lt;code&gt;CSIMigration&lt;/code&gt; 和 &lt;code&gt;CSIMigrationGCE&lt;/code&gt; 两个 &lt;code&gt;beta&lt;/code&gt; 特性&lt;/p&gt;
+&lt;!--
+### gitRepo (deprecated) {#gitrepo}
+
+&lt;blockquote class=&#34;warning&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;警告：&lt;/strong&gt; The gitRepo volume type is deprecated. To provision a container with a git repo, mount an &lt;a href=&#34;#emptydir&#34;&gt;EmptyDir&lt;/a&gt; into an InitContainer that clones the repo using git, then mount the &lt;a href=&#34;#emptydir&#34;&gt;EmptyDir&lt;/a&gt; into the Pod&amp;rsquo;s container.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+A `gitRepo` volume is an example of what can be done as a volume plugin.  It
+mounts an empty directory and clones a git repository into it for your Pod to
+use.  In the future, such volumes may be moved to an even more decoupled model,
+rather than extending the Kubernetes API for every such use case.
+
+Here is an example of gitRepo volume:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: server
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    volumeMounts:
+    - mountPath: /mypath
+      name: git-volume
+  volumes:
+  - name: git-volume
+    gitRepo:
+      repository: &#34;git@somewhere:me/my-git-repository.git&#34;
+      revision: &#34;22f1d8406d464b0c0874075539c1f2e96c253775&#34;
+```
+ --&gt;
+&lt;h3 id=&#34;gitrepo&#34;&gt;gitRepo (废弃)&lt;/h3&gt;
+&lt;blockquote class=&#34;warning&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;警告：&lt;/strong&gt; gitRepo 卷类型已经被废弃。 要管理一个包含 git 创建的容器，可以在初始化容器
+(InitContainer) 中挂载一个 &lt;a href=&#34;#emptydir&#34;&gt;EmptyDir&lt;/a&gt; 使用 git 克隆这个仓库，
+然后在需要使用的容器的 Pod 上挂载这个 &lt;a href=&#34;#emptydir&#34;&gt;EmptyDir&lt;/a&gt;&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;code&gt;gitRepo&lt;/code&gt; 卷是一个能够使用卷插件的示例。 它挂载一个空目录然后在其中克隆一个
+git 创建到其中，供 Pod 使用。 在未来，这些卷可能被改为更加松耦合的模式，
+而不是每次在这些情况下都通过扩展 k8s  API 来实现。
+以下为 gitRepo 卷示例:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;server&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/mypath&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;git-volume&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;git-volume&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;gitRepo&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;repository&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;git@somewhere:me/my-git-repository.git&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;revision&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;22f1d8406d464b0c0874075539c1f2e96c253775&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+### glusterfs {#glusterfs}
+
+A `glusterfs` volume allows a [Glusterfs](https://www.gluster.org) (an open
+source networked filesystem) volume to be mounted into your Pod.  Unlike
+`emptyDir`, which is erased when a Pod is removed, the contents of a
+`glusterfs` volume are preserved and the volume is merely unmounted.  This
+means that a glusterfs volume can be pre-populated with data, and that data can
+be &#34;handed off&#34; between Pods.  GlusterFS can be mounted by multiple writers
+simultaneously.
+
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; You must have your own GlusterFS installation running before you can use it.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+See the [GlusterFS example](https://github.com/kubernetes/examples/tree/master/volumes/glusterfs) for more details.
+ --&gt;
+&lt;h3 id=&#34;glusterfs&#34;&gt;glusterfs&lt;/h3&gt;
+&lt;p&gt;使用 &lt;code&gt;glusterfs&lt;/code&gt; 卷可以将 &lt;a href=&#34;https://www.gluster.org&#34;&gt;Glusterfs&lt;/a&gt;
+(一个开源的网络文件系统)卷挂载到 Pod 中。
+与 &lt;code&gt;emptyDir&lt;/code&gt; 在 Pod 删除时清除数据不同， 在 &lt;code&gt;glusterfs&lt;/code&gt; 卷中的内存会在卸载后依然会保存
+其中的内容。也就是说一个 &lt;code&gt;glusterfs&lt;/code&gt; 卷可以预先存在数据，其中的数据也可以在不同的 Pod 之间传递。
+GlusterFS 还可以被同时多个挂载拥有写权限
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 在使用之前必须要先安装运行自己的 GlusterFS&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;p&gt;更多个信息见 &lt;a href=&#34;https://github.com/kubernetes/examples/tree/master/volumes/glusterfs&#34;&gt;GlusterFS 示例&lt;/a&gt;&lt;/p&gt;
+&lt;!--
+### hostPath {#hostpath}
+
+A `hostPath` volume mounts a file or directory from the host node&#39;s filesystem
+into your Pod. This is not something that most Pods will need, but it offers a
+powerful escape hatch for some applications.
+
+For example, some uses for a `hostPath` are:
+
+* running a Container that needs access to Docker internals; use a `hostPath`
+  of `/var/lib/docker`
+* running cAdvisor in a Container; use a `hostPath` of `/sys`
+* allowing a Pod to specify whether a given `hostPath` should exist prior to the
+  Pod running, whether it should be created, and what it should exist as
+
+In addition to the required `path` property, user can optionally specify a `type` for a `hostPath` volume.
+
+The supported values for field `type` are:
+
+
+| Value | Behavior |
+|:------|:---------|
+| | Empty string (default) is for backward compatibility, which means that no checks will be performed before mounting the hostPath volume. |
+| `DirectoryOrCreate` | If nothing exists at the given path, an empty directory will be created there as needed with permission set to 0755, having the same group and ownership with Kubelet. |
+| `Directory` | A directory must exist at the given path |
+| `FileOrCreate` | If nothing exists at the given path, an empty file will be created there as needed with permission set to 0644, having the same group and ownership with Kubelet. |
+| `File` | A file must exist at the given path |
+| `Socket` | A UNIX socket must exist at the given path |
+| `CharDevice` | A character device must exist at the given path |
+| `BlockDevice` | A block device must exist at the given path |
+
+Watch out when using this type of volume, because:
+
+* Pods with identical configuration (such as created from a podTemplate) may
+  behave differently on different nodes due to different files on the nodes
+* when Kubernetes adds resource-aware scheduling, as is planned, it will not be
+  able to account for resources used by a `hostPath`
+* the files or directories created on the underlying hosts are only writable by root. You
+  either need to run your process as root in a
+  [privileged Container](/docs/tasks/configure-pod-container/security-context/) or modify the file
+  permissions on the host to be able to write to a `hostPath` volume
+ --&gt;
+&lt;h3 id=&#34;hostpath&#34;&gt;hostPath&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;hostPath&lt;/code&gt; 卷可以将节点上的一个文件或目录挂载到 Pod 中. 这种方式不是大多数
+Pod 所需要要的， 但也能为有些应用提供强力支持。&lt;/p&gt;
+&lt;p&gt;For example, some uses for a &lt;code&gt;hostPath&lt;/code&gt; are:
+例如以下为可以用到 &lt;code&gt;hostPath&lt;/code&gt; 的地方:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;运行一个需要访问 Docker 内部的应用，使用 &lt;code&gt;hostPath&lt;/code&gt; 挂载 &lt;code&gt;/var/lib/docker&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在容器中运行 &lt;code&gt;cAdvisor&lt;/code&gt;； 使用 &lt;code&gt;hostPath&lt;/code&gt; 挂载 &lt;code&gt;/sys&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;允许 Pod 指定某个 &lt;code&gt;hostPath&lt;/code&gt; 在 Pod 运行之前需要存在，这个目录是否需要创建，以什么方式存在(在说啥？)
+In addition to the required &lt;code&gt;path&lt;/code&gt; property, user can optionally specify a &lt;code&gt;type&lt;/code&gt; for a &lt;code&gt;hostPath&lt;/code&gt; volume.
+在需要的 &lt;code&gt;path&lt;/code&gt; 属性外， 用户还可以为 &lt;code&gt;hostPath&lt;/code&gt; 指定一个可选的 &lt;code&gt;type&lt;/code&gt; 属性。
+The supported values for field &lt;code&gt;type&lt;/code&gt; are:
+&lt;code&gt;type&lt;/code&gt; 字段支持的值有:&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;值&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;行为&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;空字符器(默认)为了向后兼容，含义是在执行挂载 &lt;code&gt;hostPath&lt;/code&gt; 卷之前不执行任何检查&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;code&gt;DirectoryOrCreate&lt;/code&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;如果指定路径不存在，则创建一个空目录，权限为 0755，组和所属关系与 kubelet 相同&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;code&gt;Directory&lt;/code&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;路径必须是一个已经存在的目录&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;code&gt;FileOrCreate&lt;/code&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;如果指定路径不存在，则创建一个空文件，权限为 0644，组和所属关系与 kubelet 相同&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;code&gt;File&lt;/code&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;路径必须是一个已经存在的文件&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;code&gt;Socket&lt;/code&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;路径必须是一个已经存在的 UNIX 套接字&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;code&gt;CharDevice&lt;/code&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;路径必须是一个已经存在的 字符设备(character device)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;code&gt;BlockDevice&lt;/code&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;路径必须是一个已经存在的 块设备(block device)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Watch out when using this type of volume, because:
+在使用带类型的卷时需要小心，因为:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;拥有相同配置(如由同一个 podTemplate 创建的) Pod 可以会因为不同节点上拥有的文件不同为表现不同行为&lt;/li&gt;
+&lt;li&gt;根据设计，当 k8s 添加资源感知(resource-aware) 调度时，不会计算 &lt;code&gt;hostPath&lt;/code&gt; 使用的资源。&lt;/li&gt;
+&lt;li&gt;在底层主机上创建的文件或目录只有 root 拥有写权限。 所以必须要在一个
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/configure-pod-container/security-context/&#34;&gt;提权容器&lt;/a&gt;
+以 root 权限运行进程或在主机上修改文件权限以便可以让 &lt;code&gt;hostPath&lt;/code&gt; 卷为可读&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+#### Example Pod
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pd
+spec:
+  containers:
+  - image: k8s.gcr.io/test-webserver
+    name: test-container
+    volumeMounts:
+    - mountPath: /test-pd
+      name: test-volume
+  volumes:
+  - name: test-volume
+    hostPath:
+      # directory location on host
+      path: /data
+      # this field is optional
+      type: Directory
+```
+
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; It should be noted that the &lt;code&gt;FileOrCreate&lt;/code&gt; mode does not create the parent directory of the file. If the parent directory of the mounted file does not exist, the pod fails to start. To ensure that this mode works, you can try to mount directories and files separately, as shown below.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+ --&gt;
+&lt;h4 id=&#34;示例-pod-1&#34;&gt;示例 Pod&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-pd&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;k8s.gcr.io/test-webserver&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-container&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/test-pd&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-volume&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-volume&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;hostPath&lt;/span&gt;:
+      &lt;span style=&#34;color:#75715e&#34;&gt;# 主机上的目录&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/data&lt;/span&gt;
+      &lt;span style=&#34;color:#75715e&#34;&gt;# 该字段可选&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;type&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Directory&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 要注意 &lt;code&gt;FileOrCreate&lt;/code&gt; 模式时，如果文件的父目录不存在是不会自动创建的。 如果挂载文件的父目录不
+存在， Pod 就会启动失败。 为了保证该模式正常工作，可以参考下面的方式，将目录和文件分开挂载。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;!--
+#### Example Pod FileOrCreate
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-webserver
+spec:
+  containers:
+  - name: test-webserver
+    image: k8s.gcr.io/test-webserver:latest
+    volumeMounts:
+    - mountPath: /var/local/aaa
+      name: mydir
+    - mountPath: /var/local/aaa/1.txt
+      name: myfile
+  volumes:
+  - name: mydir
+    hostPath:
+      # Ensure the file directory is created.
+      path: /var/local/aaa
+      type: DirectoryOrCreate
+  - name: myfile
+    hostPath:
+      path: /var/local/aaa/1.txt
+      type: FileOrCreate
+```
+ --&gt;
+&lt;h4 id=&#34;fileorcreate-示例-pod&#34;&gt;FileOrCreate 示例 Pod&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-webserver&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-webserver&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;k8s.gcr.io/test-webserver:latest&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/var/local/aaa&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mydir&lt;/span&gt;
+    - &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/var/local/aaa/1.txt&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myfile&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mydir&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;hostPath&lt;/span&gt;:
+      &lt;span style=&#34;color:#75715e&#34;&gt;# 确保文件所在的目录是存在的&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/var/local/aaa&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;type&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;DirectoryOrCreate&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myfile&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;hostPath&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/var/local/aaa/1.txt&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;type&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;FileOrCreate&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+### iscsi {#iscsi}
+
+An `iscsi` volume allows an existing iSCSI (SCSI over IP) volume to be mounted
+into your Pod.  Unlike `emptyDir`, which is erased when a Pod is removed, the
+contents of an `iscsi` volume are preserved and the volume is merely
+unmounted.  This means that an iscsi volume can be pre-populated with data, and
+that data can be &#34;handed off&#34; between Pods.
+
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; You must have your own iSCSI server running with the volume created before you can use it.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+A feature of iSCSI is that it can be mounted as read-only by multiple consumers
+simultaneously.  This means that you can pre-populate a volume with your dataset
+and then serve it in parallel from as many Pods as you need.  Unfortunately,
+iSCSI volumes can only be mounted by a single consumer in read-write mode - no
+simultaneous writers allowed.
+
+See the [iSCSI example](https://github.com/kubernetes/examples/tree/master/volumes/iscsi) for more details.
+ --&gt;
+&lt;h3 id=&#34;iscsi&#34;&gt;iscsi&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;iscsi&lt;/code&gt; 卷可以将已经存在的 iSCSI (SCSI over IP) 卷挂载到 Pod 中。
+与 &lt;code&gt;emptyDir&lt;/code&gt; 在 Pod 删除时清除数据不同， 在 &lt;code&gt;iscsi&lt;/code&gt; 卷中的内存会在卸载后依然会保存
+其中的内容。也就是说一个 &lt;code&gt;iscsi&lt;/code&gt; 卷可以预先存在数据，其中的数据也可以在不同的 Pod 之间传递。&lt;/p&gt;
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 在创建和使用卷之前必须为先有运行的 iSCSI 服务。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;code&gt;iSCSI&lt;/code&gt; 一个特性是可以以只读的方式同时挂载到多个消费者中。 这就代表着可以预先将数据集放入卷中
+然后根据需要使用任意数量的 Pod 来提供访问服务。 不过 iSCSI 卷以读写方式挂载时只能有一个消费者，
+不允许并行写。
+更多信息见 &lt;a href=&#34;https://github.com/kubernetes/examples/tree/master/volumes/iscsi&#34;&gt;iSCSI 示例&lt;/a&gt;&lt;/p&gt;
+&lt;!--
+### local {#local}
+
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.14 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+
+A `local` volume represents a mounted local storage device such as a disk,
+partition or directory.
+
+Local volumes can only be used as a statically created PersistentVolume. Dynamic
+provisioning is not supported yet.
+
+Compared to `hostPath` volumes, local volumes can be used in a durable and
+portable manner without manually scheduling Pods to nodes, as the system is aware
+of the volume&#39;s node constraints by looking at the node affinity on the PersistentVolume.
+
+However, local volumes are still subject to the availability of the underlying
+node and are not suitable for all applications. If a node becomes unhealthy,
+then the local volume will also become inaccessible, and a Pod using it will not
+be able to run. Applications using local volumes must be able to tolerate this
+reduced availability, as well as potential data loss, depending on the
+durability characteristics of the underlying disk.
+
+The following is an example of PersistentVolume spec using a `local` volume and
+`nodeAffinity`:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: example-pv
+spec:
+  capacity:
+    storage: 100Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: local-storage
+  local:
+    path: /mnt/disks/ssd1
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - example-node
+```
+
+PersistentVolume `nodeAffinity` is required when using local volumes. It enables
+the Kubernetes scheduler to correctly schedule Pods using local volumes to the
+correct node.
+
+PersistentVolume `volumeMode` can be set to &#34;Block&#34; (instead of the default
+value &#34;Filesystem&#34;) to expose the local volume as a raw block device.
+
+When using local volumes, it is recommended to create a StorageClass with
+`volumeBindingMode` set to `WaitForFirstConsumer`. See the
+[example](/docs/concepts/storage/storage-classes/#local). Delaying volume binding ensures
+that the PersistentVolumeClaim binding decision will also be evaluated with any
+other node constraints the Pod may have, such as node resource requirements, node
+selectors, Pod affinity, and Pod anti-affinity.
+
+An external static provisioner can be run separately for improved management of
+the local volume lifecycle. Note that this provisioner does not support dynamic
+provisioning yet. For an example on how to run an external local provisioner,
+see the [local volume provisioner user
+guide](https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner).
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; The local PersistentVolume requires manual cleanup and deletion by the
+user if the external static provisioner is not used to manage the volume
+lifecycle.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+ --&gt;
+&lt;h3 id=&#34;local&#34;&gt;local&lt;/h3&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.14 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;&lt;code&gt;local&lt;/code&gt; 卷代表一个挂载的本地存储，例如磁盘，分区或目录
+&lt;code&gt;local&lt;/code&gt; 卷只能以 静态创建 &lt;code&gt;PersistentVolume&lt;/code&gt; 的方式使用。 目前还不支持动态管理&lt;/p&gt;
+&lt;p&gt;Compared to &lt;code&gt;hostPath&lt;/code&gt; volumes, local volumes can be used in a durable and
+portable manner without manually scheduling Pods to nodes, as the system is aware
+of the volume&amp;rsquo;s node constraints by looking at the node affinity on the PersistentVolume.
+与 &lt;code&gt;hostPath&lt;/code&gt; 相比， &lt;code&gt;local&lt;/code&gt; 卷可以通过手动在节点上管理实现持久的和可移植的， 然后根据
+PersistentVolume 的节点亲和性来打开对应节点上的卷。&lt;/p&gt;
+&lt;p&gt;但是， &lt;code&gt;local&lt;/code&gt; 卷依然受底层节点的可用性影响，不是对所有应用都适用。 如果有一个节点应得不健康，
+这个节点上的 &lt;code&gt;local&lt;/code&gt; 也会变得不可用，使用这个卷的 Pod 也不能运行。 使用 &lt;code&gt;local&lt;/code&gt; 卷的这些应用必要
+要能忍受这样可用性降低的情况，同时还因为底层磁盘的持久性特性而产生的潜在的数据丢失的风险&lt;/p&gt;
+&lt;p&gt;以下示例中使用了 &lt;code&gt;local&lt;/code&gt;卷和 &lt;code&gt;nodeAffinity&lt;/code&gt; 的 &lt;code&gt;PersistentVolume&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolume&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;example-pv&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;capacity&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;storage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100Gi&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumeMode&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Filesystem&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;accessModes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;ReadWriteOnce&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;persistentVolumeReclaimPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Delete&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;storageClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;local-storage&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;local&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/mnt/disks/ssd1&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;nodeAffinity&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;required&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;nodeSelectorTerms&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kubernetes.io/hostname&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
+          - &lt;span style=&#34;color:#ae81ff&#34;&gt;example-node&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在使用 &lt;code&gt;local&lt;/code&gt; 卷时 PersistentVolume 需要使用 &lt;code&gt;nodeAffinity&lt;/code&gt;。 这让 k8s 可以正确地将
+使用 &lt;code&gt;local&lt;/code&gt; 卷的 Pod 调度到正确的节点上。&lt;/p&gt;
+&lt;p&gt;PersistentVolume 的 &lt;code&gt;volumeMode&lt;/code&gt; 可以被设置为 &amp;ldquo;Block&amp;rdquo; (而不是默认值 &amp;ldquo;Filesystem&amp;rdquo;)
+将这个 &lt;code&gt;local&lt;/code&gt; 卷作为块设备&lt;/p&gt;
+&lt;p&gt;当使用 &lt;code&gt;local&lt;/code&gt; 卷时， 推荐在创建 StorageClass 时将 &lt;code&gt;volumeBindingMode&lt;/code&gt; 设置为 &lt;code&gt;WaitForFirstConsumer&lt;/code&gt;。
+可以见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/storage-classes/#local&#34;&gt;示例&lt;/a&gt;.
+卷延迟绑定确定 PersistentVolumeClaim 在作绑定决策时检查 Pod 可能有的其它的节点约束，如果节点
+的资源需求，节点的选择器，Pod 的亲和性和反亲和性。&lt;/p&gt;
+&lt;p&gt;可以在外部独立运行一个静态提供者来改善 &lt;code&gt;local&lt;/code&gt; 卷生命周期管理。 要注意这个提供者目前还不支持动态管理。
+运行外部提供者的示例见
+&lt;a href=&#34;https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner&#34;&gt;local 卷提供者用户指南&lt;/a&gt;.
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 如果外部的静态提供都没有用来管理 &lt;code&gt;local&lt;/code&gt; PersistentVolume 的生命周期， 需要手动清理和删除。&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;!--
+### nfs {#nfs}
+
+An `nfs` volume allows an existing NFS (Network File System) share to be
+mounted into your Pod. Unlike `emptyDir`, which is erased when a Pod is
+removed, the contents of an `nfs` volume are preserved and the volume is merely
+unmounted.  This means that an NFS volume can be pre-populated with data, and
+that data can be &#34;handed off&#34; between Pods.  NFS can be mounted by multiple
+writers simultaneously.
+
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; You must have your own NFS server running with the share exported before you can use it.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+See the [NFS example](https://github.com/kubernetes/examples/tree/master/staging/volumes/nfs) for more details.
+ --&gt;
+&lt;h3 id=&#34;nfs&#34;&gt;nfs&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;nfs&lt;/code&gt; 卷可以将现有的 NFS (网络文件系统)挂载到 Pod 中。 与 &lt;code&gt;emptyDir&lt;/code&gt; 在 Pod 删除时清除数据不同，
+在 &lt;code&gt;iscsi&lt;/code&gt; 卷中的内存会在卸载后依然会保存 其中的内容。也就是说一个 &lt;code&gt;iscsi&lt;/code&gt; 卷可以预先存在数据，
+其中的数据也可以在不同的 Pod 之间传递。 NFS 可以以读写方式同时挂载到多个 Pod 中。&lt;/p&gt;
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 在使用之前必须要先搭建并运行好 NFS 服务器&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;更多详情见 &lt;a href=&#34;https://github.com/kubernetes/examples/tree/master/staging/volumes/nfs&#34;&gt;NFS 示例&lt;/a&gt;&lt;/p&gt;
+&lt;!--
+### persistentVolumeClaim {#persistentvolumeclaim}
+
+A `persistentVolumeClaim` volume is used to mount a
+[PersistentVolume](/docs/concepts/storage/persistent-volumes/) into a Pod. PersistentVolumeClaims
+are a way for users to &#34;claim&#34; durable storage (such as a GCE PersistentDisk or an
+iSCSI volume) without knowing the details of the particular cloud environment.
+
+See the [PersistentVolumes example](/docs/concepts/storage/persistent-volumes/) for more
+details.
+ --&gt;
+&lt;h3 id=&#34;persistentvolumeclaim&#34;&gt;persistentVolumeClaim&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;persistentVolumeClaim&lt;/code&gt; 卷用于将
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/persistent-volumes/&#34;&gt;PersistentVolume&lt;/a&gt; 挂载到 Pod 中。
+&lt;code&gt;PersistentVolumeClaim&lt;/code&gt; 是用户&amp;quot;声明&amp;quot;持久存储(如GCE PersistentDisk 或 iSCSI 卷)时不需要
+知道具体云环境细节的一种方式
+更多信息见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/persistent-volumes/&#34;&gt;PersistentVolumes 示例&lt;/a&gt;&lt;/p&gt;
+&lt;!--
+### projected {#projected}
+
+A `projected` volume maps several existing volume sources into the same directory.
+
+Currently, the following types of volume sources can be projected:
+
+- [`secret`](#secret)
+- [`downwardAPI`](#downwardapi)
+- [`configMap`](#configmap)
+- `serviceAccountToken`
+
+All sources are required to be in the same namespace as the Pod. For more details,
+see the [all-in-one volume design document](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/all-in-one-volume.md).
+
+The projection of service account tokens is a feature introduced in Kubernetes
+1.11 and promoted to Beta in 1.12.
+To enable this feature on 1.11, you need to explicitly set the `TokenRequestProjection`
+[feature gate](/docs/reference/command-line-tools-reference/feature-gates/) to
+True.
+ --&gt;
+&lt;h3 id=&#34;projected&#34;&gt;projected&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;projected&lt;/code&gt; 卷可以将几种现有的不同的卷作为源映射到同一个目录中&lt;/p&gt;
+&lt;p&gt;目前， 支持以下几种卷作为 &lt;code&gt;projected&lt;/code&gt; 的源&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#secret&#34;&gt;&lt;code&gt;secret&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#downwardapi&#34;&gt;&lt;code&gt;downwardAPI&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#configmap&#34;&gt;&lt;code&gt;configMap&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;serviceAccountToken&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所有的源都需要要与 Pod 在同一个命令空间。 更多细节见
+&lt;a href=&#34;https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/all-in-one-volume.md&#34;&gt;all-in-one 卷设计文档&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;对服务账号凭据(Service Account Token)的投射支持是从 k8s 1.11 加入的， v1.12 提升为 beta 版本。
+在 v1.11 中要启用该特性，需要显示地将
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/reference/command-line-tools-reference/feature-gates/&#34;&gt;功能阀&lt;/a&gt;
+&lt;code&gt;TokenRequestProjection&lt;/code&gt; 设置为 &lt;code&gt;true&lt;/code&gt;&lt;/p&gt;
+&lt;!--
+#### Example Pod with a secret, a downward API, and a configmap.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-test
+spec:
+  containers:
+  - name: container-test
+    image: busybox
+    volumeMounts:
+    - name: all-in-one
+      mountPath: &#34;/projected-volume&#34;
+      readOnly: true
+  volumes:
+  - name: all-in-one
+    projected:
+      sources:
+      - secret:
+          name: mysecret
+          items:
+            - key: username
+              path: my-group/my-username
+      - downwardAPI:
+          items:
+            - path: &#34;labels&#34;
+              fieldRef:
+                fieldPath: metadata.labels
+            - path: &#34;cpu_limit&#34;
+              resourceFieldRef:
+                containerName: container-test
+                resource: limits.cpu
+      - configMap:
+          name: myconfigmap
+          items:
+            - key: config
+              path: my-group/my-config
+```
+ --&gt;
+&lt;h4 id=&#34;示例-pod-中包含-secret-downwardapi-configmap&#34;&gt;示例： Pod 中包含 Secret, DownwardAPI, Configmap.&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;volume-test&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;container-test&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;busybox&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;all-in-one&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/projected-volume&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;readOnly&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;all-in-one&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;projected&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;sources&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;secret&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysecret&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;items&lt;/span&gt;:
+            - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;username&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-group/my-username&lt;/span&gt;
+      - &lt;span style=&#34;color:#f92672&#34;&gt;downwardAPI&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;items&lt;/span&gt;:
+            - &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;labels&amp;#34;&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;fieldRef&lt;/span&gt;:
+                &lt;span style=&#34;color:#f92672&#34;&gt;fieldPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;metadata.labels&lt;/span&gt;
+            - &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;cpu_limit&amp;#34;&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;resourceFieldRef&lt;/span&gt;:
+                &lt;span style=&#34;color:#f92672&#34;&gt;containerName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;container-test&lt;/span&gt;
+                &lt;span style=&#34;color:#f92672&#34;&gt;resource&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;limits.cpu&lt;/span&gt;
+      - &lt;span style=&#34;color:#f92672&#34;&gt;configMap&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myconfigmap&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;items&lt;/span&gt;:
+            - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;config&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-group/my-config&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+#### Example Pod with multiple secrets with a non-default permission mode set.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-test
+spec:
+  containers:
+  - name: container-test
+    image: busybox
+    volumeMounts:
+    - name: all-in-one
+      mountPath: &#34;/projected-volume&#34;
+      readOnly: true
+  volumes:
+  - name: all-in-one
+    projected:
+      sources:
+      - secret:
+          name: mysecret
+          items:
+            - key: username
+              path: my-group/my-username
+      - secret:
+          name: mysecret2
+          items:
+            - key: password
+              path: my-group/my-password
+              mode: 511
+```
+
+Each projected volume source is listed in the spec under `sources`. The
+parameters are nearly the same with two exceptions:
+
+* For secrets, the `secretName` field has been changed to `name` to be consistent
+  with ConfigMap naming.
+* The `defaultMode` can only be specified at the projected level and not for each
+  volume source. However, as illustrated above, you can explicitly set the `mode`
+  for each individual projection.
+
+When the `TokenRequestProjection` feature is enabled, you can inject the token
+for the current [service account](/docs/reference/access-authn-authz/authentication/#service-account-tokens)
+into a Pod at a specified path. Below is an example:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sa-token-test
+spec:
+  containers:
+  - name: container-test
+    image: busybox
+    volumeMounts:
+    - name: token-vol
+      mountPath: &#34;/service-account&#34;
+      readOnly: true
+  volumes:
+  - name: token-vol
+    projected:
+      sources:
+      - serviceAccountToken:
+          audience: api
+          expirationSeconds: 3600
+          path: token
+```
+
+The example Pod has a projected volume containing the injected service account
+token. This token can be used by Pod containers to access the Kubernetes API
+server, for example. The `audience` field contains the intended audience of the
+token. A recipient of the token must identify itself with an identifier specified
+in the audience of the token, and otherwise should reject the token. This field
+is optional and it defaults to the identifier of the API server.
+
+The `expirationSeconds` is the expected duration of validity of the service account
+token. It defaults to 1 hour and must be at least 10 minutes (600 seconds). An administrator
+can also limit its maximum value by specifying the `--service-account-max-token-expiration`
+option for the API server. The `path` field specifies a relative path to the mount point
+of the projected volume.
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; A Container using a projected volume source as a &lt;a href=&#34;#using-subpath&#34;&gt;subPath&lt;/a&gt; volume mount will not
+receive updates for those volume sources.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+ --&gt;
+&lt;h4 id=&#34;示例-pod-包含多有设置非默认权限模式的-secret&#34;&gt;示例： Pod 包含多有设置非默认权限模式的 Secret&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;volume-test&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;container-test&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;busybox&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;all-in-one&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/projected-volume&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;readOnly&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;all-in-one&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;projected&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;sources&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;secret&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysecret&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;items&lt;/span&gt;:
+            - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;username&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-group/my-username&lt;/span&gt;
+      - &lt;span style=&#34;color:#f92672&#34;&gt;secret&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysecret2&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;items&lt;/span&gt;:
+            - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;password&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-group/my-password&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;mode&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;511&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;每一个投射(&lt;code&gt;projected&lt;/code&gt;)卷的源都在配置 &lt;code&gt;sources&lt;/code&gt; 下。 除了以下两个例外，其它的参数都基本相同:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;对于 Secret, &lt;code&gt;secretName&lt;/code&gt; 字段变为 &lt;code&gt;name&lt;/code&gt; 以便与 ConfigMap 的命名一致&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;defaultMode&lt;/code&gt; 只能在 projected 级别上设置不能在每个卷源上设置。 但是，就像上面例子中所示，
+可以为每一个源设置各自独立的 &lt;code&gt;mode&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;当 &lt;code&gt;TokenRequestProjection&lt;/code&gt; 特性开启时，可能将当前[服务账号(ServiceAccount)]的凭据(token)
+注入到 Pod 的指定路径，下面为示例:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;sa-token-test&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;container-test&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;busybox&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;token-vol&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/service-account&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;readOnly&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;token-vol&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;projected&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;sources&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;serviceAccountToken&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;audience&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;api&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;expirationSeconds&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3600&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;token&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;上面的例子中， &lt;code&gt;projected&lt;/code&gt; 卷中包含了被注入的 服务账号凭据。 这个凭据可以被 Pod 的容器用来
+访问 k8s API 服务. &lt;code&gt;audience&lt;/code&gt; 字段中包含的是凭据的目标用户， 凭据的的接收者必须要验证凭据中
+提供的 &lt;code&gt;audience&lt;/code&gt; 与其本身的标识进行验证，否则就应该拒绝这个凭据。 这个字段为可选，默认的标识符为 API 服务&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;expirationSeconds&lt;/code&gt; 为服务账号凭据的有效时长。 默认为1小时，最少为 10 分钟(即 600 秒)。
+管理员也可能通过API 服务的 &lt;code&gt;--service-account-max-token-expiration&lt;/code&gt; 选项限制其最大值。
+&lt;code&gt;path&lt;/code&gt; 字段指定 &lt;code&gt;projected&lt;/code&gt; 卷挂载点的相对路径。
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 如果一个容器以将一个 &lt;code&gt;projected&lt;/code&gt; 卷以 &lt;a href=&#34;#using-subpath&#34;&gt;subPath&lt;/a&gt; 方式挂载，则不会接收到
+卷源的更新&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;!--
+### portworxVolume {#portworxvolume}
+
+A `portworxVolume` is an elastic block storage layer that runs hyperconverged with
+Kubernetes. [Portworx](https://portworx.com/use-case/kubernetes-storage/) fingerprints storage in a server, tiers based on capabilities,
+and aggregates capacity across multiple servers. Portworx runs in-guest in virtual machines or on bare metal Linux nodes.
+
+A `portworxVolume` can be dynamically created through Kubernetes or it can also
+be pre-provisioned and referenced inside a Kubernetes Pod.
+Here is an example Pod referencing a pre-provisioned PortworxVolume:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-portworx-volume-pod
+spec:
+  containers:
+  - image: k8s.gcr.io/test-webserver
+    name: test-container
+    volumeMounts:
+    - mountPath: /mnt
+      name: pxvol
+  volumes:
+  - name: pxvol
+    # This Portworx volume must already exist.
+    portworxVolume:
+      volumeID: &#34;pxvol&#34;
+      fsType: &#34;&lt;fs-type&gt;&#34;
+```
+
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; Make sure you have an existing PortworxVolume with name &lt;code&gt;pxvol&lt;/code&gt;
+before using it in the Pod.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+More details and examples can be found [here](https://github.com/kubernetes/examples/tree/master/staging/volumes/portworx/README.md).
+ --&gt;
+&lt;h3 id=&#34;portworxvolume&#34;&gt;portworxVolume&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;portworxVolume&lt;/code&gt; 是一个弹性块存储层(elastic block storage layer), 它通过 k8s 运行
+&lt;code&gt;hyperconverged&lt;/code&gt;。
+&lt;a href=&#34;https://portworx.com/use-case/kubernetes-storage/&#34;&gt;Portworx&lt;/a&gt; (这句有点绕)
+Portworx 可以运行在虚拟机或裸金属的 Linux 节点中。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;portworxVolume&lt;/code&gt; 可以通过 k8s 动态创建或预先创建然后在一个 k8s 的 Pod 中引用。
+以下为在 Pod 中使用一个预先创建好的 &lt;code&gt;PortworxVolume&lt;/code&gt; 的示例:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-portworx-volume-pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;k8s.gcr.io/test-webserver&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-container&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/mnt&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pxvol&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pxvol&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# 这个 Portworx 卷必须要已经存在.&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;portworxVolume&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;volumeID&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pxvol&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;fsType&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;lt;fs-type&amp;gt;&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 在 Pod 中使用之前需要已经存在一个名叫 &lt;code&gt;pxvol&lt;/code&gt; 的 &lt;code&gt;PortworxVolume&lt;/code&gt;&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;更多详情及示例见 &lt;a href=&#34;https://github.com/kubernetes/examples/tree/master/staging/volumes/portworx/README.md&#34;&gt;这里&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+### quobyte {#quobyte}
+
+A `quobyte` volume allows an existing [Quobyte](https://www.quobyte.com) volume to
+be mounted into your Pod.
+
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; You must have your own Quobyte setup running with the volumes
+created before you can use it.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+Quobyte supports the &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#csi&#39; target=&#39;_blank&#39;&gt;Container Storage Interface&lt;span class=&#39;tooltip-text&#39;&gt;容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中&lt;/span&gt;
+&lt;/a&gt;.
+CSI is the recommended plugin to use Quobyte volumes inside Kubernetes. Quobyte&#39;s
+GitHub project has [instructions](https://github.com/quobyte/quobyte-csi#quobyte-csi) for deploying Quobyte using CSI, along with examples.
+ --&gt;
+&lt;h3 id=&#34;quobyte&#34;&gt;quobyte&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;quobyte&lt;/code&gt; 可以将已经存在的 &lt;a href=&#34;https://www.quobyte.com&#34;&gt;Quobyte&lt;/a&gt; 卷挂载到 Pod 中。
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 在使用之前必须要配置好 Quobyte 并创建使用的卷&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;p&gt;Quobyte 支持 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#csi&#39; target=&#39;_blank&#39;&gt;容器存储接口 (CSI)&lt;span class=&#39;tooltip-text&#39;&gt;容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中&lt;/span&gt;
+&lt;/a&gt;.
+CSI 是在 k8s 中使用 Quobyte 卷的推荐插件。 Quobyte 的 GitHub 项目中有介绍使用 CSI 部署
+Quobyte 的介绍&lt;a href=&#34;https://github.com/quobyte/quobyte-csi#quobyte-csi&#34;&gt;介绍&lt;/a&gt;
+和示例。&lt;/p&gt;
+&lt;!--
+### rbd {#rbd}
+
+An `rbd` volume allows a
+[Rados Block Device](https://ceph.com/docs/master/rbd/rbd/) volume to be mounted into your
+Pod.  Unlike `emptyDir`, which is erased when a Pod is removed, the contents of
+a `rbd` volume are preserved and the volume is merely unmounted.  This
+means that a RBD volume can be pre-populated with data, and that data can
+be &#34;handed off&#34; between Pods.
+
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; You must have your own Ceph installation running before you can use RBD.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+A feature of RBD is that it can be mounted as read-only by multiple consumers
+simultaneously.  This means that you can pre-populate a volume with your dataset
+and then serve it in parallel from as many Pods as you need.  Unfortunately,
+RBD volumes can only be mounted by a single consumer in read-write mode - no
+simultaneous writers allowed.
+
+See the [RBD example](https://github.com/kubernetes/examples/tree/master/volumes/rbd) for more details.
+ --&gt;
+&lt;h3 id=&#34;rbd&#34;&gt;rbd&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;rbd&lt;/code&gt; 卷可以让 &lt;a href=&#34;https://ceph.com/docs/master/rbd/rbd/&#34;&gt;Rados 块设备&lt;/a&gt;卷挂载到 Pod 中。
+与 &lt;code&gt;emptyDir&lt;/code&gt; 在 Pod 删除时清除数据不同， 在 &lt;code&gt;rbd&lt;/code&gt; 卷中的内存会在卸载后依然会保存
+其中的内容。也就是说一个 &lt;code&gt;rbd&lt;/code&gt; 卷可以预先存在数据，其中的数据也可以在不同的 Pod 之间传递。
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 在使用 RBD 之前需要先配置运行 Ceph&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;RBD&lt;/code&gt; 一个特性是可以以只读的方式同时挂载到多个消费者中。 这就代表着可以预先将数据集放入卷中
+然后根据需要使用任意数量的 Pod 来提供访问服务。 不过 &lt;code&gt;RBD&lt;/code&gt; 卷以读写方式挂载时只能有一个消费者，
+不允许并行写。
+更多信息见 &lt;a href=&#34;https://github.com/kubernetes/examples/tree/master/volumes/rbd&#34;&gt;RBD 示例&lt;/a&gt;&lt;/p&gt;
+&lt;!--
+### scaleIO {#scaleio}
+
+ScaleIO is a software-based storage platform that can use existing hardware to
+create clusters of scalable shared block networked storage. The `scaleIO` volume
+plugin allows deployed Pods to access existing ScaleIO
+volumes (or it can dynamically provision new volumes for persistent volume claims, see
+[ScaleIO Persistent Volumes](/docs/concepts/storage/persistent-volumes/#scaleio)).
+
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; You must have an existing ScaleIO cluster already setup and
+running with the volumes created before you can use them.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+The following is an example of Pod configuration with ScaleIO:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-0
+spec:
+  containers:
+  - image: k8s.gcr.io/test-webserver
+    name: pod-0
+    volumeMounts:
+    - mountPath: /test-pd
+      name: vol-0
+  volumes:
+  - name: vol-0
+    scaleIO:
+      gateway: https://localhost:443/api
+      system: scaleio
+      protectionDomain: sd0
+      storagePool: sp1
+      volumeName: vol-0
+      secretRef:
+        name: sio-secret
+      fsType: xfs
+```
+
+For further detail, please see the [ScaleIO examples](https://github.com/kubernetes/examples/tree/master/staging/volumes/scaleio).
+ --&gt;
+&lt;h3 id=&#34;scaleio&#34;&gt;scaleIO&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;ScaleIO&lt;/code&gt; 是一个基于软件的存储平台，它可以使用已经存在的硬件来创建可扩展的共享块网络存储集群。
+&lt;code&gt;scaleIO&lt;/code&gt; 卷插件让 Pod 可以使用 已经存在的 ScaleIO 卷(也可以为 持久化卷声明(PersistentVolumeClaim)
+动态地创建新的卷， 见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/persistent-volumes/#scaleio&#34;&gt;ScaleIO 持久化卷&lt;/a&gt;)&lt;/p&gt;
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 在使用 &lt;code&gt;ScaleIO&lt;/code&gt; 卷之前，需要先部署配置运行 ScaleIO 集群。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;以下为一个使用 ScaleIO 的 Pod 配置示例:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pod-0&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;k8s.gcr.io/test-webserver&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pod-0&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/test-pd&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;vol-0&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;vol-0&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;scaleIO&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;gateway&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;https://localhost:443/api&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;system&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;scaleio&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;protectionDomain&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;sd0&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;storagePool&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;sp1&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;volumeName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;vol-0&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;secretRef&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;sio-secret&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;fsType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;xfs&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;更多信息见 &lt;a href=&#34;https://github.com/kubernetes/examples/tree/master/staging/volumes/scaleio&#34;&gt;ScaleIO 示例&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+### secret {#secret}
+
+A `secret` volume is used to pass sensitive information, such as passwords, to
+Pods.  You can store secrets in the Kubernetes API and mount them as files for
+use by Pods without coupling to Kubernetes directly.  `secret` volumes are
+backed by tmpfs (a RAM-backed filesystem) so they are never written to
+non-volatile storage.
+
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; You must create a secret in the Kubernetes API before you can use it.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; A Container using a Secret as a &lt;a href=&#34;#using-subpath&#34;&gt;subPath&lt;/a&gt; volume mount will not
+receive Secret updates.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+Secrets are described in more detail [here](/docs/concepts/configuration/secret/).
+ --&gt;
+&lt;h3 id=&#34;secret&#34;&gt;secret&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;secret&lt;/code&gt; 卷用于将如密码这样的敏感数据传入 Pod 中。 用户可以将 Secret 存在 k8s API 中，然后
+将它们以文件的方式挂载到 Pod 中而不需要直接与 k8s 耦合在一起。 &lt;code&gt;secret&lt;/code&gt; 卷基于 tmpfs(
+一个基于内存的文件系统)，所以这给永远不会写入持久性存储。
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 在使用之前需要先在 k8s API 中先创建相应的 Secret&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 一个以 &lt;a href=&#34;#using-subpath&#34;&gt;subPath&lt;/a&gt; 挂载 Secret 的容器不会接收到 Secret 的更新。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;更多关于 Secret 的信息见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/secret/&#34;&gt;这里&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+### storageOS {#storageos}
+
+A `storageos` volume allows an existing [StorageOS](https://www.storageos.com)
+volume to be mounted into your Pod.
+
+StorageOS runs as a Container within your Kubernetes environment, making local
+or attached storage accessible from any node within the Kubernetes cluster.
+Data can be replicated to protect against node failure. Thin provisioning and
+compression can improve utilization and reduce cost.
+
+At its core, StorageOS provides block storage to Containers, accessible via a file system.
+
+The StorageOS Container requires 64-bit Linux and has no additional dependencies.
+A free developer license is available.
+
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; You must run the StorageOS Container on each node that wants to
+access StorageOS volumes or that will contribute storage capacity to the pool.
+For installation instructions, consult the
+&lt;a href=&#34;https://docs.storageos.com&#34;&gt;StorageOS documentation&lt;/a&gt;.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    name: redis
+    role: master
+  name: test-storageos-redis
+spec:
+  containers:
+    - name: master
+      image: kubernetes/redis:v1
+      env:
+        - name: MASTER
+          value: &#34;true&#34;
+      ports:
+        - containerPort: 6379
+      volumeMounts:
+        - mountPath: /redis-master-data
+          name: redis-data
+  volumes:
+    - name: redis-data
+      storageos:
+        # The `redis-vol01` volume must already exist within StorageOS in the `default` namespace.
+        volumeName: redis-vol01
+        fsType: ext4
+```
+
+For more information including Dynamic Provisioning and Persistent Volume Claims, please see the
+[StorageOS examples](https://github.com/kubernetes/examples/blob/master/volumes/storageos).
+ --&gt;
+&lt;h3 id=&#34;storageos&#34;&gt;storageOS&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;storageos&lt;/code&gt; 卷可以将现有的 &lt;a href=&#34;https://www.storageos.com&#34;&gt;StorageOS&lt;/a&gt; 卷挂载到 Pod 中。&lt;/p&gt;
+&lt;p&gt;StorageOS 以容器方式运行在 k8s 环境中，可以将集群中任意节点的本地存储或附加存储变为可访问。
+数据可以被复制以提高可用性。瘦供给或压缩可以改善利用率并减少开销。
+StorageOS 核心是向容器提供块存储，可以通过文件系统访问。
+StorageOS 容器需要 64 位 Linux 外不需要其它额外的信赖。
+有一个免费的开发者许可可用。
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 需要在想让 StorageOS 访问的节点上运行 StorageOS 容器这样可以将它的存储容量加到池中。
+更新安装指导见 &lt;a href=&#34;https://docs.storageos.com&#34;&gt;StorageOS 文档&lt;/a&gt;.&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;role&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;master&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-storageos-redis&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;master&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kubernetes/redis:v1&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;env&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;MASTER&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;value&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;containerPort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;6379&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/redis-master-data&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis-data&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis-data&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;storageos&lt;/span&gt;:
+        &lt;span style=&#34;color:#75715e&#34;&gt;# The `redis-vol01` volume must already exist within StorageOS in the `default` namespace.&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;volumeName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis-vol01&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;fsType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ext4&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;更多关于动态管理和 PersistentVolumeClaim 的信息见
+&lt;a href=&#34;https://github.com/kubernetes/examples/blob/master/volumes/storageos&#34;&gt;StorageOS 示例&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+### vsphereVolume {#vspherevolume}
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Prerequisite: Kubernetes with vSphere Cloud Provider configured. For cloudprovider
+configuration please refer &lt;a href=&#34;https://vmware.github.io/vsphere-storage-for-kubernetes/documentation/&#34;&gt;vSphere getting started guide&lt;/a&gt;.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+A `vsphereVolume` is used to mount a vSphere VMDK Volume into your Pod.  The contents
+of a volume are preserved when it is unmounted. It supports both VMFS and VSAN datastore.
+
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; You must create VMDK using one of the following methods before using with Pod.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+ --&gt;
+&lt;h3 id=&#34;vspherevolume&#34;&gt;vsphereVolume&lt;/h3&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 前置条件: k8s 需要配置好 vSphere 云提供商。 cloudprovider 配置见
+&lt;a href=&#34;https://vmware.github.io/vsphere-storage-for-kubernetes/documentation/&#34;&gt;vSphere 上手指导&lt;/a&gt;.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;code&gt;vsphereVolume&lt;/code&gt; 用于将  vSphere VMDK 卷挂载到 Pod 中。 卷中的数据在卸载后依然存在。
+支持 VMFS 和 VSAN 数据存储&lt;/p&gt;
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 需要使用以下方式中的其中一种创建 VMDK 后才能在 Pod 中使用。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;!--
+#### Creating a VMDK volume
+
+Choose one of the following methods to create a VMDK.
+
+&lt;div id=&#34;tabs_volumes&#34;&gt;
+&lt;ul&gt;&lt;li&gt;&lt;a href=&#34;#tabs_volumes-0&#34;&gt;Create using vmkfstools&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#tabs_volumes-1&#34;&gt;Create using vmware-vdiskmanager&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div id=&#34;tabs_volumes-0&#34;&gt;&lt;p&gt;First ssh into ESX, then use the following command to create a VMDK:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;vmkfstools -c 2G /vmfs/volumes/DatastoreName/volumes/myDisk.vmdk
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;tabs_volumes-1&#34;&gt;&lt;p&gt;Use the following command to create a VMDK:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;vmware-vdiskmanager -c -t &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; -s 40GB -a lsilogic myDisk.vmdk
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;script&gt;$(function(){$(&#34;#tabs_volumes&#34;).tabs();});&lt;/script&gt;
+ --&gt;
+&lt;h4 id=&#34;创建-vmdk-卷&#34;&gt;创建 VMDK 卷&lt;/h4&gt;
+&lt;p&gt;选择以下方式中的一种创建 VMDK&lt;/p&gt;
+&lt;div id=&#34;tabs_volumes&#34;&gt;
+&lt;ul&gt;&lt;li&gt;&lt;a href=&#34;#tabs_volumes-0&#34;&gt;Create using vmkfstools&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#tabs_volumes-1&#34;&gt;Create using vmware-vdiskmanager&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div id=&#34;tabs_volumes-0&#34;&gt;&lt;p&gt;先 ssh 到 ESX 中，然后使用用下面的命令创建一个 VMDK&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;vmkfstools -c 2G /vmfs/volumes/DatastoreName/volumes/myDisk.vmdk
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;tabs_volumes-1&#34;&gt;&lt;p&gt;使用下面的命令创建一个 VMDK&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;vmware-vdiskmanager -c -t &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; -s 40GB -a lsilogic myDisk.vmdk
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;script&gt;$(function(){$(&#34;#tabs_volumes&#34;).tabs();});&lt;/script&gt;
+&lt;!--
+#### vSphere VMDK Example configuration
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-vmdk
+spec:
+  containers:
+  - image: k8s.gcr.io/test-webserver
+    name: test-container
+    volumeMounts:
+    - mountPath: /test-vmdk
+      name: test-volume
+  volumes:
+  - name: test-volume
+    # This VMDK volume must already exist.
+    vsphereVolume:
+      volumePath: &#34;[DatastoreName] volumes/myDisk&#34;
+      fsType: ext4
+```
+ --&gt;
+&lt;h4 id=&#34;vsphere-vmdk-配置示例&#34;&gt;vSphere VMDK 配置示例&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-vmdk&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;k8s.gcr.io/test-webserver&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-container&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/test-vmdk&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-volume&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-volume&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# 这个 VMDK 必须要已经存在.&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;vsphereVolume&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;volumePath&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[DatastoreName] volumes/myDisk&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;fsType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ext4&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;更多信息见 &lt;a href=&#34;https://github.com/kubernetes/examples/tree/master/staging/volumes/vsphere&#34;&gt;这里&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+#### CSI migration
+
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.19 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+
+The CSI Migration feature for vsphereVolume, when enabled, shims all plugin operations
+from the existing in-tree plugin to the `csi.vsphere.vmware.com` &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#csi&#39; target=&#39;_blank&#39;&gt;CSI&lt;span class=&#39;tooltip-text&#39;&gt;容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中&lt;/span&gt;
+&lt;/a&gt; driver. In order to use this feature, the [vSphere CSI
+Driver](https://github.com/kubernetes-sigs/vsphere-csi-driver)
+must be installed on the cluster and the `CSIMigration` and `CSIMigrationvSphere`
+[feature gates](/docs/reference/command-line-tools-reference/feature-gates/) must be enabled.
+
+This also requires minimum vSphere vCenter/ESXi Version to be 7.0u1 and minimum HW Version to be VM version 15.
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;p&gt;The following StorageClass parameters from the built-in vsphereVolume plugin are not supported by the vSphere CSI driver:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;diskformat&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;hostfailurestotolerate&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;forceprovisioning&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;cachereservation&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;diskstripes&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;objectspacereservation&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;iopslimit&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Existing volumes created using these parameters will be migrated to the vSphere CSI driver, but new volumes created by the vSphere CSI driver will not be honoring these parameters.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/blockquote&gt;
+
+ --&gt;
+&lt;h4 id=&#34;csi-迁移-5&#34;&gt;CSI 迁移&lt;/h4&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.19 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;的 CSI 迁移特性，在启用时，会将来自已经存在的插件的插件操作转移到
+&lt;code&gt;csi.vsphere.vmware.com&lt;/code&gt; &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#csi&#39; target=&#39;_blank&#39;&gt;CSI&lt;span class=&#39;tooltip-text&#39;&gt;容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中&lt;/span&gt;
+&lt;/a&gt;(CSI)驱动。
+为了使用该特性， 需要在集群中先安装
+&lt;a href=&#34;https://github.com/kubernetes-sigs/vsphere-csi-driver&#34;&gt;vSphere CSI Driver&lt;/a&gt;
+同时在
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/reference/command-line-tools-reference/feature-gates/&#34;&gt;功能阀&lt;/a&gt;
+启用 &lt;code&gt;CSIMigration&lt;/code&gt; 和 &lt;code&gt;CSIMigrationAzureFile&lt;/code&gt; 两个 &lt;code&gt;Alpha&lt;/code&gt; 特性
+This also requires minimum vSphere vCenter/ESXi Version to be 7.0u1 and minimum HW Version to be VM version 15.
+同时还需要 vSphere vCenter/ESXi v7.0u1+ 和 VM v15+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;p&gt;以下来自 vsphereVolume 插件内置的 StorageClass 参数不受 vSphere CSI 驱动支持:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;diskformat&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;hostfailurestotolerate&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;forceprovisioning&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;cachereservation&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;diskstripes&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;objectspacereservation&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;iopslimit&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;已经存在使用这些参数创建的卷会被迁移到 vSphere CSI 驱动， 但是使用 vSphere CSI 驱动创建新
+的卷时就不能再使用这些参数了&lt;/p&gt;
+&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;!--
+#### CSI Migration Complete
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.19 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+
+To turn off the vsphereVolume plugin from being loaded by controller manager and kubelet, you need to set this feature flag to true. This requires `csi.vsphere.vmware.com` &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#csi&#39; target=&#39;_blank&#39;&gt;CSI&lt;span class=&#39;tooltip-text&#39;&gt;容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中&lt;/span&gt;
+&lt;/a&gt; driver being installed on all worker nodes.
+ --&gt;
+&lt;h4 id=&#34;csi-migration-complete&#34;&gt;CSI Migration Complete&lt;/h4&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.19 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;为了关闭由控制器管理器和 kubelet 加载的 vsphereVolume 插件， 需要将这具功能特性标记为 true
+同时还需要在每个节点上安装 &lt;code&gt;csi.vsphere.vmware.com&lt;/code&gt;
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#csi&#39; target=&#39;_blank&#39;&gt;容器存储接口 (CSI)&lt;span class=&#39;tooltip-text&#39;&gt;容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中&lt;/span&gt;
+&lt;/a&gt;
+驱动&lt;/p&gt;
+&lt;!--
+## Using subPath
+
+Sometimes, it is useful to share one volume for multiple uses in a single Pod. The `volumeMounts.subPath`
+property can be used to specify a sub-path inside the referenced volume instead of its root.
+
+Here is an example of a Pod with a LAMP stack (Linux Apache Mysql PHP) using a single, shared volume.
+The HTML contents are mapped to its `html` folder, and the databases will be stored in its `mysql` folder:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-lamp-site
+spec:
+    containers:
+    - name: mysql
+      image: mysql
+      env:
+      - name: MYSQL_ROOT_PASSWORD
+        value: &#34;rootpasswd&#34;
+      volumeMounts:
+      - mountPath: /var/lib/mysql
+        name: site-data
+        subPath: mysql
+    - name: php
+      image: php:7.0-apache
+      volumeMounts:
+      - mountPath: /var/www/html
+        name: site-data
+        subPath: html
+    volumes:
+    - name: site-data
+      persistentVolumeClaim:
+        claimName: my-lamp-site-data
+```
+ --&gt;
+&lt;h2 id=&#34;使用-subpath&#34;&gt;使用 subPath&lt;/h2&gt;
+&lt;p&gt;有时，在同一个 Pod 中的多个用户分享同一个卷是相当有用的。 &lt;code&gt;volumeMounts.subPath&lt;/code&gt; 属性可以用来
+在引用卷时不使用其根路径而是指定子路径&lt;/p&gt;
+&lt;p&gt;以下示例 Pod 为一个使用一个共享卷的 LAMP (Linux Apache Mysql PHP) 栈。
+HTML 内容映射到 &lt;code&gt;html&lt;/code&gt; 目录， 数据库会使用 &lt;code&gt;mysql&lt;/code&gt; 目录。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-lamp-site&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysql&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysql&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;env&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;MYSQL_ROOT_PASSWORD&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;value&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;rootpasswd&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/var/lib/mysql&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;site-data&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;subPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysql&lt;/span&gt;
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;php&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;php:7.0-apache&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/var/www/html&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;site-data&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;subPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;html&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;site-data&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;persistentVolumeClaim&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;claimName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-lamp-site-data&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+### Using subPath with expanded environment variables
+
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.17 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+
+
+Use the `subPathExpr` field to construct `subPath` directory names from Downward API environment variables.
+The `subPath` and `subPathExpr` properties are mutually exclusive.
+
+In this example, a Pod uses `subPathExpr` to create a directory `pod1` within the hostPath volume `/var/log/pods`, using the pod name from the Downward API.  The host directory `/var/log/pods/pod1` is mounted at `/logs` in the container.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod1
+spec:
+  containers:
+  - name: container1
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.name
+    image: busybox
+    command: [ &#34;sh&#34;, &#34;-c&#34;, &#34;while [ true ]; do echo &#39;Hello&#39;; sleep 10; done | tee -a /logs/hello.txt&#34; ]
+    volumeMounts:
+    - name: workdir1
+      mountPath: /logs
+      subPathExpr: $(POD_NAME)
+  restartPolicy: Never
+  volumes:
+  - name: workdir1
+    hostPath:
+      path: /var/log/pods
+```
+ --&gt;
+&lt;h3 id=&#34;在-subpath-配置上使用环境变量&#34;&gt;在 subPath 配置上使用环境变量&lt;/h3&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.17 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;使用 &lt;code&gt;subPathExpr&lt;/code&gt; 字段来通过 Downward API 的环境变量构建 &lt;code&gt;subPath&lt;/code&gt; 的名称。
+&lt;code&gt;subPath&lt;/code&gt; 和 &lt;code&gt;subPathExpr&lt;/code&gt; 相互独立。&lt;/p&gt;
+&lt;p&gt;在这个例子中， 一个 Pod 使用 &lt;code&gt;subPathExpr&lt;/code&gt; 创建一个 &lt;code&gt;pod1&lt;/code&gt; 目录在 hostPath 卷 &lt;code&gt;/var/log/pods&lt;/code&gt; 中，
+使用来自 Downward API 的 Pod 名称。 主机目录 &lt;code&gt;/var/log/pods/pod1&lt;/code&gt; 挂载到容器中的 &lt;code&gt;/logs&lt;/code&gt; 上。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pod1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;container1&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;env&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;POD_NAME&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;valueFrom&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;fieldRef&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;fieldPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;metadata.name&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;busybox&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;command&lt;/span&gt;: [ &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;sh&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;-c&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;while [ true ]; do echo &amp;#39;Hello&amp;#39;; sleep 10; done | tee -a /logs/hello.txt&amp;#34;&lt;/span&gt; ]
+    &lt;span style=&#34;color:#f92672&#34;&gt;volumeMounts&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;workdir1&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/logs&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;subPathExpr&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;$(POD_NAME)&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;restartPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Never&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;workdir1&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;hostPath&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/var/log/pods&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+## Resources
+
+The storage media (Disk, SSD, etc.) of an `emptyDir` volume is determined by the
+medium of the filesystem holding the kubelet root dir (typically
+`/var/lib/kubelet`).  There is no limit on how much space an `emptyDir` or
+`hostPath` volume can consume, and no isolation between Containers or between
+Pods.
+
+In the future, we expect that `emptyDir` and `hostPath` volumes will be able to
+request a certain amount of space using a [resource](/docs/concepts/configuration/manage-resources-containers/)
+specification, and to select the type of media to use, for clusters that have
+several media types.
+ --&gt;
+&lt;h2 id=&#34;资源&#34;&gt;资源&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;emptyDir&lt;/code&gt; 卷的存储介质(Disk, SSD, etc.)是由 kubelet 根目录(通常为 &lt;code&gt;/var/lib/kubelet&lt;/code&gt;)
+所在的文件系统的存储介质决定的。 &lt;code&gt;emptyDir&lt;/code&gt; 和 &lt;code&gt;hostPath&lt;/code&gt; 卷没有使用容量限制，容器和 Pod
+之间也没有限离。&lt;/p&gt;
+&lt;p&gt;在将来，我们预计将通过
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/manage-resources-containers/&#34;&gt;资源&lt;/a&gt;
+来确定 &lt;code&gt;emptyDir&lt;/code&gt; 和 &lt;code&gt;hostPath&lt;/code&gt; 请求确定数量的空间，如果集群中有多种介质也 选择要使用的介质&lt;/p&gt;
+&lt;!--
+## Out-of-Tree Volume Plugins
+
+The Out-of-tree volume plugins include the Container Storage Interface (CSI)
+and FlexVolume. They enable storage vendors to create custom storage plugins
+without adding them to the Kubernetes repository.
+
+Before the introduction of CSI and FlexVolume, all volume plugins (like
+volume types listed above) were &#34;in-tree&#34; meaning they were built, linked,
+compiled, and shipped with the core Kubernetes binaries and extend the core
+Kubernetes API. This meant that adding a new storage system to Kubernetes (a
+volume plugin) required checking code into the core Kubernetes code repository.
+
+Both CSI and FlexVolume allow volume plugins to be developed independent of
+the Kubernetes code base, and deployed (installed) on Kubernetes clusters as
+extensions.
+
+For storage vendors looking to create an out-of-tree volume plugin, please refer
+to [this FAQ](https://github.com/kubernetes/community/blob/master/sig-storage/volume-plugin-faq.md).
+ --&gt;
+&lt;h2 id=&#34;外部卷插件&#34;&gt;外部卷插件&lt;/h2&gt;
+&lt;p&gt;外部卷插件包括 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#csi&#39; target=&#39;_blank&#39;&gt;容器存储接口 (CSI)&lt;span class=&#39;tooltip-text&#39;&gt;容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中&lt;/span&gt;
+&lt;/a&gt; 和 FlexVolume。它们使得存储提供商
+可能创建自定义的存储插件而不需要将其添加到 k8s 代码库中。&lt;/p&gt;
+&lt;p&gt;在引入 CSI 和 FlexVolume 之前， 所有的卷插件(像所有前面列举的那些)都是内置的，它们在构建，连接
+编译，发布都是与 k8s 核心二进制文件在一起的并且扩展了 k8s 核心 API。 这意味着如果我们要添加
+一种新的存储系统(一个卷插件)到 k8s 中时，需要将其代码检入到 k8s 核心代码库中。&lt;/p&gt;
+&lt;p&gt;CSI 和 FlexVolume 都允许独立于 k8s 核心代码独立开发卷插件，并且独立以插件的方式部署(安装)
+到 k8s 集群中。&lt;/p&gt;
+&lt;p&gt;要看看有哪些外部卷插件，请见
+&lt;a href=&#34;https://github.com/kubernetes/community/blob/master/sig-storage/volume-plugin-faq.md&#34;&gt;这个 FAQ&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+### CSI
+
+[Container Storage Interface](https://github.com/container-storage-interface/spec/blob/master/spec.md) (CSI)
+defines a standard interface for container orchestration systems (like
+Kubernetes) to expose arbitrary storage systems to their container workloads.
+
+Please read the [CSI design proposal](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/storage/container-storage-interface.md) for more information.
+
+CSI support was introduced as alpha in Kubernetes v1.9, moved to beta in
+Kubernetes v1.10, and is GA in Kubernetes v1.13.
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Support for CSI spec versions 0.2 and 0.3 are deprecated in Kubernetes
+v1.13 and will be removed in a future release.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; CSI drivers may not be compatible across all Kubernetes releases.
+Please check the specific CSI driver&amp;rsquo;s documentation for supported
+deployments steps for each Kubernetes release and a compatibility matrix.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+Once a CSI compatible volume driver is deployed on a Kubernetes cluster, users
+may use the `csi` volume type to attach, mount, etc. the volumes exposed by the
+CSI driver.
+
+A `csi` volume can be used in a pod in three different ways:
+- through a reference to a [`persistentVolumeClaim`](#persistentvolumeclaim)
+- with a [generic ephemeral volume](/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volume) (alpha feature)
+- with a [CSI ephemeral volume](/docs/concepts/storage/ephemeral-volumes/#csi-ephemeral-volume) if the driver
+  supports that (beta feature)
+
+The following fields are available to storage administrators to configure a CSI
+persistent volume:
+
+- `driver`: A string value that specifies the name of the volume driver to use.
+  This value must correspond to the value returned in the `GetPluginInfoResponse`
+  by the CSI driver as defined in the [CSI spec](https://github.com/container-storage-interface/spec/blob/master/spec.md#getplugininfo).
+  It is used by Kubernetes to identify which CSI driver to call out to, and by
+  CSI driver components to identify which PV objects belong to the CSI driver.
+- `volumeHandle`: A string value that uniquely identifies the volume. This value
+  must correspond to the value returned in the `volume.id` field of the
+  `CreateVolumeResponse` by the CSI driver as defined in the [CSI spec](https://github.com/container-storage-interface/spec/blob/master/spec.md#createvolume).
+  The value is passed as `volume_id` on all calls to the CSI volume driver when
+  referencing the volume.
+- `readOnly`: An optional boolean value indicating whether the volume is to be
+  &#34;ControllerPublished&#34; (attached) as read only. Default is false. This value is
+  passed to the CSI driver via the `readonly` field in the
+  `ControllerPublishVolumeRequest`.
+- `fsType`: If the PV&#39;s `VolumeMode` is `Filesystem` then this field may be used
+  to specify the filesystem that should be used to mount the volume. If the
+  volume has not been formatted and formatting is supported, this value will be
+  used to format the volume.
+  This value is passed to the CSI driver via the `VolumeCapability` field of
+  `ControllerPublishVolumeRequest`, `NodeStageVolumeRequest`, and
+  `NodePublishVolumeRequest`.
+- `volumeAttributes`: A map of string to string that specifies static properties
+  of a volume. This map must correspond to the map returned in the
+  `volume.attributes` field of the `CreateVolumeResponse` by the CSI driver as
+  defined in the [CSI spec](https://github.com/container-storage-interface/spec/blob/master/spec.md#createvolume).
+  The map is passed to the CSI driver via the `volume_context` field in the
+  `ControllerPublishVolumeRequest`, `NodeStageVolumeRequest`, and
+  `NodePublishVolumeRequest`.
+- `controllerPublishSecretRef`: A reference to the secret object containing
+  sensitive information to pass to the CSI driver to complete the CSI
+  `ControllerPublishVolume` and `ControllerUnpublishVolume` calls. This field is
+  optional, and may be empty if no secret is required. If the secret object
+  contains more than one secret, all secrets are passed.
+- `nodeStageSecretRef`: A reference to the secret object containing
+  sensitive information to pass to the CSI driver to complete the CSI
+  `NodeStageVolume` call. This field is optional, and may be empty if no secret
+  is required. If the secret object contains more than one secret, all secrets
+  are passed.
+- `nodePublishSecretRef`: A reference to the secret object containing
+  sensitive information to pass to the CSI driver to complete the CSI
+  `NodePublishVolume` call. This field is optional, and may be empty if no
+  secret is required. If the secret object contains more than one secret, all
+  secrets are passed.
+--&gt;
+&lt;h3 id=&#34;csi&#34;&gt;CSI&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/container-storage-interface/spec/blob/master/spec.md&#34;&gt;容器存储接口&lt;/a&gt; (CSI)
+defines a standard interface for container orchestration systems (like
+Kubernetes) to expose arbitrary storage systems to their container workloads.
+定义一个标准接口用于容器编排系统(像 k8s)暴露任意存储系统到它们的容器工作负载中。
+更多信息请见 &lt;a href=&#34;https://github.com/kubernetes/community/blob/master/contributors/design-proposals/storage/container-storage-interface.md&#34;&gt;CSI 设计方案&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;CSI 支持是在 k8s v1.9 中引入为 alpha， 在 k8s v1.10 进变为 beta 版本， k8s v1.13 变为 GA
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 对 CSI 0.2 和 0.3 标准的支持在 k8s v1.13 中被废弃并会在将来被移除&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; CSI 驱动可能不能与所有的 k8s 发行版本兼容。请查阅对应 CSI 驱动 文档，了解其在每一个 k8s 版本
+中的部署方式和对应的版本兼容表格&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;当一个 CSI 兼容的卷驱动被部署到 k8s 集群中时， 用户可以使用 &lt;code&gt;csi&lt;/code&gt; 卷类型为装载，挂载那些
+通过 CSI 驱动暴露的卷。&lt;/p&gt;
+&lt;p&gt;一个 &lt;code&gt;csi&lt;/code&gt; 卷可以以下三种方式在 Pod 中使用:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;通过一个 &lt;a href=&#34;#persistentvolumeclaim&#34;&gt;&lt;code&gt;persistentVolumeClaim&lt;/code&gt;&lt;/a&gt; 引用&lt;/li&gt;
+&lt;li&gt;通过&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volume&#34;&gt;generic ephemeral volume&lt;/a&gt;(alpha 特性)&lt;/li&gt;
+&lt;li&gt;如果驱动支持，通过 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/ephemeral-volumes/#csi-ephemeral-volume&#34;&gt;CSI ephemeral volume&lt;/a&gt;  (beta 特性)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;以下字段可以用于存储管理员对 CSI 持久卷的配置:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;driver&lt;/code&gt;: 一个字符串，用于指定卷所使用的驱动的名称。 取值范围是
+&lt;a href=&#34;https://github.com/container-storage-interface/spec/blob/master/spec.md#getplugininfo&#34;&gt;CSI spec&lt;/a&gt;
+中定义的 CSI 驱动 &lt;code&gt;GetPluginInfoResponse&lt;/code&gt; 的返回值。 它被 k8s 用来识别，应该调用哪个 CSI 驱动
+我大兵由 CSI 驱动组件来识别哪些 PV 对象是属于该 CSI 驱动的&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;volumeHandle&lt;/code&gt;: 一个字符串， 用于唯一标识该卷。 这个值必须是在
+&lt;a href=&#34;https://github.com/container-storage-interface/spec/blob/master/spec.md#createvolume&#34;&gt;CSI spec&lt;/a&gt;.
+定义的 CSI 驱动 &lt;code&gt;CreateVolumeResponse&lt;/code&gt; 返回值中的 &lt;code&gt;volume.id&lt;/code&gt; 的值。 在所有引用这个
+卷时会该这个值 以 &lt;code&gt;volume_id&lt;/code&gt; 调用参数发给 CSI 卷驱动&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;readOnly&lt;/code&gt;: 一个可选布尔值，用于指定该卷是否以只读方式挂载(ControllerPublished)。
+默认值为 false. 这个值通过 &lt;code&gt;ControllerPublishVolumeRequest&lt;/code&gt; 中 &lt;code&gt;readonly&lt;/code&gt; 传递给
+CSI 驱动&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;fsType&lt;/code&gt;: 如果 PV 的 &lt;code&gt;VolumeMode&lt;/code&gt; 是 &lt;code&gt;Filesystem&lt;/code&gt;，这个字段就可以用来指定挂载该卷所使用
+的文件系统。 如果这个卷还没有被格式化并支持格式化，则这个被被用来格式化这个卷。 这个值通过
+&lt;code&gt;ControllerPublishVolumeRequest&lt;/code&gt;, &lt;code&gt;NodeStageVolumeRequest&lt;/code&gt;, &lt;code&gt;NodePublishVolumeRequest&lt;/code&gt;
+的 &lt;code&gt;VolumeCapability&lt;/code&gt; 字段传递给 CSI 驱动。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;volumeAttributes&lt;/code&gt;: 一个键值都是字符串的字典，用于指定卷的静态属性。这个字段的键值必须是
+&lt;a href=&#34;https://github.com/container-storage-interface/spec/blob/master/spec.md#createvolume&#34;&gt;CSI spec&lt;/a&gt;
+中定义 CSI 驱动 &lt;code&gt;CreateVolumeResponse&lt;/code&gt; 返回值的 &lt;code&gt;volume.attributes&lt;/code&gt; 字段的键值的子集
+这个字典通过 &lt;code&gt;ControllerPublishVolumeRequest&lt;/code&gt;, &lt;code&gt;NodeStageVolumeRequest&lt;/code&gt;,
+&lt;code&gt;NodePublishVolumeRequest&lt;/code&gt; 的 &lt;code&gt;volume_context&lt;/code&gt; 字段传递给 CSI 驱动&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;controllerPublishSecretRef&lt;/code&gt;:  完成 &lt;code&gt;ControllerPublishVolume&lt;/code&gt; 和
+&lt;code&gt;ControllerUnpublishVolume&lt;/code&gt; 调用向 CSI 驱动传递敏感信息的 Secret 对象的引用。该字段为
+可选， 如果没使用 Secret 则留空。 如果 Secret 对象中有多个 Secret, 则所有的都会传递。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;nodeStageSecretRef&lt;/code&gt;: 为了完成 &lt;code&gt;NodeStageVolume&lt;/code&gt; 调用， 向 CSI 驱动传递敏感信息的
+Secret 对象的引用。该字段为 可选， 如果没使用 Secret 则留空。
+如果 Secret 对象中有多个 Secret, 则所有的都会传递。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;nodePublishSecretRef&lt;/code&gt;:  为了完成 &lt;code&gt;NodePublishVolume&lt;/code&gt; 调用， 向 CSI 驱动传递敏感信息的
+Secret 对象的引用。该字段为 可选， 如果没使用 Secret 则留空。
+如果 Secret 对象中有多个 Secret, 则所有的都会传递。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+#### CSI raw block volume support
+
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.18 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+
+Vendors with external CSI drivers can implement raw block volumes support
+in Kubernetes workloads.
+
+You can [setup your PV/PVC with raw block volume support](/docs/concepts/storage/persistent-volumes/#raw-block-volume-support)
+as usual, without any CSI specific changes.
+ --&gt;
+&lt;h4 id=&#34;csi-原生块卷支持&#34;&gt;CSI 原生块卷支持&lt;/h4&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.18 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;有外部 CSI 驱动的供应商可以实现对 k8s 工作负载原生块卷的支持&lt;/p&gt;
+&lt;p&gt;用户可以在不作任何 CSI 配置修改的情况下
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/persistent-volumes/#raw-block-volume-support&#34;&gt;设置支持原生块卷的 PV/PVC&lt;/a&gt;&lt;/p&gt;
+&lt;!--
+#### CSI ephemeral volumes
+
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.16 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+
+You can directly configure CSI volumes within the Pod
+specification. Volumes specified in this way are ephemeral and do not
+persist across Pod restarts. See [Ephemeral
+Volumes](/docs/concepts/storage/ephemeral-volumes/#csi-ephemeral-volume)
+for more information.
+ --&gt;
+&lt;h4 id=&#34;csi-临时卷&#34;&gt;CSI 临时卷&lt;/h4&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.16 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;You can directly configure CSI volumes within the Pod
+specification. Volumes specified in this way are ephemeral and do not
+persist across Pod restarts. See &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/ephemeral-volumes/#csi-ephemeral-volume&#34;&gt;Ephemeral
+Volumes&lt;/a&gt;
+for more information.
+用户可以在 Pod 定义中直接配置 CSI 卷。 但是通过这种方式创建的卷是临时，Pod 重启后就不会存在。
+更多信息请见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/ephemeral-volumes/#csi-ephemeral-volume&#34;&gt;临时卷&lt;/a&gt;&lt;/p&gt;
+&lt;!--
+#### 相关资料
+
+For more information on how to develop a CSI driver, refer to the [kubernetes-csi
+documentation](https://kubernetes-csi.github.io/docs/)
+ --&gt;
+&lt;h4 id=&#34;相关资料&#34;&gt;相关资料&lt;/h4&gt;
+&lt;p&gt;更多关于如何开发 CSI 驱动的信息，请见
+&lt;a href=&#34;https://kubernetes-csi.github.io/docs/&#34;&gt;kubernetes-csi 文档&lt;/a&gt;&lt;/p&gt;
+&lt;!--
+#### Migrating to CSI drivers from in-tree plugins
+
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.14 [alpha]&lt;/code&gt;
+&lt;/div&gt;
+
+
+
+The CSI Migration feature, when enabled, directs operations against existing in-tree
+plugins to corresponding CSI plugins (which are expected to be installed and configured).
+The feature implements the necessary translation logic and shims to re-route the
+operations in a seamless fashion. As a result, operators do not have to make any
+configuration changes to existing Storage Classes, PVs or PVCs (referring to
+in-tree plugins) when transitioning to a CSI driver that supersedes an in-tree plugin.
+
+In the alpha state, the operations and features that are supported include
+provisioning/delete, attach/detach, mount/unmount and resizing of volumes.
+
+In-tree plugins that support CSI Migration and have a corresponding CSI driver implemented
+are listed in the &#34;Types of Volumes&#34; section above.
+ --&gt;
+&lt;h4 id=&#34;从内部插件迁移到-csi-驱动&#34;&gt;从内部插件迁移到 CSI 驱动&lt;/h4&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.14 [alpha]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;当启用 CSI 迁移特性后，当内部插件有对应的 CSI 插件(已经完成安装配置)时。这个特性实现了必要的翻译
+逻辑将操作无缝地转移。 最终，操作者不需要对已经存在的 StorageClass， PV， PVC(使用内部插件的)
+配置做任何修改而实现 从内部插件迁移到 CSI 驱动上。&lt;/p&gt;
+&lt;p&gt;在 alpha 状态，支持的操作和特性包括 管理/删除 attach/detach, mount/unmount 和修改卷大小。&lt;/p&gt;
+&lt;p&gt;支持 CSI 迁移并且有对应 CSI 驱动实现的内部插件见上面的 &lt;a href=&#34;#types-of-volumes&#34;&gt;卷类型&lt;/a&gt; 章节&lt;/p&gt;
+&lt;h3 id=&#34;flexVolume&#34;&gt;FlexVolume&lt;/h3&gt;
+&lt;p&gt;FlexVolume 是一个外部插件接口，它从 k8v v1.2 (在 CSI 之间)就存在了。 它使用一个基于 exec
+的模式与驱动交互。 &lt;code&gt;FlexVolume&lt;/code&gt; 驱动的二进制必须要预先安装在节点上一个预定义插件路径中(有些情况 master 也要装)&lt;/p&gt;
+&lt;p&gt;Pod 通过内部插件 &lt;code&gt;flexvolume&lt;/code&gt; 与 FlexVolume 驱动交互，更多信息请见
+&lt;a href=&#34;https://github.com/kubernetes/community/blob/master/contributors/devel/sig-storage/flexvolume.md&#34;&gt;这里&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+## Mount propagation
+
+Mount propagation allows for sharing volumes mounted by a Container to
+other Containers in the same Pod, or even to other Pods on the same node.
+
+Mount propagation of a volume is controlled by `mountPropagation` field in Container.volumeMounts.
+Its values are:
+
+ * `None` - This volume mount will not receive any subsequent mounts
+   that are mounted to this volume or any of its subdirectories by the host.
+   In similar fashion, no mounts created by the Container will be visible on
+   the host. This is the default mode.
+
+   This mode is equal to `private` mount propagation as described in the
+   [Linux kernel documentation](https://www.kernel.org/doc/Documentation/filesystems/sharedsubtree.txt)
+
+ * `HostToContainer` - This volume mount will receive all subsequent mounts
+   that are mounted to this volume or any of its subdirectories.
+
+   In other words, if the host mounts anything inside the volume mount, the
+   Container will see it mounted there.
+
+   Similarly, if any Pod with `Bidirectional` mount propagation to the same
+   volume mounts anything there, the Container with `HostToContainer` mount
+   propagation will see it.
+
+   This mode is equal to `rslave` mount propagation as described in the
+   [Linux kernel documentation](https://www.kernel.org/doc/Documentation/filesystems/sharedsubtree.txt)
+
+ * `Bidirectional` - This volume mount behaves the same the `HostToContainer` mount.
+   In addition, all volume mounts created by the Container will be propagated
+   back to the host and to all Containers of all Pods that use the same volume.
+
+   A typical use case for this mode is a Pod with a FlexVolume or CSI driver or
+   a Pod that needs to mount something on the host using a `hostPath` volume.
+
+   This mode is equal to `rshared` mount propagation as described in the
+   [Linux kernel documentation](https://www.kernel.org/doc/Documentation/filesystems/sharedsubtree.txt)
+
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; &lt;code&gt;Bidirectional&lt;/code&gt; mount propagation can be dangerous. It can damage
+the host operating system and therefore it is allowed only in privileged
+Containers. Familiarity with Linux kernel behavior is strongly recommended.
+In addition, any volume mounts created by Containers in Pods must be destroyed
+(unmounted) by the Containers on termination.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+ --&gt;
+&lt;h2 id=&#34;挂载传播&#34;&gt;挂载传播&lt;/h2&gt;
+&lt;p&gt;挂载传播可以让同一个 Pod 中的一个容器上挂载的卷可以共享给另一个容器，甚至可以共享给同一个节点上
+的其它 Pod&lt;/p&gt;
+&lt;p&gt;一个卷的挂载传播受容 &lt;code&gt;Container.volumeMounts&lt;/code&gt; 的 &lt;code&gt;mountPropagation&lt;/code&gt; 字段控制。可选值有:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;None&lt;/code&gt; 这个卷挂载不会接收到任何后续由主机挂载到这个卷或任意其子目录的挂载。
+类似地，由容器创建的挂载在主机上不可见。 这是默认模式。&lt;/p&gt;
+&lt;p&gt;这个模式与
+&lt;a href=&#34;https://www.kernel.org/doc/Documentation/filesystems/sharedsubtree.txt&#34;&gt;Linux 内核文档&lt;/a&gt;
+中描述的 &lt;code&gt;private&lt;/code&gt; 挂载传播等效。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;HostToContainer&lt;/code&gt; 这个卷挂载会接收所有后继到这个卷或其子目录的挂载。&lt;/p&gt;
+&lt;p&gt;换种方式来说， 如果主机挂载了任意内容到这个卷挂载，容器中就会看到挂载的内容。&lt;/p&gt;
+&lt;p&gt;相似地，如果任意使用 &lt;code&gt;Bidirectional&lt;/code&gt; 挂载传播的 Pod 挂载了任意内容， 使用 &lt;code&gt;HostToContainer&lt;/code&gt;
+挂载传播的容器也会看到这个挂载。&lt;/p&gt;
+&lt;p&gt;这种模式与
+&lt;a href=&#34;https://www.kernel.org/doc/Documentation/filesystems/sharedsubtree.txt&#34;&gt;Linux 内核文档&lt;/a&gt;
+中描述的 &lt;code&gt;rslave&lt;/code&gt; 挂载传播等效。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;Bidirectional&lt;/code&gt; 这种卷挂载的表现方式与 &lt;code&gt;HostToContainer&lt;/code&gt; 挂载相同。 同时，所以由容器创建
+卷挂载也会反向传播给主机和所以使用这个卷的所有 Pod 的所有容器。&lt;/p&gt;
+&lt;p&gt;使用这种模式的一个典型场景是一个使用 &lt;code&gt;FlexVolume&lt;/code&gt; 或 CSI 驱动容器 或 一个需要使用 &lt;code&gt;hostPath&lt;/code&gt;
+卷挂载一些主机内容的容器。
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; &lt;code&gt;Bidirectional&lt;/code&gt; 挂载传播可能会相当危险。 它可能危害主机操作系统并且只能在提权容器上使用。
+强烈建议操作使用前要相当熟悉  Linux 内核行为。 另外，由 Pod 中容器创建的卷挂载必须要在容器被终结时销毁
+(卸载)&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+### Configuration
+Before mount propagation can work properly on some deployments (CoreOS,
+RedHat/Centos, Ubuntu) mount share must be configured correctly in
+Docker as shown below.
+
+Edit your Docker&#39;s `systemd` service file.  Set `MountFlags` as follows:
+```shell
+MountFlags=shared
+```
+Or, remove `MountFlags=slave` if present.  Then restart the Docker daemon:
+```shell
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
+ --&gt;
+&lt;h3 id=&#34;配置&#34;&gt;配置&lt;/h3&gt;
+&lt;p&gt;Before mount propagation can work properly on some deployments (CoreOS,
+RedHat/Centos, Ubuntu) mount share must be configured correctly in
+Docker as shown below.
+想要让挂载传播在某些部署(CoreOS, RedHat/Centos, Ubuntu)上正常工作，需要在 Docker 上
+进行正确的共享挂载配置，具体如下:
+编辑 Docker &lt;code&gt;systemd&lt;/code&gt; 服务配置文件，将 &lt;code&gt;MountFlags&lt;/code&gt; 设置如下:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;MountFlags=shared
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;或者，如果有配置为 &lt;code&gt;MountFlags=slave&lt;/code&gt; 则将其移除。然后重启 Docker 守护进程:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;sudo systemctl daemon-reload
+sudo systemctl restart docker
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;相关资料-1&#34;&gt;相关资料&lt;/h2&gt;
+&lt;!--
+* Follow an example of [deploying WordPress and MySQL with Persistent Volumes](/docs/tutorials/stateful-application/mysql-wordpress-persistent-volume/).
+--&gt;
+&lt;ul&gt;
+&lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tutorials/stateful-application/mysql-wordpress-persistent-volume/&#34;&gt;部署带有持久卷的 WordPress 和 MySQL&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>
@@ -6117,7 +8946,7 @@ In the case of pre-provisioned binding, the VolumeSnapshot will remain unbound u
 ### Persistent Volume Claim as Snapshot Source Protection
 
 The purpose of this protection is to ensure that in-use
-&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/&#39; target=&#39;_blank&#39;&gt;PersistentVolumeClaim&lt;span class=&#39;tooltip-text&#39;&gt;Claims storage resources defined in a PersistentVolume so that it can be mounted as a volume in a container.&lt;/span&gt;
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/&#39; target=&#39;_blank&#39;&gt;PersistentVolumeClaim&lt;span class=&#39;tooltip-text&#39;&gt;索要定义在 PersistentVolume 中的存储资源，然后就可以将其以卷的方式挂载到容器中。&lt;/span&gt;
 &lt;/a&gt;
 API objects are not removed from the system while a snapshot is being taken from it (as this may result in data loss).
 
@@ -6125,7 +8954,7 @@ While a snapshot is being taken of a PersistentVolumeClaim, that PersistentVolum
  --&gt;
 &lt;h3 id=&#34;当-pvc-作为快照源的保护机制&#34;&gt;当 PVC 作为快照源的保护机制&lt;/h3&gt;
 &lt;p&gt;这个保护机制的目的是确保使用中的
-&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/&#39; target=&#39;_blank&#39;&gt;PersistentVolumeClaim&lt;span class=&#39;tooltip-text&#39;&gt;Claims storage resources defined in a PersistentVolume so that it can be mounted as a volume in a container.&lt;/span&gt;
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/&#39; target=&#39;_blank&#39;&gt;PersistentVolumeClaim&lt;span class=&#39;tooltip-text&#39;&gt;索要定义在 PersistentVolume 中的存储资源，然后就可以将其以卷的方式挂载到容器中。&lt;/span&gt;
 &lt;/a&gt;
 API 对象在做快照的过程中不会被从系统中删除(因为这可能会导致数据丢失)。&lt;/p&gt;
 &lt;p&gt;当一个 &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; 在用于做快照，则它就在使用中状态。 如果删除了一个正在作为快照
@@ -7510,6 +10339,149 @@ LoadBalancer Ingress:   a320587ffd19711e5a37606cf4a74574-1142138393.us-east-1.el
 &lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/access-application-cluster/connecting-frontend-backend/&#34;&gt;使用 Service 连接前后端应用&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/access-application-cluster/create-external-load-balancer/&#34;&gt;创建一个外部负载均衡器&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: CSI 卷克隆</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-pvc-datasource/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-pvc-datasource/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- jsafrane
+- saad-ali
+- thockin
+- msau42
+title: CSI Volume Cloning
+content_type: concept
+weight: 30
+---
+ --&gt;
+&lt;!-- overview --&gt;
+&lt;!--
+This document describes the concept of cloning existing CSI Volumes in Kubernetes.  Familiarity with [Volumes](/docs/concepts/storage/volumes) is suggested.
+ --&gt;
+&lt;p&gt;本文主要介绍在 k8s 中克隆已有的 CSI 卷的概念. 建议先熟悉
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes&#34;&gt;Volumes&lt;/a&gt;&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## Introduction
+
+The &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#csi&#39; target=&#39;_blank&#39;&gt;CSI&lt;span class=&#39;tooltip-text&#39;&gt;容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中&lt;/span&gt;
+&lt;/a&gt; Volume Cloning feature adds support for specifying existing &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/&#39; target=&#39;_blank&#39;&gt;PVC&lt;span class=&#39;tooltip-text&#39;&gt;索要定义在 PersistentVolume 中的存储资源，然后就可以将其以卷的方式挂载到容器中。&lt;/span&gt;
+&lt;/a&gt;s in the `dataSource` field to indicate a user would like to clone a &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;Volume&lt;span class=&#39;tooltip-text&#39;&gt;A directory containing data, accessible to the containers in a pod.&lt;/span&gt;
+&lt;/a&gt;.
+
+A Clone is defined as a duplicate of an existing Kubernetes Volume that can be consumed as any standard Volume would be.  The only difference is that upon provisioning, rather than creating a &#34;new&#34; empty Volume, the back end device creates an exact duplicate of the specified Volume.
+
+The implementation of cloning, from the perspective of the Kubernetes API, simply adds the ability to specify an existing PVC as a dataSource during new PVC creation. The source PVC must be bound and available (not in use).
+
+Users need to be aware of the following when using this feature:
+
+* Cloning support (`VolumePVCDataSource`) is only available for CSI drivers.
+* Cloning support is only available for dynamic provisioners.
+* CSI drivers may or may not have implemented the volume cloning functionality.
+* You can only clone a PVC when it exists in the same namespace as the destination PVC (source and destination must be in the same namespace).
+* Cloning is only supported within the same Storage Class.
+    - Destination volume must be the same storage class as the source
+    - Default storage class can be used and storageClassName omitted in the spec
+* Cloning can only be performed between two volumes that use the same VolumeMode setting (if you request a block mode volume, the source MUST also be block mode)
+ --&gt;
+&lt;h2 id=&#34;介绍&#34;&gt;介绍&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#csi&#39; target=&#39;_blank&#39;&gt;CSI&lt;span class=&#39;tooltip-text&#39;&gt;容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中&lt;/span&gt;
+&lt;/a&gt; 卷克隆的特性。它支持在 &lt;code&gt;dataSource&lt;/code&gt;
+字段指定现有的
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/&#39; target=&#39;_blank&#39;&gt;PVC&lt;span class=&#39;tooltip-text&#39;&gt;索要定义在 PersistentVolume 中的存储资源，然后就可以将其以卷的方式挂载到容器中。&lt;/span&gt;
+&lt;/a&gt;
+表示用户希望克隆一个
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;Volume&lt;span class=&#39;tooltip-text&#39;&gt;A directory containing data, accessible to the containers in a pod.&lt;/span&gt;
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;这个克隆体是对现有的 k8s 卷的复制，可以用于任意标准卷可用的地方。 区别只有提供时不是创建一个新
+的空卷，而对源卷底层存储设备完全复制的卷&lt;/p&gt;
+&lt;p&gt;以 k8s API 的角度来看，克隆的实现就是，在创建新的 PVC 时，可以在 &lt;code&gt;dataSource&lt;/code&gt; 字段指定一个
+现有的 PVC 作为数据源。 源 PVC 必须绑定且可用(不能在使用中)&lt;/p&gt;
+&lt;p&gt;用户在使用该特性时需要注意以下几点:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;只有 CSI 驱动才支持克隆 (&lt;code&gt;VolumePVCDataSource&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;只支持在动态供应中使用克隆&lt;/li&gt;
+&lt;li&gt;CSI 驱动可能实现或可能没实现克隆功能&lt;/li&gt;
+&lt;li&gt;只有源 PVC 必须与目标 PVC 在同一个命名空间才能克隆(源和目标必须在一个命名空间)&lt;/li&gt;
+&lt;li&gt;克隆只能发生一同一个存储类别中(StorageClass)
+&lt;ul&gt;
+&lt;li&gt;目标卷的 存储类别必须与源相同&lt;/li&gt;
+&lt;li&gt;当定义中没有指定 &lt;code&gt;storageClassName&lt;/code&gt; 时使用默认存储类别(StorageClass)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;克隆只能在两个相同卷类别(VolumeMode)的卷之间操作(如果请求的是一个块设备卷，源就必须是一个块设备卷)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+## Provisioning
+
+Clones are provisioned just like any other PVC with the exception of adding a dataSource that references an existing PVC in the same namespace.
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: clone-of-pvc-1
+    namespace: myns
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: cloning
+  resources:
+    requests:
+      storage: 5Gi
+  dataSource:
+    kind: PersistentVolumeClaim
+    name: pvc-1
+```
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; You must specify a capacity value for &lt;code&gt;spec.resources.requests.storage&lt;/code&gt;, and the value you specify must be the same or larger than the capacity of the source volume.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+The result is a new PVC with the name `clone-of-pvc-1` that has the exact same content as the specified source `pvc-1`.
+ --&gt;
+&lt;h2 id=&#34;供应&#34;&gt;供应&lt;/h2&gt;
+&lt;p&gt;克隆体除了在 &lt;code&gt;dataSource&lt;/code&gt; 指定一个同一命名空间的 PVC 外与任意其它的 PVC 的供应完全相同，&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolumeClaim&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;clone-of-pvc-1&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;namespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myns&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;accessModes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;ReadWriteOnce&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;storageClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;cloning&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;requests&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;storage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;5Gi&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;dataSource&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolumeClaim&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pvc-1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 必须要为 &lt;code&gt;spec.resources.requests.storage&lt;/code&gt; 指定一个值，并且这个值必须大于或等于源卷的值&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;最终结果就是新创建一个叫  &lt;code&gt;clone-of-pvc-1&lt;/code&gt; 的PVC 其内容与它的源 &lt;code&gt;pvc-1&lt;/code&gt; 完全一样。&lt;/p&gt;
+&lt;!--
+## Usage
+
+Upon availability of the new PVC, the cloned PVC is consumed the same as other PVC.  It&#39;s also expected at this point that the newly created PVC is an independent object.  It can be consumed, cloned, snapshotted, or deleted independently and without consideration for it&#39;s original dataSource PVC.  This also implies that the source is not linked in any way to the newly created clone, it may also be modified or deleted without affecting the newly created clone.
+ --&gt;
+&lt;h2 id=&#34;使用&#34;&gt;使用&lt;/h2&gt;
+&lt;p&gt;在可用性上，克隆体的 PVC 与其它的 PVC 一样。 新创建的 PVC 是一个独立的对象。 它可以消费，克隆，创建快照，
+并在不影响它源 PVC 的情况下独立的删除。 这就是说克隆的源和目标之间没有任意形式的链接，对源的
+修改或删除也不会影响它克隆体&lt;/p&gt;
 
       </description>
     </item>

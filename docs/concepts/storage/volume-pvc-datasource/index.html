@@ -11,21 +11,26 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/index.xml">
 <link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
 <link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/images/kubernetes-192x192.png">
-<title>容器 | Kubernetes</title><meta property="og:title" content="容器" />
-<meta property="og:description" content="Technology for packaging an application along with its runtime dependencies." />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/" />
-<meta property="og:updated_time" content="2020-07-19T00:00:00+00:00" /><meta property="og:site_name" content="Kubernetes" />
-<meta itemprop="name" content="容器">
-<meta itemprop="description" content="Technology for packaging an application along with its runtime dependencies.">
+<title>CSI 卷克隆 | Kubernetes</title><meta property="og:title" content="CSI 卷克隆" />
+<meta property="og:description" content="本文主要介绍在 k8s 中克隆已有的 CSI 卷的概念. 建议先熟悉 Volumes CSI容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中 Volume Cloning feature adds support for specifying existing PV" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-pvc-datasource/" />
+<meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="CSI 卷克隆">
+<meta itemprop="description" content="本文主要介绍在 k8s 中克隆已有的 CSI 卷的概念. 建议先熟悉 Volumes CSI容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中 Volume Cloning feature adds support for specifying existing PV">
+
+<meta itemprop="wordCount" content="1095">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="容器"/>
-<meta name="twitter:description" content="Technology for packaging an application along with its runtime dependencies."/>
+<meta name="twitter:title" content="CSI 卷克隆"/>
+<meta name="twitter:description" content="本文主要介绍在 k8s 中克隆已有的 CSI 卷的概念. 建议先熟悉 Volumes CSI容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中 Volume Cloning feature adds support for specifying existing PV"/>
 
 
 
@@ -69,12 +74,12 @@
 
 
 
-<meta name="description" content="Technology for packaging an application along with its runtime dependencies.">
-<meta property="og:description" content="Technology for packaging an application along with its runtime dependencies.">
-<meta name="twitter:description" content="Technology for packaging an application along with its runtime dependencies.">
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/">
-<meta property="og:title" content="容器">
-<meta name="twitter:title" content="容器">
+<meta name="description" content="本文主要介绍在 k8s 中克隆已有的 CSI 卷的概念. 建议先熟悉 Volumes CSI容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中 Volume Cloning feature adds support for specifying existing PV">
+<meta property="og:description" content="本文主要介绍在 k8s 中克隆已有的 CSI 卷的概念. 建议先熟悉 Volumes CSI容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中 Volume Cloning feature adds support for specifying existing PV">
+<meta name="twitter:description" content="本文主要介绍在 k8s 中克隆已有的 CSI 卷的概念. 建议先熟悉 Volumes CSI容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中 Volume Cloning feature adds support for specifying existing PV">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-pvc-datasource/">
+<meta property="og:title" content="CSI 卷克隆">
+<meta name="twitter:title" content="CSI 卷克隆">
 <meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
 
 <meta name="twitter:image:alt" content="Kubernetes">
@@ -88,9 +93,9 @@
 <script src="/k8sDocs/js/script.js"></script>
 
 
-    <title>容器 | Kubernetes</title>
+    <title>CSI 卷克隆 | Kubernetes</title>
   </head>
-  <body class="td-section td-documentation">
+  <body class="td-page td-documentation">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
@@ -345,10 +350,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/containers/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">容器</a>
+    <a  href="/k8sDocs/docs/concepts/containers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">容器</a>
   </li>
   <ul>
-    <li class="collapse show" id="k8sdocsdocsconceptscontainers">
+    <li class="collapse " id="k8sdocsdocsconceptscontainers">
       
       
       
@@ -634,10 +639,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
+    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
   </li>
   <ul>
-    <li class="collapse " id="k8sdocsdocsconceptsstorage">
+    <li class="collapse show" id="k8sdocsdocsconceptsstorage">
       
       
       
@@ -662,7 +667,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-pvc-datasource" href="/k8sDocs/docs/concepts/storage/volume-pvc-datasource/">CSI 卷克隆</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsstoragevolume-pvc-datasource" href="/k8sDocs/docs/concepts/storage/volume-pvc-datasource/">CSI 卷克隆</a>
       
       
     </li>
@@ -702,6 +707,9 @@
 
 
 
+
+
+
 <li class="breadcrumb-item" >
 	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
 </li>
@@ -716,8 +724,15 @@
 
 
 
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/">存储(Storage)</a>
+</li>
+
+
+
+
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/">容器</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-pvc-datasource/">CSI 卷克隆</a>
 </li>
 
 	</ol>
@@ -727,206 +742,153 @@
               
             
               
-	<div class="td-content">
-		
-		
-			
-				
-			
-		
-		
-			
+    <div class="td-content">
+    
 <p>
-  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/containers/_index.md" id="editPageButton" target="_blank" data-proofer-ignore>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/storage/volume-pvc-datasource.md" id="editPageButton" target="_blank" data-proofer-ignore>
     Edit This Page
   </a>
 </p>
 
-  <h1>容器</h1>
+  <h1>CSI 卷克隆</h1>
   
-  <div class="lead">Technology for packaging an application along with its runtime dependencies.</div>
+  
 
+<!--
+---
+reviewers:
+- jsafrane
+- saad-ali
+- thockin
+- msau42
+title: CSI Volume Cloning
+content_type: concept
+weight: 30
+---
+ -->
 <!-- overview -->
-<p>用户运行的每一个容器都是可重复的，标准中说明容器中包含的所需要的依赖，所以每次运行的行为都应该是一致的</p>
-<p>容器技术让应用与底层主机的基础设施解耦。这使在不同云环境或操作系统上的部署变得更容易。</p>
+<!--
+This document describes the concept of cloning existing CSI Volumes in Kubernetes.  Familiarity with [Volumes](/docs/concepts/storage/volumes) is suggested.
+ -->
+<p>本文主要介绍在 k8s 中克隆已有的 CSI 卷的概念. 建议先熟悉
+<a href="/k8sDocs/docs/concepts/storage/volumes">Volumes</a></p>
 <!-- body -->
-<h2 id="容器镜像">容器镜像</h2>
-<p><a href="./00-images/">容器镜像</a> 是一个直接可以运行的软件包，其中含了这个应用运行所需要的一切: 应用程序和对应的运行环境，应用和系统的依赖库，必要配置的默认值</p>
-<p>在设计上一个容器是不可变更的：不能修改一个已经运行的窗口的代码(应用)。如果用户想对一个容器化的应用进行变更，需要构建一个包含这些变更的新镜像，并用这个新的镜像再创建一个新的容器代替原来的容器继续运行</p>
-<h2 id="容器运行时">容器运行时</h2>
-<p>容器运行时就是负责运行容器的软件， k8s 支持以下几种运行时:</p>
+<!--
+## Introduction
+
+The <a class='glossary-tooltip' href='/k8sDocs/docs/concepts/storage/volumes/#csi' target='_blank'>CSI<span class='tooltip-text'>容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中</span>
+</a> Volume Cloning feature adds support for specifying existing <a class='glossary-tooltip' href='/docs/concepts/storage/persistent-volumes/' target='_blank'>PVC<span class='tooltip-text'>索要定义在 PersistentVolume 中的存储资源，然后就可以将其以卷的方式挂载到容器中。</span>
+</a>s in the `dataSource` field to indicate a user would like to clone a <a class='glossary-tooltip' href='/docs/concepts/storage/volumes/' target='_blank'>Volume<span class='tooltip-text'>A directory containing data, accessible to the containers in a pod.</span>
+</a>.
+
+A Clone is defined as a duplicate of an existing Kubernetes Volume that can be consumed as any standard Volume would be.  The only difference is that upon provisioning, rather than creating a "new" empty Volume, the back end device creates an exact duplicate of the specified Volume.
+
+The implementation of cloning, from the perspective of the Kubernetes API, simply adds the ability to specify an existing PVC as a dataSource during new PVC creation. The source PVC must be bound and available (not in use).
+
+Users need to be aware of the following when using this feature:
+
+* Cloning support (`VolumePVCDataSource`) is only available for CSI drivers.
+* Cloning support is only available for dynamic provisioners.
+* CSI drivers may or may not have implemented the volume cloning functionality.
+* You can only clone a PVC when it exists in the same namespace as the destination PVC (source and destination must be in the same namespace).
+* Cloning is only supported within the same Storage Class.
+    - Destination volume must be the same storage class as the source
+    - Default storage class can be used and storageClassName omitted in the spec
+* Cloning can only be performed between two volumes that use the same VolumeMode setting (if you request a block mode volume, the source MUST also be block mode)
+ -->
+<h2 id="介绍">介绍</h2>
+<p><a class='glossary-tooltip' href='/k8sDocs/docs/concepts/storage/volumes/#csi' target='_blank'>CSI<span class='tooltip-text'>容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中</span>
+</a> 卷克隆的特性。它支持在 <code>dataSource</code>
+字段指定现有的
+<a class='glossary-tooltip' href='/docs/concepts/storage/persistent-volumes/' target='_blank'>PVC<span class='tooltip-text'>索要定义在 PersistentVolume 中的存储资源，然后就可以将其以卷的方式挂载到容器中。</span>
+</a>
+表示用户希望克隆一个
+<a class='glossary-tooltip' href='/docs/concepts/storage/volumes/' target='_blank'>Volume<span class='tooltip-text'>A directory containing data, accessible to the containers in a pod.</span>
+</a></p>
+<p>这个克隆体是对现有的 k8s 卷的复制，可以用于任意标准卷可用的地方。 区别只有提供时不是创建一个新
+的空卷，而对源卷底层存储设备完全复制的卷</p>
+<p>以 k8s API 的角度来看，克隆的实现就是，在创建新的 PVC 时，可以在 <code>dataSource</code> 字段指定一个
+现有的 PVC 作为数据源。 源 PVC 必须绑定且可用(不能在使用中)</p>
+<p>用户在使用该特性时需要注意以下几点:</p>
 <ul>
-<li>Docker</li>
-<li>containerd</li>
-<li>CRI-O</li>
-<li>任意实现 k8s CRI(Container Runtime Interface)的应用</li>
-</ul>
-<h2 id="相关资料">相关资料</h2>
+<li>只有 CSI 驱动才支持克隆 (<code>VolumePVCDataSource</code>)</li>
+<li>只支持在动态供应中使用克隆</li>
+<li>CSI 驱动可能实现或可能没实现克隆功能</li>
+<li>只有源 PVC 必须与目标 PVC 在同一个命名空间才能克隆(源和目标必须在一个命名空间)</li>
+<li>克隆只能发生一同一个存储类别中(StorageClass)
 <ul>
-<li>看看 <a href="./00-images/">容器镜像</a></li>
-<li>看看 <a href="/k8sDocs/2-concepts/03-workloads/00-pods/">Pod</a></li>
+<li>目标卷的 存储类别必须与源相同</li>
+<li>当定义中没有指定 <code>storageClassName</code> 时使用默认存储类别(StorageClass)</li>
 </ul>
+</li>
+<li>克隆只能在两个相同卷类别(VolumeMode)的卷之间操作(如果请求的是一个块设备卷，源就必须是一个块设备卷)</li>
+</ul>
+<!--
+## Provisioning
+
+Clones are provisioned just like any other PVC with the exception of adding a dataSource that references an existing PVC in the same namespace.
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: clone-of-pvc-1
+    namespace: myns
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: cloning
+  resources:
+    requests:
+      storage: 5Gi
+  dataSource:
+    kind: PersistentVolumeClaim
+    name: pvc-1
+```
+
+<blockquote class="note">
+  <div><strong>说明：</strong> You must specify a capacity value for <code>spec.resources.requests.storage</code>, and the value you specify must be the same or larger than the capacity of the source volume.</div>
+</blockquote>
 
 
-		
-		<div class="section-index">
-    
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/containers/00-images/">镜像</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/containers/01-container-environment/">容器环境</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/containers/02-runtime-class/">Runtime Class</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/">容器生命周期钩子</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-    
-</div>
+The result is a new PVC with the name `clone-of-pvc-1` that has the exact same content as the specified source `pvc-1`.
+ -->
+<h2 id="供应">供应</h2>
+<p>克隆体除了在 <code>dataSource</code> 指定一个同一命名空间的 PVC 外与任意其它的 PVC 的供应完全相同，</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolumeClaim</span>
+<span style="color:#f92672">metadata</span>:
+    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">clone-of-pvc-1</span>
+    <span style="color:#f92672">namespace</span>: <span style="color:#ae81ff">myns</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">accessModes</span>:
+  - <span style="color:#ae81ff">ReadWriteOnce</span>
+  <span style="color:#f92672">storageClassName</span>: <span style="color:#ae81ff">cloning</span>
+  <span style="color:#f92672">resources</span>:
+    <span style="color:#f92672">requests</span>:
+      <span style="color:#f92672">storage</span>: <span style="color:#ae81ff">5Gi</span>
+  <span style="color:#f92672">dataSource</span>:
+    <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolumeClaim</span>
+    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">pvc-1</span>
+</code></pre></div><blockquote class="note">
+  <div><strong>说明：</strong> 必须要为 <code>spec.resources.requests.storage</code> 指定一个值，并且这个值必须大于或等于源卷的值</div>
+</blockquote>
 
-	</div>
+<p>最终结果就是新创建一个叫  <code>clone-of-pvc-1</code> 的PVC 其内容与它的源 <code>pvc-1</code> 完全一样。</p>
+<!--
+## Usage
+
+Upon availability of the new PVC, the cloned PVC is consumed the same as other PVC.  It's also expected at this point that the newly created PVC is an independent object.  It can be consumed, cloned, snapshotted, or deleted independently and without consideration for it's original dataSource PVC.  This also implies that the source is not linked in any way to the newly created clone, it may also be modified or deleted without affecting the newly created clone.
+ -->
+<h2 id="使用">使用</h2>
+<p>在可用性上，克隆体的 PVC 与其它的 PVC 一样。 新创建的 PVC 是一个独立的对象。 它可以消费，克隆，创建快照，
+并在不影响它源 PVC 的情况下独立的删除。 这就是说克隆的源和目标之间没有任意形式的链接，对源的
+修改或删除也不会影响它克隆体</p>
+
+
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 July 19, 2020
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 January 1, 0001
 </div>
             
           </main>
@@ -942,14 +904,6 @@
 
 
 
-
-<nav id="TableOfContents">
-  <ul>
-    <li><a href="#容器镜像">容器镜像</a></li>
-    <li><a href="#容器运行时">容器运行时</a></li>
-    <li><a href="#相关资料">相关资料</a></li>
-  </ul>
-</nav>
 
 
 

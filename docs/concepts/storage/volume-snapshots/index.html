@@ -23,7 +23,7 @@
 <meta itemprop="name" content="卷快照">
 <meta itemprop="description" content="功能特性状态: Kubernetes v1.17 [beta] In Kubernetes, a _VolumeSnapshot_ represents a snapshot of a volume on a storage system. This document assumes that you are already familiar with Kubernetes [persistent volumes](/docs/concepts/storage/persistent-volumes/). -- 功能特性状态: Kubernetes v1.17 [beta] 在 k8s 中， VolumeSnapshot 代表存储系统中一个卷的快照。 在阅读此">
 
-<meta itemprop="wordCount" content="1864">
+<meta itemprop="wordCount" content="1932">
 
 
 
@@ -649,6 +649,12 @@
       
       
       
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolumes" href="/k8sDocs/docs/concepts/storage/volumes/">Volumes</a>
+      
+      
+      
+      
+      
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragepersistent-volumes" href="/k8sDocs/docs/concepts/storage/persistent-volumes/">持久化卷(PV)</a>
       
       
@@ -656,6 +662,12 @@
       
       
       <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsstoragevolume-snapshots" href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-pvc-datasource" href="/k8sDocs/docs/concepts/storage/volume-pvc-datasource/">CSI 卷克隆</a>
       
       
     </li>
@@ -876,7 +888,7 @@ In the case of pre-provisioned binding, the VolumeSnapshot will remain unbound u
 ### Persistent Volume Claim as Snapshot Source Protection
 
 The purpose of this protection is to ensure that in-use
-<a class='glossary-tooltip' href='/docs/concepts/storage/persistent-volumes/' target='_blank'>PersistentVolumeClaim<span class='tooltip-text'>Claims storage resources defined in a PersistentVolume so that it can be mounted as a volume in a container.</span>
+<a class='glossary-tooltip' href='/docs/concepts/storage/persistent-volumes/' target='_blank'>PersistentVolumeClaim<span class='tooltip-text'>索要定义在 PersistentVolume 中的存储资源，然后就可以将其以卷的方式挂载到容器中。</span>
 </a>
 API objects are not removed from the system while a snapshot is being taken from it (as this may result in data loss).
 
@@ -884,7 +896,7 @@ While a snapshot is being taken of a PersistentVolumeClaim, that PersistentVolum
  -->
 <h3 id="当-pvc-作为快照源的保护机制">当 PVC 作为快照源的保护机制</h3>
 <p>这个保护机制的目的是确保使用中的
-<a class='glossary-tooltip' href='/docs/concepts/storage/persistent-volumes/' target='_blank'>PersistentVolumeClaim<span class='tooltip-text'>Claims storage resources defined in a PersistentVolume so that it can be mounted as a volume in a container.</span>
+<a class='glossary-tooltip' href='/docs/concepts/storage/persistent-volumes/' target='_blank'>PersistentVolumeClaim<span class='tooltip-text'>索要定义在 PersistentVolume 中的存储资源，然后就可以将其以卷的方式挂载到容器中。</span>
 </a>
 API 对象在做快照的过程中不会被从系统中删除(因为这可能会导致数据丢失)。</p>
 <p>当一个 <code>PersistentVolumeClaim</code> 在用于做快照，则它就在使用中状态。 如果删除了一个正在作为快照
