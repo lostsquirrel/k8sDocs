@@ -1,7 +1,6 @@
 ---
 title: Volumes
 date: 2020-10-12
-draft: true
 weight: 020500
 content_type: concept
 weight: 10
