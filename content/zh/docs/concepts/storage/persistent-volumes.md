@@ -1095,7 +1095,7 @@ spec:
 ```
  -->
 
-## PersistentVolumeClaim
+## PersistentVolumeClaim {#persistentvolumeclaims}
 
 每个 PVC 包含 `spec` 和 `status`, 其中包含 PVC 的配置定义和状态。
 `PersistentVolumeClaim` 对象的名称必须是一个有效的

@@ -20,7 +20,7 @@ tags:
 StorageClasses can map to quality-of-service levels, backup policies, or to arbitrary policies determined by cluster administrators. Each StorageClass contains the fields `provisioner`, `parameters`, and `reclaimPolicy`, which are used when a {{< glossary_tooltip text="Persistent Volume" term_id="persistent-volume" >}} belonging to the class needs to be dynamically provisioned. Users can request a particular class using the name of a StorageClass object.
  -->
 
-`StorageClasse` 可以与 服务质量(QoS)级别，备份策略， 或其它由管理决定的任意策略。 每个
+`StorageClasse` 可以与 服务质量(QoS)级别，备份策略， 或其它由管理决定的任意策略做关联。 每个
 `StorageClasse` 都包含 `provisioner`, `parameters`, `reclaimPolicy` 字段，它们将在
 有属于这个 `StorageClasse` 的
 {{< glossary_tooltip text="Persistent Volume" term_id="persistent-volume" >}}

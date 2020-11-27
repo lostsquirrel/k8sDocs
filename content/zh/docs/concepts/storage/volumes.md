@@ -1,7 +1,6 @@
 ---
-title: Volumes
+title: 卷(Volume)
 date: 2020-10-12
-weight: 020500
 content_type: concept
 weight: 10
 ---
