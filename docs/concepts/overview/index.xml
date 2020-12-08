@@ -5,7 +5,6 @@
     <description>Recent content in 概览 on Kubernetes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 03 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/index.xml" rel="self" type="application/rss+xml" />
     
@@ -337,7 +336,7 @@ JSON和Protobuf序列化的定义结构变更策略与API定义资源结构的�
     <item>
       <title>Docs: k8s 对象管理</title>
       <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/</link>
-      <pubDate>Fri, 03 Jul 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/</guid>
       <description>

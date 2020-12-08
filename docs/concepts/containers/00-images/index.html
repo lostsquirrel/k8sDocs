@@ -13,18 +13,19 @@
 
 <link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
 <link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
-<link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/images/kubernetes-192x192.png">
+<link rel="manifest" href="/k8sDocs/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/k8sDocs/images/kubernetes-192x192.png">
+
 <title>镜像 | Kubernetes</title><meta property="og:title" content="镜像" />
 <meta property="og:description" content="一个容器镜像就是构建应用的二进制数据和应用所以需要的依赖。 容器镜像是一个可独立运行的可执行软件包，并定义了清楚的运行环境。 通常是用户创建一个" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/00-images/" />
 <meta property="article:published_time" content="2020-07-24T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-07-19T00:00:00+00:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2020-12-08T18:03:37+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="镜像">
 <meta itemprop="description" content="一个容器镜像就是构建应用的二进制数据和应用所以需要的依赖。 容器镜像是一个可独立运行的可执行软件包，并定义了清楚的运行环境。 通常是用户创建一个">
 <meta itemprop="datePublished" content="2020-07-24T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-07-19T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2020-12-08T18:03:37+08:00" />
 <meta itemprop="wordCount" content="2737">
 
 
@@ -42,7 +43,7 @@
 <link href="/k8sDocs/scss/main.min.537757ec8e00d87ec206229d5725b6d05e078dd447818e448f0802685603e730.css" rel="stylesheet" integrity="">
 
 
-<script src="/k8sDocs/js/jquery-3.5.1.min.js" ></script>
+<script src="/k8sDocs/js/jquery-3.3.1.min.js" ></script>
 
 
 
@@ -651,7 +652,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolumes" href="/k8sDocs/docs/concepts/storage/volumes/">Volumes</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolumes" href="/k8sDocs/docs/concepts/storage/volumes/">卷(Volume)</a>
       
       
       
@@ -670,6 +671,12 @@
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-pvc-datasource" href="/k8sDocs/docs/concepts/storage/volume-pvc-datasource/">CSI 卷克隆</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragestorage-classes" href="/k8sDocs/docs/concepts/storage/storage-classes/">StorageClass</a>
       
       
     </li>
@@ -953,7 +960,7 @@ cat <span style="color:#e6db74">&lt;&lt;EOF &gt;&gt; ./kustomization.yaml
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 July 19, 2020
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-08 18:03:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/568344ddef3371bc05235fac0a064bc0a7a2d84d">[WIP]storage class on going (568344d)</a>
 </div>
             
           </main>
@@ -964,6 +971,24 @@ cat <span style="color:#e6db74">&lt;&lt;EOF &gt;&gt; ./kustomization.yaml
 
 
 
+
+<div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+
+
+
+
+
+
+
+
+
+
+
+<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/containers/00-images.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/containers/00-images.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=%e9%95%9c%e5%83%8f" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
+
+</div>
 
 
 

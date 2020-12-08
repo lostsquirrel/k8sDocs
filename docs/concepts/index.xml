@@ -18,7 +18,7 @@
     <item>
       <title>Docs: 概览</title>
       <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/</link>
-      <pubDate>Fri, 03 Jul 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/</guid>
       <description>
@@ -31,7 +31,7 @@
     <item>
       <title>Docs: 集群架构</title>
       <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/</link>
-      <pubDate>Wed, 15 Jul 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/</guid>
       <description>
@@ -117,7 +117,7 @@ Kubernetes networking addresses four concerns:
     <item>
       <title>Docs: 存储(Storage)</title>
       <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/</link>
-      <pubDate>Mon, 12 Oct 2020 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/</guid>
       <description>
