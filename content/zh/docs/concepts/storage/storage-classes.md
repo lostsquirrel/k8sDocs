@@ -146,7 +146,7 @@ provisioner can be used. There are also cases when 3rd party storage
 vendors provide their own external provisioner.
  -->
 
-### Provisioner
+### 供应者(Provisioner)
 
 每个 `StorageClass` 都有一个供应者，这个供应者决定供给 PV 的卷插件。 这个字段必须指定。
 
@@ -172,17 +172,17 @@ vendors provide their own external provisioner.
 | StorageOS            | &#x2713;            | [StorageOS](#storageos)              |
 | Local                | -                   | [Local](#local)              |
 
-用户并不仅限于上面列举的"内部"提供者(这些名称以 "kubernetes.io" 前缀的是随同 k8s 发行一起的)。
-也可以运行和指定外部的提供者，这些是依照由 k8s 定义的
+用户并不仅限于上面列举的"内部"供应者(这些名称以 "kubernetes.io" 前缀的是随同 k8s 发行一起的)。
+也可以运行和指定外部的供应者，这些是依照由 k8s 定义的
 [specification](https://git.k8s.io/community/contributors/design-proposals/storage/volume-provisioning.md)
 独立程序。 外部供应者的开发者可以完全自主地决定代码存入在哪， 供应者程序是什么发布的， 运行需要什么，
 使用什么卷插件(包括 Flex)，等等。
 [kubernetes-sigs/sig-storage-lib-external-provisioner](https://github.com/kubernetes-sigs/sig-storage-lib-external-provisioner)
-仓库中包含了编写外部提供者需要实现的一系列规格说明。 一些外部提供也列举在这个仓库中
+仓库中包含了编写外部供应者需要实现的一系列规格说明。 一些外部提供也列举在这个仓库中
 
 例如， NFS 没有提供内部的供应者，就可以使用一个外部的供应都。 还有种情况是第三方存储提供都
 也会提供自己的外部供应者。
-
+<!--
 ### Reclaim Policy
 
 PersistentVolumes that are dynamically created by a StorageClass will have the
@@ -192,7 +192,16 @@ StorageClass object is created, it will default to `Delete`.
 
 PersistentVolumes that are created manually and managed via a StorageClass will have
 whatever reclaim policy they were assigned at creation.
+ -->
 
+### 回收策略
+
+由 `StorageClass` 动态创建的持久化卷(PV)将通过 `StorageClass` 的 `reclaimPolicy` 字段
+设备回收策略，这些策略可以是 `Delete` 或 `Retain`。 如果在创建 `StorageClass` 对象的时候
+没有指定 `reclaimPolicy`， 默认回收策略为 `Delete`
+
+由手动创建并通过 `StorageClass` 管理的 持久化卷(PV) 会在创建的时候指定回收策略
+<!--
 ### Allow Volume Expansion
 
 {{< feature-state for_k8s_version="v1.11" state="beta" >}}
@@ -224,7 +233,38 @@ CSI | 1.14 (alpha), 1.16 (beta)
 {{< note >}}
 You can only use the volume expansion feature to grow a Volume, not to shrink it.
 {{< /note >}}
+ -->
 
+### 允许卷扩容
+
+{{< feature-state for_k8s_version="v1.11" state="beta" >}}
+
+持久化卷(PV) 可以设置为可扩展的。当开启该特性后允许用户通过修改对应 PVC 对象的方式修改卷的容量。
+
+以下类型的卷在底层 `StorageClass` 的 `allowVolumeExpansion` 字段设置为 `true`,时支持卷扩展。
+
+{{< table caption = "Table of Volume types and the version of Kubernetes they require"  >}}
+
+卷类型       | 需要的 k8s 版本
+:---------- | :--------------------------
+gcePersistentDisk | 1.11
+awsElasticBlockStore | 1.11
+Cinder | 1.11
+glusterfs | 1.11
+rbd | 1.11
+Azure File | 1.11
+Azure Disk | 1.11
+Portworx | 1.11
+FlexVolume | 1.13
+CSI | 1.14 (alpha), 1.16 (beta)
+
+{{< /table >}}
+
+
+{{< note >}}
+只能使用卷扩展特性扩充卷，不能缩小
+{{< /note >}}
+<!--
 ### Mount Options
 
 PersistentVolumes that are dynamically created by a StorageClass will have the
@@ -233,7 +273,16 @@ mount options specified in the `mountOptions` field of the class.
 If the volume plugin does not support mount options but mount options are
 specified, provisioning will fail. Mount options are not validated on either
 the class or PV, so mount of the PV will simply fail if one is invalid.
+ -->
 
+### 挂载选项
+
+由 `StorageClass` 动态创建的持久化卷(PV)会拥有由 `StorageClass` `mountOptions` 字段指定
+的挂载选项。
+
+如果卷插件不支持挂载选项但又指定了挂载选项，供应就会失败。 `StorageClass` 或 PV 挂载选项
+不是有效的， 如果其中有一个无效则挂载就会失败。
+<!--
 ### Volume Binding Mode
 
 The `volumeBindingMode` field controls when [volume binding and dynamic
@@ -270,7 +319,42 @@ The following plugins support `WaitForFirstConsumer` with pre-created Persistent
 [CSI volumes](/docs/concepts/storage/volumes/#csi) are also supported with dynamic provisioning
 and pre-created PVs, but you'll need to look at the documentation for a specific CSI driver
 to see its supported topology keys and examples.
+ -->
 
+### 卷绑定模式
+
+当
+[卷绑定和动态供应](/docs/concepts/storage/persistent-volumes/#provisioning)
+发生时由 `volumeBindingMode` 字段控制。
+
+默认情况下使用的是 `Immediate` 模式，这种模式表示在 PersistentVolumeClaim 对象创建后立即
+进行卷绑定和动态供应。对于有拓扑限制的存储后台和并不是集群中所有节点都可以访问的存储时，
+持久化卷(PV) 会在不知道 Pod 调度要求的情况下绑定或供应。这可能会导致 Pod 不可调度。
+
+要避免这个问题，管理员可以将卷模式设置为 `WaitForFirstConsumer`，这样持久化卷(PV)的绑定和
+供应会推迟到使用这个 PVC 的 Pod 创建之后。此时持久化卷(PV)在供应时会确认由 Pod 指定的调度约束。
+这些限制包括但不限于
+[资源需求](/k8sDocs/docs/concepts/configuration/manage-resources-containers/),
+[节点选择器](/k8sDocs/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector),
+[Pod 亲和性和反亲和性](/k8sDocs/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity),
+[毒点和耐受](/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration).
+
+以下插件支持带动态供应的 `WaitForFirstConsumer`:
+
+* [AWSElasticBlockStore](#aws-ebs)
+* [GCEPersistentDisk](#gce-pd)
+* [AzureDisk](#azure-disk)
+
+以下插件支持在预先创建 持久化卷(PV)绑定的 `WaitForFirstConsumer`
+
+* 上面所有
+* [Local](#local)
+
+{{< feature-state state="stable" for_k8s_version="v1.17" >}}
+
+[CSI 卷](/docs/concepts/storage/volumes/#csi) 也支持动态供应和预创建 PV，但需要先
+查看对应 CSI 驱动的文档，看看支持的拓扑键和示例。
+<!--
 ### Allowed Topologies
 
 When a cluster operator specifies the `WaitForFirstConsumer` volume binding mode, it is no longer necessary
@@ -297,7 +381,30 @@ allowedTopologies:
     - us-central1-a
     - us-central1-b
 ```
+ -->
+### 允许的拓扑 {#allowed-topologies}
 
+当集群中的卷绑定模式被设置为 `WaitForFirstConsumer` 时，在大多数情况下就不供应严格受限于
+指定拓扑。 但如果仍然需要这些限制，可以通过 `allowedTopologies` 指定。
+
+以下的示例中展示的是怎么通过设置区域来限制供应的卷拓扑，如果插件支持，这些限制会用来替换插件中的 `zone` 和 `zones` 参数
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-standard
+volumeBindingMode: WaitForFirstConsumer
+allowedTopologies:
+- matchLabelExpressions:
+  - key: failure-domain.beta.kubernetes.io/zone
+    values:
+    - us-central1-a
+    - us-central1-b
+```
+<!--
 ## Parameters
 
 Storage Classes have parameters that describe volumes belonging to the storage
@@ -309,7 +416,17 @@ used.
 There can be at most 512 parameters defined for a StorageClass.
 The total length of the parameters object including its keys and values cannot
 exceed 256 KiB.
+ -->
 
+## 参数
+
+`StorageClass` 有些参数，这些参数描述属于该存储类别的卷。 基于不同的 `provisioner` 可以接受
+不同的参数。 例如， 对于 `type` 的参数值为 `io1`， `iopsPerGB` 参数的值为 `EBS`。 当一个参数
+没有设置时，就会使用默认值。
+
+对于每个 `StorageClass` 最多可以定义 `512` 个参数。参数对象的总长度，包含其键和值不能超过
+256 KiB
+<!--
 ### AWS EBS
 
 ```yaml
@@ -351,7 +468,47 @@ parameters:
 `zone` and `zones` parameters are deprecated and replaced with
 [allowedTopologies](#allowed-topologies)
 {{< /note >}}
+ -->
 
+### AWS EBS {#aws-ebs}
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: slow
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: io1
+  iopsPerGB: "10"
+  fsType: ext4
+```
+
+- `type`: `io1`, `gp2`, `sc1`, `st1`. 默认: `gp2`
+  详细信息见 [AWS 文档](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumeTypes.html)
+
+- `zone` (废弃): AWS 区域。如果 `zone` 和 `zones` 都没有设置， 卷会在 k8s 集群中所有有节点的
+  活跃区别之间随机调度
+
+- `zones` (废弃): 一个用逗号分隔的 AWS 区域列表。 如果没有设置，卷会在 k8s 集群中所有有节点的
+  活跃区别之间随机调度。 `zone` 和 `zones` 参数一定不要同时使用。
+
+- `iopsPerGB`: 仅限 `io1` 卷。每秒每GiB I/O 操作数。AWS 会将这个值乘以申请的卷大小得出
+  卷的 IOPS， 最高为 20 000 IOPS (AWS 支持的最大值, 见
+  [AWS 文档](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumeTypes.html).
+  这个的值是一个字段串，也就是这样 `"10"`， 而不是 `10`.
+- `fsType`: k8s 支持的文件系统类型。 默认: `"ext4"`.
+
+- `encrypted`: 表示这个 EBS 卷是否使用加密。 有效的值是 `"true"` 或 `"false"`
+  这里的值也是字符串，也就是 `"true"`, 而不是 `true`.
+
+- `kmsKeyId`: 可选。 在对卷加密时且的亚马逊资源全名的键。 如果这个值没提供但 `encrypted`
+  设置为 "true", AWS 就会生成一个键。 关于有效的 ARN 值见 AWS 文档。
+
+{{< note >}}
+`zone` 和 `zones` 参数已经废弃，被 [允许的拓扑](#allowed-topologies) 替换
+{{< /note >}}
+<!--
 ### GCE PD
 
 ```yaml
@@ -394,7 +551,44 @@ using `allowedTopologies`.
 `zone` and `zones` parameters are deprecated and replaced with
 [allowedTopologies](#allowed-topologies)
 {{< /note >}}
+ -->
 
+### GCE PD {#gce-pd}
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: slow
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-standard
+  fstype: ext4
+  replication-type: none
+```
+
+- `type`: `pd-standard` 或 `pd-ssd`. 默认: `pd-standard`
+
+- `zone` (废弃): GCE 区域. 如果 `zone` 和 `zones` 都没有设置， 卷会在 k8s 集群中所有有节点的
+  活跃区别之间随机调度， `zone` 和 `zones` 参数一定不要同时使用。
+
+- `zones` (废弃): 一个用逗号分隔的 GCE 区域列表。 如果没有设置，卷会在 k8s 集群中所有有节点的
+  活跃区别之间随机调度。 `zone` 和 `zones` 参数一定不要同时使用。`zone` 和 `zones` 参数一定不要同时使用。
+- `fstype`: `ext4` 或 `xfs`. 默认: `ext4`. 定义的文件系统类型必须被主机操作系统支持
+- `replication-type`: `none` 或 `regional-pd`. 默认: `none`.
+
+如果 `replication-type` 设置为 `none`， 会供应一个常规的 PD。
+
+如果 `replication-type` 设置为 `regional-pd`， 会供应一个
+[Regional Persistent Disk](https://cloud.google.com/compute/docs/disks/#repds)
+强烈推荐同时设置 `volumeBindingMode: WaitForFirstConsumer`。 在这种情况下，当创建一个
+消费使用该 `StorageClass` 的 PVC 时， 会供应两个区域持久化盘。 一个区域与 Pod 调度的区域相同，
+另一个则随机到集群中其它的可用区域。 硬盘区域还可以使用  `allowedTopologies` 添加更多多限制。
+
+{{< note >}}
+`zone` 和 `zones` 参数已经废弃，被 [允许的拓扑](#allowed-topologies) 替换
+{{< /note >}}
+<!--
 ### Glusterfs
 
 ```yaml
@@ -475,7 +669,82 @@ parameters:
     automatically creates an endpoint and a headless service in the name
     `gluster-dynamic-<claimname>`. The dynamic endpoint and service are automatically
     deleted when the persistent volume claim is deleted.
+ -->
 
+### Glusterfs {#glusterfs}
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: slow
+provisioner: kubernetes.io/glusterfs
+parameters:
+  resturl: "http://127.0.0.1:8081"
+  clusterid: "630372ccdc720a92c681fb928f27b53f"
+  restauthenabled: "true"
+  restuser: "admin"
+  secretNamespace: "default"
+  secretName: "heketi-secret"
+  gidMin: "40000"
+  gidMax: "50000"
+  volumetype: "replicate:3"
+```
+
+- `resturl`: Gluster REST 服务/Heketi 服务 url, 用来根据需要供应 gluster 卷。 通常格式为
+  `IPaddress:Port` 这是 GlusterFS 动态供应的必要参数。 如果 Heketi 服务是可路由的服务
+  在 openshift/kubernetes 设置中提供。 这会有一个类似 `http://heketi-storage-project.cloudapps.mystorage.com`
+  格式的地址，其中的 fqdn 是 Heketi 服务的可解析 url.
+
+- `restauthenabled` :Gluster REST 服务是否开启认证。 如果这个值是 `"true"`， 则必须要提供
+  `restuser` 和 `restuserkey` 或 `secretNamespace` + `secretName`。 这个选项已经废弃
+  当 `restuser`, `restuserkey`, `secretName` 或 `secretNamespace` 有值时，默认就启用
+
+- `restuser` : Gluster REST 服务/Heketi 中可以访问并在 Gluster Trusted Pool 中创建卷的用户。
+
+- `restuserkey` : Gluster REST 服务/Heketi 用户的密码，用于 REST 服务认证。 这个参数
+  已经废弃，推荐使用 `secretNamespace` + `secretName`
+
+- `secretNamespace`, `secretName` :  确定在访问 Gluster REST 服务用户密码的 Secret
+  实例是哪个。这两个参数为可选， 如果它们都没有设置，则会使用空密码。 提供的 Secret 必要是
+  `"kubernetes.io/glusterfs"` 类型的。 创建示例
+
+    ```
+    kubectl create secret generic heketi-secret \
+      --type="kubernetes.io/glusterfs" --from-literal=key='opensesame' \
+      --namespace=default
+    ```
+
+    使用 Secret 的示例在这里
+    [glusterfs-provisioning-secret.yaml](https://github.com/kubernetes/examples/tree/master/staging/persistent-volume-provisioning/glusterfs/glusterfs-secret.yaml).
+
+- `clusterid`: `630372ccdc720a92c681fb928f27b53f` 集群 ID，会在 Heketi 供应卷时用到。
+  也可以是集群 ID 的列表，例如: `"8452344e2becec931ece4e33c4674e4e,42982310de6c63381718ccfa6d8cf397"`
+  这个参数为可选
+
+- `gidMin`, `gidMax` : StorageClass GID 范围的最小值和最大值， 在这个范围(`gidMin`-`gidMax`)
+  中的一个唯一值(GID) 会用于动态供应卷。 这两个参数为可选。 如果没有指定，被供应卷的范围值为
+  `2000-2147483647` 也就对应着默认的最小值(`gidMin`)和最大值(`gidMax`)
+
+- `volumetype` : 卷类型及其参数可以使用这个参数配置，这是一个可选参数。 如果卷类型没有指定，
+  则其类型由供应者决定。
+
+    例如:
+    - 复制型卷: `volumetype: replicate:3` 其中 3 是副本数
+    - Disperse/EC 卷 : `volumetype: disperse:4:2` 其中 4 是数据 2 是冗余数
+    - 分布式卷: `volumetype: none`
+
+    对于可用的卷类型及其管理选项，见
+    [Administration Guide](https://access.redhat.com/documentation/en-US/Red_Hat_Storage/3.1/html/Administration_Guide/part-Overview.html).
+
+    更多信息见
+    [怎么配置 Heketi](https://github.com/heketi/heketi/wiki/Setting-up-the-topology).
+
+    当持久化卷是被动态供应时， Gluster 会自动创建一个 Endpoint 和一个无头 Service, 名称都是
+    `gluster-dynamic-<claimname>`. 当 PVC 被删除时，对应的 Endpoint 和 Service 也会
+    动态自动删除。
+
+<!--
 ### OpenStack Cinder
 
 ```yaml
@@ -495,7 +764,29 @@ parameters:
 {{< feature-state state="deprecated" for_k8s_version="v1.11" >}}
 This internal provisioner of OpenStack is deprecated. Please use [the external cloud provider for OpenStack](https://github.com/kubernetes/cloud-provider-openstack).
 {{< /note >}}
+-->
 
+### OpenStack Cinder {#openstack-cinder}
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gold
+provisioner: kubernetes.io/cinder
+parameters:
+  availability: nova
+```
+
+- `availability`: 可用区域。 如果没有设置， 卷会在所有有 k8s 节点的区域中随机
+
+{{< note >}}
+{{< feature-state state="deprecated" for_k8s_version="v1.11" >}}
+
+这个 OpenStack 内部供应都已经废弃。 请使用
+[OpenStack 外部云提供者](https://github.com/kubernetes/cloud-provider-openstack).
+{{< /note >}}
+<!--
 ### vSphere
 
 There are two types of provisioners for vSphere storage classes:
@@ -504,11 +795,29 @@ There are two types of provisioners for vSphere storage classes:
 - [vCP provisioner](#vcp-provisioner): `kubernetes.io/vsphere-volume`
 
 In-tree provisioners are [deprecated](/blog/2019/12/09/kubernetes-1-17-feature-csi-migration-beta/#why-are-we-migrating-in-tree-plugins-to-csi). For more information on the CSI provisioner, see [Kubernetes vSphere CSI Driver](https://vsphere-csi-driver.sigs.k8s.io/) and [vSphereVolume CSI migration](/docs/concepts/storage/volumes/#csi-migration-5).
+ -->
 
+### vSphere {#vsphere}
+
+vSphere 存储类别有两种类型的供应者:
+- [CSI 供应者](#vsphere-provisioner-csi): `csi.vsphere.vmware.com`
+- [vCP 供应者](#vcp-provisioner): `kubernetes.io/vsphere-volume`
+
+内部供应都已经
+[废弃](https://kubernetes.io/blog/2019/12/09/kubernetes-1-17-feature-csi-migration-beta/#why-are-we-migrating-in-tree-plugins-to-csi)
+更多关于 CSI 供应者的信息见
+[Kubernetes vSphere CSI Driver](https://vsphere-csi-driver.sigs.k8s.io/) and [vSphereVolume CSI migration](/docs/concepts/storage/volumes/#csi-migration-5).
+<!--
 #### CSI Provisioner {#vsphere-provisioner-csi}
 
 The vSphere CSI StorageClass provisioner works with Tanzu Kubernetes clusters. For an example, refer to the [vSphere CSI repository](https://raw.githubusercontent.com/kubernetes-sigs/vsphere-csi-driver/master/example/vanilla-k8s-file-driver/example-sc.yaml).
+ -->
 
+#### CSI 供应者 {#vsphere-provisioner-csi}
+
+vSphere CSI StorageClass 供应者工作于 Tanzu k8s 集群中。 示例见
+[vSphere CSI 仓库](https://raw.githubusercontent.com/kubernetes-sigs/vsphere-csi-driver/master/example/vanilla-k8s-file-driver/example-sc.yaml).
+<!--
 #### vCP Provisioner
 
 The following examples use the VMware Cloud Provider (vCP) StorageClass provisioner.  
@@ -580,7 +889,64 @@ The following examples use the VMware Cloud Provider (vCP) StorageClass provisio
 There are few
 [vSphere examples](https://github.com/kubernetes/examples/tree/master/staging/volumes/vsphere)
 which you try out for persistent volume management inside Kubernetes for vSphere.
+ -->
 
+#### vCP 供应者 {#vcp-provisioner}
+
+The following examples use the VMware Cloud Provider (vCP) StorageClass provisioner.  
+以下示例使用 VMware Cloud Provider (vCP) StorageClass 应用者。
+
+1. 创建一个用户指定硬盘模式的 StorageClass
+
+    ```yaml
+    apiVersion: storage.k8s.io/v1
+    kind: StorageClass
+    metadata:
+      name: fast
+    provisioner: kubernetes.io/vsphere-volume
+    parameters:
+      diskformat: zeroedthick
+    ```
+
+    `diskformat`: `thin`, `zeroedthick` 和 `eagerzeroedthick`. 默认: `"thin"`.
+
+2. 创建一个用于指定数据源和基于该数据库的磁盘模式的 StorageClass
+    ```yaml
+    apiVersion: storage.k8s.io/v1
+    kind: StorageClass
+    metadata:
+      name: fast
+    provisioner: kubernetes.io/vsphere-volume
+    parameters:
+        diskformat: zeroedthick
+        datastore: VSANDatastore
+    ```
+
+    `datastore`:  用户也可以在 StorageClass 中指定数据源(datastore). 卷会在 StorageClass
+    指定的数据源上创建，本例中就是 `VSANDatastore`. 该字段为可选。 如果没有指定数据源，
+    则会使用 vSphere Cloud Provider 初始化时使用的 vSphere 配置文件中指定的数据源来创建卷。
+3. 在 k8s 中的存储策略管理
+
+    - 使用已经存在的 vCenter SPBM 策略
+
+        vSphere 对于存储管理的重要特性之一就是基于策略的管理。 基于策略的存储管理(SPBM)是一个
+        存储策略框架， 它为大范围的数据服务和存储方案提供一个统一的控制台。 SPBM 让 vSphere
+        管理员能够应对存储供应的挑战，如 容量计划，细分服务级别，可用空间管理(capacity headroom)
+
+        SPBM 可能通过 StorageClass 中的 `storagePolicyName` 来指定。
+    - k8s 内部支持的虚拟 SAN 策略
+
+        Vsphere 基础设施 (VI) 管理员可以在动态卷供应时指定自定义的虚拟 SAN 存储能力。
+        这时候可以在动态供应时以存储能力的形式定义存储要求， 如性能和可用性。 在一个持久化卷(虚拟磁盘)
+        被创建时，存储能力要求会被转换成虚拟 SAN 策略，再被推到虚拟 SAN 层。虚拟磁盘会发布在
+        满足要求的虚拟 SAN 数据中。
+
+        更多关于怎么使用持久化卷管理的存储策略见
+        [Storage Policy Based Management for dynamic provisioning of volumes](https://vmware.github.io/vsphere-storage-for-kubernetes/documentation/policy-based-mgmt.html)
+
+这些
+[vSphere 示例](https://github.com/kubernetes/examples/tree/master/staging/volumes/vsphere)
+可以用来熟悉用于 vSphere 的 k8s 集群中的持久化卷管理
 ### Ceph RBD
 
 ```yaml

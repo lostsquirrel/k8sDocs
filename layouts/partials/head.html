@@ -28,7 +28,7 @@
 {{ template "_internal/google_analytics_async.html" . }}
 {{ end }}
 {{ partialCached "head-css.html" . "asdf" }}
-<script src="{{ "js/jquery-3.5.1.min.js" | relURL }}" ></script>
+<script src="{{ "js/jquery-3.3.1.min.js" | relURL }}" ></script>
 {{ if and (.Site.Params.offlineSearch) (not .Site.Params.gcs_engine_id) }}
 <script src="https://unpkg.com/lunr@2.1.6/lunr.js"></script>
 <script src="/js/offline-search.js"></script>

@@ -4,6 +4,7 @@ title: "K8S 文档笔记"
 defaultContentLanguage: "zh"
 theme: docsy
 hascjklanguage: true
+enableGitInfo: true
 metaDataFormat: yaml
 params:
   description: test
@@ -11,6 +12,7 @@ params:
   menu_style: slide-menu
   baidu_tongji_id: 46e26ffc9d975f663dff0b89f1cf7931
   github_doc_repository: https://github.com/lostsquirrel/k8sDocs
+  github_repo: https://github.com/lostsquirrel/k8sDocs
   language_alternatives:
     - en
   showedit: true
@@ -19,6 +21,7 @@ params:
   version: "v1.19"
   githubbranch: "master"
   docsbranch: "master"
+  time_format_default: "2006-01-02 15:04:00"
   ui:
     sidebar_menu_compact: true
     breadcrumb_disable: false
