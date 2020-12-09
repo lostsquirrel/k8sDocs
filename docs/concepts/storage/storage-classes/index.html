@@ -20,11 +20,11 @@
 <meta property="og:description" content="本文介绍 k8s 中的 StorageClass 这个概念。 建议先熟悉 卷(Volume) 和 持久化卷(PV) 介绍 StorageClass 为管理员提供了一种描述不同存储类别的方式. 不同的类别与 服务质量" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-classes/" />
-<meta property="article:modified_time" content="2020-12-08T18:03:37+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2020-12-09T15:50:23+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="StorageClass">
 <meta itemprop="description" content="本文介绍 k8s 中的 StorageClass 这个概念。 建议先熟悉 卷(Volume) 和 持久化卷(PV) 介绍 StorageClass 为管理员提供了一种描述不同存储类别的方式. 不同的类别与 服务质量">
-<meta itemprop="dateModified" content="2020-12-08T18:03:37+08:00" />
-<meta itemprop="wordCount" content="5653">
+<meta itemprop="dateModified" content="2020-12-09T15:50:23+08:00" />
+<meta itemprop="wordCount" content="6047">
 
 
 
@@ -1872,6 +1872,55 @@ which you try out for persistent volume management inside Kubernetes for vSphere
 <p>这些
 <a href="https://github.com/kubernetes/examples/tree/master/staging/volumes/vsphere">vSphere 示例</a>
 可以用来熟悉用于 vSphere 的 k8s 集群中的持久化卷管理</p>
+<!--
+### Ceph RBD
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast
+provisioner: kubernetes.io/rbd
+parameters:
+  monitors: 10.16.153.105:6789
+  adminId: kube
+  adminSecretName: ceph-secret
+  adminSecretNamespace: kube-system
+  pool: kube
+  userId: kube
+  userSecretName: ceph-secret-user
+  userSecretNamespace: default
+  fsType: ext4
+  imageFormat: "2"
+  imageFeatures: "layering"
+```
+
+* `monitors`: Ceph monitors, comma delimited. This parameter is required.
+* `adminId`: Ceph client ID that is capable of creating images in the pool.
+  Default is "admin".
+* `adminSecretName`: Secret Name for `adminId`. This parameter is required.
+  The provided secret must have type "kubernetes.io/rbd".
+* `adminSecretNamespace`: The namespace for `adminSecretName`. Default is "default".
+* `pool`: Ceph RBD pool. Default is "rbd".
+* `userId`: Ceph client ID that is used to map the RBD image. Default is the
+  same as `adminId`.
+* `userSecretName`: The name of Ceph Secret for `userId` to map RBD image. It
+  must exist in the same namespace as PVCs. This parameter is required.
+  The provided secret must have type "kubernetes.io/rbd", for example created in this
+  way:
+
+    ```shell
+    kubectl create secret generic ceph-secret --type="kubernetes.io/rbd" \
+      --from-literal=key='QVFEQ1pMdFhPUnQrSmhBQUFYaERWNHJsZ3BsMmNjcDR6RFZST0E9PQ==' \
+      --namespace=kube-system
+    ```
+* `userSecretNamespace`: The namespace for `userSecretName`.
+* `fsType`: fsType that is supported by kubernetes. Default: `"ext4"`.
+* `imageFormat`: Ceph RBD image format, "1" or "2". Default is "2".
+* `imageFeatures`: This parameter is optional and should only be used if you
+  set `imageFormat` to "2". Currently supported features are `layering` only.
+  Default is "", and no features are turned on.
+ -->
 <h3 id="ceph-rbd">Ceph RBD</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">storage.k8s.io/v1</span>
 <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">StorageClass</span>
@@ -1892,50 +1941,96 @@ which you try out for persistent volume management inside Kubernetes for vSphere
   <span style="color:#f92672">imageFeatures</span>: <span style="color:#e6db74">&#34;layering&#34;</span>
 </code></pre></div><ul>
 <li>
-<p><code>monitors</code>: Ceph monitors, comma delimited. This parameter is required.</p>
+<p><code>monitors</code>: Ceph monitor, 逗号分隔，这是个必要参数</p>
 </li>
 <li>
-<p><code>adminId</code>: Ceph client ID that is capable of creating images in the pool.
-Default is &ldquo;admin&rdquo;.</p>
+<p><code>adminId</code>: 能够在 pool 中创建镜像的 Ceph 客户 ID， 默认为 <code>&quot;admin&quot;</code></p>
 </li>
 <li>
-<p><code>adminSecretName</code>: Secret Name for <code>adminId</code>. This parameter is required.
-The provided secret must have type &ldquo;kubernetes.io/rbd&rdquo;.</p>
+<p><code>adminSecretName</code>: <code>adminId</code> 的 <code>Secret</code> 名称。 这是个必要参数。 这个 <code>Secret</code>
+必须包含 &ldquo;kubernetes.io/rbd&rdquo; 类型</p>
 </li>
 <li>
-<p><code>adminSecretNamespace</code>: The namespace for <code>adminSecretName</code>. Default is &ldquo;default&rdquo;.</p>
+<p><code>adminSecretNamespace</code>: <code>adminSecretName</code> 对应的命名空间。 默认为 <code>&quot;default&quot;</code></p>
 </li>
 <li>
-<p><code>pool</code>: Ceph RBD pool. Default is &ldquo;rbd&rdquo;.</p>
+<p><code>pool</code>: Ceph RBD pool。 默认是 <code>&quot;rbd&quot;</code></p>
 </li>
 <li>
-<p><code>userId</code>: Ceph client ID that is used to map the RBD image. Default is the
-same as <code>adminId</code>.</p>
+<p><code>userId</code>: 用来与 RBD 镜像关联的 Ceph 客户 ID。 默认与 <code>adminId</code> 相同。</p>
 </li>
 <li>
-<p><code>userSecretName</code>: The name of Ceph Secret for <code>userId</code> to map RBD image. It
-must exist in the same namespace as PVCs. This parameter is required.
-The provided secret must have type &ldquo;kubernetes.io/rbd&rdquo;, for example created in this
-way:</p>
+<p><code>userSecretName</code>: 与 RBD image 镜像关联的 Ceph 客户 的 <code>Secret</code>。 这个  <code>Secret</code> 必须
+与 PVC 在同一个命令空间。 这是一个必要参数。这个  <code>Secret</code>必须包含 &ldquo;kubernetes.io/rbd&rdquo; 类型。
+以下为创建示例:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl create secret generic ceph-secret --type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;kubernetes.io/rbd&#34;</span> <span style="color:#ae81ff">\
 </span><span style="color:#ae81ff"></span>  --from-literal<span style="color:#f92672">=</span>key<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;QVFEQ1pMdFhPUnQrSmhBQUFYaERWNHJsZ3BsMmNjcDR6RFZST0E9PQ==&#39;</span> <span style="color:#ae81ff">\
 </span><span style="color:#ae81ff"></span>  --namespace<span style="color:#f92672">=</span>kube-system
 </code></pre></div></li>
 <li>
-<p><code>userSecretNamespace</code>: The namespace for <code>userSecretName</code>.</p>
+<p><code>userSecretNamespace</code>: <code>userSecretName</code> 的命名空间</p>
 </li>
 <li>
-<p><code>fsType</code>: fsType that is supported by kubernetes. Default: <code>&quot;ext4&quot;</code>.</p>
+<p><code>fsType</code>: 受 k8s 支持的文件系统。 默认 <code>&quot;ext4&quot;</code></p>
 </li>
 <li>
-<p><code>imageFormat</code>: Ceph RBD image format, &ldquo;1&rdquo; or &ldquo;2&rdquo;. Default is &ldquo;2&rdquo;.</p>
+<p><code>imageFormat</code>: Ceph RBD image 模式，&ldquo;1&rdquo; or &ldquo;2&rdquo;. 默认为 &ldquo;2&rdquo;.</p>
 </li>
 <li>
-<p><code>imageFeatures</code>: This parameter is optional and should only be used if you
-set <code>imageFormat</code> to &ldquo;2&rdquo;. Currently supported features are <code>layering</code> only.
-Default is &ldquo;&rdquo;, and no features are turned on.</p>
+<p><code>imageFeatures</code>: 这个参数为可选，但只用在 <code>imageFormat</code> 设置为 &ldquo;2&rdquo; 时。 目前支持的特性
+只有 <code>layering</code>， 默认是 <code>&quot;&quot;</code>，表示没有开启任何特性。</p>
 </li>
 </ul>
+<!--
+### Quobyte
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+   name: slow
+provisioner: kubernetes.io/quobyte
+parameters:
+    quobyteAPIServer: "http://138.68.74.142:7860"
+    registry: "138.68.74.142:7861"
+    adminSecretName: "quobyte-admin-secret"
+    adminSecretNamespace: "kube-system"
+    user: "root"
+    group: "root"
+    quobyteConfig: "BASE"
+    quobyteTenant: "DEFAULT"
+```
+
+* `quobyteAPIServer`: API Server of Quobyte in the format
+  `"http(s)://api-server:7860"`
+* `registry`: Quobyte registry to use to mount the volume. You can specify the
+  registry as ``<host>:<port>`` pair or if you want to specify multiple
+  registries you just have to put a comma between them e.q.
+  ``<host1>:<port>,<host2>:<port>,<host3>:<port>``.
+  The host can be an IP address or if you have a working DNS you can also
+  provide the DNS names.
+* `adminSecretNamespace`: The namespace for `adminSecretName`.
+  Default is "default".
+* `adminSecretName`: secret that holds information about the Quobyte user and
+  the password to authenticate against the API server. The provided secret
+  must have type "kubernetes.io/quobyte" and the keys `user` and `password`,
+  for example:
+
+    ```shell
+    kubectl create secret generic quobyte-admin-secret \
+      --type="kubernetes.io/quobyte" --from-literal=user='admin' --from-literal=password='opensesame' \
+      --namespace=kube-system
+    ```
+
+* `user`: maps all access to this user. Default is "root".
+* `group`: maps all access to this group. Default is "nfsnobody".
+* `quobyteConfig`: use the specified configuration to create the volume. You
+  can create a new configuration or modify an existing one with the Web
+  console or the quobyte CLI. Default is "BASE".
+* `quobyteTenant`: use the specified tenant ID to create/delete the volume.
+  This Quobyte tenant has to be already present in Quobyte.
+  Default is "DEFAULT".
+ -->
 <h3 id="quobyte">Quobyte</h3>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">storage.k8s.io/v1</span>
 <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">StorageClass</span>
@@ -1953,45 +2048,37 @@ Default is &ldquo;&rdquo;, and no features are turned on.</p>
     <span style="color:#f92672">quobyteTenant</span>: <span style="color:#e6db74">&#34;DEFAULT&#34;</span>
 </code></pre></div><ul>
 <li>
-<p><code>quobyteAPIServer</code>: API Server of Quobyte in the format
-<code>&quot;http(s)://api-server:7860&quot;</code></p>
+<p><code>quobyteAPIServer</code>:  <code>&quot;http(s)://api-server:7860&quot;</code> 格式的 Quobyte API 服务</p>
 </li>
 <li>
-<p><code>registry</code>: Quobyte registry to use to mount the volume. You can specify the
-registry as <code>&lt;host&gt;:&lt;port&gt;</code> pair or if you want to specify multiple
-registries you just have to put a comma between them e.q.
-<code>&lt;host1&gt;:&lt;port&gt;,&lt;host2&gt;:&lt;port&gt;,&lt;host3&gt;:&lt;port&gt;</code>.
-The host can be an IP address or if you have a working DNS you can also
-provide the DNS names.</p>
+<p><code>registry</code>: 用于挂载卷的 Quobyte 注册中心。 注册中心的格式为 <code>&lt;host&gt;:&lt;port&gt;</code>， 如果要
+设置多个则用逗号分隔，如 <code>&lt;host1&gt;:&lt;port&gt;,&lt;host2&gt;:&lt;port&gt;,&lt;host3&gt;:&lt;port&gt;</code>.
+其中 host 是一个 IP 地址或如果有 DNS 服务，则可以使用 DNS 名称。</p>
 </li>
 <li>
-<p><code>adminSecretNamespace</code>: The namespace for <code>adminSecretName</code>.
-Default is &ldquo;default&rdquo;.</p>
-</li>
-<li>
-<p><code>adminSecretName</code>: secret that holds information about the Quobyte user and
-the password to authenticate against the API server. The provided secret
-must have type &ldquo;kubernetes.io/quobyte&rdquo; and the keys <code>user</code> and <code>password</code>,
-for example:</p>
+<p><code>adminSecretName</code>: 用于存放 Quobyte API 服务对应用户密码信息的 <code>Secret</code>. 这个 <code>Secret</code>
+必须包含 &ldquo;kubernetes.io/quobyte&rdquo; 类型和 <code>user</code> 和 <code>password</code> 键。
+示例创建命令如下:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl create secret generic quobyte-admin-secret <span style="color:#ae81ff">\
 </span><span style="color:#ae81ff"></span>  --type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;kubernetes.io/quobyte&#34;</span> --from-literal<span style="color:#f92672">=</span>user<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;admin&#39;</span> --from-literal<span style="color:#f92672">=</span>password<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;opensesame&#39;</span> <span style="color:#ae81ff">\
 </span><span style="color:#ae81ff"></span>  --namespace<span style="color:#f92672">=</span>kube-system
 </code></pre></div></li>
 <li>
-<p><code>user</code>: maps all access to this user. Default is &ldquo;root&rdquo;.</p>
+<p><code>adminSecretNamespace</code>: <code>adminSecretName</code> 所属的命名空间，默认为 <code>&quot;default&quot;</code></p>
 </li>
 <li>
-<p><code>group</code>: maps all access to this group. Default is &ldquo;nfsnobody&rdquo;.</p>
+<p><code>user</code>: 将所有访问指向这个用户。 默认为 <code>&quot;root&quot;</code></p>
 </li>
 <li>
-<p><code>quobyteConfig</code>: use the specified configuration to create the volume. You
-can create a new configuration or modify an existing one with the Web
-console or the quobyte CLI. Default is &ldquo;BASE&rdquo;.</p>
+<p><code>group</code>: 将所有访问指向这个用户组。 默认为 <code>&quot;nfsnobody&quot;</code></p>
 </li>
 <li>
-<p><code>quobyteTenant</code>: use the specified tenant ID to create/delete the volume.
-This Quobyte tenant has to be already present in Quobyte.
-Default is &ldquo;DEFAULT&rdquo;.</p>
+<p><code>quobyteConfig</code>: 使用这个配置创建卷。 可通过控制台 quobyte 命令行或以创建一个新的配置
+或修改已经存在的配置。 默认为 &ldquo;BASE&rdquo;.</p>
+</li>
+<li>
+<p><code>quobyteTenant</code>: 使用指定租户 ID 来创建/删除卷。 这个 Quobyte 租户必须是已经存在于 Quobyte 中。
+默认为 &ldquo;DEFAULT&rdquo;.</p>
 </li>
 </ul>
 <h3 id="azure-disk">Azure Disk</h3>
@@ -2210,7 +2297,7 @@ PersistentVolumeClaim.</p>
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-08 18:03:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/568344ddef3371bc05235fac0a064bc0a7a2d84d">[WIP]storage class on going (568344d)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-09 15:50:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/d033b750bd89ffeaf1149391377feae81c2958bc">[WIP]storage class on going (d033b75)</a>
 </div>
             
           </main>
