@@ -947,6 +947,8 @@ The following examples use the VMware Cloud Provider (vCP) StorageClass provisio
 这些
 [vSphere 示例](https://github.com/kubernetes/examples/tree/master/staging/volumes/vsphere)
 可以用来熟悉用于 vSphere 的 k8s 集群中的持久化卷管理
+
+<!--
 ### Ceph RBD
 
 ```yaml
@@ -994,7 +996,57 @@ parameters:
 * `imageFeatures`: This parameter is optional and should only be used if you
   set `imageFormat` to "2". Currently supported features are `layering` only.
   Default is "", and no features are turned on.
+ -->
 
+### Ceph RBD {#ceph-rbd}
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast
+provisioner: kubernetes.io/rbd
+parameters:
+  monitors: 10.16.153.105:6789
+  adminId: kube
+  adminSecretName: ceph-secret
+  adminSecretNamespace: kube-system
+  pool: kube
+  userId: kube
+  userSecretName: ceph-secret-user
+  userSecretNamespace: default
+  fsType: ext4
+  imageFormat: "2"
+  imageFeatures: "layering"
+```
+
+- `monitors`: Ceph monitor, 逗号分隔，这是个必要参数
+
+- `adminId`: 能够在 pool 中创建镜像的 Ceph 客户 ID， 默认为 `"admin"`
+
+- `adminSecretName`: `adminId` 的 `Secret` 名称。 这是个必要参数。 这个 `Secret`
+  必须包含 "kubernetes.io/rbd" 类型
+- `adminSecretNamespace`: `adminSecretName` 对应的命名空间。 默认为 `"default"`
+- `pool`: Ceph RBD pool。 默认是 `"rbd"`
+
+- `userId`: 用来与 RBD 镜像关联的 Ceph 客户 ID。 默认与 `adminId` 相同。
+
+- `userSecretName`: 与 RBD image 镜像关联的 Ceph 客户 的 `Secret`。 这个  `Secret` 必须
+  与 PVC 在同一个命令空间。 这是一个必要参数。这个  `Secret`必须包含 "kubernetes.io/rbd" 类型。
+  以下为创建示例:
+    ```shell
+    kubectl create secret generic ceph-secret --type="kubernetes.io/rbd" \
+      --from-literal=key='QVFEQ1pMdFhPUnQrSmhBQUFYaERWNHJsZ3BsMmNjcDR6RFZST0E9PQ==' \
+      --namespace=kube-system
+    ```
+
+- `userSecretNamespace`: `userSecretName` 的命名空间
+- `fsType`: 受 k8s 支持的文件系统。 默认 `"ext4"`
+- `imageFormat`: Ceph RBD image 模式，"1" or "2". 默认为 "2".
+
+- `imageFeatures`: 这个参数为可选，但只用在 `imageFormat` 设置为 "2" 时。 目前支持的特性
+  只有 `layering`， 默认是 `""`，表示没有开启任何特性。
+<!--
 ### Quobyte
 
 ```yaml
@@ -1043,7 +1095,53 @@ parameters:
 * `quobyteTenant`: use the specified tenant ID to create/delete the volume.
   This Quobyte tenant has to be already present in Quobyte.
   Default is "DEFAULT".
+ -->
 
+### Quobyte {#quobyte}
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+   name: slow
+provisioner: kubernetes.io/quobyte
+parameters:
+    quobyteAPIServer: "http://138.68.74.142:7860"
+    registry: "138.68.74.142:7861"
+    adminSecretName: "quobyte-admin-secret"
+    adminSecretNamespace: "kube-system"
+    user: "root"
+    group: "root"
+    quobyteConfig: "BASE"
+    quobyteTenant: "DEFAULT"
+```
+
+- `quobyteAPIServer`:  `"http(s)://api-server:7860"` 格式的 Quobyte API 服务
+
+- `registry`: 用于挂载卷的 Quobyte 注册中心。 注册中心的格式为 `<host>:<port>`， 如果要
+  设置多个则用逗号分隔，如 ``<host1>:<port>,<host2>:<port>,<host3>:<port>``.
+  其中 host 是一个 IP 地址或如果有 DNS 服务，则可以使用 DNS 名称。
+
+- `adminSecretName`: 用于存放 Quobyte API 服务对应用户密码信息的 `Secret`. 这个 `Secret`
+  必须包含 "kubernetes.io/quobyte" 类型和 `user` 和 `password` 键。
+  示例创建命令如下:
+    ```shell
+    kubectl create secret generic quobyte-admin-secret \
+      --type="kubernetes.io/quobyte" --from-literal=user='admin' --from-literal=password='opensesame' \
+      --namespace=kube-system
+    ```
+
+- `adminSecretNamespace`: `adminSecretName` 所属的命名空间，默认为 `"default"`
+
+- `user`: 将所有访问指向这个用户。 默认为 `"root"`
+
+- `group`: 将所有访问指向这个用户组。 默认为 `"nfsnobody"`
+
+- `quobyteConfig`: 使用这个配置创建卷。 可通过控制台 quobyte 命令行或以创建一个新的配置
+  或修改已经存在的配置。 默认为 "BASE".
+
+- `quobyteTenant`: 使用指定租户 ID 来创建/删除卷。 这个 Quobyte 租户必须是已经存在于 Quobyte 中。
+  默认为 "DEFAULT".
 ### Azure Disk
 
 #### Azure Unmanaged Disk storage class {#azure-unmanaged-disk-storage-class}
