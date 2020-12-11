@@ -14753,6 +14753,153 @@ You can expose a Service in multiple ways that don&#39;t directly involve the In
     </item>
     
     <item>
+      <title>Docs: VolumeSnapshotClass</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-snapshot-classes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-snapshot-classes/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- saad-ali
+- thockin
+- msau42
+- jingxu97
+- xing-yang
+- yuxiangqian
+title: Volume Snapshot Classes
+content_type: concept
+weight: 30
+---
+--&gt;
+&lt;!-- overview --&gt;
+&lt;!--
+This document describes the concept of VolumeSnapshotClass in Kubernetes. Familiarity
+with [volume snapshots](/docs/concepts/storage/volume-snapshots/) and
+[storage classes](/docs/concepts/storage/storage-classes) is suggested.
+--&gt;
+&lt;p&gt;本文介绍 k8s 中的 VolumeSnapshotClass 概念。建议先熟悉
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volume-snapshots/&#34;&gt;卷快照&lt;/a&gt; 和
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/storage-classes&#34;&gt;StorageClass&lt;/a&gt;&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## Introduction
+
+Just like StorageClass provides a way for administrators to describe the &#34;classes&#34;
+of storage they offer when provisioning a volume, VolumeSnapshotClass provides a
+way to describe the &#34;classes&#34; of storage when provisioning a volume snapshot.
+ --&gt;
+&lt;!--
+## Introduction
+Just like StorageClass provides a way for administrators to describe the &#34;classes&#34;
+of storage they offer when provisioning a volume, VolumeSnapshotClass provides a
+way to describe the &#34;classes&#34; of storage when provisioning a volume snapshot.
+--&gt;
+&lt;h2 id=&#34;介绍&#34;&gt;介绍&lt;/h2&gt;
+&lt;p&gt;与 StorageClass 为管理员提供了一种描述他们供应的存储的类别(class)一样。
+VolumeSnapshotClass 提供了一种描述他们供应的卷快照的类别(class)&lt;/p&gt;
+&lt;!--
+## The VolumeSnapshotClass Resource
+
+Each VolumeSnapshotClass contains the fields `driver`, `deletionPolicy`, and `parameters`,
+which are used when a VolumeSnapshot belonging to the class needs to be
+dynamically provisioned.
+
+The name of a VolumeSnapshotClass object is significant, and is how users can
+request a particular class. Administrators set the name and other parameters
+of a class when first creating VolumeSnapshotClass objects, and the objects cannot
+be updated once they are created.
+
+```yaml
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: csi-hostpath-snapclass
+driver: hostpath.csi.k8s.io
+deletionPolicy: Delete
+parameters:
+```
+
+Administrators can specify a default VolumeSnapshotClass for VolumeSnapshots
+that don&#39;t request any particular class to bind to by adding the
+`snapshot.storage.kubernetes.io/is-default-class: &#34;true&#34;` annotation:
+
+```yaml
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: csi-hostpath-snapclass
+  annotations:
+    snapshot.storage.kubernetes.io/is-default-class: &#34;true&#34;
+driver: hostpath.csi.k8s.io
+deletionPolicy: Delete
+parameters:
+```
+ --&gt;
+&lt;h2 id=&#34;volumesnapshotclass-资源&#34;&gt;VolumeSnapshotClass 资源&lt;/h2&gt;
+&lt;p&gt;每个 &lt;code&gt;VolumeSnapshotClass&lt;/code&gt; 包含的字段有 &lt;code&gt;driver&lt;/code&gt;, &lt;code&gt;deletionPolicy&lt;/code&gt;, 和 &lt;code&gt;parameters&lt;/code&gt;,
+这个对象被属于该类别的 VolumeSnapshot 动态供应时用到。&lt;/p&gt;
+&lt;p&gt;VolumeSnapshotClass 对象的名称是有意义的，它是用户可以怎么申请一个指定的类别。 管理员在第一次创建
+VolumeSnapshotClass 指定该类别的名称和其它参数，这个对象在创建之后将不能被修改。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;snapshot.storage.k8s.io/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;VolumeSnapshotClass&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;csi-hostpath-snapclass&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;driver&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;hostpath.csi.k8s.io&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;deletionPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Delete&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;parameters&lt;/span&gt;:
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;管理员可以能过如下设置注解
+&lt;code&gt;snapshot.storage.kubernetes.io/is-default-class: &amp;quot;true&amp;quot;&lt;/code&gt;
+为那些没有指定任何类别的 VolumeSnapshot 指定默认的 VolumeSnapshotClass，&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;snapshot.storage.k8s.io/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;VolumeSnapshotClass&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;csi-hostpath-snapclass&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;snapshot.storage.kubernetes.io/is-default-class&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;driver&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;hostpath.csi.k8s.io&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;deletionPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Delete&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;parameters&lt;/span&gt;:
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+### Driver
+
+Volume snapshot classes have a driver that determines what CSI volume plugin is
+used for provisioning VolumeSnapshots. This field must be specified.
+ --&gt;
+&lt;h3 id=&#34;驱动driver&#34;&gt;驱动(&lt;code&gt;driver&lt;/code&gt;)&lt;/h3&gt;
+&lt;p&gt;卷快照类别有一个 driver 字段来决定使用哪个 CSI 卷插件来供应卷快照(VolumeSnapshot).
+这是一相必要字段。&lt;/p&gt;
+&lt;!--
+### DeletionPolicy
+
+Volume snapshot classes have a deletionPolicy. It enables you to configure what happens to a VolumeSnapshotContent when the VolumeSnapshot object it is bound to is to be deleted. The deletionPolicy of a volume snapshot can either be `Retain` or `Delete`. This field must be specified.
+
+If the deletionPolicy is `Delete`, then the underlying storage snapshot will be deleted along with the VolumeSnapshotContent object. If the deletionPolicy is `Retain`, then both the underlying snapshot and VolumeSnapshotContent remain.
+ --&gt;
+&lt;h3 id=&#34;删除策略deletionpolicy&#34;&gt;删除策略(&lt;code&gt;deletionPolicy&lt;/code&gt;)&lt;/h3&gt;
+&lt;p&gt;卷快照类别有一个 &lt;code&gt;deletionPolicy&lt;/code&gt;。 它让用户可以配置当与 VolumeSnapshotContent 绑定
+VolumeSnapshot 对象被删除时，怎么处理 VolumeSnapshotContent。 卷快照类别的删除策略(&lt;code&gt;deletionPolicy&lt;/code&gt;)
+可以是 &lt;code&gt;Retain&lt;/code&gt; 或 &lt;code&gt;Delete&lt;/code&gt;， 这是一个必要字段。&lt;/p&gt;
+&lt;p&gt;如果删除策略(&lt;code&gt;deletionPolicy&lt;/code&gt;) 是 &lt;code&gt;Delete&lt;/code&gt;，底层的存储快照会随同 VolumeSnapshotContent
+对象的删除一起删除。 如果删除策略(&lt;code&gt;deletionPolicy&lt;/code&gt;) 是 &lt;code&gt;Retain&lt;/code&gt;，
+底层的存储快照 和 VolumeSnapshotContent 都会保留。&lt;/p&gt;
+&lt;!--
+## Parameters
+
+Volume snapshot classes have parameters that describe volume snapshots belonging to
+the volume snapshot class. Different parameters may be accepted depending on the
+`driver`.
+ --&gt;
+&lt;h2 id=&#34;其它参数-parameters&#34;&gt;其它参数 (&lt;code&gt;parameters&lt;/code&gt;)&lt;/h2&gt;
+&lt;p&gt;卷快照类别有描述属于该类别的卷快照的参数。 可以接受哪些的参数基于不同的驱动 &lt;code&gt;driver&lt;/code&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: Ingress 控制器</title>
       <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/ingress-controllers/</link>
       <pubDate>Wed, 23 Sep 2020 00:00:00 +0000</pubDate>

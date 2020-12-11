@@ -11,22 +11,27 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/index.xml">
 <link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
 <link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
 <link rel="manifest" href="/k8sDocs/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/k8sDocs/images/kubernetes-192x192.png">
 
-<title>k8s 对象管理 | Kubernetes</title><meta property="og:title" content="k8s 对象管理" />
-<meta property="og:description" content="生产级别的容器编排系统" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/" />
-<meta property="og:site_name" content="Kubernetes" />
-<meta itemprop="name" content="k8s 对象管理">
-<meta itemprop="description" content="生产级别的容器编排系统">
+<title>VolumeSnapshotClass | Kubernetes</title><meta property="og:title" content="VolumeSnapshotClass" />
+<meta property="og:description" content="本文介绍 k8s 中的 VolumeSnapshotClass 概念。建议先熟悉 卷快照 和 StorageClass 介绍 与 StorageClass 为管理员提供了一种描述他们供应的存储的类别(class)一样。 VolumeSnapshotClass 提供了一种描述他们供应的卷" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-snapshot-classes/" />
+<meta property="article:modified_time" content="2020-12-11T16:45:40+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="VolumeSnapshotClass">
+<meta itemprop="description" content="本文介绍 k8s 中的 VolumeSnapshotClass 概念。建议先熟悉 卷快照 和 StorageClass 介绍 与 StorageClass 为管理员提供了一种描述他们供应的存储的类别(class)一样。 VolumeSnapshotClass 提供了一种描述他们供应的卷">
+<meta itemprop="dateModified" content="2020-12-11T16:45:40+08:00" />
+<meta itemprop="wordCount" content="607">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="k8s 对象管理"/>
-<meta name="twitter:description" content="生产级别的容器编排系统"/>
+<meta name="twitter:title" content="VolumeSnapshotClass"/>
+<meta name="twitter:description" content="本文介绍 k8s 中的 VolumeSnapshotClass 概念。建议先熟悉 卷快照 和 StorageClass 介绍 与 StorageClass 为管理员提供了一种描述他们供应的存储的类别(class)一样。 VolumeSnapshotClass 提供了一种描述他们供应的卷"/>
 
 
 
@@ -70,12 +75,12 @@
 
 
 
-<meta name="description" content="k8s 对象为年老体弱化到 k8s 系统的实体。 k8s 使用这些实体表示集群的状态。本节主要介绍对象的域模型与怎么管理这些对象">
-<meta property="og:description" content="k8s 对象为年老体弱化到 k8s 系统的实体。 k8s 使用这些实体表示集群的状态。本节主要介绍对象的域模型与怎么管理这些对象">
-<meta name="twitter:description" content="k8s 对象为年老体弱化到 k8s 系统的实体。 k8s 使用这些实体表示集群的状态。本节主要介绍对象的域模型与怎么管理这些对象">
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/">
-<meta property="og:title" content="k8s 对象管理">
-<meta name="twitter:title" content="k8s 对象管理">
+<meta name="description" content="本文介绍 k8s 中的 VolumeSnapshotClass 概念。建议先熟悉 卷快照 和 StorageClass 介绍 与 StorageClass 为管理员提供了一种描述他们供应的存储的类别(class)一样。 VolumeSnapshotClass 提供了一种描述他们供应的卷">
+<meta property="og:description" content="本文介绍 k8s 中的 VolumeSnapshotClass 概念。建议先熟悉 卷快照 和 StorageClass 介绍 与 StorageClass 为管理员提供了一种描述他们供应的存储的类别(class)一样。 VolumeSnapshotClass 提供了一种描述他们供应的卷">
+<meta name="twitter:description" content="本文介绍 k8s 中的 VolumeSnapshotClass 概念。建议先熟悉 卷快照 和 StorageClass 介绍 与 StorageClass 为管理员提供了一种描述他们供应的存储的类别(class)一样。 VolumeSnapshotClass 提供了一种描述他们供应的卷">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-snapshot-classes/">
+<meta property="og:title" content="VolumeSnapshotClass">
+<meta name="twitter:title" content="VolumeSnapshotClass">
 <meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
 
 <meta name="twitter:image:alt" content="Kubernetes">
@@ -89,9 +94,9 @@
 <script src="/k8sDocs/js/script.js"></script>
 
 
-    <title>k8s 对象管理 | Kubernetes</title>
+    <title>VolumeSnapshotClass | Kubernetes</title>
   </head>
-  <body class="td-section td-documentation">
+  <body class="td-page td-documentation">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
@@ -193,10 +198,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/overview/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">概览</a>
+    <a  href="/k8sDocs/docs/concepts/overview/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">概览</a>
   </li>
   <ul>
-    <li class="collapse show" id="k8sdocsdocsconceptsoverview">
+    <li class="collapse " id="k8sdocsdocsconceptsoverview">
       
       
       
@@ -228,10 +233,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/overview/working-with-objects/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">k8s 对象管理</a>
+    <a  href="/k8sDocs/docs/concepts/overview/working-with-objects/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">k8s 对象管理</a>
   </li>
   <ul>
-    <li class="collapse show" id="k8sdocsdocsconceptsoverviewworking-with-objects">
+    <li class="collapse " id="k8sdocsdocsconceptsoverviewworking-with-objects">
       
       
       
@@ -635,10 +640,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
+    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
   </li>
   <ul>
-    <li class="collapse " id="k8sdocsdocsconceptsstorage">
+    <li class="collapse show" id="k8sdocsdocsconceptsstorage">
       
       
       
@@ -675,7 +680,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshot-classes" href="/k8sDocs/docs/concepts/storage/volume-snapshot-classes/">VolumeSnapshotClass</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsstoragevolume-snapshot-classes" href="/k8sDocs/docs/concepts/storage/volume-snapshot-classes/">VolumeSnapshotClass</a>
       
       
     </li>
@@ -733,14 +738,14 @@
 
 
 <li class="breadcrumb-item" >
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/">概览</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/">存储(Storage)</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/">k8s 对象管理</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-snapshot-classes/">VolumeSnapshotClass</a>
 </li>
 
 	</ol>
@@ -750,209 +755,154 @@
               
             
               
-	<div class="td-content">
-		
-		
-			
-				
-			
-		
-		
-			
+    <div class="td-content">
+    
 <p>
-  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/overview/working-with-objects/_index.md" id="editPageButton" target="_blank" data-proofer-ignore>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/storage/volume-snapshot-classes.md" id="editPageButton" target="_blank" data-proofer-ignore>
     Edit This Page
   </a>
 </p>
 
-  <h1>k8s 对象管理</h1>
+  <h1>VolumeSnapshotClass</h1>
   
   
 
-<p>k8s 对象为年老体弱化到 k8s 系统的实体。 k8s 使用这些实体表示集群的状态。本节主要介绍对象的域模型与怎么管理这些对象</p>
+<!--
+---
+reviewers:
+- saad-ali
+- thockin
+- msau42
+- jingxu97
+- xing-yang
+- yuxiangqian
+title: Volume Snapshot Classes
+content_type: concept
+weight: 30
+---
+-->
+<!-- overview -->
+<!--
+This document describes the concept of VolumeSnapshotClass in Kubernetes. Familiarity
+with [volume snapshots](/docs/concepts/storage/volume-snapshots/) and
+[storage classes](/docs/concepts/storage/storage-classes) is suggested.
+-->
+<p>本文介绍 k8s 中的 VolumeSnapshotClass 概念。建议先熟悉
+<a href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a> 和
+<a href="/k8sDocs/docs/concepts/storage/storage-classes">StorageClass</a></p>
+<!-- body -->
+<!--
+## Introduction
+
+Just like StorageClass provides a way for administrators to describe the "classes"
+of storage they offer when provisioning a volume, VolumeSnapshotClass provides a
+way to describe the "classes" of storage when provisioning a volume snapshot.
+ -->
+<!--
+## Introduction
+Just like StorageClass provides a way for administrators to describe the "classes"
+of storage they offer when provisioning a volume, VolumeSnapshotClass provides a
+way to describe the "classes" of storage when provisioning a volume snapshot.
+-->
+<h2 id="介绍">介绍</h2>
+<p>与 StorageClass 为管理员提供了一种描述他们供应的存储的类别(class)一样。
+VolumeSnapshotClass 提供了一种描述他们供应的卷快照的类别(class)</p>
+<!--
+## The VolumeSnapshotClass Resource
+
+Each VolumeSnapshotClass contains the fields `driver`, `deletionPolicy`, and `parameters`,
+which are used when a VolumeSnapshot belonging to the class needs to be
+dynamically provisioned.
+
+The name of a VolumeSnapshotClass object is significant, and is how users can
+request a particular class. Administrators set the name and other parameters
+of a class when first creating VolumeSnapshotClass objects, and the objects cannot
+be updated once they are created.
+
+```yaml
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: csi-hostpath-snapclass
+driver: hostpath.csi.k8s.io
+deletionPolicy: Delete
+parameters:
+```
+
+Administrators can specify a default VolumeSnapshotClass for VolumeSnapshots
+that don't request any particular class to bind to by adding the
+`snapshot.storage.kubernetes.io/is-default-class: "true"` annotation:
+
+```yaml
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: csi-hostpath-snapclass
+  annotations:
+    snapshot.storage.kubernetes.io/is-default-class: "true"
+driver: hostpath.csi.k8s.io
+deletionPolicy: Delete
+parameters:
+```
+ -->
+<h2 id="volumesnapshotclass-资源">VolumeSnapshotClass 资源</h2>
+<p>每个 <code>VolumeSnapshotClass</code> 包含的字段有 <code>driver</code>, <code>deletionPolicy</code>, 和 <code>parameters</code>,
+这个对象被属于该类别的 VolumeSnapshot 动态供应时用到。</p>
+<p>VolumeSnapshotClass 对象的名称是有意义的，它是用户可以怎么申请一个指定的类别。 管理员在第一次创建
+VolumeSnapshotClass 指定该类别的名称和其它参数，这个对象在创建之后将不能被修改。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">snapshot.storage.k8s.io/v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">VolumeSnapshotClass</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">csi-hostpath-snapclass</span>
+<span style="color:#f92672">driver</span>: <span style="color:#ae81ff">hostpath.csi.k8s.io</span>
+<span style="color:#f92672">deletionPolicy</span>: <span style="color:#ae81ff">Delete</span>
+<span style="color:#f92672">parameters</span>:
+</code></pre></div><p>管理员可以能过如下设置注解
+<code>snapshot.storage.kubernetes.io/is-default-class: &quot;true&quot;</code>
+为那些没有指定任何类别的 VolumeSnapshot 指定默认的 VolumeSnapshotClass，</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">snapshot.storage.k8s.io/v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">VolumeSnapshotClass</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">csi-hostpath-snapclass</span>
+  <span style="color:#f92672">annotations</span>:
+    <span style="color:#f92672">snapshot.storage.kubernetes.io/is-default-class</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+<span style="color:#f92672">driver</span>: <span style="color:#ae81ff">hostpath.csi.k8s.io</span>
+<span style="color:#f92672">deletionPolicy</span>: <span style="color:#ae81ff">Delete</span>
+<span style="color:#f92672">parameters</span>:
+</code></pre></div><!--
+### Driver
+
+Volume snapshot classes have a driver that determines what CSI volume plugin is
+used for provisioning VolumeSnapshots. This field must be specified.
+ -->
+<h3 id="驱动driver">驱动(<code>driver</code>)</h3>
+<p>卷快照类别有一个 driver 字段来决定使用哪个 CSI 卷插件来供应卷快照(VolumeSnapshot).
+这是一相必要字段。</p>
+<!--
+### DeletionPolicy
+
+Volume snapshot classes have a deletionPolicy. It enables you to configure what happens to a VolumeSnapshotContent when the VolumeSnapshot object it is bound to is to be deleted. The deletionPolicy of a volume snapshot can either be `Retain` or `Delete`. This field must be specified.
+
+If the deletionPolicy is `Delete`, then the underlying storage snapshot will be deleted along with the VolumeSnapshotContent object. If the deletionPolicy is `Retain`, then both the underlying snapshot and VolumeSnapshotContent remain.
+ -->
+<h3 id="删除策略deletionpolicy">删除策略(<code>deletionPolicy</code>)</h3>
+<p>卷快照类别有一个 <code>deletionPolicy</code>。 它让用户可以配置当与 VolumeSnapshotContent 绑定
+VolumeSnapshot 对象被删除时，怎么处理 VolumeSnapshotContent。 卷快照类别的删除策略(<code>deletionPolicy</code>)
+可以是 <code>Retain</code> 或 <code>Delete</code>， 这是一个必要字段。</p>
+<p>如果删除策略(<code>deletionPolicy</code>) 是 <code>Delete</code>，底层的存储快照会随同 VolumeSnapshotContent
+对象的删除一起删除。 如果删除策略(<code>deletionPolicy</code>) 是 <code>Retain</code>，
+底层的存储快照 和 VolumeSnapshotContent 都会保留。</p>
+<!--
+## Parameters
+
+Volume snapshot classes have parameters that describe volume snapshots belonging to
+the volume snapshot class. Different parameters may be accepted depending on the
+`driver`.
+ -->
+<h2 id="其它参数-parameters">其它参数 (<code>parameters</code>)</h2>
+<p>卷快照类别有描述属于该类别的卷快照的参数。 可以接受哪些的参数基于不同的驱动 <code>driver</code>.</p>
 
 
-		
-		<div class="section-index">
-    
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/overview/working-with-objects/names/">对象命令与ID</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-    
-</div>
-
-	</div>
 
             
             <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-11 16:45:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/091827f0dc450af0be52f5d0d711c1b621ac49bb">publish volume snapshot classes (091827f)</a>
@@ -979,9 +929,9 @@
 
 
 
-<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/overview/working-with-objects/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/overview/working-with-objects/_index.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=k8s%20%e5%af%b9%e8%b1%a1%e7%ae%a1%e7%90%86" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/storage/volume-snapshot-classes.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/storage/volume-snapshot-classes.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=VolumeSnapshotClass" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
 
 </div>
 
@@ -989,6 +939,19 @@
 
 
 
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#介绍">介绍</a></li>
+    <li><a href="#volumesnapshotclass-资源">VolumeSnapshotClass 资源</a>
+      <ul>
+        <li><a href="#驱动driver">驱动(<code>driver</code>)</a></li>
+        <li><a href="#删除策略deletionpolicy">删除策略(<code>deletionPolicy</code>)</a></li>
+      </ul>
+    </li>
+    <li><a href="#其它参数-parameters">其它参数 (<code>parameters</code>)</a></li>
+  </ul>
+</nav>
 
 
 
