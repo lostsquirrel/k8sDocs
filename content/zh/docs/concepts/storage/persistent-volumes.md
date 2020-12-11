@@ -85,7 +85,7 @@ PV 是集群中的资源。 PVC 是对这些资源的申请同时也表现为对
 
 There are two ways PVs may be provisioned: statically or dynamically.
  -->
-### 供给
+### 供给 {#provisioning}
 
 PV 可以被两个方式提供: 静态供给 或 动态供给
 <!--

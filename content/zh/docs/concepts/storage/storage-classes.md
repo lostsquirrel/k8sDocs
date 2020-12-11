@@ -324,7 +324,7 @@ to see its supported topology keys and examples.
 ### 卷绑定模式
 
 当
-[卷绑定和动态供应](/docs/concepts/storage/persistent-volumes/#provisioning)
+[卷绑定和动态供应](/k8sDocs/docs/concepts/storage/persistent-volumes/#provisioning)
 发生时由 `volumeBindingMode` 字段控制。
 
 默认情况下使用的是 `Immediate` 模式，这种模式表示在 PersistentVolumeClaim 对象创建后立即
@@ -352,7 +352,7 @@ to see its supported topology keys and examples.
 
 {{< feature-state state="stable" for_k8s_version="v1.17" >}}
 
-[CSI 卷](/docs/concepts/storage/volumes/#csi) 也支持动态供应和预创建 PV，但需要先
+[CSI 卷](/k8sDocs/docs/concepts/storage/volumes/#csi) 也支持动态供应和预创建 PV，但需要先
 查看对应 CSI 驱动的文档，看看支持的拓扑键和示例。
 <!--
 ### Allowed Topologies
@@ -806,7 +806,7 @@ vSphere 存储类别有两种类型的供应者:
 内部供应都已经
 [废弃](https://kubernetes.io/blog/2019/12/09/kubernetes-1-17-feature-csi-migration-beta/#why-are-we-migrating-in-tree-plugins-to-csi)
 更多关于 CSI 供应者的信息见
-[Kubernetes vSphere CSI Driver](https://vsphere-csi-driver.sigs.k8s.io/) and [vSphereVolume CSI migration](/docs/concepts/storage/volumes/#csi-migration-5).
+[Kubernetes vSphere CSI Driver](https://vsphere-csi-driver.sigs.k8s.io/) and [vSphereVolume CSI migration](/k8sDocs/docs/concepts/storage/volumes/#csi-migration-5).
 <!--
 #### CSI Provisioner {#vsphere-provisioner-csi}
 
@@ -1032,7 +1032,7 @@ parameters:
 - `userId`: 用来与 RBD 镜像关联的 Ceph 客户 ID。 默认与 `adminId` 相同。
 
 - `userSecretName`: 与 RBD image 镜像关联的 Ceph 客户 的 `Secret`。 这个  `Secret` 必须
-  与 PVC 在同一个命令空间。 这是一个必要参数。这个  `Secret`必须包含 "kubernetes.io/rbd" 类型。
+  与 PVC 在同一个命名空间。 这是一个必要参数。这个  `Secret`必须包含 "kubernetes.io/rbd" 类型。
   以下为创建示例:
     ```shell
     kubectl create secret generic ceph-secret --type="kubernetes.io/rbd" \
@@ -1142,6 +1142,7 @@ parameters:
 
 - `quobyteTenant`: 使用指定租户 ID 来创建/删除卷。 这个 Quobyte 租户必须是已经存在于 Quobyte 中。
   默认为 "DEFAULT".
+<!--
 ### Azure Disk
 
 #### Azure Unmanaged Disk storage class {#azure-unmanaged-disk-storage-class}
@@ -1164,8 +1165,28 @@ parameters:
   it must reside in the same resource group as the cluster, and `location` is
   ignored. If a storage account is not provided, a new storage account will be
   created in the same resource group as the cluster.
+ -->
+### Azure 磁盘 {#azure-disk}
 
-#### Azure Disk storage class (starting from v1.7.2) {#azure-disk-storage-class}
+#### Azure 非托管磁盘 StorageClass {#azure-unmanaged-disk-storage-class}
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: slow
+provisioner: kubernetes.io/azure-disk
+parameters:
+  skuName: Standard_LRS
+  location: eastus
+  storageAccount: azure_storage_account_name
+```
+
+- `skuName`: Azure 存储账户 Sku 层。 默认为空
+- `location`: Azure 存储账户位置。 默认为空
+- `storageAccount`: Azure 存储账户名称。 如果提供了存储账户，必须与集群在同一个资源组，
+  同时 `location` 会被忽略。 如果没有提供存储账户，会在集群所在资源组创建一个新的存储账户。
+#### Azure 磁盘 StorageClass (starting from v1.7.2) {#azure-disk-storage-class}
 
 ```yaml
 apiVersion: storage.k8s.io/v1
@@ -1178,23 +1199,17 @@ parameters:
   kind: Shared
 ```
 
-* `storageaccounttype`: Azure storage account Sku tier. Default is empty.
-* `kind`: Possible values are `shared` (default), `dedicated`, and `managed`.
-  When `kind` is `shared`, all unmanaged disks are created in a few shared
-  storage accounts in the same resource group as the cluster. When `kind` is
-  `dedicated`, a new dedicated storage account will be created for the new
-  unmanaged disk in the same resource group as the cluster. When `kind` is
-  `managed`, all managed disks are created in the same resource group as
-  the cluster.
-* `resourceGroup`: Specify the resource group in which the Azure disk will be created.
-   It must be an existing resource group name. If it is unspecified, the disk will be
-   placed in the same resource group as the current Kubernetes cluster.
-
-- Premium VM can attach both Standard_LRS and Premium_LRS disks, while Standard
-  VM can only attach Standard_LRS disks.
-- Managed VM can only attach managed disks and unmanaged VM can only attach
-  unmanaged disks.
-
+- `storageaccounttype`: Azure 存储账户类型。 默认值 (原文档有问题，暂不知道默认值是啥)
+- `kind`: 可用值有 `shared` (默认), `dedicated`, `managed`.
+  当 `kind` 是 `shared` 时，所有非托管的硬盘会在与集群同一个资源组创建几个分享存储账户。
+  当 `kind` 是 `dedicated` 时，在与集群同一个资源组中会为每一个新创建的非托管磁盘创建一个独立
+  的存储账户。
+  当 `kind` 是 `managed` 时，所有托管的磁盘都会创建在与集群同一个资源组
+- `resourceGroup`: 指定 Azure 磁盘创建的资源组。 必须是一个已经存在的资源组名称。 如果没有指定，
+  磁盘会放在与当前 k8s 集群所在的这个资源组。
+- 高级的 VM 可以挂载 Standard_LRS 和 Premium_LRS 磁盘，标准 VM 只可以挂载 Standard_LRS 磁盘。
+- 托管 VM 只能挂载托管磁盘，非托管 VM 只能挂载 非托管
+<!--
 ### Azure File
 
 ```yaml
@@ -1234,7 +1249,47 @@ add the `create` permission of resource `secret` for clusterrole
 In a multi-tenancy context, it is strongly recommended to set the value for
 `secretNamespace` explicitly, otherwise the storage account credentials may
 be read by other users.
+ -->
 
+### Azure 文件 {#azure-file}
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: azurefile
+provisioner: kubernetes.io/azure-file
+parameters:
+  skuName: Standard_LRS
+  location: eastus
+  storageAccount: azure_storage_account_name
+```
+
+- `skuName`: Azure 存储账户 Sku 层。 默认为空
+- `location`: Azure 存储账户位置。 默认为空
+
+- `storageAccount`: Azure 存储账户名称。 默认为空。 如果没有提供存储账户，会搜索与资源组
+  关联所有的存储账户中查找一个匹配 `skuName` 和 `location` 的那个。如果提供了存储账户
+  则必须是与集群在同一个资源组，并且 `skuName` 和 `location` 会被忽略。
+
+- `secretNamespace`: 包含 Azure 存储账户名称的 key 的 Secret 所在的命名空间。 默认与 Pod
+  相同
+
+- `secretName`: 包含 Azure 存储账户名称的 key 的 Secret 的名称。 默认为
+  `azure-storage-account-<accountName>-secret`
+
+- `readOnly`: 一个标记这个存储是否以只读方式挂载的标记。默认为 false 也就是以读写方式挂载。
+  这个配置会与 VolumeMount 的 `ReadOnly` 设置有冲突
+
+在存储供应时会为挂载凭证创建一个名字为 `secretName` 字段值的 Secret。如果集群启用了
+[RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) 和
+[Controller Roles](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#controller-roles),
+为要 `clusterrole` `system:controller:persistent-volume-binder` 中的 `secret` 资源添加
+`create` 权限。
+
+在一个多租户的上下文下， 强烈建议显示地设置 `secretNamespace` 值， 否则存储账户的凭据可能被
+其它用户访问。
+<!--
 ### Portworx Volume
 
 ```yaml
@@ -1269,7 +1324,35 @@ parameters:
   `persistent volumes` use case such as for databases like Cassandra should set
   to false, `true/false` (default `false`). A string is expected here i.e.
   `"true"` and not `true`.
+ -->
 
+### Portworx 卷 {#portworx-volume}
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: portworx-io-priority-high
+provisioner: kubernetes.io/portworx-volume
+parameters:
+  repl: "1"
+  snap_interval:   "70"
+  priority_io:  "high"
+
+```
+
+- `fs`: 文件系统 `none/xfs/ext4` (默认: `ext4`).
+- `block_size`: 块大小，单位千字节 (默认: `32`).
+- `repl`: 并发副本的数量，副本倍率格式为 `1..3` (默认: `1`) 这里值是字符串，也就是 `"1"` 而不是 `1`.
+- `priority_io`: 决定卷以什么级别的性能创建。`high/medium/low` (默认: `low`).
+- `snap_interval`: 触发快照的时间间隔，快照是基于之前的快照增量创建，0 就是禁用快照(默认: `0`).
+  这里值是字符串，也就是 `"70"` 而不是 `70`.
+- `aggregation_level`: 指定卷分布的块数量， 0 表示非聚合卷(默认为: `0`)
+  这里值是字符串，也就是 `"0"` 而不是 `0`.
+- `ephemeral`: 指定这个卷是否在卸载时清查或应该持久存在。 `emptyDir` 情况下可以将该值设置为 true
+  `persistent volumes` 情况下，如例如 Cassandra 这些数据库，应该设置为 false,  `true/false` (默认为 `false`).
+  这个字段的值是一个字段串，是`"true"` 而不是 `true`.
+<!--
 ### ScaleIO
 
 ```yaml
@@ -1310,7 +1393,46 @@ kubectl create secret generic sio-secret --type="kubernetes.io/scaleio" \
 --from-literal=username=sioadmin --from-literal=password=d2NABDNjMA== \
 --namespace=default
 ```
+ -->
 
+### ScaleIO {#scaleio}
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: slow
+provisioner: kubernetes.io/scaleio
+parameters:
+  gateway: https://192.168.99.200:443/api
+  system: scaleio
+  protectionDomain: pd0
+  storagePool: sp1
+  storageMode: ThinProvisioned
+  secretRef: sio-secret
+  readOnly: false
+  fsType: xfs
+```
+
+- `provisioner`: 该属性设置为 `kubernetes.io/scaleio`
+- `gateway`: ScaleIO API 网关地址(必要)
+- `system`: ScaleIO 系统名称(必要)
+- `protectionDomain`: ScaleIO 保护域名名称 (必要)
+- `storagePool`: 卷存储池名称(必要)
+- `storageMode`: 存储供应模式 `ThinProvisioned` (默认) 或 `ThickProvisioned`
+- `secretRef`: 配置的 Secret 对象(必要)
+- `readOnly`: 指定挂载卷访问模式(默认为 `"false"`)
+- `fsType`: 卷使用的文件系统(默认 `ext4`)
+
+ScaleIO k8s 卷插件需要一个配置 `Secret` 对象。 `Secret` 必须要以 `kubernetes.io/scaleio`
+类型创建并且必须与 PVC 在同一个命名空间。 以下为创建示例:
+
+```shell
+kubectl create secret generic sio-secret --type="kubernetes.io/scaleio" \
+--from-literal=username=sioadmin --from-literal=password=d2NABDNjMA== \
+--namespace=default
+```
+<!--
 ### StorageOS
 
 ```yaml
@@ -1359,7 +1481,53 @@ Secrets used for dynamically provisioned volumes may be created in any namespace
 and referenced with the `adminSecretNamespace` parameter. Secrets used by
 pre-provisioned volumes must be created in the same namespace as the PVC that
 references it.
+ -->
 
+### StorageOS  {#storageos}
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast
+provisioner: kubernetes.io/storageos
+parameters:
+  pool: default
+  description: Kubernetes volume
+  fsType: ext4
+  adminSecretNamespace: default
+  adminSecretName: storageos-secret
+```
+
+- `pool`: 供应卷的 StorageOS 分布式容量池的名称 ?
+
+- `description`: 分配给动态供应的卷的描述。 同样 StorageClass 的所有卷的描述都是一样的，
+  不同的 StorageClass 可以根据不现的应用场景使用不同的描述。 默认为 `Kubernetes volume`.
+
+- `fsType`: 申请的默认文件系统类型。 StorageOS 中的用户定义规则可能会覆盖该值。 默认为 `ext4`.
+
+- `adminSecretNamespace`: API 配置的 Secret 所在的命名空间。 如果设置了 adminSecretName
+  则需要设置该字段
+
+- `adminSecretName`: 获取 StorageOS API 凭据的 Secret 名称。如果没有设置，则会尝试使用
+  默认值
+
+StorageOS 的 k8s 卷插件可以使用一个 Secret 对象来指定访问StorageOS API 的地址和凭据。
+只有在修改默认情况需要配置该值。
+Secret 必须要以 `kubernetes.io/storageos` 类型创建。创建命令示例:
+
+```shell
+kubectl create secret generic storageos-secret \
+--type="kubernetes.io/storageos" \
+--from-literal=apiAddress=tcp://localhost:5705 \
+--from-literal=apiUsername=storageos \
+--from-literal=apiPassword=storageos \
+--namespace=default
+```
+
+卷动态供应使用的 Secret 可以创建在任意命名空间中，通过 `adminSecretNamespace` 参数引用。
+预创建卷所使用的 Secret 必须与使用它的 PVC 在同一个命名空间
+<!--
 ### Local
 
 {{< feature-state for_k8s_version="v1.14" state="stable" >}}
@@ -1380,3 +1548,21 @@ specified by the `WaitForFirstConsumer` volume binding mode.
 Delaying volume binding allows the scheduler to consider all of a Pod's
 scheduling constraints when choosing an appropriate PersistentVolume for a
 PersistentVolumeClaim.
+ -->
+### Local {#local}
+
+{{< feature-state for_k8s_version="v1.14" state="stable" >}}
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-storage
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+```
+
+Local 卷目前不支持动态供应， 但 StorageClass 也可以用来让卷绑定发生在 Pod 调度之后。
+可以通过设置卷绑定模式为 `WaitForFirstConsumer` 达到这个目的
+
+延迟绑定可以在为 PVC 选择恰当的 PV 时考虑 Pod 所有约束。
