@@ -3082,7 +3082,7 @@ This also requires minimum vSphere vCenter/ESXi Version to be 7.0u1 and minimum 
 &lt;/blockquote&gt;
 
  --&gt;
-&lt;h4 id=&#34;csi-迁移-5&#34;&gt;CSI 迁移&lt;/h4&gt;
+&lt;h4 id=&#34;csi-migration-5&#34;&gt;CSI 迁移&lt;/h4&gt;
 
 
 
@@ -6349,7 +6349,7 @@ PVs are resources in the cluster. PVCs are requests for those resources and also
 
 There are two ways PVs may be provisioned: statically or dynamically.
  --&gt;
-&lt;h3 id=&#34;供给&#34;&gt;供给&lt;/h3&gt;
+&lt;h3 id=&#34;provisioning&#34;&gt;供给&lt;/h3&gt;
 &lt;p&gt;PV 可以被两个方式提供: 静态供给 或 动态供给&lt;/p&gt;
 &lt;!--
 #### Static
@@ -11347,7 +11347,7 @@ to see its supported topology keys and examples.
  --&gt;
 &lt;h3 id=&#34;卷绑定模式&#34;&gt;卷绑定模式&lt;/h3&gt;
 &lt;p&gt;当
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/#provisioning&#34;&gt;卷绑定和动态供应&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/persistent-volumes/#provisioning&#34;&gt;卷绑定和动态供应&lt;/a&gt;
 发生时由 &lt;code&gt;volumeBindingMode&lt;/code&gt; 字段控制。&lt;/p&gt;
 &lt;p&gt;默认情况下使用的是 &lt;code&gt;Immediate&lt;/code&gt; 模式，这种模式表示在 PersistentVolumeClaim 对象创建后立即
 进行卷绑定和动态供应。对于有拓扑限制的存储后台和并不是集群中所有节点都可以访问的存储时，
@@ -11380,7 +11380,7 @@ to see its supported topology keys and examples.
 &lt;/div&gt;
 
 
-&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/#csi&#34;&gt;CSI 卷&lt;/a&gt; 也支持动态供应和预创建 PV，但需要先
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#csi&#34;&gt;CSI 卷&lt;/a&gt; 也支持动态供应和预创建 PV，但需要先
 查看对应 CSI 驱动的文档，看看支持的拓扑键和示例。&lt;/p&gt;
 &lt;!--
 ### Allowed Topologies
@@ -11837,7 +11837,7 @@ In-tree provisioners are [deprecated](/blog/2019/12/09/kubernetes-1-17-feature-c
 &lt;p&gt;内部供应都已经
 &lt;a href=&#34;https://kubernetes.io/blog/2019/12/09/kubernetes-1-17-feature-csi-migration-beta/#why-are-we-migrating-in-tree-plugins-to-csi&#34;&gt;废弃&lt;/a&gt;
 更多关于 CSI 供应者的信息见
-&lt;a href=&#34;https://vsphere-csi-driver.sigs.k8s.io/&#34;&gt;Kubernetes vSphere CSI Driver&lt;/a&gt; and &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/#csi-migration-5&#34;&gt;vSphereVolume CSI migration&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;https://vsphere-csi-driver.sigs.k8s.io/&#34;&gt;Kubernetes vSphere CSI Driver&lt;/a&gt; and &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#csi-migration-5&#34;&gt;vSphereVolume CSI migration&lt;/a&gt;.&lt;/p&gt;
 &lt;!--
 #### CSI Provisioner {#vsphere-provisioner-csi}
 
@@ -12062,7 +12062,7 @@ parameters:
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;code&gt;userSecretName&lt;/code&gt;: 与 RBD image 镜像关联的 Ceph 客户 的 &lt;code&gt;Secret&lt;/code&gt;。 这个  &lt;code&gt;Secret&lt;/code&gt; 必须
-与 PVC 在同一个命令空间。 这是一个必要参数。这个  &lt;code&gt;Secret&lt;/code&gt;必须包含 &amp;ldquo;kubernetes.io/rbd&amp;rdquo; 类型。
+与 PVC 在同一个命名空间。 这是一个必要参数。这个  &lt;code&gt;Secret&lt;/code&gt;必须包含 &amp;ldquo;kubernetes.io/rbd&amp;rdquo; 类型。
 以下为创建示例:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create secret generic ceph-secret --type&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;kubernetes.io/rbd&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
 &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;  --from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;QVFEQ1pMdFhPUnQrSmhBQUFYaERWNHJsZ3BsMmNjcDR6RFZST0E9PQ==&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
@@ -12182,8 +12182,32 @@ parameters:
 默认为 &amp;ldquo;DEFAULT&amp;rdquo;.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;azure-disk&#34;&gt;Azure Disk&lt;/h3&gt;
-&lt;h4 id=&#34;azure-unmanaged-disk-storage-class&#34;&gt;Azure Unmanaged Disk storage class&lt;/h4&gt;
+&lt;!--
+### Azure Disk
+
+#### Azure Unmanaged Disk storage class {#azure-unmanaged-disk-storage-class}
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: slow
+provisioner: kubernetes.io/azure-disk
+parameters:
+  skuName: Standard_LRS
+  location: eastus
+  storageAccount: azure_storage_account_name
+```
+
+* `skuName`: Azure storage account Sku tier. Default is empty.
+* `location`: Azure storage account location. Default is empty.
+* `storageAccount`: Azure storage account name. If a storage account is provided,
+  it must reside in the same resource group as the cluster, and `location` is
+  ignored. If a storage account is not provided, a new storage account will be
+  created in the same resource group as the cluster.
+ --&gt;
+&lt;h3 id=&#34;azure-disk&#34;&gt;Azure 磁盘&lt;/h3&gt;
+&lt;h4 id=&#34;azure-unmanaged-disk-storage-class&#34;&gt;Azure 非托管磁盘 StorageClass&lt;/h4&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;storage.k8s.io/v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;StorageClass&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -12194,14 +12218,12 @@ parameters:
   &lt;span style=&#34;color:#f92672&#34;&gt;location&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;eastus&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;storageAccount&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;azure_storage_account_name&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;skuName&lt;/code&gt;: Azure storage account Sku tier. Default is empty.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;location&lt;/code&gt;: Azure storage account location. Default is empty.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;storageAccount&lt;/code&gt;: Azure storage account name. If a storage account is provided,
-it must reside in the same resource group as the cluster, and &lt;code&gt;location&lt;/code&gt; is
-ignored. If a storage account is not provided, a new storage account will be
-created in the same resource group as the cluster.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;skuName&lt;/code&gt;: Azure 存储账户 Sku 层。 默认为空&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;location&lt;/code&gt;: Azure 存储账户位置。 默认为空&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;storageAccount&lt;/code&gt;: Azure 存储账户名称。 如果提供了存储账户，必须与集群在同一个资源组，
+同时 &lt;code&gt;location&lt;/code&gt; 会被忽略。 如果没有提供存储账户，会在集群所在资源组创建一个新的存储账户。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4 id=&#34;azure-disk-storage-class&#34;&gt;Azure Disk storage class (starting from v1.7.2)&lt;/h4&gt;
+&lt;h4 id=&#34;azure-disk-storage-class&#34;&gt;Azure 磁盘 StorageClass (starting from v1.7.2)&lt;/h4&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;storage.k8s.io/v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;StorageClass&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -12211,25 +12233,59 @@ created in the same resource group as the cluster.&lt;/li&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;storageaccounttype&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Standard_LRS&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Shared&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;storageaccounttype&lt;/code&gt;: Azure storage account Sku tier. Default is empty.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;kind&lt;/code&gt;: Possible values are &lt;code&gt;shared&lt;/code&gt; (default), &lt;code&gt;dedicated&lt;/code&gt;, and &lt;code&gt;managed&lt;/code&gt;.
-When &lt;code&gt;kind&lt;/code&gt; is &lt;code&gt;shared&lt;/code&gt;, all unmanaged disks are created in a few shared
-storage accounts in the same resource group as the cluster. When &lt;code&gt;kind&lt;/code&gt; is
-&lt;code&gt;dedicated&lt;/code&gt;, a new dedicated storage account will be created for the new
-unmanaged disk in the same resource group as the cluster. When &lt;code&gt;kind&lt;/code&gt; is
-&lt;code&gt;managed&lt;/code&gt;, all managed disks are created in the same resource group as
-the cluster.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;resourceGroup&lt;/code&gt;: Specify the resource group in which the Azure disk will be created.
-It must be an existing resource group name. If it is unspecified, the disk will be
-placed in the same resource group as the current Kubernetes cluster.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;storageaccounttype&lt;/code&gt;: Azure 存储账户类型。 默认值 (原文档有问题，暂不知道默认值是啥)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;kind&lt;/code&gt;: 可用值有 &lt;code&gt;shared&lt;/code&gt; (默认), &lt;code&gt;dedicated&lt;/code&gt;, &lt;code&gt;managed&lt;/code&gt;.
+当 &lt;code&gt;kind&lt;/code&gt; 是 &lt;code&gt;shared&lt;/code&gt; 时，所有非托管的硬盘会在与集群同一个资源组创建几个分享存储账户。
+当 &lt;code&gt;kind&lt;/code&gt; 是 &lt;code&gt;dedicated&lt;/code&gt; 时，在与集群同一个资源组中会为每一个新创建的非托管磁盘创建一个独立
+的存储账户。
+当 &lt;code&gt;kind&lt;/code&gt; 是 &lt;code&gt;managed&lt;/code&gt; 时，所有托管的磁盘都会创建在与集群同一个资源组&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;resourceGroup&lt;/code&gt;: 指定 Azure 磁盘创建的资源组。 必须是一个已经存在的资源组名称。 如果没有指定，
+磁盘会放在与当前 k8s 集群所在的这个资源组。&lt;/li&gt;
+&lt;li&gt;高级的 VM 可以挂载 Standard_LRS 和 Premium_LRS 磁盘，标准 VM 只可以挂载 Standard_LRS 磁盘。&lt;/li&gt;
+&lt;li&gt;托管 VM 只能挂载托管磁盘，非托管 VM 只能挂载 非托管&lt;/li&gt;
 &lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;Premium VM can attach both Standard_LRS and Premium_LRS disks, while Standard
-VM can only attach Standard_LRS disks.&lt;/li&gt;
-&lt;li&gt;Managed VM can only attach managed disks and unmanaged VM can only attach
-unmanaged disks.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;azure-file&#34;&gt;Azure File&lt;/h3&gt;
+&lt;!--
+### Azure File
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: azurefile
+provisioner: kubernetes.io/azure-file
+parameters:
+  skuName: Standard_LRS
+  location: eastus
+  storageAccount: azure_storage_account_name
+```
+
+* `skuName`: Azure storage account Sku tier. Default is empty.
+* `location`: Azure storage account location. Default is empty.
+* `storageAccount`: Azure storage account name.  Default is empty. If a storage
+  account is not provided, all storage accounts associated with the resource
+  group are searched to find one that matches `skuName` and `location`. If a
+  storage account is provided, it must reside in the same resource group as the
+  cluster, and `skuName` and `location` are ignored.
+* `secretNamespace`: the namespace of the secret that contains the Azure Storage
+  Account Name and Key. Default is the same as the Pod.
+* `secretName`: the name of the secret that contains the Azure Storage Account Name and
+  Key. Default is `azure-storage-account-&lt;accountName&gt;-secret`
+* `readOnly`: a flag indicating whether the storage will be mounted as read only.
+  Defaults to false which means a read/write mount. This setting will impact the
+  `ReadOnly` setting in VolumeMounts as well.
+
+During storage provisioning, a secret named by `secretName` is created for the
+mounting credentials. If the cluster has enabled both
+[RBAC](/docs/reference/access-authn-authz/rbac/) and
+[Controller Roles](/docs/reference/access-authn-authz/rbac/#controller-roles),
+add the `create` permission of resource `secret` for clusterrole
+`system:controller:persistent-volume-binder`.
+
+In a multi-tenancy context, it is strongly recommended to set the value for
+`secretNamespace` explicitly, otherwise the storage account credentials may
+be read by other users.
+ --&gt;
+&lt;h3 id=&#34;azure-file&#34;&gt;Azure 文件&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;storage.k8s.io/v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;StorageClass&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -12240,31 +12296,74 @@ unmanaged disks.&lt;/li&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;location&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;eastus&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;storageAccount&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;azure_storage_account_name&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;skuName&lt;/code&gt;: Azure storage account Sku tier. Default is empty.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;location&lt;/code&gt;: Azure storage account location. Default is empty.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;storageAccount&lt;/code&gt;: Azure storage account name.  Default is empty. If a storage
-account is not provided, all storage accounts associated with the resource
-group are searched to find one that matches &lt;code&gt;skuName&lt;/code&gt; and &lt;code&gt;location&lt;/code&gt;. If a
-storage account is provided, it must reside in the same resource group as the
-cluster, and &lt;code&gt;skuName&lt;/code&gt; and &lt;code&gt;location&lt;/code&gt; are ignored.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;secretNamespace&lt;/code&gt;: the namespace of the secret that contains the Azure Storage
-Account Name and Key. Default is the same as the Pod.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;secretName&lt;/code&gt;: the name of the secret that contains the Azure Storage Account Name and
-Key. Default is &lt;code&gt;azure-storage-account-&amp;lt;accountName&amp;gt;-secret&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;readOnly&lt;/code&gt;: a flag indicating whether the storage will be mounted as read only.
-Defaults to false which means a read/write mount. This setting will impact the
-&lt;code&gt;ReadOnly&lt;/code&gt; setting in VolumeMounts as well.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;skuName&lt;/code&gt;: Azure 存储账户 Sku 层。 默认为空&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;location&lt;/code&gt;: Azure 存储账户位置。 默认为空&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;storageAccount&lt;/code&gt;: Azure 存储账户名称。 默认为空。 如果没有提供存储账户，会搜索与资源组
+关联所有的存储账户中查找一个匹配 &lt;code&gt;skuName&lt;/code&gt; 和 &lt;code&gt;location&lt;/code&gt; 的那个。如果提供了存储账户
+则必须是与集群在同一个资源组，并且 &lt;code&gt;skuName&lt;/code&gt; 和 &lt;code&gt;location&lt;/code&gt; 会被忽略。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;secretNamespace&lt;/code&gt;: 包含 Azure 存储账户名称的 key 的 Secret 所在的命名空间。 默认与 Pod
+相同&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;secretName&lt;/code&gt;: 包含 Azure 存储账户名称的 key 的 Secret 的名称。 默认为
+&lt;code&gt;azure-storage-account-&amp;lt;accountName&amp;gt;-secret&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;readOnly&lt;/code&gt;: 一个标记这个存储是否以只读方式挂载的标记。默认为 false 也就是以读写方式挂载。
+这个配置会与 VolumeMount 的 &lt;code&gt;ReadOnly&lt;/code&gt; 设置有冲突&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;During storage provisioning, a secret named by &lt;code&gt;secretName&lt;/code&gt; is created for the
-mounting credentials. If the cluster has enabled both
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/rbac/&#34;&gt;RBAC&lt;/a&gt; and
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/rbac/#controller-roles&#34;&gt;Controller Roles&lt;/a&gt;,
-add the &lt;code&gt;create&lt;/code&gt; permission of resource &lt;code&gt;secret&lt;/code&gt; for clusterrole
-&lt;code&gt;system:controller:persistent-volume-binder&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;In a multi-tenancy context, it is strongly recommended to set the value for
-&lt;code&gt;secretNamespace&lt;/code&gt; explicitly, otherwise the storage account credentials may
-be read by other users.&lt;/p&gt;
-&lt;h3 id=&#34;portworx-volume&#34;&gt;Portworx Volume&lt;/h3&gt;
+&lt;p&gt;在存储供应时会为挂载凭证创建一个名字为 &lt;code&gt;secretName&lt;/code&gt; 字段值的 Secret。如果集群启用了
+&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/rbac/&#34;&gt;RBAC&lt;/a&gt; 和
+&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/rbac/#controller-roles&#34;&gt;Controller Roles&lt;/a&gt;,
+为要 &lt;code&gt;clusterrole&lt;/code&gt; &lt;code&gt;system:controller:persistent-volume-binder&lt;/code&gt; 中的 &lt;code&gt;secret&lt;/code&gt; 资源添加
+&lt;code&gt;create&lt;/code&gt; 权限。&lt;/p&gt;
+&lt;p&gt;在一个多租户的上下文下， 强烈建议显示地设置 &lt;code&gt;secretNamespace&lt;/code&gt; 值， 否则存储账户的凭据可能被
+其它用户访问。&lt;/p&gt;
+&lt;!--
+### Portworx Volume
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: portworx-io-priority-high
+provisioner: kubernetes.io/portworx-volume
+parameters:
+  repl: &#34;1&#34;
+  snap_interval:   &#34;70&#34;
+  priority_io:  &#34;high&#34;
+
+```
+
+* `fs`: filesystem to be laid out: `none/xfs/ext4` (default: `ext4`).
+* `block_size`: block size in Kbytes (default: `32`).
+* `repl`: number of synchronous replicas to be provided in the form of
+  replication factor `1..3` (default: `1`) A string is expected here i.e.
+  `&#34;1&#34;` and not `1`.
+* `priority_io`: determines whether the volume will be created from higher
+  performance or a lower priority storage `high/medium/low` (default: `low`).
+* `snap_interval`: clock/time interval in minutes for when to trigger snapshots.
+  Snapshots are incremental based on difference with the prior snapshot, 0
+  disables snaps (default: `0`). A string is expected here i.e.
+  `&#34;70&#34;` and not `70`.
+* `aggregation_level`: specifies the number of chunks the volume would be
+  distributed into, 0 indicates a non-aggregated volume (default: `0`). A string
+  is expected here i.e. `&#34;0&#34;` and not `0`
+* `ephemeral`: specifies whether the volume should be cleaned-up after unmount
+  or should be persistent. `emptyDir` use case can set this value to true and
+  `persistent volumes` use case such as for databases like Cassandra should set
+  to false, `true/false` (default `false`). A string is expected here i.e.
+  `&#34;true&#34;` and not `true`.
+ --&gt;
+&lt;h3 id=&#34;portworx-volume&#34;&gt;Portworx 卷&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;storage.k8s.io/v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;StorageClass&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -12276,26 +12375,60 @@ be read by other users.&lt;/p&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;priority_io&lt;/span&gt;:  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;high&amp;#34;&lt;/span&gt;
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;fs&lt;/code&gt;: filesystem to be laid out: &lt;code&gt;none/xfs/ext4&lt;/code&gt; (default: &lt;code&gt;ext4&lt;/code&gt;).&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;block_size&lt;/code&gt;: block size in Kbytes (default: &lt;code&gt;32&lt;/code&gt;).&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;repl&lt;/code&gt;: number of synchronous replicas to be provided in the form of
-replication factor &lt;code&gt;1..3&lt;/code&gt; (default: &lt;code&gt;1&lt;/code&gt;) A string is expected here i.e.
-&lt;code&gt;&amp;quot;1&amp;quot;&lt;/code&gt; and not &lt;code&gt;1&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;priority_io&lt;/code&gt;: determines whether the volume will be created from higher
-performance or a lower priority storage &lt;code&gt;high/medium/low&lt;/code&gt; (default: &lt;code&gt;low&lt;/code&gt;).&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;snap_interval&lt;/code&gt;: clock/time interval in minutes for when to trigger snapshots.
-Snapshots are incremental based on difference with the prior snapshot, 0
-disables snaps (default: &lt;code&gt;0&lt;/code&gt;). A string is expected here i.e.
-&lt;code&gt;&amp;quot;70&amp;quot;&lt;/code&gt; and not &lt;code&gt;70&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;aggregation_level&lt;/code&gt;: specifies the number of chunks the volume would be
-distributed into, 0 indicates a non-aggregated volume (default: &lt;code&gt;0&lt;/code&gt;). A string
-is expected here i.e. &lt;code&gt;&amp;quot;0&amp;quot;&lt;/code&gt; and not &lt;code&gt;0&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;ephemeral&lt;/code&gt;: specifies whether the volume should be cleaned-up after unmount
-or should be persistent. &lt;code&gt;emptyDir&lt;/code&gt; use case can set this value to true and
-&lt;code&gt;persistent volumes&lt;/code&gt; use case such as for databases like Cassandra should set
-to false, &lt;code&gt;true/false&lt;/code&gt; (default &lt;code&gt;false&lt;/code&gt;). A string is expected here i.e.
-&lt;code&gt;&amp;quot;true&amp;quot;&lt;/code&gt; and not &lt;code&gt;true&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fs&lt;/code&gt;: 文件系统 &lt;code&gt;none/xfs/ext4&lt;/code&gt; (默认: &lt;code&gt;ext4&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;block_size&lt;/code&gt;: 块大小，单位千字节 (默认: &lt;code&gt;32&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;repl&lt;/code&gt;: 并发副本的数量，副本倍率格式为 &lt;code&gt;1..3&lt;/code&gt; (默认: &lt;code&gt;1&lt;/code&gt;) 这里值是字符串，也就是 &lt;code&gt;&amp;quot;1&amp;quot;&lt;/code&gt; 而不是 &lt;code&gt;1&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;priority_io&lt;/code&gt;: 决定卷以什么级别的性能创建。&lt;code&gt;high/medium/low&lt;/code&gt; (默认: &lt;code&gt;low&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;snap_interval&lt;/code&gt;: 触发快照的时间间隔，快照是基于之前的快照增量创建，0 就是禁用快照(默认: &lt;code&gt;0&lt;/code&gt;).
+这里值是字符串，也就是 &lt;code&gt;&amp;quot;70&amp;quot;&lt;/code&gt; 而不是 &lt;code&gt;70&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;aggregation_level&lt;/code&gt;: 指定卷分布的块数量， 0 表示非聚合卷(默认为: &lt;code&gt;0&lt;/code&gt;)
+这里值是字符串，也就是 &lt;code&gt;&amp;quot;0&amp;quot;&lt;/code&gt; 而不是 &lt;code&gt;0&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ephemeral&lt;/code&gt;: 指定这个卷是否在卸载时清查或应该持久存在。 &lt;code&gt;emptyDir&lt;/code&gt; 情况下可以将该值设置为 true
+&lt;code&gt;persistent volumes&lt;/code&gt; 情况下，如例如 Cassandra 这些数据库，应该设置为 false,  &lt;code&gt;true/false&lt;/code&gt; (默认为 &lt;code&gt;false&lt;/code&gt;).
+这个字段的值是一个字段串，是&lt;code&gt;&amp;quot;true&amp;quot;&lt;/code&gt; 而不是 &lt;code&gt;true&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;
+&lt;!--
+### ScaleIO
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: slow
+provisioner: kubernetes.io/scaleio
+parameters:
+  gateway: https://192.168.99.200:443/api
+  system: scaleio
+  protectionDomain: pd0
+  storagePool: sp1
+  storageMode: ThinProvisioned
+  secretRef: sio-secret
+  readOnly: false
+  fsType: xfs
+```
+
+* `provisioner`: attribute is set to `kubernetes.io/scaleio`
+* `gateway`: address to a ScaleIO API gateway (required)
+* `system`: the name of the ScaleIO system (required)
+* `protectionDomain`: the name of the ScaleIO protection domain (required)
+* `storagePool`: the name of the volume storage pool (required)
+* `storageMode`: the storage provision mode: `ThinProvisioned` (default) or
+  `ThickProvisioned`
+* `secretRef`: reference to a configured Secret object (required)
+* `readOnly`: specifies the access mode to the mounted volume (default false)
+* `fsType`: the file system to use for the volume (default ext4)
+
+The ScaleIO Kubernetes volume plugin requires a configured Secret object.
+The secret must be created with type `kubernetes.io/scaleio` and use the same
+namespace value as that of the PVC where it is referenced
+as shown in the following command:
+
+```shell
+kubectl create secret generic sio-secret --type=&#34;kubernetes.io/scaleio&#34; \
+--from-literal=username=sioadmin --from-literal=password=d2NABDNjMA== \
+--namespace=default
+```
+ --&gt;
 &lt;h3 id=&#34;scaleio&#34;&gt;ScaleIO&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;storage.k8s.io/v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;StorageClass&lt;/span&gt;
@@ -12312,25 +12445,72 @@ to false, &lt;code&gt;true/false&lt;/code&gt; (default &lt;code&gt;false&lt;/cod
   &lt;span style=&#34;color:#f92672&#34;&gt;readOnly&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;fsType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;xfs&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;provisioner&lt;/code&gt;: attribute is set to &lt;code&gt;kubernetes.io/scaleio&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;gateway&lt;/code&gt;: address to a ScaleIO API gateway (required)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;system&lt;/code&gt;: the name of the ScaleIO system (required)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;protectionDomain&lt;/code&gt;: the name of the ScaleIO protection domain (required)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;storagePool&lt;/code&gt;: the name of the volume storage pool (required)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;storageMode&lt;/code&gt;: the storage provision mode: &lt;code&gt;ThinProvisioned&lt;/code&gt; (default) or
-&lt;code&gt;ThickProvisioned&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;secretRef&lt;/code&gt;: reference to a configured Secret object (required)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;readOnly&lt;/code&gt;: specifies the access mode to the mounted volume (default false)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;fsType&lt;/code&gt;: the file system to use for the volume (default ext4)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;provisioner&lt;/code&gt;: 该属性设置为 &lt;code&gt;kubernetes.io/scaleio&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;gateway&lt;/code&gt;: ScaleIO API 网关地址(必要)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;system&lt;/code&gt;: ScaleIO 系统名称(必要)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;protectionDomain&lt;/code&gt;: ScaleIO 保护域名名称 (必要)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;storagePool&lt;/code&gt;: 卷存储池名称(必要)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;storageMode&lt;/code&gt;: 存储供应模式 &lt;code&gt;ThinProvisioned&lt;/code&gt; (默认) 或 &lt;code&gt;ThickProvisioned&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;secretRef&lt;/code&gt;: 配置的 Secret 对象(必要)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;readOnly&lt;/code&gt;: 指定挂载卷访问模式(默认为 &lt;code&gt;&amp;quot;false&amp;quot;&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fsType&lt;/code&gt;: 卷使用的文件系统(默认 &lt;code&gt;ext4&lt;/code&gt;)&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;The ScaleIO Kubernetes volume plugin requires a configured Secret object.
-The secret must be created with type &lt;code&gt;kubernetes.io/scaleio&lt;/code&gt; and use the same
-namespace value as that of the PVC where it is referenced
-as shown in the following command:&lt;/p&gt;
+&lt;p&gt;ScaleIO k8s 卷插件需要一个配置 &lt;code&gt;Secret&lt;/code&gt; 对象。 &lt;code&gt;Secret&lt;/code&gt; 必须要以 &lt;code&gt;kubernetes.io/scaleio&lt;/code&gt;
+类型创建并且必须与 PVC 在同一个命名空间。 以下为创建示例:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create secret generic sio-secret --type&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;kubernetes.io/scaleio&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
 &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;--from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;username&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;sioadmin --from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;password&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;d2NABDNjMA&lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
 &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;--namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;default
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;storageos&#34;&gt;StorageOS&lt;/h3&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+### StorageOS
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast
+provisioner: kubernetes.io/storageos
+parameters:
+  pool: default
+  description: Kubernetes volume
+  fsType: ext4
+  adminSecretNamespace: default
+  adminSecretName: storageos-secret
+```
+
+* `pool`: The name of the StorageOS distributed capacity pool to provision the
+  volume from.  Uses the `default` pool which is normally present if not specified.
+* `description`: The description to assign to volumes that were created dynamically.
+  All volume descriptions will be the same for the storage class, but different
+  storage classes can be used to allow descriptions for different use cases.
+  Defaults to `Kubernetes volume`.
+* `fsType`: The default filesystem type to request. Note that user-defined rules
+  within StorageOS may override this value.  Defaults to `ext4`.
+* `adminSecretNamespace`: The namespace where the API configuration secret is
+  located. Required if adminSecretName set.
+* `adminSecretName`: The name of the secret to use for obtaining the StorageOS
+  API credentials. If not specified, default values will be attempted.
+
+The StorageOS Kubernetes volume plugin can use a Secret object to specify an
+endpoint and credentials to access the StorageOS API. This is only required when
+the defaults have been changed.
+The secret must be created with type `kubernetes.io/storageos` as shown in the
+following command:
+
+```shell
+kubectl create secret generic storageos-secret \
+--type=&#34;kubernetes.io/storageos&#34; \
+--from-literal=apiAddress=tcp://localhost:5705 \
+--from-literal=apiUsername=storageos \
+--from-literal=apiPassword=storageos \
+--namespace=default
+```
+
+Secrets used for dynamically provisioned volumes may be created in any namespace
+and referenced with the `adminSecretNamespace` parameter. Secrets used by
+pre-provisioned volumes must be created in the same namespace as the PVC that
+references it.
+ --&gt;
+&lt;h3 id=&#34;storageos&#34;&gt;StorageOS &lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;storage.k8s.io/v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;StorageClass&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -12343,34 +12523,67 @@ as shown in the following command:&lt;/p&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;adminSecretNamespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;default&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;adminSecretName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;storageos-secret&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;pool&lt;/code&gt;: The name of the StorageOS distributed capacity pool to provision the
-volume from.  Uses the &lt;code&gt;default&lt;/code&gt; pool which is normally present if not specified.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;description&lt;/code&gt;: The description to assign to volumes that were created dynamically.
-All volume descriptions will be the same for the storage class, but different
-storage classes can be used to allow descriptions for different use cases.
-Defaults to &lt;code&gt;Kubernetes volume&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;fsType&lt;/code&gt;: The default filesystem type to request. Note that user-defined rules
-within StorageOS may override this value.  Defaults to &lt;code&gt;ext4&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;adminSecretNamespace&lt;/code&gt;: The namespace where the API configuration secret is
-located. Required if adminSecretName set.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;adminSecretName&lt;/code&gt;: The name of the secret to use for obtaining the StorageOS
-API credentials. If not specified, default values will be attempted.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;pool&lt;/code&gt;: 供应卷的 StorageOS 分布式容量池的名称 ?&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;description&lt;/code&gt;: 分配给动态供应的卷的描述。 同样 StorageClass 的所有卷的描述都是一样的，
+不同的 StorageClass 可以根据不现的应用场景使用不同的描述。 默认为 &lt;code&gt;Kubernetes volume&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;fsType&lt;/code&gt;: 申请的默认文件系统类型。 StorageOS 中的用户定义规则可能会覆盖该值。 默认为 &lt;code&gt;ext4&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;adminSecretNamespace&lt;/code&gt;: API 配置的 Secret 所在的命名空间。 如果设置了 adminSecretName
+则需要设置该字段&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;adminSecretName&lt;/code&gt;: 获取 StorageOS API 凭据的 Secret 名称。如果没有设置，则会尝试使用
+默认值&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;The StorageOS Kubernetes volume plugin can use a Secret object to specify an
-endpoint and credentials to access the StorageOS API. This is only required when
-the defaults have been changed.
-The secret must be created with type &lt;code&gt;kubernetes.io/storageos&lt;/code&gt; as shown in the
-following command:&lt;/p&gt;
+&lt;p&gt;StorageOS 的 k8s 卷插件可以使用一个 Secret 对象来指定访问StorageOS API 的地址和凭据。
+只有在修改默认情况需要配置该值。
+Secret 必须要以 &lt;code&gt;kubernetes.io/storageos&lt;/code&gt; 类型创建。创建命令示例:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create secret generic storageos-secret &lt;span style=&#34;color:#ae81ff&#34;&gt;\
 &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;--type&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;kubernetes.io/storageos&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
 &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;--from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;apiAddress&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;tcp://localhost:5705 &lt;span style=&#34;color:#ae81ff&#34;&gt;\
 &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;--from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;apiUsername&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;storageos &lt;span style=&#34;color:#ae81ff&#34;&gt;\
 &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;--from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;apiPassword&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;storageos &lt;span style=&#34;color:#ae81ff&#34;&gt;\
 &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;--namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;default
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Secrets used for dynamically provisioned volumes may be created in any namespace
-and referenced with the &lt;code&gt;adminSecretNamespace&lt;/code&gt; parameter. Secrets used by
-pre-provisioned volumes must be created in the same namespace as the PVC that
-references it.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;卷动态供应使用的 Secret 可以创建在任意命名空间中，通过 &lt;code&gt;adminSecretNamespace&lt;/code&gt; 参数引用。
+预创建卷所使用的 Secret 必须与使用它的 PVC 在同一个命名空间&lt;/p&gt;
+&lt;!--
+### Local
+
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.14 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-storage
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+```
+
+Local volumes do not currently support dynamic provisioning, however a StorageClass
+should still be created to delay volume binding until Pod scheduling. This is
+specified by the `WaitForFirstConsumer` volume binding mode.
+
+Delaying volume binding allows the scheduler to consider all of a Pod&#39;s
+scheduling constraints when choosing an appropriate PersistentVolume for a
+PersistentVolumeClaim.
+ --&gt;
 &lt;h3 id=&#34;local&#34;&gt;Local&lt;/h3&gt;
 
 
@@ -12388,12 +12601,9 @@ references it.&lt;/p&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;local-storage&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;provisioner&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kubernetes.io/no-provisioner&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;volumeBindingMode&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;WaitForFirstConsumer&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Local volumes do not currently support dynamic provisioning, however a StorageClass
-should still be created to delay volume binding until Pod scheduling. This is
-specified by the &lt;code&gt;WaitForFirstConsumer&lt;/code&gt; volume binding mode.&lt;/p&gt;
-&lt;p&gt;Delaying volume binding allows the scheduler to consider all of a Pod&amp;rsquo;s
-scheduling constraints when choosing an appropriate PersistentVolume for a
-PersistentVolumeClaim.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Local 卷目前不支持动态供应， 但 StorageClass 也可以用来让卷绑定发生在 Pod 调度之后。
+可以通过设置卷绑定模式为 &lt;code&gt;WaitForFirstConsumer&lt;/code&gt; 达到这个目的&lt;/p&gt;
+&lt;p&gt;延迟绑定可以在为 PVC 选择恰当的 PV 时考虑 Pod 所有约束。&lt;/p&gt;
 
       </description>
     </item>
