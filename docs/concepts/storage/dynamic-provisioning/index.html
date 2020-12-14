@@ -20,11 +20,11 @@
 <meta property="og:description" content="卷动态供应允许存储卷可以根据需要创建。 如果没有动态供应，集群管理员必须要手动调用云存储或其它存储 提供者来创建新的存储卷，然后再创建 PersistentVolume 对象来 在" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/dynamic-provisioning/" />
-<meta property="article:modified_time" content="2020-12-11T17:51:59+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2020-12-14T16:24:39+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="卷动态供应">
 <meta itemprop="description" content="卷动态供应允许存储卷可以根据需要创建。 如果没有动态供应，集群管理员必须要手动调用云存储或其它存储 提供者来创建新的存储卷，然后再创建 PersistentVolume 对象来 在">
-<meta itemprop="dateModified" content="2020-12-11T17:51:59+08:00" />
-<meta itemprop="wordCount" content="625">
+<meta itemprop="dateModified" content="2020-12-14T16:24:39+08:00" />
+<meta itemprop="wordCount" content="1044">
 
 
 
@@ -819,27 +819,54 @@ More information on storage classes can be found
 [here](/docs/concepts/storage/storage-classes/).
  -->
 <h2 id="背景">背景</h2>
-<p>The implementation of dynamic volume provisioning is based on the API object <code>StorageClass</code>
-from the API group <code>storage.k8s.io</code>. A cluster administrator can define as many
-<code>StorageClass</code> objects as needed, each specifying a <em>volume plugin</em> (aka
-<em>provisioner</em>) that provisions a volume and the set of parameters to pass to
-that provisioner when provisioning.
-A cluster administrator can define and expose multiple flavors of storage (from
-the same or different storage systems) within a cluster, each with a custom set
-of parameters. This design also ensures that end users don&rsquo;t have to worry
-about the complexity and nuances of how storage is provisioned, but still
-have the ability to select from multiple storage options.</p>
-<p>More information on storage classes can be found
-<a href="/docs/concepts/storage/storage-classes/">here</a>.</p>
-<h2 id="enabling-dynamic-provisioning">Enabling Dynamic Provisioning</h2>
-<p>To enable dynamic provisioning, a cluster administrator needs to pre-create
+<p>卷动态供应是基于来自 <code>storage.k8s.io</code> API 组的 <code>StorageClass</code> API 对象。 集群管理员可以
+根据需要创建任意数量的 <code>StorageClass</code> 对象， 每个对象中都会指定一个 <em>卷插件</em>(也就是 <em>供应者</em>)
+来提供卷并且包含供应卷时需要传递的参数集。集群管理员可以在集群中定义并暴露多个偏好的存储(来自相同
+或不同的存储系统)，每种都有一套自定义的参数。 这种设计也保证终端用户不需要关心存储供应的复杂性和差异性
+的同时还能提供多种存储选项的选择。</p>
+<p>更多关于存储类别的信息见
+<a href="/k8sDocs/docs/concepts/storage/storage-classes/">这里</a>.</p>
+<!--
+## Enabling Dynamic Provisioning
+
+To enable dynamic provisioning, a cluster administrator needs to pre-create
 one or more StorageClass objects for users.
 StorageClass objects define which provisioner should be used and what parameters
 should be passed to that provisioner when dynamic provisioning is invoked.
 The name of a StorageClass object must be a valid
-<a href="/docs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS subdomain name</a>.</p>
-<p>The following manifest creates a storage class &ldquo;slow&rdquo; which provisions standard
-disk-like persistent disks.</p>
+[DNS subdomain name](/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+
+The following manifest creates a storage class "slow" which provisions standard
+disk-like persistent disks.
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: slow
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-standard
+```
+
+The following manifest creates a storage class "fast" which provisions
+SSD-like persistent disks.
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-ssd
+```
+ -->
+<h2 id="enabling-dynamic-provisioning">启用动态供应</h2>
+<p>为启用动态供应，集群管理员需要预先为用户创建好一个或多个 <code>StorageClass</code> 对象。<code>StorageClass</code>
+对象定义需要使用哪个供应者和在动态供应调用时需要传递给供应者的参数。 <code>StorageClass</code> 对象的名称
+必须是一个有效的 <a href="/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.</p>
+<p>以下的配置中定义了一个叫 &ldquo;slow&rdquo; <code>StorageClass</code>， 它提供了一个标准的类磁盘的持久下磁盘。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">storage.k8s.io/v1</span>
 <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">StorageClass</span>
 <span style="color:#f92672">metadata</span>:
@@ -847,8 +874,7 @@ disk-like persistent disks.</p>
 <span style="color:#f92672">provisioner</span>: <span style="color:#ae81ff">kubernetes.io/gce-pd</span>
 <span style="color:#f92672">parameters</span>:
   <span style="color:#f92672">type</span>: <span style="color:#ae81ff">pd-standard</span>
-</code></pre></div><p>The following manifest creates a storage class &ldquo;fast&rdquo; which provisions
-SSD-like persistent disks.</p>
+</code></pre></div><p>以下的配置中定义了一个叫 &ldquo;fast&rdquo; <code>StorageClass</code>， 它提供了一个类SSD盘的持久下磁盘。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">storage.k8s.io/v1</span>
 <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">StorageClass</span>
 <span style="color:#f92672">metadata</span>:
@@ -856,16 +882,44 @@ SSD-like persistent disks.</p>
 <span style="color:#f92672">provisioner</span>: <span style="color:#ae81ff">kubernetes.io/gce-pd</span>
 <span style="color:#f92672">parameters</span>:
   <span style="color:#f92672">type</span>: <span style="color:#ae81ff">pd-ssd</span>
-</code></pre></div><h2 id="using-dynamic-provisioning">Using Dynamic Provisioning</h2>
-<p>Users request dynamically provisioned storage by including a storage class in
-their <code>PersistentVolumeClaim</code>. Before Kubernetes v1.6, this was done via the
-<code>volume.beta.kubernetes.io/storage-class</code> annotation. However, this annotation
+</code></pre></div><!--
+## Using Dynamic Provisioning
+
+Users request dynamically provisioned storage by including a storage class in
+their `PersistentVolumeClaim`. Before Kubernetes v1.6, this was done via the
+`volume.beta.kubernetes.io/storage-class` annotation. However, this annotation
 is deprecated since v1.6. Users now can and should instead use the
-<code>storageClassName</code> field of the <code>PersistentVolumeClaim</code> object. The value of
-this field must match the name of a <code>StorageClass</code> configured by the
-administrator (see <a href="#enabling-dynamic-provisioning">below</a>).</p>
-<p>To select the &ldquo;fast&rdquo; storage class, for example, a user would create the
-following PersistentVolumeClaim:</p>
+`storageClassName` field of the `PersistentVolumeClaim` object. The value of
+this field must match the name of a `StorageClass` configured by the
+administrator (see [below](#enabling-dynamic-provisioning)).
+
+To select the "fast" storage class, for example, a user would create the
+following PersistentVolumeClaim:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: claim1
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: fast
+  resources:
+    requests:
+      storage: 30Gi
+```
+
+This claim results in an SSD-like Persistent Disk being automatically
+provisioned. When the claim is deleted, the volume is destroyed.
+-->
+<h2 id="using-dynamic-provisioning">使用动态供应</h2>
+<p>用户通过在 <code>PersistentVolumeClaim</code> 引用一个 <code>StorageClass</code> 申请动态供应存储。 在 k8s
+v1.6 之前， 这是通过添加注解 <code>volume.beta.kubernetes.io/storage-class</code> 实现的。但是
+这个注解在 k8s v1.6 之后已经废弃。在这之后的版本用户可以在 <code>PersistentVolumeClaim</code> 对象
+中使用 <code>storageClassName</code> 代替这个注解。这个字段值必须与管理员配置的 <code>StorageClass</code> 中的一个
+(见 <a href="#enabling-dynamic-provisioning">上面</a>).</p>
+<p>例如，想要使用 &ldquo;fast&rdquo; <code>StorageClass</code>， 用户可以创建以下 PersistentVolumeClaim:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
 <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">PersistentVolumeClaim</span>
 <span style="color:#f92672">metadata</span>:
@@ -877,36 +931,63 @@ following PersistentVolumeClaim:</p>
   <span style="color:#f92672">resources</span>:
     <span style="color:#f92672">requests</span>:
       <span style="color:#f92672">storage</span>: <span style="color:#ae81ff">30Gi</span>
-</code></pre></div><p>This claim results in an SSD-like Persistent Disk being automatically
-provisioned. When the claim is deleted, the volume is destroyed.</p>
-<h2 id="defaulting-behavior">Defaulting Behavior</h2>
-<p>Dynamic provisioning can be enabled on a cluster such that all claims are
+</code></pre></div><p>这个配置的 PVC 会自动供应一个类 SSD 的持久化磁盘。 当 PVC 被删除后，对应卷也会被删除。</p>
+<!--
+## Defaulting Behavior
+
+Dynamic provisioning can be enabled on a cluster such that all claims are
 dynamically provisioned if no storage class is specified. A cluster administrator
-can enable this behavior by:</p>
+can enable this behavior by:
+
+- Marking one `StorageClass` object as *default*;
+- Making sure that the [`DefaultStorageClass` admission controller](/docs/reference/access-authn-authz/admission-controllers/#defaultstorageclass)
+  is enabled on the API server.
+
+An administrator can mark a specific `StorageClass` as default by adding the
+`storageclass.kubernetes.io/is-default-class` annotation to it.
+When a default `StorageClass` exists in a cluster and a user creates a
+`PersistentVolumeClaim` with `storageClassName` unspecified, the
+`DefaultStorageClass` admission controller automatically adds the
+`storageClassName` field pointing to the default storage class.
+
+Note that there can be at most one *default* storage class on a cluster, or
+a `PersistentVolumeClaim` without `storageClassName` explicitly specified cannot
+be created.
+ -->
+<h2 id="默认行为">默认行为</h2>
+<p>可以在集群中启用动态供应，这样所有的PVC 都可以在没有指定 StorageClass 的情况下也是动态供应的。
+集群管理员可以通过以下方式启动:</p>
 <ul>
-<li>Marking one <code>StorageClass</code> object as <em>default</em>;</li>
-<li>Making sure that the <a href="/docs/reference/access-authn-authz/admission-controllers/#defaultstorageclass"><code>DefaultStorageClass</code> admission controller</a>
+<li>将一个 <code>StorageClass</code> 对象设置为 <em>默认</em>;
 is enabled on the API server.</li>
+<li>确保 API server 上的
+<a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#defaultstorageclass"><code>DefaultStorageClass</code> 准入控制</a>
+启用了</li>
 </ul>
-<p>An administrator can mark a specific <code>StorageClass</code> as default by adding the
-<code>storageclass.kubernetes.io/is-default-class</code> annotation to it.
-When a default <code>StorageClass</code> exists in a cluster and a user creates a
-<code>PersistentVolumeClaim</code> with <code>storageClassName</code> unspecified, the
-<code>DefaultStorageClass</code> admission controller automatically adds the
-<code>storageClassName</code> field pointing to the default storage class.</p>
-<p>Note that there can be at most one <em>default</em> storage class on a cluster, or
-a <code>PersistentVolumeClaim</code> without <code>storageClassName</code> explicitly specified cannot
-be created.</p>
-<h2 id="topology-awareness">Topology Awareness</h2>
-<p>In <a href="/docs/setup/multiple-zones">Multi-Zone</a> clusters, Pods can be spread across
+<p>管理员可以通过在一个 <code>StorageClass</code> 添加 <code>storageclass.kubernetes.io/is-default-class</code>
+注解的方式将其设置为默认。 当集群中有默认的 <code>StorageClass</code> 存在时，用户创建 <code>PersistentVolumeClaim</code>
+没有指定 <code>storageClassName</code> ，<code>DefaultStorageClass</code> 准入控制自动添加 <code>storageClassName</code>
+字段，并将其指向默认的 <code>StorageClass</code>。</p>
+<p>要注意一个集群中最多只能有一个 <em>默认</em> <code>StorageClass</code>， 否则没有显示指定 <code>storageClassName</code>
+的 <code>PersistentVolumeClaim</code> 是不能创建的。</p>
+<!--
+## Topology Awareness
+
+In [Multi-Zone](/docs/setup/multiple-zones) clusters, Pods can be spread across
 Zones in a Region. Single-Zone storage backends should be provisioned in the Zones where
-Pods are scheduled. This can be accomplished by setting the <a href="/docs/concepts/storage/storage-classes/#volume-binding-mode">Volume Binding
-Mode</a>.</p>
+Pods are scheduled. This can be accomplished by setting the [Volume Binding
+Mode](/docs/concepts/storage/storage-classes/#volume-binding-mode).
+ -->
+<h2 id="拓扑自洽">拓扑自洽</h2>
+<p>在 <a href="/k8sDocs/docs/setup/multiple-zones">多区域</a> 集群中，Pod 可以在同一个地区的不同区域中分布。
+单区域存储后端应该供应到 Pod 被调度到的区域中。这可以通过设置
+<a href="/k8sDocs/docs/concepts/storage/storage-classes/#volume-binding-mode">卷绑定模式</a>
+实现。</p>
 
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-11 17:51:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/75bb493c4bad7f50f1b2b103f7bfa44a1aa04401">[WIP]dynamic provisioning start (75bb493)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-14 16:24:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/b41d3710248c70daf8776836af01a2a9abda0636">publish storage classes (b41d371)</a>
 </div>
             
           </main>
@@ -944,10 +1025,10 @@ Mode</a>.</p>
 <nav id="TableOfContents">
   <ul>
     <li><a href="#背景">背景</a></li>
-    <li><a href="#enabling-dynamic-provisioning">Enabling Dynamic Provisioning</a></li>
-    <li><a href="#using-dynamic-provisioning">Using Dynamic Provisioning</a></li>
-    <li><a href="#defaulting-behavior">Defaulting Behavior</a></li>
-    <li><a href="#topology-awareness">Topology Awareness</a></li>
+    <li><a href="#enabling-dynamic-provisioning">启用动态供应</a></li>
+    <li><a href="#using-dynamic-provisioning">使用动态供应</a></li>
+    <li><a href="#默认行为">默认行为</a></li>
+    <li><a href="#拓扑自洽">拓扑自洽</a></li>
   </ul>
 </nav>
 
