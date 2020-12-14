@@ -321,7 +321,7 @@ and pre-created PVs, but you'll need to look at the documentation for a specific
 to see its supported topology keys and examples.
  -->
 
-### 卷绑定模式
+### 卷绑定模式 {#volume-binding-mode}
 
 当
 [卷绑定和动态供应](/k8sDocs/docs/concepts/storage/persistent-volumes/#provisioning)
