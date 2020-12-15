@@ -16,24 +16,22 @@
 <link rel="manifest" href="/k8sDocs/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/k8sDocs/images/kubernetes-192x192.png">
 
-<title>标签设置指导 | Kubernetes</title><meta property="og:title" content="标签设置指导" />
-<meta property="og:description" content="用户可以使用 kubectl 和 dashboard 外的可视化管理工具。一些通用的描述对象信息的标签配置可以让这些工具更好地工作 为了工具能更好的使用这些标签，建议标签以方便查" />
+<title>Storage Capacity | Kubernetes</title><meta property="og:title" content="Storage Capacity" />
+<meta property="og:description" content="功能特性状态: Kubernetes v1.19 [alpha] This page describes how Kubernetes keeps track of storage capacity and how the scheduler uses that information to schedule Pods onto nodes that have access to enough storage capacity for the remaining missing volumes. Without storage capacity tracking, the scheduler may choose a node that doesn&#39;t have enough capacity to provision a volume and multiple scheduling retries will be needed." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/" />
-<meta property="article:published_time" content="2020-07-03T00:00:00+00:00" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-capacity/" />
 <meta property="article:modified_time" content="2020-12-15T18:10:50+08:00" /><meta property="og:site_name" content="Kubernetes" />
-<meta itemprop="name" content="标签设置指导">
-<meta itemprop="description" content="用户可以使用 kubectl 和 dashboard 外的可视化管理工具。一些通用的描述对象信息的标签配置可以让这些工具更好地工作 为了工具能更好的使用这些标签，建议标签以方便查">
-<meta itemprop="datePublished" content="2020-07-03T00:00:00+00:00" />
+<meta itemprop="name" content="Storage Capacity">
+<meta itemprop="description" content="功能特性状态: Kubernetes v1.19 [alpha] This page describes how Kubernetes keeps track of storage capacity and how the scheduler uses that information to schedule Pods onto nodes that have access to enough storage capacity for the remaining missing volumes. Without storage capacity tracking, the scheduler may choose a node that doesn&#39;t have enough capacity to provision a volume and multiple scheduling retries will be needed.">
 <meta itemprop="dateModified" content="2020-12-15T18:10:50+08:00" />
-<meta itemprop="wordCount" content="853">
+<meta itemprop="wordCount" content="1391">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="标签设置指导"/>
-<meta name="twitter:description" content="用户可以使用 kubectl 和 dashboard 外的可视化管理工具。一些通用的描述对象信息的标签配置可以让这些工具更好地工作 为了工具能更好的使用这些标签，建议标签以方便查"/>
+<meta name="twitter:title" content="Storage Capacity"/>
+<meta name="twitter:description" content="功能特性状态: Kubernetes v1.19 [alpha] This page describes how Kubernetes keeps track of storage capacity and how the scheduler uses that information to schedule Pods onto nodes that have access to enough storage capacity for the remaining missing volumes. Without storage capacity tracking, the scheduler may choose a node that doesn&#39;t have enough capacity to provision a volume and multiple scheduling retries will be needed."/>
 
 
 
@@ -77,12 +75,12 @@
 
 
 
-<meta name="description" content="用户可以使用 kubectl 和 dashboard 外的可视化管理工具。一些通用的描述对象信息的标签配置可以让这些工具更好地工作 为了工具能更好的使用这些标签，建议标签以方便查">
-<meta property="og:description" content="用户可以使用 kubectl 和 dashboard 外的可视化管理工具。一些通用的描述对象信息的标签配置可以让这些工具更好地工作 为了工具能更好的使用这些标签，建议标签以方便查">
-<meta name="twitter:description" content="用户可以使用 kubectl 和 dashboard 外的可视化管理工具。一些通用的描述对象信息的标签配置可以让这些工具更好地工作 为了工具能更好的使用这些标签，建议标签以方便查">
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/">
-<meta property="og:title" content="标签设置指导">
-<meta name="twitter:title" content="标签设置指导">
+<meta name="description" content="功能特性状态: Kubernetes v1.19 [alpha] This page describes how Kubernetes keeps track of storage capacity and how the scheduler uses that information to schedule Pods onto nodes that have access to enough storage capacity for the remaining missing volumes. Without storage capacity tracking, the scheduler may choose a node that doesn&#39;t have enough capacity to provision a volume and multiple scheduling retries will be needed.">
+<meta property="og:description" content="功能特性状态: Kubernetes v1.19 [alpha] This page describes how Kubernetes keeps track of storage capacity and how the scheduler uses that information to schedule Pods onto nodes that have access to enough storage capacity for the remaining missing volumes. Without storage capacity tracking, the scheduler may choose a node that doesn&#39;t have enough capacity to provision a volume and multiple scheduling retries will be needed.">
+<meta name="twitter:description" content="功能特性状态: Kubernetes v1.19 [alpha] This page describes how Kubernetes keeps track of storage capacity and how the scheduler uses that information to schedule Pods onto nodes that have access to enough storage capacity for the remaining missing volumes. Without storage capacity tracking, the scheduler may choose a node that doesn&#39;t have enough capacity to provision a volume and multiple scheduling retries will be needed.">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-capacity/">
+<meta property="og:title" content="Storage Capacity">
+<meta name="twitter:title" content="Storage Capacity">
 <meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
 
 <meta name="twitter:image:alt" content="Kubernetes">
@@ -96,7 +94,7 @@
 <script src="/k8sDocs/js/script.js"></script>
 
 
-    <title>标签设置指导 | Kubernetes</title>
+    <title>Storage Capacity | Kubernetes</title>
   </head>
   <body class="td-page td-documentation">
     <header>
@@ -200,10 +198,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/overview/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">概览</a>
+    <a  href="/k8sDocs/docs/concepts/overview/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">概览</a>
   </li>
   <ul>
-    <li class="collapse show" id="k8sdocsdocsconceptsoverview">
+    <li class="collapse " id="k8sdocsdocsconceptsoverview">
       
       
       
@@ -235,10 +233,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/overview/working-with-objects/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">k8s 对象管理</a>
+    <a  href="/k8sDocs/docs/concepts/overview/working-with-objects/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">k8s 对象管理</a>
   </li>
   <ul>
-    <li class="collapse show" id="k8sdocsdocsconceptsoverviewworking-with-objects">
+    <li class="collapse " id="k8sdocsdocsconceptsoverviewworking-with-objects">
       
       
       
@@ -281,7 +279,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsoverviewworking-with-objects06-common-labels" href="/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects06-common-labels" href="/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a>
       
       
     </li>
@@ -642,10 +640,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
+    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
   </li>
   <ul>
-    <li class="collapse " id="k8sdocsdocsconceptsstorage">
+    <li class="collapse show" id="k8sdocsdocsconceptsstorage">
       
       
       
@@ -694,7 +692,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragestorage-capacity" href="/k8sDocs/docs/concepts/storage/storage-capacity/">Storage Capacity</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsstoragestorage-capacity" href="/k8sDocs/docs/concepts/storage/storage-capacity/">Storage Capacity</a>
       
       
     </li>
@@ -737,9 +735,6 @@
 
 
 
-
-
-
 <li class="breadcrumb-item" >
 	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
 </li>
@@ -755,21 +750,14 @@
 
 
 <li class="breadcrumb-item" >
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/">概览</a>
-</li>
-
-
-
-
-<li class="breadcrumb-item" >
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/">k8s 对象管理</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/">存储(Storage)</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-capacity/">Storage Capacity</a>
 </li>
 
 	</ol>
@@ -782,158 +770,239 @@
     <div class="td-content">
     
 <p>
-  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/overview/working-with-objects/06-common-labels.md" id="editPageButton" target="_blank" data-proofer-ignore>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/storage/storage-capacity.md" id="editPageButton" target="_blank" data-proofer-ignore>
     Edit This Page
   </a>
 </p>
 
-  <h1>标签设置指导</h1>
+  <h1>Storage Capacity</h1>
   
   
 
-<p>用户可以使用 kubectl 和 dashboard 外的可视化管理工具。一些通用的描述对象信息的标签配置可以让这些工具更好地工作
-为了工具能更好的使用这些标签，建议标签以方便查询的方式来定义对象信息
-元数据是围绕应用这个概念来组织的。k8s 并不是一个平台即服务(PaaS),也没有一个对应用有一个强制的格式规范。只是通过元数据来提供应用的描述和信息。关于应用所包含的信息的的规范是相关宽松的
-注意: 只能推荐使用这些标签。以方便对应用的管理，这些都不是 k8s 核心工具所必要的
-共享标签和注解需要共享一个共同的前缀 <code>app.kubernetes.io</code>, 没有前缀的标签是用户私有的。在共享标签上使用使用共享前缀是为了保证不会影响到用户私有的标签。</p>
-<h2 id="标签">标签</h2>
-<p>为了给读者一个标签使用的整体印象，以下标签可以用在第一个资源对象上。</p>
-<table>
-<thead>
-<tr>
-<th>标签键</th>
-<th>说明</th>
-<th>示例值</th>
-<th>值数据类型</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>app.kubernetes.io/name</td>
-<td>应用名称</td>
-<td><code>mysql</code></td>
-<td>string</td>
-</tr>
-<tr>
-<td>app.kubernetes.io/instance</td>
-<td>用于识别应用实例的唯一名称</td>
-<td><code>wordpress-abcxzy</code></td>
-<td>string</td>
-</tr>
-<tr>
-<td>app.kubernetes.io/version</td>
-<td>应用的当前版本 (如 版本号, 版本哈希, 等.)</td>
-<td><code>5.7.21</code></td>
-<td>string</td>
-</tr>
-<tr>
-<td>app.kubernetes.io/component</td>
-<td>架构中的结构名</td>
-<td><code>database</code></td>
-<td>string</td>
-</tr>
-<tr>
-<td>app.kubernetes.io/part-of</td>
-<td>这个对象是哪个应用的一部分</td>
-<td><code>wordpress</code></td>
-<td>string</td>
-</tr>
-<tr>
-<td>app.kubernetes.io/managed-by</td>
-<td>用于管理这个对象的工具</td>
-<td><code>helm</code></td>
-<td>string</td>
-</tr>
-</tbody>
-</table>
-<p>以下是一个 <code>StatefulSet</code> 的实践示例</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
-<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">StatefulSet</span>
-<span style="color:#f92672">metadata</span>:
-  <span style="color:#f92672">labels</span>:
-    <span style="color:#f92672">app.kubernetes.io/name</span>: <span style="color:#ae81ff">mysql</span>
-    <span style="color:#f92672">app.kubernetes.io/instance</span>: <span style="color:#ae81ff">wordpress-abcxzy</span>
-    <span style="color:#f92672">app.kubernetes.io/version</span>: <span style="color:#e6db74">&#34;5.7.21&#34;</span>
-    <span style="color:#f92672">app.kubernetes.io/component</span>: <span style="color:#ae81ff">database</span>
-    <span style="color:#f92672">app.kubernetes.io/part-of</span>: <span style="color:#ae81ff">wordpress</span>
-    <span style="color:#f92672">app.kubernetes.io/managed-by</span>: <span style="color:#ae81ff">helm</span>
-</code></pre></div><h2 id="应用及应用实例">应用及应用实例</h2>
-<p>一个应用可能在 k8s 集群的一个命名空间中安装一次或多次。比如 安装多个 wordpress 的(不同)网站
-应用名和其实例名都应该作区分， 比如 一个 wordpress 应用为 <code>app.kubernetes.io/name: wordpress</code>, 其实例可以设置为 <code>app.kubernetes.io/instance: wordpress-abcxzy</code> 这就应用和实例就比较好识别，当一个应用有多个实例是每个实例的名称都要唯一。</p>
-<h2 id="示例">示例</h2>
-<p>以下示例展示这些标签的不同用法</p>
-<h3 id="一个简单的无状态-service">一个简单的无状态 Service</h3>
-<p>以下应用场景为 用一个 Deployment 和 Service 对象部署一个简单的无状态服务。 以下为其标签的最简配置
-Deployment 用于管理应用运行的 Pod</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
-<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
-<span style="color:#f92672">metadata</span>:
-  <span style="color:#f92672">labels</span>:
-    <span style="color:#f92672">app.kubernetes.io/name</span>: <span style="color:#ae81ff">myservice</span>
-    <span style="color:#f92672">app.kubernetes.io/instance</span>: <span style="color:#ae81ff">myservice-abcxzy</span>
-...
-</code></pre></div><p>Service 用于应用接入</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
-<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
-<span style="color:#f92672">metadata</span>:
-  <span style="color:#f92672">labels</span>:
-    <span style="color:#f92672">app.kubernetes.io/name</span>: <span style="color:#ae81ff">myservice</span>
-    <span style="color:#f92672">app.kubernetes.io/instance</span>: <span style="color:#ae81ff">myservice-abcxzy</span>
-...
+<!--
+---
+reviewers:
+- jsafrane
+- saad-ali
+- msau42
+- xing-yang
+- pohly
+title: Storage Capacity
+content_type: concept
+weight: 45
+---
+ -->
+<!-- overview -->
+<!--
+Storage capacity is limited and may vary depending on the node on
+which a pod runs: network-attached storage might not be accessible by
+all nodes, or storage is local to a node to begin with.
 
-</code></pre></div><h3 id="带数据库的web应用">带数据库的Web应用</h3>
-<p>稍复杂一点的应用场景: 一个web 应用(WordPress)用到一个数据库(MySQL), 通过 Helm 安装</p>
-<p>WordPress 的 Deployment</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
-<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Deployment</span>
-<span style="color:#f92672">metadata</span>:
-  <span style="color:#f92672">labels</span>:
-    <span style="color:#f92672">app.kubernetes.io/name</span>: <span style="color:#ae81ff">wordpress</span>
-    <span style="color:#f92672">app.kubernetes.io/instance</span>: <span style="color:#ae81ff">wordpress-abcxzy</span>
-    <span style="color:#f92672">app.kubernetes.io/version</span>: <span style="color:#e6db74">&#34;4.9.4&#34;</span>
-    <span style="color:#f92672">app.kubernetes.io/managed-by</span>: <span style="color:#ae81ff">helm</span>
-    <span style="color:#f92672">app.kubernetes.io/component</span>: <span style="color:#ae81ff">server</span>
-    <span style="color:#f92672">app.kubernetes.io/part-of</span>: <span style="color:#ae81ff">wordpress</span>
-...
-</code></pre></div><p>WordPress 的 Service</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
-<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
-<span style="color:#f92672">metadata</span>:
-  <span style="color:#f92672">labels</span>:
-    <span style="color:#f92672">app.kubernetes.io/name</span>: <span style="color:#ae81ff">wordpress</span>
-    <span style="color:#f92672">app.kubernetes.io/instance</span>: <span style="color:#ae81ff">wordpress-abcxzy</span>
-    <span style="color:#f92672">app.kubernetes.io/version</span>: <span style="color:#e6db74">&#34;4.9.4&#34;</span>
-    <span style="color:#f92672">app.kubernetes.io/managed-by</span>: <span style="color:#ae81ff">helm</span>
-    <span style="color:#f92672">app.kubernetes.io/component</span>: <span style="color:#ae81ff">server</span>
-    <span style="color:#f92672">app.kubernetes.io/part-of</span>: <span style="color:#ae81ff">wordpress</span>
-...
-</code></pre></div><p>MySQL 的 StatefulSet</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
-<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">StatefulSet</span>
-<span style="color:#f92672">metadata</span>:
-  <span style="color:#f92672">labels</span>:
-    <span style="color:#f92672">app.kubernetes.io/name</span>: <span style="color:#ae81ff">mysql</span>
-    <span style="color:#f92672">app.kubernetes.io/instance</span>: <span style="color:#ae81ff">mysql-abcxzy</span>
-    <span style="color:#f92672">app.kubernetes.io/version</span>: <span style="color:#e6db74">&#34;5.7.21&#34;</span>
-    <span style="color:#f92672">app.kubernetes.io/managed-by</span>: <span style="color:#ae81ff">helm</span>
-    <span style="color:#f92672">app.kubernetes.io/component</span>: <span style="color:#ae81ff">database</span>
-    <span style="color:#f92672">app.kubernetes.io/part-of</span>: <span style="color:#ae81ff">wordpress</span>
-...
 
-</code></pre></div><p>MySQL 的 Service</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
-<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Service</span>
-<span style="color:#f92672">metadata</span>:
-  <span style="color:#f92672">labels</span>:
-    <span style="color:#f92672">app.kubernetes.io/name</span>: <span style="color:#ae81ff">mysql</span>
-    <span style="color:#f92672">app.kubernetes.io/instance</span>: <span style="color:#ae81ff">mysql-abcxzy</span>
-    <span style="color:#f92672">app.kubernetes.io/version</span>: <span style="color:#e6db74">&#34;5.7.21&#34;</span>
-    <span style="color:#f92672">app.kubernetes.io/managed-by</span>: <span style="color:#ae81ff">helm</span>
-    <span style="color:#f92672">app.kubernetes.io/component</span>: <span style="color:#ae81ff">database</span>
-    <span style="color:#f92672">app.kubernetes.io/part-of</span>: <span style="color:#ae81ff">wordpress</span>
-...
 
-</code></pre></div><p>在 StatefulSet 和 Service 可以找到它们自己的信息所属的应用的信息。这些在更大的应用中相当有用。</p>
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.19 [alpha]</code>
+</div>
+
+
+
+This page describes how Kubernetes keeps track of storage capacity and
+how the scheduler uses that information to schedule Pods onto nodes
+that have access to enough storage capacity for the remaining missing
+volumes. Without storage capacity tracking, the scheduler may choose a
+node that doesn't have enough capacity to provision a volume and
+multiple scheduling retries will be needed.
+
+Tracking storage capacity is supported for <a class='glossary-tooltip' href='/k8sDocs/docs/concepts/storage/volumes/#csi' target='_blank'>Container Storage Interface<span class='tooltip-text'>容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中</span>
+</a> (CSI) drivers and
+[needs to be enabled](#enabling-storage-capacity-tracking) when installing a CSI driver.
+ -->
+<p>存储容量是受限的并且还基于 Pod 运行的节点: 网络存储可以不能在所有的节点上访问，或者存储只属于
+Pod 启动的节点上。</p>
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.19 [alpha]</code>
+</div>
+
+
+<p>本文主要介绍 k8s 是怎么保持对存储容量的跟踪并且调度器使用这些信息来把 Pod 调度到能够访问到
+剩余没使用的卷有足够存储容量。 如果没有对存储容量的跟踪， 造成调度器因调度到一个没有足够存储容量
+的节点而造成多次尝试重新调度。</p>
+<p>跟踪存储容量是支持
+<a class='glossary-tooltip' href='/k8sDocs/docs/concepts/storage/volumes/#csi' target='_blank'>容器存储接口 (CSI)<span class='tooltip-text'>容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中</span>
+</a> (CSI) 驱动并且在安装 CSI 驱动时
+<a href="#enabling-storage-capacity-tracking">需要开启</a></p>
+<!-- body -->
+<!--
+## API
+
+There are two API extensions for this feature:
+- [CSIStorageCapacity](/docs/reference/generated/kubernetes-api/v1.19/#csistoragecapacity-v1alpha1-storage-k8s-io) objects:
+  these get produced by a CSI driver in the namespace
+  where the driver is installed. Each object contains capacity
+  information for one storage class and defines which nodes have
+  access to that storage.
+- [The `CSIDriverSpec.StorageCapacity` field](/docs/reference/generated/kubernetes-api/v1.19/#csidriverspec-v1-storage-k8s-io):
+  when set to `true`, the Kubernetes scheduler will consider storage
+  capacity for volumes that use the CSI driver.
+ -->
+<h2 id="api">API</h2>
+<p>对于这个特性有两个 API 扩展:</p>
+<ul>
+<li><a href="/docs/reference/generated/kubernetes-api/v1.19/#csistoragecapacity-v1alpha1-storage-k8s-io">CSIStorageCapacity</a> 对象:
+这些是当驱动被安装时由 CSI 驱动在命名空间中生成的。 每个对象包含一个 StorageClass 的容量信息
+并定义哪个节点可以访问这个存储。</li>
+<li><a href="/docs/reference/generated/kubernetes-api/v1.19/#csidriverspec-v1-storage-k8s-io"><code>CSIDriverSpec.StorageCapacity</code> 字段</a>:
+当设置为 <code>true</code>， k8s 调度器会考量使用 CSI 驱动的卷的存储容量</li>
+</ul>
+<!--
+## Scheduling
+
+Storage capacity information is used by the Kubernetes scheduler if:
+- the `CSIStorageCapacity` feature gate is true,
+- a Pod uses a volume that has not been created yet,
+- that volume uses a <a class='glossary-tooltip' href='/k8sDocs/docs/concepts/storage/storage-classes' target='_blank'>StorageClass<span class='tooltip-text'>StorageClass 为管理员提供了一种描述不同存储类别的方式</span>
+</a> which references a CSI driver and
+  uses `WaitForFirstConsumer` [volume binding
+  mode](/docs/concepts/storage/storage-classes/#volume-binding-mode),
+  and
+- the `CSIDriver` object for the driver has `StorageCapacity` set to
+  true.
+
+In that case, the scheduler only considers nodes for the Pod which
+have enough storage available to them. This check is very
+simplistic and only compares the size of the volume against the
+capacity listed in `CSIStorageCapacity` objects with a topology that
+includes the node.
+
+For volumes with `Immediate` volume binding mode, the storage driver
+decides where to create the volume, independently of Pods that will
+use the volume. The scheduler then schedules Pods onto nodes where the
+volume is available after the volume has been created.
+
+For [CSI ephemeral volumes](/docs/concepts/storage/volumes/#csi),
+scheduling always happens without considering storage capacity. This
+is based on the assumption that this volume type is only used by
+special CSI drivers which are local to a node and do not need
+significant resources there.
+ -->
+<h2 id="scheduling">调度</h2>
+<p>k8s 调度器会使用存储容量信息如果:</p>
+<ul>
+<li><code>CSIStorageCapacity</code> 功能阀启用</li>
+<li>一个 Pod 使用了一个还没有被创建的卷</li>
+<li>这卷使用一个 <a class='glossary-tooltip' href='/k8sDocs/docs/concepts/storage/storage-classes' target='_blank'>StorageClass<span class='tooltip-text'>StorageClass 为管理员提供了一种描述不同存储类别的方式</span>
+</a>
+它使用 CSI 驱动并设置 <code>WaitForFirstConsumer</code>
+<a href="/k8sDocs/docs/concepts/storage/storage-classes/#volume-binding-mode">卷绑定模式</a></li>
+<li>驱动的 <code>CSIDriver</code> 对象上的 <code>StorageCapacity</code> 被设置为 true</li>
+</ul>
+<p>In that case, the scheduler only considers nodes for the Pod which
+have enough storage available to them. This check is very
+simplistic and only compares the size of the volume against the
+capacity listed in <code>CSIStorageCapacity</code> objects with a topology that
+includes the node.</p>
+<p>在那种情况下， 调度器只考虑那些对于该 Pod 有足够存储的节点。这种检测是相当简单的也就是只对卷的大小
+和包含节点</p>
+<p>For volumes with <code>Immediate</code> volume binding mode, the storage driver
+decides where to create the volume, independently of Pods that will
+use the volume. The scheduler then schedules Pods onto nodes where the
+volume is available after the volume has been created.</p>
+<p>For <a href="/docs/concepts/storage/volumes/#csi">CSI ephemeral volumes</a>,
+scheduling always happens without considering storage capacity. This
+is based on the assumption that this volume type is only used by
+special CSI drivers which are local to a node and do not need
+significant resources there.</p>
+<h2 id="rescheduling">Rescheduling</h2>
+<p>When a node has been selected for a Pod with <code>WaitForFirstConsumer</code>
+volumes, that decision is still tentative. The next step is that the
+CSI storage driver gets asked to create the volume with a hint that the
+volume is supposed to be available on the selected node.</p>
+<p>Because Kubernetes might have chosen a node based on out-dated
+capacity information, it is possible that the volume cannot really be
+created. The node selection is then reset and the Kubernetes scheduler
+tries again to find a node for the Pod.</p>
+<h2 id="limitations">Limitations</h2>
+<p>Storage capacity tracking increases the chance that scheduling works
+on the first try, but cannot guarantee this because the scheduler has
+to decide based on potentially out-dated information. Usually, the
+same retry mechanism as for scheduling without any storage capacity
+information handles scheduling failures.</p>
+<p>One situation where scheduling can fail permanently is when a Pod uses
+multiple volumes: one volume might have been created already in a
+topology segment which then does not have enough capacity left for
+another volume. Manual intervention is necessary to recover from this,
+for example by increasing capacity or deleting the volume that was
+already created. <a href="https://github.com/kubernetes/enhancements/pull/1703">Further
+work</a> is needed
+to handle this automatically.</p>
+<!--
+## Enabling storage capacity tracking
+
+Storage capacity tracking is an *alpha feature* and only enabled when
+the `CSIStorageCapacity` [feature
+gate](/docs/reference/command-line-tools-reference/feature-gates/) and
+the `storage.k8s.io/v1alpha1` <a class='glossary-tooltip' href='/docs/concepts/overview/kubernetes-api/#api-groups' target='_blank'>API group<span class='tooltip-text'>A set of related paths in the Kubernetes API.</span>
+</a> are enabled. For details on
+that, see the `--feature-gates` and `--runtime-config` [kube-apiserver
+parameters](/docs/reference/command-line-tools-reference/kube-apiserver/).
+
+A quick check
+whether a Kubernetes cluster supports the feature is to list
+CSIStorageCapacity objects with:
+```shell
+kubectl get csistoragecapacities --all-namespaces
+```
+
+If your cluster supports CSIStorageCapacity, the response is either a list of CSIStorageCapacity objects or:
+```
+No resources found
+```
+
+If not supported, this error is printed instead:
+```
+error: the server doesn't have a resource type "csistoragecapacities"
+```
+
+In addition to enabling the feature in the cluster, a CSI
+driver also has to
+support it. Please refer to the driver's documentation for
+details.
+ -->
+<h2 id="enabling-storage-capacity-tracking">Enabling storage capacity tracking</h2>
+<p>Storage capacity tracking is an <em>alpha feature</em> and only enabled when
+the <code>CSIStorageCapacity</code> <a href="/docs/reference/command-line-tools-reference/feature-gates/">feature
+gate</a> and
+the <code>storage.k8s.io/v1alpha1</code> <a class='glossary-tooltip' href='/docs/concepts/overview/kubernetes-api/#api-groups' target='_blank'>API group<span class='tooltip-text'>A set of related paths in the Kubernetes API.</span>
+</a> are enabled. For details on
+that, see the <code>--feature-gates</code> and <code>--runtime-config</code> <a href="/docs/reference/command-line-tools-reference/kube-apiserver/">kube-apiserver
+parameters</a>.</p>
+<p>A quick check
+whether a Kubernetes cluster supports the feature is to list
+CSIStorageCapacity objects with:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get csistoragecapacities --all-namespaces
+</code></pre></div><p>If your cluster supports CSIStorageCapacity, the response is either a list of CSIStorageCapacity objects or:</p>
+<pre><code>No resources found
+</code></pre><p>If not supported, this error is printed instead:</p>
+<pre><code>error: the server doesn't have a resource type &quot;csistoragecapacities&quot;
+</code></pre><p>In addition to enabling the feature in the cluster, a CSI
+driver also has to
+support it. Please refer to the driver&rsquo;s documentation for
+details.</p>
+<h2 id="相关资料">相关资料</h2>
+<ul>
+<li>For more information on the design, see the
+<a href="https://github.com/kubernetes/enhancements/blob/master/keps/sig-storage/1472-storage-capacity-tracking/README.md">Storage Capacity Constraints for Pod Scheduling KEP</a>.</li>
+<li>For more information on further development of this feature, see the <a href="https://github.com/kubernetes/enhancements/issues/1472">enhancement tracking issue #1472</a>.</li>
+<li>Learn about <a href="/docs/concepts/scheduling-eviction/kube-scheduler/">Kubernetes Scheduler</a></li>
+</ul>
 
 
 
@@ -962,9 +1031,9 @@ Deployment 用于管理应用运行的 Pod</p>
 
 
 
-<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/overview/working-with-objects/06-common-labels.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/overview/working-with-objects/06-common-labels.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=%e6%a0%87%e7%ad%be%e8%ae%be%e7%bd%ae%e6%8c%87%e5%af%bc" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/storage/storage-capacity.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/storage/storage-capacity.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=Storage%20Capacity" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
 
 </div>
 
@@ -975,14 +1044,12 @@ Deployment 用于管理应用运行的 Pod</p>
 
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#标签">标签</a></li>
-    <li><a href="#应用及应用实例">应用及应用实例</a></li>
-    <li><a href="#示例">示例</a>
-      <ul>
-        <li><a href="#一个简单的无状态-service">一个简单的无状态 Service</a></li>
-        <li><a href="#带数据库的web应用">带数据库的Web应用</a></li>
-      </ul>
-    </li>
+    <li><a href="#api">API</a></li>
+    <li><a href="#scheduling">调度</a></li>
+    <li><a href="#rescheduling">Rescheduling</a></li>
+    <li><a href="#limitations">Limitations</a></li>
+    <li><a href="#enabling-storage-capacity-tracking">Enabling storage capacity tracking</a></li>
+    <li><a href="#相关资料">相关资料</a></li>
   </ul>
 </nav>
 
