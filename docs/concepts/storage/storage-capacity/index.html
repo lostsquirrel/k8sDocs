@@ -16,21 +16,21 @@
 <link rel="manifest" href="/k8sDocs/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/k8sDocs/images/kubernetes-192x192.png">
 
-<title>Storage Capacity | Kubernetes</title><meta property="og:title" content="Storage Capacity" />
+<title>存储容量 | Kubernetes</title><meta property="og:title" content="存储容量" />
 <meta property="og:description" content="功能特性状态: Kubernetes v1.19 [alpha] This page describes how Kubernetes keeps track of storage capacity and how the scheduler uses that information to schedule Pods onto nodes that have access to enough storage capacity for the remaining missing volumes. Without storage capacity tracking, the scheduler may choose a node that doesn&#39;t have enough capacity to provision a volume and multiple scheduling retries will be needed." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-capacity/" />
-<meta property="article:modified_time" content="2020-12-15T18:10:50+08:00" /><meta property="og:site_name" content="Kubernetes" />
-<meta itemprop="name" content="Storage Capacity">
+<meta property="article:modified_time" content="2020-12-16T19:57:11+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="存储容量">
 <meta itemprop="description" content="功能特性状态: Kubernetes v1.19 [alpha] This page describes how Kubernetes keeps track of storage capacity and how the scheduler uses that information to schedule Pods onto nodes that have access to enough storage capacity for the remaining missing volumes. Without storage capacity tracking, the scheduler may choose a node that doesn&#39;t have enough capacity to provision a volume and multiple scheduling retries will be needed.">
-<meta itemprop="dateModified" content="2020-12-15T18:10:50+08:00" />
-<meta itemprop="wordCount" content="1391">
+<meta itemprop="dateModified" content="2020-12-16T19:57:11+08:00" />
+<meta itemprop="wordCount" content="1608">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Storage Capacity"/>
+<meta name="twitter:title" content="存储容量"/>
 <meta name="twitter:description" content="功能特性状态: Kubernetes v1.19 [alpha] This page describes how Kubernetes keeps track of storage capacity and how the scheduler uses that information to schedule Pods onto nodes that have access to enough storage capacity for the remaining missing volumes. Without storage capacity tracking, the scheduler may choose a node that doesn&#39;t have enough capacity to provision a volume and multiple scheduling retries will be needed."/>
 
 
@@ -79,8 +79,8 @@
 <meta property="og:description" content="功能特性状态: Kubernetes v1.19 [alpha] This page describes how Kubernetes keeps track of storage capacity and how the scheduler uses that information to schedule Pods onto nodes that have access to enough storage capacity for the remaining missing volumes. Without storage capacity tracking, the scheduler may choose a node that doesn&#39;t have enough capacity to provision a volume and multiple scheduling retries will be needed.">
 <meta name="twitter:description" content="功能特性状态: Kubernetes v1.19 [alpha] This page describes how Kubernetes keeps track of storage capacity and how the scheduler uses that information to schedule Pods onto nodes that have access to enough storage capacity for the remaining missing volumes. Without storage capacity tracking, the scheduler may choose a node that doesn&#39;t have enough capacity to provision a volume and multiple scheduling retries will be needed.">
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-capacity/">
-<meta property="og:title" content="Storage Capacity">
-<meta name="twitter:title" content="Storage Capacity">
+<meta property="og:title" content="存储容量">
+<meta name="twitter:title" content="存储容量">
 <meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
 
 <meta name="twitter:image:alt" content="Kubernetes">
@@ -94,7 +94,7 @@
 <script src="/k8sDocs/js/script.js"></script>
 
 
-    <title>Storage Capacity | Kubernetes</title>
+    <title>存储容量 | Kubernetes</title>
   </head>
   <body class="td-page td-documentation">
     <header>
@@ -692,7 +692,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsstoragestorage-capacity" href="/k8sDocs/docs/concepts/storage/storage-capacity/">Storage Capacity</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsstoragestorage-capacity" href="/k8sDocs/docs/concepts/storage/storage-capacity/">存储容量</a>
       
       
     </li>
@@ -757,7 +757,7 @@
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-capacity/">Storage Capacity</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-capacity/">存储容量</a>
 </li>
 
 	</ol>
@@ -775,7 +775,7 @@
   </a>
 </p>
 
-  <h1>Storage Capacity</h1>
+  <h1>存储容量</h1>
   
   
 
@@ -856,10 +856,10 @@ There are two API extensions for this feature:
 <h2 id="api">API</h2>
 <p>对于这个特性有两个 API 扩展:</p>
 <ul>
-<li><a href="/docs/reference/generated/kubernetes-api/v1.19/#csistoragecapacity-v1alpha1-storage-k8s-io">CSIStorageCapacity</a> 对象:
+<li><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#csistoragecapacity-v1alpha1-storage-k8s-io">CSIStorageCapacity</a> 对象:
 这些是当驱动被安装时由 CSI 驱动在命名空间中生成的。 每个对象包含一个 StorageClass 的容量信息
 并定义哪个节点可以访问这个存储。</li>
-<li><a href="/docs/reference/generated/kubernetes-api/v1.19/#csidriverspec-v1-storage-k8s-io"><code>CSIDriverSpec.StorageCapacity</code> 字段</a>:
+<li><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#csidriverspec-v1-storage-k8s-io"><code>CSIDriverSpec.StorageCapacity</code> 字段</a>:
 当设置为 <code>true</code>， k8s 调度器会考量使用 CSI 驱动的卷的存储容量</li>
 </ul>
 <!--
@@ -904,45 +904,56 @@ significant resources there.
 <a href="/k8sDocs/docs/concepts/storage/storage-classes/#volume-binding-mode">卷绑定模式</a></li>
 <li>驱动的 <code>CSIDriver</code> 对象上的 <code>StorageCapacity</code> 被设置为 true</li>
 </ul>
-<p>In that case, the scheduler only considers nodes for the Pod which
-have enough storage available to them. This check is very
-simplistic and only compares the size of the volume against the
-capacity listed in <code>CSIStorageCapacity</code> objects with a topology that
-includes the node.</p>
-<p>在那种情况下， 调度器只考虑那些对于该 Pod 有足够存储的节点。这种检测是相当简单的也就是只对卷的大小
-和包含节点</p>
-<p>For volumes with <code>Immediate</code> volume binding mode, the storage driver
-decides where to create the volume, independently of Pods that will
-use the volume. The scheduler then schedules Pods onto nodes where the
-volume is available after the volume has been created.</p>
-<p>For <a href="/docs/concepts/storage/volumes/#csi">CSI ephemeral volumes</a>,
-scheduling always happens without considering storage capacity. This
-is based on the assumption that this volume type is only used by
-special CSI drivers which are local to a node and do not need
-significant resources there.</p>
-<h2 id="rescheduling">Rescheduling</h2>
-<p>When a node has been selected for a Pod with <code>WaitForFirstConsumer</code>
+<p>在那种情况下，调度器只考虑那些对于该 Pod 有足够存储的节点。这种检测是相当简单的也就是只对卷的大小
+和 包含节点拓扑的 <code>CSIStorageCapacity</code> 对象中列举的容量进行对比。</p>
+<p>对于那些使用 <code>Immediate</code> 卷绑定模式的卷，由存储驱动决定在哪创建卷， Pod 会独立地使用这些卷。
+然后调度器再把 Pod 调度到那些已经创建好卷的节点上。</p>
+<p>对于
+<a href="/k8sDocs/docs/concepts/storage/volumes/#csi">CSI 临时卷</a>,
+在调度时始终不考虑存储容量的。 这么做是因为有这么一个假设: 这个卷类型只被一个在节点范围内，不
+需要用到很多资源的特殊 CSI 驱动。</p>
+<!--
+## Rescheduling
+
+When a node has been selected for a Pod with `WaitForFirstConsumer`
 volumes, that decision is still tentative. The next step is that the
 CSI storage driver gets asked to create the volume with a hint that the
-volume is supposed to be available on the selected node.</p>
-<p>Because Kubernetes might have chosen a node based on out-dated
+volume is supposed to be available on the selected node.
+
+Because Kubernetes might have chosen a node based on out-dated
 capacity information, it is possible that the volume cannot really be
 created. The node selection is then reset and the Kubernetes scheduler
-tries again to find a node for the Pod.</p>
-<h2 id="limitations">Limitations</h2>
-<p>Storage capacity tracking increases the chance that scheduling works
+tries again to find a node for the Pod.
+ -->
+<h2 id="rescheduling">Rescheduling</h2>
+<p>当一个节点被一个使用 <code>WaitForFirstConsumer</code> 卷的 Pod 选中时，这个决策也是选择性的。 下一步
+就是 CSI 存储驱动被告知选择的节点应该是有足够的空间来创建这相卷</p>
+<p>因为 k8s 可能基于过期的容量信息选择一个节点，这就可能这个卷不能被真正创建。然后这次节点选择就
+被重围，k8s 调度器再次尝试为 Pod 找一个节点。</p>
+<!--
+## Limitations
+
+Storage capacity tracking increases the chance that scheduling works
 on the first try, but cannot guarantee this because the scheduler has
 to decide based on potentially out-dated information. Usually, the
 same retry mechanism as for scheduling without any storage capacity
-information handles scheduling failures.</p>
-<p>One situation where scheduling can fail permanently is when a Pod uses
+information handles scheduling failures.
+
+One situation where scheduling can fail permanently is when a Pod uses
 multiple volumes: one volume might have been created already in a
 topology segment which then does not have enough capacity left for
 another volume. Manual intervention is necessary to recover from this,
 for example by increasing capacity or deleting the volume that was
-already created. <a href="https://github.com/kubernetes/enhancements/pull/1703">Further
-work</a> is needed
-to handle this automatically.</p>
+already created. [Further
+work](https://github.com/kubernetes/enhancements/pull/1703) is needed
+to handle this automatically.
+ -->
+<h2 id="limitations">Limitations</h2>
+<p>存储容量的跟踪会增加调度在第一次调度时成功的机会，但不能保证，因为调度器可能是基于潜在的过期信息。
+通常，这与没有容量信息调度时失败后的重试机制是一样的。</p>
+<p>有一种情况是当一个 Pod 使用两个卷时调度可能会永久失： 一个卷可能已经在拓扑信息中创建，但这里
+没有足够的空间来创建另一个卷。 这时间就需要人工介入来修复这种问题， 例如增加容量或删除已经创建的卷。
+<a href="https://github.com/kubernetes/enhancements/pull/1703">剩下的工件</a> 就会自动地被处理。</p>
 <!--
 ## Enabling storage capacity tracking
 
@@ -976,38 +987,41 @@ driver also has to
 support it. Please refer to the driver's documentation for
 details.
  -->
-<h2 id="enabling-storage-capacity-tracking">Enabling storage capacity tracking</h2>
-<p>Storage capacity tracking is an <em>alpha feature</em> and only enabled when
-the <code>CSIStorageCapacity</code> <a href="/docs/reference/command-line-tools-reference/feature-gates/">feature
-gate</a> and
-the <code>storage.k8s.io/v1alpha1</code> <a class='glossary-tooltip' href='/docs/concepts/overview/kubernetes-api/#api-groups' target='_blank'>API group<span class='tooltip-text'>A set of related paths in the Kubernetes API.</span>
-</a> are enabled. For details on
-that, see the <code>--feature-gates</code> and <code>--runtime-config</code> <a href="/docs/reference/command-line-tools-reference/kube-apiserver/">kube-apiserver
-parameters</a>.</p>
-<p>A quick check
-whether a Kubernetes cluster supports the feature is to list
-CSIStorageCapacity objects with:</p>
+<h2 id="enabling-storage-capacity-tracking">启用容量跟踪</h2>
+<p>存储容量跟踪是一个 <em>alpha 特性</em>， 只有在
+<a class='glossary-tooltip' href='/docs/concepts/overview/kubernetes-api/#api-groups' target='_blank'>API group<span class='tooltip-text'>A set of related paths in the Kubernetes API.</span>
+</a>
+中的 <code>storage.k8s.io/v1alpha1</code> 被启用，同时还启用了 <code>CSIStorageCapacity</code>
+<a href="https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/">功能阀</a>
+更多相关信息，见
+<a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/">kube-apiserver 参数</a>
+中的  <code>--feature-gates</code> 和 <code>--runtime-config</code></p>
+<p>快速检查 k8s 集群是否支持该特性的办法就是列举 <code>CSIStorageCapacity</code> 对象:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get csistoragecapacities --all-namespaces
-</code></pre></div><p>If your cluster supports CSIStorageCapacity, the response is either a list of CSIStorageCapacity objects or:</p>
+</code></pre></div><p>如果集群支持 CSIStorageCapacity， 返回内容可能是一个 CSIStorageCapacity 列表或者:</p>
 <pre><code>No resources found
-</code></pre><p>If not supported, this error is printed instead:</p>
+</code></pre><p>如果不支持则会出现以下错误:</p>
 <pre><code>error: the server doesn't have a resource type &quot;csistoragecapacities&quot;
-</code></pre><p>In addition to enabling the feature in the cluster, a CSI
-driver also has to
-support it. Please refer to the driver&rsquo;s documentation for
-details.</p>
+</code></pre><p>另外，要在集群中启用该功能还需要所使用的 CSI 驱动也是支持。 具体请参阅驱动的文档。</p>
 <h2 id="相关资料">相关资料</h2>
+<!--
+- For more information on the design, see the
+[Storage Capacity Constraints for Pod Scheduling KEP](https://github.com/kubernetes/enhancements/blob/master/keps/sig-storage/1472-storage-capacity-tracking/README.md).
+- For more information on further development of this feature, see the [enhancement tracking issue #1472](https://github.com/kubernetes/enhancements/issues/1472).
+- Learn about [Kubernetes Scheduler](/docs/concepts/scheduling-eviction/kube-scheduler/)
+ -->
 <ul>
-<li>For more information on the design, see the
+<li>更多关于设计的信息见
 <a href="https://github.com/kubernetes/enhancements/blob/master/keps/sig-storage/1472-storage-capacity-tracking/README.md">Storage Capacity Constraints for Pod Scheduling KEP</a>.</li>
-<li>For more information on further development of this feature, see the <a href="https://github.com/kubernetes/enhancements/issues/1472">enhancement tracking issue #1472</a>.</li>
-<li>Learn about <a href="/docs/concepts/scheduling-eviction/kube-scheduler/">Kubernetes Scheduler</a></li>
+<li>更多关于该特性的开发展望见
+<a href="https://github.com/kubernetes/enhancements/issues/1472">enhancement tracking issue #1472</a>.</li>
+<li>概念学习 <a href="/k8sDocs/docs/concepts/scheduling-eviction/kube-scheduler/">k8s 调度器</a></li>
 </ul>
 
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-15 18:10:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/b46eb885924d0e7fe44c27f8a4ce26cc69816d17">[WIP]start storage capacity (b46eb88)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-16 19:57:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/210122ec90a5b2efe3eeea4d23a110907060dc7a">publish storage capacity (210122e)</a>
 </div>
             
           </main>
@@ -1033,7 +1047,7 @@ details.</p>
 
 <a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/storage/storage-capacity.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
 <a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/storage/storage-capacity.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=Storage%20Capacity" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=%e5%ad%98%e5%82%a8%e5%ae%b9%e9%87%8f" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
 
 </div>
 
@@ -1048,7 +1062,7 @@ details.</p>
     <li><a href="#scheduling">调度</a></li>
     <li><a href="#rescheduling">Rescheduling</a></li>
     <li><a href="#limitations">Limitations</a></li>
-    <li><a href="#enabling-storage-capacity-tracking">Enabling storage capacity tracking</a></li>
+    <li><a href="#enabling-storage-capacity-tracking">启用容量跟踪</a></li>
     <li><a href="#相关资料">相关资料</a></li>
   </ul>
 </nav>

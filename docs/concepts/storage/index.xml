@@ -7261,7 +7261,7 @@ Mode](/docs/concepts/storage/storage-classes/#volume-binding-mode).
     </item>
     
     <item>
-      <title>Docs: Storage Capacity</title>
+      <title>Docs: 存储容量</title>
       <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-capacity/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
@@ -7346,10 +7346,10 @@ There are two API extensions for this feature:
 &lt;h2 id=&#34;api&#34;&gt;API&lt;/h2&gt;
 &lt;p&gt;对于这个特性有两个 API 扩展:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubernetes-api/v1.19/#csistoragecapacity-v1alpha1-storage-k8s-io&#34;&gt;CSIStorageCapacity&lt;/a&gt; 对象:
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#csistoragecapacity-v1alpha1-storage-k8s-io&#34;&gt;CSIStorageCapacity&lt;/a&gt; 对象:
 这些是当驱动被安装时由 CSI 驱动在命名空间中生成的。 每个对象包含一个 StorageClass 的容量信息
 并定义哪个节点可以访问这个存储。&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubernetes-api/v1.19/#csidriverspec-v1-storage-k8s-io&#34;&gt;&lt;code&gt;CSIDriverSpec.StorageCapacity&lt;/code&gt; 字段&lt;/a&gt;:
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#csidriverspec-v1-storage-k8s-io&#34;&gt;&lt;code&gt;CSIDriverSpec.StorageCapacity&lt;/code&gt; 字段&lt;/a&gt;:
 当设置为 &lt;code&gt;true&lt;/code&gt;， k8s 调度器会考量使用 CSI 驱动的卷的存储容量&lt;/li&gt;
 &lt;/ul&gt;
 &lt;!--
@@ -7394,45 +7394,56 @@ significant resources there.
 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/storage-classes/#volume-binding-mode&#34;&gt;卷绑定模式&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;驱动的 &lt;code&gt;CSIDriver&lt;/code&gt; 对象上的 &lt;code&gt;StorageCapacity&lt;/code&gt; 被设置为 true&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;In that case, the scheduler only considers nodes for the Pod which
-have enough storage available to them. This check is very
-simplistic and only compares the size of the volume against the
-capacity listed in &lt;code&gt;CSIStorageCapacity&lt;/code&gt; objects with a topology that
-includes the node.&lt;/p&gt;
-&lt;p&gt;在那种情况下， 调度器只考虑那些对于该 Pod 有足够存储的节点。这种检测是相当简单的也就是只对卷的大小
-和包含节点&lt;/p&gt;
-&lt;p&gt;For volumes with &lt;code&gt;Immediate&lt;/code&gt; volume binding mode, the storage driver
-decides where to create the volume, independently of Pods that will
-use the volume. The scheduler then schedules Pods onto nodes where the
-volume is available after the volume has been created.&lt;/p&gt;
-&lt;p&gt;For &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/#csi&#34;&gt;CSI ephemeral volumes&lt;/a&gt;,
-scheduling always happens without considering storage capacity. This
-is based on the assumption that this volume type is only used by
-special CSI drivers which are local to a node and do not need
-significant resources there.&lt;/p&gt;
-&lt;h2 id=&#34;rescheduling&#34;&gt;Rescheduling&lt;/h2&gt;
-&lt;p&gt;When a node has been selected for a Pod with &lt;code&gt;WaitForFirstConsumer&lt;/code&gt;
+&lt;p&gt;在那种情况下，调度器只考虑那些对于该 Pod 有足够存储的节点。这种检测是相当简单的也就是只对卷的大小
+和 包含节点拓扑的 &lt;code&gt;CSIStorageCapacity&lt;/code&gt; 对象中列举的容量进行对比。&lt;/p&gt;
+&lt;p&gt;对于那些使用 &lt;code&gt;Immediate&lt;/code&gt; 卷绑定模式的卷，由存储驱动决定在哪创建卷， Pod 会独立地使用这些卷。
+然后调度器再把 Pod 调度到那些已经创建好卷的节点上。&lt;/p&gt;
+&lt;p&gt;对于
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#csi&#34;&gt;CSI 临时卷&lt;/a&gt;,
+在调度时始终不考虑存储容量的。 这么做是因为有这么一个假设: 这个卷类型只被一个在节点范围内，不
+需要用到很多资源的特殊 CSI 驱动。&lt;/p&gt;
+&lt;!--
+## Rescheduling
+
+When a node has been selected for a Pod with `WaitForFirstConsumer`
 volumes, that decision is still tentative. The next step is that the
 CSI storage driver gets asked to create the volume with a hint that the
-volume is supposed to be available on the selected node.&lt;/p&gt;
-&lt;p&gt;Because Kubernetes might have chosen a node based on out-dated
+volume is supposed to be available on the selected node.
+
+Because Kubernetes might have chosen a node based on out-dated
 capacity information, it is possible that the volume cannot really be
 created. The node selection is then reset and the Kubernetes scheduler
-tries again to find a node for the Pod.&lt;/p&gt;
-&lt;h2 id=&#34;limitations&#34;&gt;Limitations&lt;/h2&gt;
-&lt;p&gt;Storage capacity tracking increases the chance that scheduling works
+tries again to find a node for the Pod.
+ --&gt;
+&lt;h2 id=&#34;rescheduling&#34;&gt;Rescheduling&lt;/h2&gt;
+&lt;p&gt;当一个节点被一个使用 &lt;code&gt;WaitForFirstConsumer&lt;/code&gt; 卷的 Pod 选中时，这个决策也是选择性的。 下一步
+就是 CSI 存储驱动被告知选择的节点应该是有足够的空间来创建这相卷&lt;/p&gt;
+&lt;p&gt;因为 k8s 可能基于过期的容量信息选择一个节点，这就可能这个卷不能被真正创建。然后这次节点选择就
+被重围，k8s 调度器再次尝试为 Pod 找一个节点。&lt;/p&gt;
+&lt;!--
+## Limitations
+
+Storage capacity tracking increases the chance that scheduling works
 on the first try, but cannot guarantee this because the scheduler has
 to decide based on potentially out-dated information. Usually, the
 same retry mechanism as for scheduling without any storage capacity
-information handles scheduling failures.&lt;/p&gt;
-&lt;p&gt;One situation where scheduling can fail permanently is when a Pod uses
+information handles scheduling failures.
+
+One situation where scheduling can fail permanently is when a Pod uses
 multiple volumes: one volume might have been created already in a
 topology segment which then does not have enough capacity left for
 another volume. Manual intervention is necessary to recover from this,
 for example by increasing capacity or deleting the volume that was
-already created. &lt;a href=&#34;https://github.com/kubernetes/enhancements/pull/1703&#34;&gt;Further
-work&lt;/a&gt; is needed
-to handle this automatically.&lt;/p&gt;
+already created. [Further
+work](https://github.com/kubernetes/enhancements/pull/1703) is needed
+to handle this automatically.
+ --&gt;
+&lt;h2 id=&#34;limitations&#34;&gt;Limitations&lt;/h2&gt;
+&lt;p&gt;存储容量的跟踪会增加调度在第一次调度时成功的机会，但不能保证，因为调度器可能是基于潜在的过期信息。
+通常，这与没有容量信息调度时失败后的重试机制是一样的。&lt;/p&gt;
+&lt;p&gt;有一种情况是当一个 Pod 使用两个卷时调度可能会永久失： 一个卷可能已经在拓扑信息中创建，但这里
+没有足够的空间来创建另一个卷。 这时间就需要人工介入来修复这种问题， 例如增加容量或删除已经创建的卷。
+&lt;a href=&#34;https://github.com/kubernetes/enhancements/pull/1703&#34;&gt;剩下的工件&lt;/a&gt; 就会自动地被处理。&lt;/p&gt;
 &lt;!--
 ## Enabling storage capacity tracking
 
@@ -7466,32 +7477,35 @@ driver also has to
 support it. Please refer to the driver&#39;s documentation for
 details.
  --&gt;
-&lt;h2 id=&#34;enabling-storage-capacity-tracking&#34;&gt;Enabling storage capacity tracking&lt;/h2&gt;
-&lt;p&gt;Storage capacity tracking is an &lt;em&gt;alpha feature&lt;/em&gt; and only enabled when
-the &lt;code&gt;CSIStorageCapacity&lt;/code&gt; &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;feature
-gate&lt;/a&gt; and
-the &lt;code&gt;storage.k8s.io/v1alpha1&lt;/code&gt; &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/kubernetes-api/#api-groups&#39; target=&#39;_blank&#39;&gt;API group&lt;span class=&#39;tooltip-text&#39;&gt;A set of related paths in the Kubernetes API.&lt;/span&gt;
-&lt;/a&gt; are enabled. For details on
-that, see the &lt;code&gt;--feature-gates&lt;/code&gt; and &lt;code&gt;--runtime-config&lt;/code&gt; &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/kube-apiserver/&#34;&gt;kube-apiserver
-parameters&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;A quick check
-whether a Kubernetes cluster supports the feature is to list
-CSIStorageCapacity objects with:&lt;/p&gt;
+&lt;h2 id=&#34;enabling-storage-capacity-tracking&#34;&gt;启用容量跟踪&lt;/h2&gt;
+&lt;p&gt;存储容量跟踪是一个 &lt;em&gt;alpha 特性&lt;/em&gt;， 只有在
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/kubernetes-api/#api-groups&#39; target=&#39;_blank&#39;&gt;API group&lt;span class=&#39;tooltip-text&#39;&gt;A set of related paths in the Kubernetes API.&lt;/span&gt;
+&lt;/a&gt;
+中的 &lt;code&gt;storage.k8s.io/v1alpha1&lt;/code&gt; 被启用，同时还启用了 &lt;code&gt;CSIStorageCapacity&lt;/code&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;功能阀&lt;/a&gt;
+更多相关信息，见
+&lt;a href=&#34;https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/&#34;&gt;kube-apiserver 参数&lt;/a&gt;
+中的  &lt;code&gt;--feature-gates&lt;/code&gt; 和 &lt;code&gt;--runtime-config&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;快速检查 k8s 集群是否支持该特性的办法就是列举 &lt;code&gt;CSIStorageCapacity&lt;/code&gt; 对象:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get csistoragecapacities --all-namespaces
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If your cluster supports CSIStorageCapacity, the response is either a list of CSIStorageCapacity objects or:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果集群支持 CSIStorageCapacity， 返回内容可能是一个 CSIStorageCapacity 列表或者:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;No resources found
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;If not supported, this error is printed instead:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如果不支持则会出现以下错误:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;error: the server doesn&#39;t have a resource type &amp;quot;csistoragecapacities&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;In addition to enabling the feature in the cluster, a CSI
-driver also has to
-support it. Please refer to the driver&amp;rsquo;s documentation for
-details.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;另外，要在集群中启用该功能还需要所使用的 CSI 驱动也是支持。 具体请参阅驱动的文档。&lt;/p&gt;
 &lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;!--
+- For more information on the design, see the
+[Storage Capacity Constraints for Pod Scheduling KEP](https://github.com/kubernetes/enhancements/blob/master/keps/sig-storage/1472-storage-capacity-tracking/README.md).
+- For more information on further development of this feature, see the [enhancement tracking issue #1472](https://github.com/kubernetes/enhancements/issues/1472).
+- Learn about [Kubernetes Scheduler](/docs/concepts/scheduling-eviction/kube-scheduler/)
+ --&gt;
 &lt;ul&gt;
-&lt;li&gt;For more information on the design, see the
+&lt;li&gt;更多关于设计的信息见
 &lt;a href=&#34;https://github.com/kubernetes/enhancements/blob/master/keps/sig-storage/1472-storage-capacity-tracking/README.md&#34;&gt;Storage Capacity Constraints for Pod Scheduling KEP&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;For more information on further development of this feature, see the &lt;a href=&#34;https://github.com/kubernetes/enhancements/issues/1472&#34;&gt;enhancement tracking issue #1472&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Learn about &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/kube-scheduler/&#34;&gt;Kubernetes Scheduler&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;更多关于该特性的开发展望见
+&lt;a href=&#34;https://github.com/kubernetes/enhancements/issues/1472&#34;&gt;enhancement tracking issue #1472&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;概念学习 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/scheduling-eviction/kube-scheduler/&#34;&gt;k8s 调度器&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>
