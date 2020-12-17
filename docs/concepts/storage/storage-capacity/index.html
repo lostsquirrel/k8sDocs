@@ -20,11 +20,11 @@
 <meta property="og:description" content="功能特性状态: Kubernetes v1.19 [alpha] This page describes how Kubernetes keeps track of storage capacity and how the scheduler uses that information to schedule Pods onto nodes that have access to enough storage capacity for the remaining missing volumes. Without storage capacity tracking, the scheduler may choose a node that doesn&#39;t have enough capacity to provision a volume and multiple scheduling retries will be needed." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-capacity/" />
-<meta property="article:modified_time" content="2020-12-16T19:57:11+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2020-12-17T19:59:59+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="存储容量">
 <meta itemprop="description" content="功能特性状态: Kubernetes v1.19 [alpha] This page describes how Kubernetes keeps track of storage capacity and how the scheduler uses that information to schedule Pods onto nodes that have access to enough storage capacity for the remaining missing volumes. Without storage capacity tracking, the scheduler may choose a node that doesn&#39;t have enough capacity to provision a volume and multiple scheduling retries will be needed.">
-<meta itemprop="dateModified" content="2020-12-16T19:57:11+08:00" />
-<meta itemprop="wordCount" content="1608">
+<meta itemprop="dateModified" content="2020-12-17T19:59:59+08:00" />
+<meta itemprop="wordCount" content="1611">
 
 
 
@@ -695,6 +695,12 @@
       <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsstoragestorage-capacity" href="/k8sDocs/docs/concepts/storage/storage-capacity/">存储容量</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstorageephemeral-volumes" href="/k8sDocs/docs/concepts/storage/ephemeral-volumes/">临时卷</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -925,7 +931,7 @@ capacity information, it is possible that the volume cannot really be
 created. The node selection is then reset and the Kubernetes scheduler
 tries again to find a node for the Pod.
  -->
-<h2 id="rescheduling">Rescheduling</h2>
+<h2 id="rescheduling">再调度</h2>
 <p>当一个节点被一个使用 <code>WaitForFirstConsumer</code> 卷的 Pod 选中时，这个决策也是选择性的。 下一步
 就是 CSI 存储驱动被告知选择的节点应该是有足够的空间来创建这相卷</p>
 <p>因为 k8s 可能基于过期的容量信息选择一个节点，这就可能这个卷不能被真正创建。然后这次节点选择就
@@ -948,7 +954,7 @@ already created. [Further
 work](https://github.com/kubernetes/enhancements/pull/1703) is needed
 to handle this automatically.
  -->
-<h2 id="limitations">Limitations</h2>
+<h2 id="limitations">限制</h2>
 <p>存储容量的跟踪会增加调度在第一次调度时成功的机会，但不能保证，因为调度器可能是基于潜在的过期信息。
 通常，这与没有容量信息调度时失败后的重试机制是一样的。</p>
 <p>有一种情况是当一个 Pod 使用两个卷时调度可能会永久失： 一个卷可能已经在拓扑信息中创建，但这里
@@ -1021,7 +1027,7 @@ details.
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-16 19:57:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/210122ec90a5b2efe3eeea4d23a110907060dc7a">publish storage capacity (210122e)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-17 19:59:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/a37dccb96144af2f42b07794f02a72911efda9d3">[WIP]start ephemeral volumes (a37dccb)</a>
 </div>
             
           </main>
@@ -1060,8 +1066,8 @@ details.
   <ul>
     <li><a href="#api">API</a></li>
     <li><a href="#scheduling">调度</a></li>
-    <li><a href="#rescheduling">Rescheduling</a></li>
-    <li><a href="#limitations">Limitations</a></li>
+    <li><a href="#rescheduling">再调度</a></li>
+    <li><a href="#limitations">限制</a></li>
     <li><a href="#enabling-storage-capacity-tracking">启用容量跟踪</a></li>
     <li><a href="#相关资料">相关资料</a></li>
   </ul>
