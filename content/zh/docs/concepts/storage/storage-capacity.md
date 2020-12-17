@@ -136,7 +136,7 @@ created. The node selection is then reset and the Kubernetes scheduler
 tries again to find a node for the Pod.
  -->
 
-## Rescheduling {#rescheduling}
+## 再调度 {#rescheduling}
 
 当一个节点被一个使用 `WaitForFirstConsumer` 卷的 Pod 选中时，这个决策也是选择性的。 下一步
 就是 CSI 存储驱动被告知选择的节点应该是有足够的空间来创建这相卷
@@ -162,7 +162,7 @@ work](https://github.com/kubernetes/enhancements/pull/1703) is needed
 to handle this automatically.
  -->
 
-## Limitations {#limitations}
+## 限制 {#limitations}
 
 存储容量的跟踪会增加调度在第一次调度时成功的机会，但不能保证，因为调度器可能是基于潜在的过期信息。
 通常，这与没有容量信息调度时失败后的重试机制是一样的。
