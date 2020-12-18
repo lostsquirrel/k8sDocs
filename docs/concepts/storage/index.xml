@@ -7604,13 +7604,13 @@ is managed by kubelet, or injecting different data.
 &lt;p&gt;k8s 支持几种不同类型的临时卷用于不同目的:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/#emptydir&#34;&gt;emptyDir&lt;/a&gt;: 在 Pod 启动时是空的，来自
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#emptydir&#34;&gt;emptyDir&lt;/a&gt;: 在 Pod 启动时是空的，来自
 kubelet 基础目录的本地存储(通常是系统盘)或内存&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/#configmap&#34;&gt;configMap&lt;/a&gt;,
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/#downwardapi&#34;&gt;downwardAPI&lt;/a&gt;,
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/#secret&#34;&gt;secret&lt;/a&gt;: 注入不同类型的 k8s 数据到 Pod 中&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#configmap&#34;&gt;configMap&lt;/a&gt;,
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#downwardapi&#34;&gt;downwardAPI&lt;/a&gt;,
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#secret&#34;&gt;secret&lt;/a&gt;: 注入不同类型的 k8s 数据到 Pod 中&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;a href=&#34;#csi-ephemeral-volumes&#34;&gt;CSI 临时卷&lt;/a&gt;: 与上一个类型相似， 但由特殊的
@@ -7623,7 +7623,7 @@ kubelet 基础目录的本地存储(通常是系统盘)或内存&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;code&gt;emptyDir&lt;/code&gt;, &lt;code&gt;configMap&lt;/code&gt;, &lt;code&gt;downwardAPI&lt;/code&gt;, &lt;code&gt;secret&lt;/code&gt;  是以
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/manage-resources-containers/#local-ephemeral-storage&#34;&gt;本地临时卷&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/manage-resources-containers/#local-ephemeral-storage&#34;&gt;本地临时卷&lt;/a&gt;
 提供。
 它们由每个节点上的 kubelet 管理。&lt;/p&gt;
 &lt;p&gt;CSI 临时卷&lt;em&gt;必须&lt;/em&gt;由第三方 CSI 存储驱动提供的。&lt;/p&gt;
@@ -7698,7 +7698,7 @@ instructions.
 As a cluster administrator, you can use a [PodSecurityPolicy](/docs/concepts/policy/pod-security-policy/) to control which CSI drivers can be used in a Pod, specified with the
 [`allowedCSIDrivers` field](/docs/reference/generated/kubernetes-api/v1.19/#podsecuritypolicyspec-v1beta1-policy).
  --&gt;
-&lt;h3 id=&#34;csi-临时卷&#34;&gt;CSI 临时卷&lt;/h3&gt;
+&lt;h3 id=&#34;csi-ephemeral-volumes&#34;&gt;CSI 临时卷&lt;/h3&gt;
 
 
 
@@ -7709,10 +7709,8 @@ As a cluster administrator, you can use a [PodSecurityPolicy](/docs/concepts/pol
 &lt;/div&gt;
 
 
-&lt;p&gt;This feature requires the &lt;code&gt;CSIInlineVolume&lt;/code&gt; &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;feature gate&lt;/a&gt; to be enabled. It
-is enabled by default starting with Kubernetes 1.16.
-这个特性需要启用 &lt;code&gt;CSIInlineVolume&lt;/code&gt;
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;功能阀&lt;/a&gt;。
+&lt;p&gt;这个特性需要启用 &lt;code&gt;CSIInlineVolume&lt;/code&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;功能阀&lt;/a&gt;。
 从 k8s v1.16 开始该功能默认是开启的。&lt;/p&gt;
 &lt;blockquote class=&#34;note&#34;&gt;
   &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; CSI 临时卷只被一部分 CSI 驱动支持。 这个 k8s CSI
@@ -7720,19 +7718,16 @@ is enabled by default starting with Kubernetes 1.16.
 中显示了哪些驱动支持临时卷。&lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;Conceptually, CSI ephemeral volumes are similar to &lt;code&gt;configMap&lt;/code&gt;,
-&lt;code&gt;downwardAPI&lt;/code&gt; and &lt;code&gt;secret&lt;/code&gt; volume types: the storage is managed locally on each
-node and is created together with other local resources after a Pod has been
-scheduled onto a node. Kubernetes has no concept of rescheduling Pods
-anymore at this stage. Volume creation has to be unlikely to fail,
-otherwise Pod startup gets stuck. In particular, &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-capacity/&#34;&gt;storage capacity
-aware Pod scheduling&lt;/a&gt; is &lt;em&gt;not&lt;/em&gt;
-supported for these volumes. They are currently also not covered by
-the storage resource usage limits of a Pod, because that is something
-that kubelet can only enforce for storage that it manages itself.&lt;/p&gt;
 &lt;p&gt;在概念上， CSI 临时卷与 &lt;code&gt;configMap&lt;/code&gt;, &lt;code&gt;downwardAPI&lt;/code&gt; 和 &lt;code&gt;secret&lt;/code&gt; 这些类型的卷相似:
-存储由每个节点本地管理并且在 Pod 被调度到节点上时随同其它本地资源一起创建。&lt;/p&gt;
-&lt;p&gt;Here&amp;rsquo;s an example manifest for a Pod that uses CSI ephemeral storage:&lt;/p&gt;
+存储由每个节点本地管理并且在 Pod 被调度到节点上时随同其它本地资源一起创建。在这种情况下 k8s
+就没有对 Pod 重新调度的概念。卷创建看下来是不可能失败的，否则 Pod 启动就会卡住。 特别是
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/storage-capacity/&#34;&gt;Pod 调度存储容量感知&lt;/a&gt; 对这些卷是不受支持。
+这种不支持目前还包含 Pod 所使用的存储资源的使用限制，因为 kubelet 只能执行那些能自己对自己进行管理存储的管理。
+&lt;blockquote&gt;
+  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;p&gt;以下这个示例配置是一个使用 CSI 临时卷的 Pod:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -7751,13 +7746,16 @@ that kubelet can only enforce for storage that it manages itself.&lt;/p&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;driver&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;inline.storage.kubernetes.io&lt;/span&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;volumeAttributes&lt;/span&gt;:
           &lt;span style=&#34;color:#f92672&#34;&gt;foo&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;bar&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;volumeAttributes&lt;/code&gt; determine what volume is prepared by the
-driver. These attributes are specific to each driver and not
-standardized. See the documentation of each CSI driver for further
-instructions.&lt;/p&gt;
-&lt;p&gt;As a cluster administrator, you can use a &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/pod-security-policy/&#34;&gt;PodSecurityPolicy&lt;/a&gt; to control which CSI drivers can be used in a Pod, specified with the
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubernetes-api/v1.19/#podsecuritypolicyspec-v1beta1-policy&#34;&gt;&lt;code&gt;allowedCSIDrivers&lt;/code&gt; field&lt;/a&gt;.&lt;/p&gt;
-&lt;h3 id=&#34;generic-ephemeral-volumes&#34;&gt;Generic ephemeral volumes&lt;/h3&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;volumeAttributes&lt;/code&gt; 决定驱动需要准备什么卷。 这些属性因驱动的不同而不同，没有标准。 具体配置
+请参阅对应驱动的文档&lt;/p&gt;
+&lt;p&gt;作为一个集群管理员，可能使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/policy/pod-security-policy/&#34;&gt;PodSecurityPolicy&lt;/a&gt;
+Pod 中可以使用哪些 CSI 驱动， 通过
+&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podsecuritypolicyspec-v1beta1-policy&#34;&gt;&lt;code&gt;allowedCSIDrivers&lt;/code&gt; 字段&lt;/a&gt;
+来指定&lt;/p&gt;
+&lt;!--
+### Generic ephemeral volumes
+
 
 
 
@@ -7768,23 +7766,87 @@ instructions.&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;p&gt;This feature requires the &lt;code&gt;GenericEphemeralVolume&lt;/code&gt; &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;feature gate&lt;/a&gt; to be
-enabled. Because this is an alpha feature, it is disabled by default.&lt;/p&gt;
-&lt;p&gt;Generic ephemeral volumes are similar to &lt;code&gt;emptyDir&lt;/code&gt; volumes, just more
-flexible:&lt;/p&gt;
+
+This feature requires the `GenericEphemeralVolume` [feature gate](/docs/reference/command-line-tools-reference/feature-gates/) to be
+enabled. Because this is an alpha feature, it is disabled by default.
+
+Generic ephemeral volumes are similar to `emptyDir` volumes, just more
+flexible:
+- Storage can be local or network-attached.
+- Volumes can have a fixed size that Pods are not able to exceed.
+- Volumes may have some initial data, depending on the driver and
+  parameters.
+- Typical operations on volumes are supported assuming that the driver
+  supports them, including
+  ([snapshotting](/docs/concepts/storage/volume-snapshots/),
+  [cloning](/docs/concepts/storage/volume-pvc-datasource/),
+  [resizing](/docs/concepts/storage/persistent-volumes/#expanding-persistent-volumes-claims),
+  and [storage capacity tracking](/docs/concepts/storage/storage-capacity/).
+
+Example:
+
+```yaml
+kind: Pod
+apiVersion: v1
+metadata:
+  name: my-app
+spec:
+  containers:
+    - name: my-frontend
+      image: busybox
+      volumeMounts:
+      - mountPath: &#34;/scratch&#34;
+        name: scratch-volume
+      command: [ &#34;sleep&#34;, &#34;1000000&#34; ]
+  volumes:
+    - name: scratch-volume
+      ephemeral:
+        volumeClaimTemplate:
+          metadata:
+            labels:
+              type: my-frontend-volume
+          spec:
+            accessModes: [ &#34;ReadWriteOnce&#34; ]
+            storageClassName: &#34;scratch-storage-class&#34;
+            resources:
+              requests:
+                storage: 1Gi
+```
+ --&gt;
+&lt;h3 id=&#34;通用临时卷&#34;&gt;通用临时卷&lt;/h3&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.19 [alpha]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;这个特性需要启用 &lt;code&gt;GenericEphemeralVolume&lt;/code&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;功能阀&lt;/a&gt;
+来开启。 因为这是一个 alpha 特性，默认是关闭的。&lt;/p&gt;
+&lt;p&gt;通用临时卷与 &lt;code&gt;emptyDir&lt;/code&gt; 卷相似，只是更加灵活:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Storage can be local or network-attached.&lt;/li&gt;
-&lt;li&gt;Volumes can have a fixed size that Pods are not able to exceed.&lt;/li&gt;
-&lt;li&gt;Volumes may have some initial data, depending on the driver and
-parameters.&lt;/li&gt;
-&lt;li&gt;Typical operations on volumes are supported assuming that the driver
-supports them, including
-(&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-snapshots/&#34;&gt;snapshotting&lt;/a&gt;,
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-pvc-datasource/&#34;&gt;cloning&lt;/a&gt;,
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/#expanding-persistent-volumes-claims&#34;&gt;resizing&lt;/a&gt;,
-and &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-capacity/&#34;&gt;storage capacity tracking&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;存储可以在本地或网络挂载&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;卷可以有固定容量， Pod 不能使用超限&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;卷可以基于驱动和参数拥有初始数据&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果驱动支持它们也支持对于卷的典型操作，包含
+(&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volume-snapshots/&#34;&gt;快照&lt;/a&gt;,
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volume-pvc-datasource/&#34;&gt;克隆&lt;/a&gt;,
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/persistent-volumes/#expanding-persistent-volumes-claims&#34;&gt;扩容&lt;/a&gt;,
+和 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/storage-capacity/&#34;&gt;存储容量跟踪&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Example:&lt;/p&gt;
+&lt;p&gt;示例:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -7810,86 +7872,174 @@ and &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage
             &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
               &lt;span style=&#34;color:#f92672&#34;&gt;requests&lt;/span&gt;:
                 &lt;span style=&#34;color:#f92672&#34;&gt;storage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1Gi&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;lifecycle-and-persistentvolumeclaim&#34;&gt;Lifecycle and PersistentVolumeClaim&lt;/h3&gt;
-&lt;p&gt;The key design idea is that the
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubernetes-api/v1.19/#ephemeralvolumesource-v1alpha1-core&#34;&gt;parameters for a volume claim&lt;/a&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+### Lifecycle and PersistentVolumeClaim
+
+The key design idea is that the
+[parameters for a volume claim](/docs/reference/generated/kubernetes-api/v1.19/#ephemeralvolumesource-v1alpha1-core)
 are allowed inside a volume source of the Pod. Labels, annotations and
 the whole set of fields for a PersistentVolumeClaim are supported. When such a Pod gets
 created, the ephemeral volume controller then creates an actual PersistentVolumeClaim
 object in the same namespace as the Pod and ensures that the PersistentVolumeClaim
-gets deleted when the Pod gets deleted.&lt;/p&gt;
-&lt;p&gt;That triggers volume binding and/or provisioning, either immediately if
+gets deleted when the Pod gets deleted.
+
+That triggers volume binding and/or provisioning, either immediately if
 the &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/storage-classes&#39; target=&#39;_blank&#39;&gt;StorageClass&lt;span class=&#39;tooltip-text&#39;&gt;StorageClass 为管理员提供了一种描述不同存储类别的方式&lt;/span&gt;
 &lt;/a&gt; uses immediate volume binding or when the Pod is
-tentatively scheduled onto a node (&lt;code&gt;WaitForFirstConsumer&lt;/code&gt; volume
+tentatively scheduled onto a node (`WaitForFirstConsumer` volume
 binding mode). The latter is recommended for generic ephemeral volumes
 because then the scheduler is free to choose a suitable node for
 the Pod. With immediate binding, the scheduler is forced to select a node that has
-access to the volume once it is available.&lt;/p&gt;
-&lt;p&gt;In terms of &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/#owners-and-dependents&#34;&gt;resource ownership&lt;/a&gt;,
+access to the volume once it is available.
+
+In terms of [resource ownership](/docs/concepts/workloads/controllers/garbage-collection/#owners-and-dependents),
 a Pod that has generic ephemeral storage is the owner of the PersistentVolumeClaim(s)
 that provide that ephemeral storage. When the Pod is deleted,
 the Kubernetes garbage collector deletes the PVC, which then usually
 triggers deletion of the volume because the default reclaim policy of
 storage classes is to delete volumes. You can create quasi-ephemeral local storage
-using a StorageClass with a reclaim policy of &lt;code&gt;retain&lt;/code&gt;: the storage outlives the Pod,
-and in this case you need to ensure that volume clean up happens separately.&lt;/p&gt;
-&lt;p&gt;While these PVCs exist, they can be used like any other PVC. In
+using a StorageClass with a reclaim policy of `retain`: the storage outlives the Pod,
+and in this case you need to ensure that volume clean up happens separately.
+
+While these PVCs exist, they can be used like any other PVC. In
 particular, they can be referenced as data source in volume cloning or
 snapshotting. The PVC object also holds the current status of the
-volume.&lt;/p&gt;
-&lt;h3 id=&#34;persistentvolumeclaim-naming&#34;&gt;PersistentVolumeClaim naming&lt;/h3&gt;
-&lt;p&gt;Naming of the automatically created PVCs is deterministic: the name is
-a combination of Pod name and volume name, with a hyphen (&lt;code&gt;-&lt;/code&gt;) in the
+volume.
+ --&gt;
+&lt;h3 id=&#34;生命周期-和-persistentvolumeclaim&#34;&gt;生命周期 和 PersistentVolumeClaim&lt;/h3&gt;
+&lt;p&gt;该设计主旨就是
+&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#ephemeralvolumesource-v1alpha1-core&#34;&gt;卷申领的参数&lt;/a&gt;
+可以在 Pod 的卷源中。 标签，注解，PersistentVolumeClaim 的一堆字段都是支持的。 当这样一个
+Pod 被创建时， 临时卷控制器实际是创建一个与 Pod 在同一个命名空间的 PersistentVolumeClaim，
+并且确保这个 PersistentVolumeClaim 在 Pod 删除时也会被删除。&lt;/p&gt;
+&lt;p&gt;在触发卷绑定和/或供应时，可能是即时的，如果
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/storage-classes&#39; target=&#39;_blank&#39;&gt;StorageClass&lt;span class=&#39;tooltip-text&#39;&gt;StorageClass 为管理员提供了一种描述不同存储类别的方式&lt;/span&gt;
+&lt;/a&gt;
+使用的绑定模式是即时绑定， 也可能是在 Pod 调度到节点时(&lt;code&gt;WaitForFirstConsumer&lt;/code&gt; 卷绑定模式)。
+对于通用临时卷推荐使用后者，因为这样调度器可以自由的选择合适的节点。 如果使用即时绑定，调度器就会
+限制在卷变为可用时，可以访问到卷的那些节点中选择一个。&lt;/p&gt;
+&lt;p&gt;在术语
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/#owners-and-dependents&#34;&gt;资源所有权&lt;/a&gt;,
+中， 拥有这个通用临时存储的 Pod 是这个(些)提供这些临时存储的 PersistentVolumeClaim 的拥有者。
+当 Pod 被删除后， k8s 垃圾回收器就会删除 PVC，通常这就会触发卷的删除，因为 StorageClass
+默认的回收策略就是删除卷。 也可以使用回收策略为保留(&lt;code&gt;retain&lt;/code&gt;)的 StorageClass 创建一个准临时本地存储：
+存储会比使用它的 Pod 存在时间更久， 在这种情况下需要保证独立执行卷清理工作。&lt;/p&gt;
+&lt;p&gt;当这种 PVC 存在时，它们可以当做任意其它的 PVC 来用。 特别是它们可以被用作克隆或快照所引用的数据
+源。 这些 PVC 对象也包含了卷的当前状态。&lt;/p&gt;
+&lt;!--
+### PersistentVolumeClaim naming
+
+Naming of the automatically created PVCs is deterministic: the name is
+a combination of Pod name and volume name, with a hyphen (`-`) in the
 middle. In the example above, the PVC name will be
-&lt;code&gt;my-app-scratch-volume&lt;/code&gt;.  This deterministic naming makes it easier to
+`my-app-scratch-volume`.  This deterministic naming makes it easier to
 interact with the PVC because one does not have to search for it once
-the Pod name and volume name are known.&lt;/p&gt;
-&lt;p&gt;The deterministic naming also introduces a potential conflict between different
-Pods (a Pod &amp;ldquo;pod-a&amp;rdquo; with volume &amp;ldquo;scratch&amp;rdquo; and another Pod with name
-&amp;ldquo;pod&amp;rdquo; and volume &amp;ldquo;a-scratch&amp;rdquo; both end up with the same PVC name
-&amp;ldquo;pod-a-scratch&amp;rdquo;) and between Pods and manually created PVCs.&lt;/p&gt;
-&lt;p&gt;Such conflicts are detected: a PVC is only used for an ephemeral
+the Pod name and volume name are known.
+
+The deterministic naming also introduces a potential conflict between different
+Pods (a Pod &#34;pod-a&#34; with volume &#34;scratch&#34; and another Pod with name
+&#34;pod&#34; and volume &#34;a-scratch&#34; both end up with the same PVC name
+&#34;pod-a-scratch&#34;) and between Pods and manually created PVCs.
+
+Such conflicts are detected: a PVC is only used for an ephemeral
 volume if it was created for the Pod. This check is based on the
 ownership relationship. An existing PVC is not overwritten or
 modified. But this does not resolve the conflict because without the
-right PVC, the Pod cannot start.&lt;/p&gt;
+right PVC, the Pod cannot start.
+
 &lt;blockquote class=&#34;caution&#34;&gt;
   &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; Take care when naming Pods and volumes inside the
 same namespace, so that these conflicts can&amp;rsquo;t occur.&lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;security&#34;&gt;Security&lt;/h3&gt;
-&lt;p&gt;Enabling the GenericEphemeralVolume feature allows users to create
+ --&gt;
+&lt;h3 id=&#34;persistentvolumeclaim-命名&#34;&gt;PersistentVolumeClaim 命名&lt;/h3&gt;
+&lt;p&gt;自动创建的 PVC 的名称的组成规则为: Pod 名称和 卷名称的组合，中间通过连字符(&lt;code&gt;-&lt;/code&gt;)连接。
+在上面的示例中， PVC 的名称就是 &lt;code&gt;my-app-scratch-volume&lt;/code&gt;. 这种决定名称的方式可以简单与
+PVC 的交互， 因为当知道 Pod 名称和卷名称时就相当于直接知道了 PVC 的名称，没有必要再查找。&lt;/p&gt;
+&lt;p&gt;这种命名方式也会在不同 Pod 间引入潜在的命名冲突(一个名称为 &amp;ldquo;pod-a&amp;rdquo; 的 Pod 有一个名称为 &amp;ldquo;scratch&amp;rdquo;
+与一个名称为 &amp;ldquo;pod&amp;rdquo; 的Pod 有一个名称为 &amp;ldquo;a-scratch&amp;rdquo; 卷，最终都会使用同一个 PVC 名称， 就是
+&amp;ldquo;pod-a-scratch&amp;rdquo;) 并且与手动创建 PVC 的 Pod 也有类似风险。&lt;/p&gt;
+&lt;p&gt;这类冲突的发现机制: 如果一个 PVC 是为一个 Pod 创建的它就只能用作一个临时卷。 这种检查是基于
+所有权关系的。 一个存储的 PVC 是不能被覆盖或修改的。 但是这样并不能解决冲突，因为没正确的 PVC，
+Pod 是不能启动的。&lt;/p&gt;
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 在同一个命名空间计划好 Pod 和 卷的命名就能避免这种冲突的发生。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;!--
+### Security
+
+Enabling the GenericEphemeralVolume feature allows users to create
 PVCs indirectly if they can create Pods, even if they do not have
 permission to create PVCs directly. Cluster administrators must be
 aware of this. If this does not fit their security model, they have
-two choices:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Explicitly disable the feature through the feature gate, to avoid
-being surprised when some future Kubernetes version enables it
-by default.&lt;/li&gt;
-&lt;li&gt;Use a &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/pod-security-policy/&#34;&gt;Pod Security
-Policy&lt;/a&gt; where the
-&lt;code&gt;volumes&lt;/code&gt; list does not contain the &lt;code&gt;ephemeral&lt;/code&gt; volume type.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The normal namespace quota for PVCs in a namespace still applies, so
+two choices:
+- Explicitly disable the feature through the feature gate, to avoid
+  being surprised when some future Kubernetes version enables it
+  by default.
+- Use a [Pod Security
+  Policy](/docs/concepts/policy/pod-security-policy/) where the
+  `volumes` list does not contain the `ephemeral` volume type.
+
+The normal namespace quota for PVCs in a namespace still applies, so
 even if users are allowed to use this new mechanism, they cannot use
-it to circumvent other policies.&lt;/p&gt;
-&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
-&lt;h3 id=&#34;ephemeral-volumes-managed-by-kubelet&#34;&gt;Ephemeral volumes managed by kubelet&lt;/h3&gt;
-&lt;p&gt;See &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/manage-resources-containers/#local-ephemeral-storage&#34;&gt;local ephemeral storage&lt;/a&gt;.&lt;/p&gt;
-&lt;h3 id=&#34;csi-ephemeral-volumes&#34;&gt;CSI ephemeral volumes&lt;/h3&gt;
+it to circumvent other policies.
+ --&gt;
+&lt;h3 id=&#34;安全&#34;&gt;安全&lt;/h3&gt;
+&lt;p&gt;启用 GenericEphemeralVolume 特性允许用户在创建 Pod 时间接地创建 PVC， 即便这些用户有直接
+创建 PVC 的权限. 集群管理员一定要知道这点。 如果这不符合需要的安全模型，有两种选择:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;For more information on the design, see the &lt;a href=&#34;https://github.com/kubernetes/enhancements/blob/ad6021b3d61a49040a3f835e12c8bb5424db2bbb/keps/sig-storage/20190122-csi-inline-volumes.md&#34;&gt;Ephemeral Inline CSI
-volumes KEP&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;For more information on further development of this feature, see the &lt;a href=&#34;https://github.com/kubernetes/enhancements/issues/596&#34;&gt;enhancement tracking issue #596&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;通过功能阀显示地禁用这个特性，防止如果在将来的 k8s 版本中默认开启了该特性而被吓到。&lt;/li&gt;
+&lt;li&gt;使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/policy/pod-security-policy/&#34;&gt;Pod 安全策略&lt;/a&gt; 保证
+&lt;code&gt;volumes&lt;/code&gt; 列表中没有 &lt;code&gt;ephemeral&lt;/code&gt; 这个卷类型。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;generic-ephemeral-volumes-1&#34;&gt;Generic ephemeral volumes&lt;/h3&gt;
+&lt;p&gt;常规的命名空间的限额对于这个命名空间中的 PVC 依然是起作用的，所以即便允许用户使用这个新的机制，
+也不可能使用这个特性规避其它的策略。&lt;/p&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;!--
+### Ephemeral volumes managed by kubelet
+
+See [local ephemeral storage](/docs/concepts/configuration/manage-resources-containers/#local-ephemeral-storage).
+ --&gt;
+&lt;h3 id=&#34;由-kubelet-管理的临时卷&#34;&gt;由 kubelet 管理的临时卷&lt;/h3&gt;
+&lt;p&gt;见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/manage-resources-containers/#local-ephemeral-storage&#34;&gt;本地临时存储&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+### CSI ephemeral volumes
+
+- For more information on the design, see the [Ephemeral Inline CSI
+  volumes KEP](https://github.com/kubernetes/enhancements/blob/ad6021b3d61a49040a3f835e12c8bb5424db2bbb/keps/sig-storage/20190122-csi-inline-volumes.md).
+- For more information on further development of this feature, see the [enhancement tracking issue #596](https://github.com/kubernetes/enhancements/issues/596).
+ --&gt;
+&lt;h3 id=&#34;csi-临时卷&#34;&gt;CSI 临时卷&lt;/h3&gt;
 &lt;ul&gt;
-&lt;li&gt;For more information on the design, see the
-&lt;a href=&#34;https://github.com/kubernetes/enhancements/blob/master/keps/sig-storage/1698-generic-ephemeral-volumes/README.md&#34;&gt;Generic ephemeral inline volumes KEP&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;For more information on further development of this feature, see the &lt;a href=&#34;https://github.com/kubernetes/enhancements/issues/1698&#34;&gt;enhancement tracking issue #1698&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;要了解更多设计上的信息，见
+&lt;a href=&#34;https://github.com/kubernetes/enhancements/blob/ad6021b3d61a49040a3f835e12c8bb5424db2bbb/keps/sig-storage/20190122-csi-inline-volumes.md&#34;&gt;Ephemeral Inline CSI volumes KEP&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;要了解该功能的未来开发情况见
+&lt;a href=&#34;https://github.com/kubernetes/enhancements/issues/596&#34;&gt;enhancement tracking issue #596&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+### Generic ephemeral volumes
+
+- For more information on the design, see the
+[Generic ephemeral inline volumes KEP](https://github.com/kubernetes/enhancements/blob/master/keps/sig-storage/1698-generic-ephemeral-volumes/README.md).
+- For more information on further development of this feature, see the [enhancement tracking issue #1698](https://github.com/kubernetes/enhancements/issues/1698).
+ --&gt;
+&lt;h3 id=&#34;通用临时卷-1&#34;&gt;通用临时卷&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;要了解更多设计上的信息，见
+&lt;a href=&#34;https://github.com/kubernetes/enhancements/blob/master/keps/sig-storage/1698-generic-ephemeral-volumes/README.md&#34;&gt;Generic ephemeral inline volumes KEP&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;要了解该功能的未来开发情况见
+&lt;a href=&#34;https://github.com/kubernetes/enhancements/issues/1698&#34;&gt;enhancement tracking issue #1698&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>
