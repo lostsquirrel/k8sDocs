@@ -94,12 +94,12 @@ is managed by kubelet, or injecting different data.
 ### 临时卷的类型
 
 k8s 支持几种不同类型的临时卷用于不同目的:
-- [emptyDir](/docs/concepts/storage/volumes/#emptydir): 在 Pod 启动时是空的，来自
+- [emptyDir](/k8sDocs/docs/concepts/storage/volumes/#emptydir): 在 Pod 启动时是空的，来自
   kubelet 基础目录的本地存储(通常是系统盘)或内存
 
-- [configMap](/docs/concepts/storage/volumes/#configmap),
-  [downwardAPI](/docs/concepts/storage/volumes/#downwardapi),
-  [secret](/docs/concepts/storage/volumes/#secret): 注入不同类型的 k8s 数据到 Pod 中
+- [configMap](/k8sDocs/docs/concepts/storage/volumes/#configmap),
+  [downwardAPI](/k8sDocs/docs/concepts/storage/volumes/#downwardapi),
+  [secret](/k8sDocs/docs/concepts/storage/volumes/#secret): 注入不同类型的 k8s 数据到 Pod 中
 
 - [CSI 临时卷](#csi-ephemeral-volumes): 与上一个类型相似， 但由特殊的
   [CSI 驱动](https://github.com/container-storage-interface/spec/blob/master/spec.md)
@@ -108,7 +108,7 @@ k8s 支持几种不同类型的临时卷用于不同目的:
 - [通用临时卷](#generic-ephemeral-volumes)， 可以由所有可以支持持久化卷(PV)的存储驱动提供
 
 `emptyDir`, `configMap`, `downwardAPI`, `secret`  是以
-[本地临时卷](/docs/concepts/configuration/manage-resources-containers/#local-ephemeral-storage)
+[本地临时卷](/k8sDocs/docs/concepts/configuration/manage-resources-containers/#local-ephemeral-storage)
 提供。
 它们由每个节点上的 kubelet 管理。
 
@@ -177,14 +177,12 @@ As a cluster administrator, you can use a [PodSecurityPolicy](/docs/concepts/pol
 [`allowedCSIDrivers` field](/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#podsecuritypolicyspec-v1beta1-policy).
  -->
 
-### CSI 临时卷
+### CSI 临时卷 {#csi-ephemeral-volumes}
 
 {{< feature-state for_k8s_version="v1.16" state="beta" >}}
 
-This feature requires the `CSIInlineVolume` [feature gate](/docs/reference/command-line-tools-reference/feature-gates/) to be enabled. It
-is enabled by default starting with Kubernetes 1.16.
 这个特性需要启用 `CSIInlineVolume`
-[功能阀](/docs/reference/command-line-tools-reference/feature-gates/)。
+[功能阀](https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)。
 从 k8s v1.16 开始该功能默认是开启的。
 
 {{< note >}}
@@ -193,21 +191,14 @@ CSI 临时卷只被一部分 CSI 驱动支持。 这个 k8s CSI
 中显示了哪些驱动支持临时卷。
 {{< /note >}}
 
-Conceptually, CSI ephemeral volumes are similar to `configMap`,
-`downwardAPI` and `secret` volume types: the storage is managed locally on each
- node and is created together with other local resources after a Pod has been
-scheduled onto a node. Kubernetes has no concept of rescheduling Pods
-anymore at this stage. Volume creation has to be unlikely to fail,
-otherwise Pod startup gets stuck. In particular, [storage capacity
-aware Pod scheduling](/docs/concepts/storage/storage-capacity/) is *not*
-supported for these volumes. They are currently also not covered by
-the storage resource usage limits of a Pod, because that is something
-that kubelet can only enforce for storage that it manages itself.
-
 在概念上， CSI 临时卷与 `configMap`, `downwardAPI` 和 `secret` 这些类型的卷相似:
-存储由每个节点本地管理并且在 Pod 被调度到节点上时随同其它本地资源一起创建。
+存储由每个节点本地管理并且在 Pod 被调度到节点上时随同其它本地资源一起创建。在这种情况下 k8s
+就没有对 Pod 重新调度的概念。卷创建看下来是不可能失败的，否则 Pod 启动就会卡住。 特别是
+[Pod 调度存储容量感知](/k8sDocs/docs/concepts/storage/storage-capacity/) 对这些卷是不受支持。
+这种不支持目前还包含 Pod 所使用的存储资源的使用限制，因为 kubelet 只能执行那些能自己对自己进行管理存储的管理。
+{{<todo-optimize >}}
 
-Here's an example manifest for a Pod that uses CSI ephemeral storage:
+以下这个示例配置是一个使用 CSI 临时卷的 Pod:
 
 ```yaml
 kind: Pod
@@ -230,14 +221,15 @@ spec:
           foo: bar
 ```
 
-The `volumeAttributes` determine what volume is prepared by the
-driver. These attributes are specific to each driver and not
-standardized. See the documentation of each CSI driver for further
-instructions.
+`volumeAttributes` 决定驱动需要准备什么卷。 这些属性因驱动的不同而不同，没有标准。 具体配置
+请参阅对应驱动的文档
 
-As a cluster administrator, you can use a [PodSecurityPolicy](/docs/concepts/policy/pod-security-policy/) to control which CSI drivers can be used in a Pod, specified with the
-[`allowedCSIDrivers` field](/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#podsecuritypolicyspec-v1beta1-policy).
-
+作为一个集群管理员，可能使用
+[PodSecurityPolicy](/k8sDocs/docs/concepts/policy/pod-security-policy/)
+Pod 中可以使用哪些 CSI 驱动， 通过
+[`allowedCSIDrivers` 字段](https://kubernetes.io/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#podsecuritypolicyspec-v1beta1-policy)
+来指定
+<!--
 ### Generic ephemeral volumes
 
 {{< feature-state for_k8s_version="v1.19" state="alpha" >}}
@@ -287,7 +279,60 @@ spec:
               requests:
                 storage: 1Gi
 ```
+ -->
 
+### 通用临时卷
+
+{{< feature-state for_k8s_version="v1.19" state="alpha" >}}
+
+这个特性需要启用 `GenericEphemeralVolume`
+[功能阀](https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)
+来开启。 因为这是一个 alpha 特性，默认是关闭的。
+
+通用临时卷与 `emptyDir` 卷相似，只是更加灵活:
+
+- 存储可以在本地或网络挂载
+
+- 卷可以有固定容量， Pod 不能使用超限
+
+- 卷可以基于驱动和参数拥有初始数据
+
+- 如果驱动支持它们也支持对于卷的典型操作，包含
+  ([快照](/k8sDocs/docs/concepts/storage/volume-snapshots/),
+  [克隆](/k8sDocs/docs/concepts/storage/volume-pvc-datasource/),
+  [扩容](/k8sDocs/docs/concepts/storage/persistent-volumes/#expanding-persistent-volumes-claims),
+  和 [存储容量跟踪](/k8sDocs/docs/concepts/storage/storage-capacity/).
+
+示例:
+
+```yaml
+kind: Pod
+apiVersion: v1
+metadata:
+  name: my-app
+spec:
+  containers:
+    - name: my-frontend
+      image: busybox
+      volumeMounts:
+      - mountPath: "/scratch"
+        name: scratch-volume
+      command: [ "sleep", "1000000" ]
+  volumes:
+    - name: scratch-volume
+      ephemeral:
+        volumeClaimTemplate:
+          metadata:
+            labels:
+              type: my-frontend-volume
+          spec:
+            accessModes: [ "ReadWriteOnce" ]
+            storageClassName: "scratch-storage-class"
+            resources:
+              requests:
+                storage: 1Gi
+```
+<!--
 ### Lifecycle and PersistentVolumeClaim
 
 The key design idea is that the
@@ -319,7 +364,33 @@ While these PVCs exist, they can be used like any other PVC. In
 particular, they can be referenced as data source in volume cloning or
 snapshotting. The PVC object also holds the current status of the
 volume.
+ -->
 
+### 生命周期 和 PersistentVolumeClaim
+
+该设计主旨就是
+[卷申领的参数](https://kubernetes.io/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#ephemeralvolumesource-v1alpha1-core)
+可以在 Pod 的卷源中。 标签，注解，PersistentVolumeClaim 的一堆字段都是支持的。 当这样一个
+Pod 被创建时， 临时卷控制器实际是创建一个与 Pod 在同一个命名空间的 PersistentVolumeClaim，
+并且确保这个 PersistentVolumeClaim 在 Pod 删除时也会被删除。
+
+在触发卷绑定和/或供应时，可能是即时的，如果
+{{< glossary_tooltip text="StorageClass" term_id="storage-class" >}}
+使用的绑定模式是即时绑定， 也可能是在 Pod 调度到节点时(`WaitForFirstConsumer` 卷绑定模式)。
+对于通用临时卷推荐使用后者，因为这样调度器可以自由的选择合适的节点。 如果使用即时绑定，调度器就会
+限制在卷变为可用时，可以访问到卷的那些节点中选择一个。
+
+在术语
+[资源所有权](/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/#owners-and-dependents),
+中， 拥有这个通用临时存储的 Pod 是这个(些)提供这些临时存储的 PersistentVolumeClaim 的拥有者。
+当 Pod 被删除后， k8s 垃圾回收器就会删除 PVC，通常这就会触发卷的删除，因为 StorageClass
+默认的回收策略就是删除卷。 也可以使用回收策略为保留(`retain`)的 StorageClass 创建一个准临时本地存储：
+存储会比使用它的 Pod 存在时间更久， 在这种情况下需要保证独立执行卷清理工作。
+
+当这种 PVC 存在时，它们可以当做任意其它的 PVC 来用。 特别是它们可以被用作克隆或快照所引用的数据
+源。 这些 PVC 对象也包含了卷的当前状态。
+
+<!--
 ### PersistentVolumeClaim naming
 
 Naming of the automatically created PVCs is deterministic: the name is
@@ -344,7 +415,25 @@ right PVC, the Pod cannot start.
 Take care when naming Pods and volumes inside the
 same namespace, so that these conflicts can't occur.
 {{< /caution >}}
+ -->
+### PersistentVolumeClaim 命名
 
+自动创建的 PVC 的名称的组成规则为: Pod 名称和 卷名称的组合，中间通过连字符(`-`)连接。
+在上面的示例中， PVC 的名称就是 `my-app-scratch-volume`. 这种决定名称的方式可以简单与
+PVC 的交互， 因为当知道 Pod 名称和卷名称时就相当于直接知道了 PVC 的名称，没有必要再查找。
+
+这种命名方式也会在不同 Pod 间引入潜在的命名冲突(一个名称为 "pod-a" 的 Pod 有一个名称为 "scratch"
+与一个名称为 "pod" 的Pod 有一个名称为 "a-scratch" 卷，最终都会使用同一个 PVC 名称， 就是
+"pod-a-scratch") 并且与手动创建 PVC 的 Pod 也有类似风险。
+
+这类冲突的发现机制: 如果一个 PVC 是为一个 Pod 创建的它就只能用作一个临时卷。 这种检查是基于
+所有权关系的。 一个存储的 PVC 是不能被覆盖或修改的。 但是这样并不能解决冲突，因为没正确的 PVC，
+Pod 是不能启动的。
+
+{{< caution >}}
+在同一个命名空间计划好 Pod 和 卷的命名就能避免这种冲突的发生。
+{{< /caution >}}
+<!--
 ### Security
 
 Enabling the GenericEphemeralVolume feature allows users to create
@@ -362,21 +451,56 @@ two choices:
 The normal namespace quota for PVCs in a namespace still applies, so
 even if users are allowed to use this new mechanism, they cannot use
 it to circumvent other policies.
+ -->
+
+### 安全
+
+启用 GenericEphemeralVolume 特性允许用户在创建 Pod 时间接地创建 PVC， 即便这些用户有直接
+创建 PVC 的权限. 集群管理员一定要知道这点。 如果这不符合需要的安全模型，有两种选择:
+- 通过功能阀显示地禁用这个特性，防止如果在将来的 k8s 版本中默认开启了该特性而被吓到。
+- 使用
+  [Pod 安全策略](/k8sDocs/docs/concepts/policy/pod-security-policy/) 保证
+  `volumes` 列表中没有 `ephemeral` 这个卷类型。
+
+常规的命名空间的限额对于这个命名空间中的 PVC 依然是起作用的，所以即便允许用户使用这个新的机制，
+也不可能使用这个特性规避其它的策略。
+
 
 ## {{% heading "whatsnext" %}}
-
+<!--
 ### Ephemeral volumes managed by kubelet
 
 See [local ephemeral storage](/docs/concepts/configuration/manage-resources-containers/#local-ephemeral-storage).
+ -->
+### 由 kubelet 管理的临时卷
 
+见 [本地临时存储](/k8sDocs/docs/concepts/configuration/manage-resources-containers/#local-ephemeral-storage).
+<!--
 ### CSI ephemeral volumes
 
 - For more information on the design, see the [Ephemeral Inline CSI
   volumes KEP](https://github.com/kubernetes/enhancements/blob/ad6021b3d61a49040a3f835e12c8bb5424db2bbb/keps/sig-storage/20190122-csi-inline-volumes.md).
 - For more information on further development of this feature, see the [enhancement tracking issue #596](https://github.com/kubernetes/enhancements/issues/596).
+ -->
 
+### CSI 临时卷
+
+- 要了解更多设计上的信息，见
+  [Ephemeral Inline CSI volumes KEP](https://github.com/kubernetes/enhancements/blob/ad6021b3d61a49040a3f835e12c8bb5424db2bbb/keps/sig-storage/20190122-csi-inline-volumes.md).
+
+- 要了解该功能的未来开发情况见
+   [enhancement tracking issue #596](https://github.com/kubernetes/enhancements/issues/596).
+<!--
 ### Generic ephemeral volumes
 
 - For more information on the design, see the
 [Generic ephemeral inline volumes KEP](https://github.com/kubernetes/enhancements/blob/master/keps/sig-storage/1698-generic-ephemeral-volumes/README.md).
 - For more information on further development of this feature, see the [enhancement tracking issue #1698](https://github.com/kubernetes/enhancements/issues/1698).
+ -->
+### 通用临时卷
+
+- 要了解更多设计上的信息，见
+  [Generic ephemeral inline volumes KEP](https://github.com/kubernetes/enhancements/blob/master/keps/sig-storage/1698-generic-ephemeral-volumes/README.md).
+
+- 要了解该功能的未来开发情况见
+  [enhancement tracking issue #1698](https://github.com/kubernetes/enhancements/issues/1698).
