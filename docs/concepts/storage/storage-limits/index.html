@@ -11,22 +11,27 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/index.xml">
 <link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
 <link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
 <link rel="manifest" href="/k8sDocs/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/k8sDocs/images/kubernetes-192x192.png">
 
-<title>集群架构 | Kubernetes</title><meta property="og:title" content="集群架构" />
-<meta property="og:description" content="生产级别的容器编排系统" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/" />
-<meta property="og:site_name" content="Kubernetes" />
-<meta itemprop="name" content="集群架构">
-<meta itemprop="description" content="生产级别的容器编排系统">
+<title>节点级别的卷限制 | Kubernetes</title><meta property="og:title" content="节点级别的卷限制" />
+<meta property="og:description" content="本文主要介绍在各家云提供商上每个节点能够挂载的卷的最大数量。 像 Google, Amazon, 和 Microsoft 这样典型的云提供上对于每个节点上能挂载的卷数量是有限制的。 让 k8s 遵守这个" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-limits/" />
+<meta property="article:modified_time" content="2020-12-18T17:54:04+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="节点级别的卷限制">
+<meta itemprop="description" content="本文主要介绍在各家云提供商上每个节点能够挂载的卷的最大数量。 像 Google, Amazon, 和 Microsoft 这样典型的云提供上对于每个节点上能挂载的卷数量是有限制的。 让 k8s 遵守这个">
+<meta itemprop="dateModified" content="2020-12-18T17:54:04+08:00" />
+<meta itemprop="wordCount" content="900">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="集群架构"/>
-<meta name="twitter:description" content="生产级别的容器编排系统"/>
+<meta name="twitter:title" content="节点级别的卷限制"/>
+<meta name="twitter:description" content="本文主要介绍在各家云提供商上每个节点能够挂载的卷的最大数量。 像 Google, Amazon, 和 Microsoft 这样典型的云提供上对于每个节点上能挂载的卷数量是有限制的。 让 k8s 遵守这个"/>
 
 
 
@@ -70,12 +75,12 @@
 
 
 
-<meta name="description" content="">
-<meta property="og:description" content="">
-<meta name="twitter:description" content="">
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/">
-<meta property="og:title" content="集群架构">
-<meta name="twitter:title" content="集群架构">
+<meta name="description" content="本文主要介绍在各家云提供商上每个节点能够挂载的卷的最大数量。 像 Google, Amazon, 和 Microsoft 这样典型的云提供上对于每个节点上能挂载的卷数量是有限制的。 让 k8s 遵守这个">
+<meta property="og:description" content="本文主要介绍在各家云提供商上每个节点能够挂载的卷的最大数量。 像 Google, Amazon, 和 Microsoft 这样典型的云提供上对于每个节点上能挂载的卷数量是有限制的。 让 k8s 遵守这个">
+<meta name="twitter:description" content="本文主要介绍在各家云提供商上每个节点能够挂载的卷的最大数量。 像 Google, Amazon, 和 Microsoft 这样典型的云提供上对于每个节点上能挂载的卷数量是有限制的。 让 k8s 遵守这个">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-limits/">
+<meta property="og:title" content="节点级别的卷限制">
+<meta name="twitter:title" content="节点级别的卷限制">
 <meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
 
 <meta name="twitter:image:alt" content="Kubernetes">
@@ -89,9 +94,9 @@
 <script src="/k8sDocs/js/script.js"></script>
 
 
-    <title>集群架构 | Kubernetes</title>
+    <title>节点级别的卷限制 | Kubernetes</title>
   </head>
-  <body class="td-section td-documentation">
+  <body class="td-page td-documentation">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
@@ -299,10 +304,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/architecture/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">集群架构</a>
+    <a  href="/k8sDocs/docs/concepts/architecture/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">集群架构</a>
   </li>
   <ul>
-    <li class="collapse show" id="k8sdocsdocsconceptsarchitecture">
+    <li class="collapse " id="k8sdocsdocsconceptsarchitecture">
       
       
       
@@ -635,10 +640,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
+    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
   </li>
   <ul>
-    <li class="collapse " id="k8sdocsdocsconceptsstorage">
+    <li class="collapse show" id="k8sdocsdocsconceptsstorage">
       
       
       
@@ -699,7 +704,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragestorage-limits" href="/k8sDocs/docs/concepts/storage/storage-limits/">节点级别的卷限制</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsstoragestorage-limits" href="/k8sDocs/docs/concepts/storage/storage-limits/">节点级别的卷限制</a>
       
       
     </li>
@@ -739,6 +744,9 @@
 
 
 
+
+
+
 <li class="breadcrumb-item" >
 	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
 </li>
@@ -753,8 +761,15 @@
 
 
 
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/">存储(Storage)</a>
+</li>
+
+
+
+
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/">集群架构</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-limits/">节点级别的卷限制</a>
 </li>
 
 	</ol>
@@ -764,184 +779,207 @@
               
             
               
-	<div class="td-content">
-		
-		
-			
-				
-			
-		
-		
-			<h1>集群架构</h1>
-			
-		
-		<div class="section-index">
+    <div class="td-content">
     
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/architecture/nodes/">节点</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/architecture/control-plane-node-communication/">控制中心与节点的通信</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/architecture/controller/">控制器</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/architecture/cloud-controller/">Cloud Controller Manager</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-    
+<p>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/storage/storage-limits.md" id="editPageButton" target="_blank" data-proofer-ignore>
+    Edit This Page
+  </a>
+</p>
+
+  <h1>节点级别的卷限制</h1>
+  
+  
+
+<!--
+---
+reviewers:
+- jsafrane
+- saad-ali
+- thockin
+- msau42
+title: Node-specific Volume Limits
+content_type: concept
+---
+ -->
+<!-- overview -->
+<!--
+This page describes the maximum number of volumes that can be attached
+to a Node for various cloud providers.
+
+Cloud providers like Google, Amazon, and Microsoft typically have a limit on
+how many volumes can be attached to a Node. It is important for Kubernetes to
+respect those limits. Otherwise, Pods scheduled on a Node could get stuck
+waiting for volumes to attach.
+-->
+<p>本文主要介绍在各家云提供商上每个节点能够挂载的卷的最大数量。
+像 Google, Amazon, 和 Microsoft 这样典型的云提供上对于每个节点上能挂载的卷数量是有限制的。
+让 k8s 遵守这个限制是比较重要的。 否则，Pod 在调度到一个节点后就会卡在等待卷挂载上。</p>
+<!-- body -->
+<!--
+## Kubernetes default limits
+
+The Kubernetes scheduler has default limits on the number of volumes
+that can be attached to a Node:
+
+<table>
+  <tr><th>Cloud service</th><th>Maximum volumes per Node</th></tr>
+  <tr><td><a href="https://aws.amazon.com/ebs/">Amazon Elastic Block Store (EBS)</a></td><td>39</td></tr>
+  <tr><td><a href="https://cloud.google.com/persistent-disk/">Google Persistent Disk</a></td><td>16</td></tr>
+  <tr><td><a href="https://azure.microsoft.com/en-us/services/storage/main-disks/">Microsoft Azure Disk Storage</a></td><td>16</td></tr>
+</table>
+ -->
+<h2 id="k8s-默认的限制">k8s 默认的限制</h2>
+<p>k8s 调度器对每个节点上能够挂载的卷的数量是有限制的:</p>
+<table>
+<thead>
+<tr>
+<th>云服务</th>
+<th>每个节点挂载卷的最大值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://aws.amazon.com/ebs/">Amazon Elastic Block Store (EBS)</a></td>
+<td>39</td>
+</tr>
+<tr>
+<td><a href="https://cloud.google.com/persistent-disk/">Google Persistent Disk</a></td>
+<td>16</td>
+</tr>
+<tr>
+<td><a href="https://azure.microsoft.com/en-us/services/storage/main-disks/">Microsoft Azure Disk Storage</a></td>
+<td>16</td>
+</tr>
+</tbody>
+</table>
+<!--
+## Custom limits
+
+You can change these limits by setting the value of the
+`KUBE_MAX_PD_VOLS` environment variable, and then starting the scheduler.
+CSI drivers might have a different procedure, see their documentation
+on how to customize their limits.
+
+Use caution if you set a limit that is higher than the default limit. Consult
+the cloud provider's documentation to make sure that Nodes can actually support
+the limit you set.
+
+The limit applies to the entire cluster, so it affects all Nodes.
+-->
+<!--
+## Custom limits
+
+You can change these limits by setting the value of the
+`KUBE_MAX_PD_VOLS` environment variable, and then starting the scheduler.
+CSI drivers might have a different procedure, see their documentation
+on how to customize their limits.
+
+Use caution if you set a limit that is higher than the default limit. Consult
+the cloud provider's documentation to make sure that Nodes can actually support
+the limit you set.
+
+The limit applies to the entire cluster, so it affects all Nodes.
+ -->
+<h2 id="自定义限制">自定义限制</h2>
+<p>可以通过设置 <code>KUBE_MAX_PD_VOLS</code> 环境变量的值来修改这个限制， 修改后重新启动调度器。
+CSI 驱动可能需要不同的步骤，具体怎么修改这个自定义配置见他们的文档。</p>
+<p>要小心设置了一个比默认值大的限制。 参照云提供商的文档来决定节点实际支持的限制再设置这个值。</p>
+<p>这个限制会应用到整个集群，所以它会影响所有的节点。</p>
+<!--
+## Dynamic volume limits
+
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.17 [stable]</code>
 </div>
 
-	</div>
+
+
+Dynamic volume limits are supported for following volume types.
+
+- Amazon EBS
+- Google Persistent Disk
+- Azure Disk
+- CSI
+
+For volumes managed by in-tree volume plugins, Kubernetes automatically determines the Node
+type and enforces the appropriate maximum number of volumes for the node. For example:
+
+* On
+<a href="https://cloud.google.com/compute/">Google Compute Engine</a>,
+up to 127 volumes can be attached to a node, [depending on the node
+type](https://cloud.google.com/compute/docs/disks/#pdnumberlimits).
+
+* For Amazon EBS disks on M5,C5,R5,T3 and Z1D instance types, Kubernetes allows only 25
+volumes to be attached to a Node. For other instance types on
+<a href="https://aws.amazon.com/ec2/">Amazon Elastic Compute Cloud (EC2)</a>,
+Kubernetes allows 39 volumes to be attached to a Node.
+
+* On Azure, up to 64 disks can be attached to a node, depending on the node type. For more details, refer to [Sizes for virtual machines in Azure](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes).
+
+* If a CSI storage driver advertises a maximum number of volumes for a Node (using `NodeGetInfo`), the <a class='glossary-tooltip' href='/docs/reference/generated/kube-scheduler/' target='_blank'>kube-scheduler<span class='tooltip-text'>Control plane component that watches for newly created pods with no assigned node, and selects a node for them to run on.</span>
+</a> honors that limit.
+Refer to the [CSI specifications](https://github.com/container-storage-interface/spec/blob/master/spec.md#nodegetinfo) for details.
+
+* For volumes managed by in-tree plugins that have been migrated to a CSI driver, the maximum number of volumes will be the one reported by the CSI driver.
+-->
+<h2 id="动态卷限制">动态卷限制</h2>
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.17 [stable]</code>
+</div>
+
+
+<p>以下类型的卷支持动态卷限制：</p>
+<ul>
+<li>Amazon EBS</li>
+<li>Google Persistent Disk</li>
+<li>Azure Disk</li>
+<li>CSI</li>
+</ul>
+<p>对于由内部卷插件管理的卷， k8s 自动决定节点的类型并为节点设置合适的最大卷数量限制。 例如:</p>
+<ul>
+<li>
+<p>在
+<a href="https://cloud.google.com/compute/">Google Compute Engine</a>
+上
+<a href="https://cloud.google.com/compute/docs/disks/#pdnumberlimits">基于节点的类型</a>.
+每个节点最多可以挂载 127 个卷。</p>
+</li>
+<li>
+<p>对于 Amazon EBS 磁盘， 在 M5,C5,R5,T3 和 Z1D 类型的实例上，k8s 允许挂载到每个节点上的
+卷的最大值是 25. 对于
+<a href="https://aws.amazon.com/ec2/">Amazon Elastic Compute Cloud (EC2)</a>
+上其它类型的实例类型， k8s 允许挂载到每个节点上能挂载卷的最大值是 39</p>
+</li>
+<li>
+<p>在 Azure, 基于节点类型的不同，每个节点上能挂载磁盘数量是 64， 更多信息见
+<a href="https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes">Azure 中虚拟机的大小</a></p>
+</li>
+<li>
+<p>如果一个 CSI 存储驱动指定了每个节点的最大卷数量(通过 <code>NodeGetInfo</code>)，
+<a class='glossary-tooltip' href='/docs/reference/generated/kube-scheduler/' target='_blank'>kube-scheduler<span class='tooltip-text'>Control plane component that watches for newly created pods with no assigned node, and selects a node for them to run on.</span>
+</a>， 也会
+接受这个限制。
+详见
+<a href="https://github.com/container-storage-interface/spec/blob/master/spec.md#nodegetinfo">CSI specifications</a></p>
+</li>
+<li>
+<p>对于由内部插件管理的卷，但已经迁移到了 CSI 驱动的，节点能够挂载的卷的最大数量会由 CSI 驱动
+来报告这个值。</p>
+</li>
+</ul>
+
+
 
             
             <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-18 17:54:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/c40563ca65b368bd8e89b6a0eacce0efee7e76e6">publish storage limits (c40563c)</a>
@@ -968,9 +1006,9 @@
 
 
 
-<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/architecture/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/architecture/_index.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=%e9%9b%86%e7%be%a4%e6%9e%b6%e6%9e%84" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/storage/storage-limits.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/storage/storage-limits.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=%e8%8a%82%e7%82%b9%e7%ba%a7%e5%88%ab%e7%9a%84%e5%8d%b7%e9%99%90%e5%88%b6" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
 
 </div>
 
@@ -978,6 +1016,14 @@
 
 
 
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#k8s-默认的限制">k8s 默认的限制</a></li>
+    <li><a href="#自定义限制">自定义限制</a></li>
+    <li><a href="#动态卷限制">动态卷限制</a></li>
+  </ul>
+</nav>
 
 
 

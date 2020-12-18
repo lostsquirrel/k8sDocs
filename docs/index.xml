@@ -18032,6 +18032,206 @@ k8s 调度器保证节点有足够的资源运行分配到其上的 Pod， 调�
     </item>
     
     <item>
+      <title>Docs: 节点级别的卷限制</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-limits/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-limits/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- jsafrane
+- saad-ali
+- thockin
+- msau42
+title: Node-specific Volume Limits
+content_type: concept
+---
+ --&gt;
+&lt;!-- overview --&gt;
+&lt;!--
+This page describes the maximum number of volumes that can be attached
+to a Node for various cloud providers.
+
+Cloud providers like Google, Amazon, and Microsoft typically have a limit on
+how many volumes can be attached to a Node. It is important for Kubernetes to
+respect those limits. Otherwise, Pods scheduled on a Node could get stuck
+waiting for volumes to attach.
+--&gt;
+&lt;p&gt;本文主要介绍在各家云提供商上每个节点能够挂载的卷的最大数量。
+像 Google, Amazon, 和 Microsoft 这样典型的云提供上对于每个节点上能挂载的卷数量是有限制的。
+让 k8s 遵守这个限制是比较重要的。 否则，Pod 在调度到一个节点后就会卡在等待卷挂载上。&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## Kubernetes default limits
+
+The Kubernetes scheduler has default limits on the number of volumes
+that can be attached to a Node:
+
+&lt;table&gt;
+  &lt;tr&gt;&lt;th&gt;Cloud service&lt;/th&gt;&lt;th&gt;Maximum volumes per Node&lt;/th&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;a href=&#34;https://aws.amazon.com/ebs/&#34;&gt;Amazon Elastic Block Store (EBS)&lt;/a&gt;&lt;/td&gt;&lt;td&gt;39&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;a href=&#34;https://cloud.google.com/persistent-disk/&#34;&gt;Google Persistent Disk&lt;/a&gt;&lt;/td&gt;&lt;td&gt;16&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;a href=&#34;https://azure.microsoft.com/en-us/services/storage/main-disks/&#34;&gt;Microsoft Azure Disk Storage&lt;/a&gt;&lt;/td&gt;&lt;td&gt;16&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+ --&gt;
+&lt;h2 id=&#34;k8s-默认的限制&#34;&gt;k8s 默认的限制&lt;/h2&gt;
+&lt;p&gt;k8s 调度器对每个节点上能够挂载的卷的数量是有限制的:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;云服务&lt;/th&gt;
+&lt;th&gt;每个节点挂载卷的最大值&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;https://aws.amazon.com/ebs/&#34;&gt;Amazon Elastic Block Store (EBS)&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;39&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;https://cloud.google.com/persistent-disk/&#34;&gt;Google Persistent Disk&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;16&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;a href=&#34;https://azure.microsoft.com/en-us/services/storage/main-disks/&#34;&gt;Microsoft Azure Disk Storage&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;16&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;!--
+## Custom limits
+
+You can change these limits by setting the value of the
+`KUBE_MAX_PD_VOLS` environment variable, and then starting the scheduler.
+CSI drivers might have a different procedure, see their documentation
+on how to customize their limits.
+
+Use caution if you set a limit that is higher than the default limit. Consult
+the cloud provider&#39;s documentation to make sure that Nodes can actually support
+the limit you set.
+
+The limit applies to the entire cluster, so it affects all Nodes.
+--&gt;
+&lt;!--
+## Custom limits
+
+You can change these limits by setting the value of the
+`KUBE_MAX_PD_VOLS` environment variable, and then starting the scheduler.
+CSI drivers might have a different procedure, see their documentation
+on how to customize their limits.
+
+Use caution if you set a limit that is higher than the default limit. Consult
+the cloud provider&#39;s documentation to make sure that Nodes can actually support
+the limit you set.
+
+The limit applies to the entire cluster, so it affects all Nodes.
+ --&gt;
+&lt;h2 id=&#34;自定义限制&#34;&gt;自定义限制&lt;/h2&gt;
+&lt;p&gt;可以通过设置 &lt;code&gt;KUBE_MAX_PD_VOLS&lt;/code&gt; 环境变量的值来修改这个限制， 修改后重新启动调度器。
+CSI 驱动可能需要不同的步骤，具体怎么修改这个自定义配置见他们的文档。&lt;/p&gt;
+&lt;p&gt;要小心设置了一个比默认值大的限制。 参照云提供商的文档来决定节点实际支持的限制再设置这个值。&lt;/p&gt;
+&lt;p&gt;这个限制会应用到整个集群，所以它会影响所有的节点。&lt;/p&gt;
+&lt;!--
+## Dynamic volume limits
+
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.17 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+
+Dynamic volume limits are supported for following volume types.
+
+- Amazon EBS
+- Google Persistent Disk
+- Azure Disk
+- CSI
+
+For volumes managed by in-tree volume plugins, Kubernetes automatically determines the Node
+type and enforces the appropriate maximum number of volumes for the node. For example:
+
+* On
+&lt;a href=&#34;https://cloud.google.com/compute/&#34;&gt;Google Compute Engine&lt;/a&gt;,
+up to 127 volumes can be attached to a node, [depending on the node
+type](https://cloud.google.com/compute/docs/disks/#pdnumberlimits).
+
+* For Amazon EBS disks on M5,C5,R5,T3 and Z1D instance types, Kubernetes allows only 25
+volumes to be attached to a Node. For other instance types on
+&lt;a href=&#34;https://aws.amazon.com/ec2/&#34;&gt;Amazon Elastic Compute Cloud (EC2)&lt;/a&gt;,
+Kubernetes allows 39 volumes to be attached to a Node.
+
+* On Azure, up to 64 disks can be attached to a node, depending on the node type. For more details, refer to [Sizes for virtual machines in Azure](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes).
+
+* If a CSI storage driver advertises a maximum number of volumes for a Node (using `NodeGetInfo`), the &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kube-scheduler/&#39; target=&#39;_blank&#39;&gt;kube-scheduler&lt;span class=&#39;tooltip-text&#39;&gt;Control plane component that watches for newly created pods with no assigned node, and selects a node for them to run on.&lt;/span&gt;
+&lt;/a&gt; honors that limit.
+Refer to the [CSI specifications](https://github.com/container-storage-interface/spec/blob/master/spec.md#nodegetinfo) for details.
+
+* For volumes managed by in-tree plugins that have been migrated to a CSI driver, the maximum number of volumes will be the one reported by the CSI driver.
+--&gt;
+&lt;h2 id=&#34;动态卷限制&#34;&gt;动态卷限制&lt;/h2&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.17 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;以下类型的卷支持动态卷限制：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Amazon EBS&lt;/li&gt;
+&lt;li&gt;Google Persistent Disk&lt;/li&gt;
+&lt;li&gt;Azure Disk&lt;/li&gt;
+&lt;li&gt;CSI&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;对于由内部卷插件管理的卷， k8s 自动决定节点的类型并为节点设置合适的最大卷数量限制。 例如:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;在
+&lt;a href=&#34;https://cloud.google.com/compute/&#34;&gt;Google Compute Engine&lt;/a&gt;
+上
+&lt;a href=&#34;https://cloud.google.com/compute/docs/disks/#pdnumberlimits&#34;&gt;基于节点的类型&lt;/a&gt;.
+每个节点最多可以挂载 127 个卷。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;对于 Amazon EBS 磁盘， 在 M5,C5,R5,T3 和 Z1D 类型的实例上，k8s 允许挂载到每个节点上的
+卷的最大值是 25. 对于
+&lt;a href=&#34;https://aws.amazon.com/ec2/&#34;&gt;Amazon Elastic Compute Cloud (EC2)&lt;/a&gt;
+上其它类型的实例类型， k8s 允许挂载到每个节点上能挂载卷的最大值是 39&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在 Azure, 基于节点类型的不同，每个节点上能挂载磁盘数量是 64， 更多信息见
+&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes&#34;&gt;Azure 中虚拟机的大小&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果一个 CSI 存储驱动指定了每个节点的最大卷数量(通过 &lt;code&gt;NodeGetInfo&lt;/code&gt;)，
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kube-scheduler/&#39; target=&#39;_blank&#39;&gt;kube-scheduler&lt;span class=&#39;tooltip-text&#39;&gt;Control plane component that watches for newly created pods with no assigned node, and selects a node for them to run on.&lt;/span&gt;
+&lt;/a&gt;， 也会
+接受这个限制。
+详见
+&lt;a href=&#34;https://github.com/container-storage-interface/spec/blob/master/spec.md#nodegetinfo&#34;&gt;CSI specifications&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;对于由内部插件管理的卷，但已经迁移到了 CSI 驱动的，节点能够挂载的卷的最大数量会由 CSI 驱动
+来报告这个值。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: 控制中心与节点的通信</title>
       <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/control-plane-node-communication/</link>
       <pubDate>Wed, 08 Jul 2020 00:00:00 +0000</pubDate>
@@ -27814,167 +28014,6 @@ See &lt;a href=&#34;https://github.com/kubernetes/kubeadm/issues/149#issuecommen
 &lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
 &lt;p&gt;&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/api-machinery/garbage-collection.md&#34;&gt;设计文稿 1&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/api-machinery/synchronous-garbage-collection.md&#34;&gt;设计文稿 2&lt;/a&gt;&lt;/p&gt;
-
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: 用于已完成资源的 TTL 控制器</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/ttlafterfinished/</link>
-      <pubDate>Mon, 31 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/ttlafterfinished/</guid>
-      <description>
-        
-        
-        &lt;!--  
----
-reviewers:
-- janetkuo
-title: TTL Controller for Finished Resources
-content_type: concept
-weight: 70
----
---&gt;
-&lt;!-- overview --&gt;
-&lt;!--
-
-
-
-
-
-&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
-&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.12 [alpha]&lt;/code&gt;
-&lt;/div&gt;
-
-
-
-The TTL controller provides a TTL (time to live) mechanism to limit the lifetime of resource
-objects that have finished execution. TTL controller only handles
-&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/controllers/job/&#39; target=&#39;_blank&#39;&gt;Jobs&lt;span class=&#39;tooltip-text&#39;&gt;一个运行后即结束的有限或批量任务&lt;/span&gt;
-&lt;/a&gt; for now,
-and may be expanded to handle other resources that will finish execution,
-such as Pods and custom resources.
-
-Alpha Disclaimer: this feature is currently alpha, and can be enabled with both kube-apiserver and kube-controller-manager
-[feature gate](/docs/reference/command-line-tools-reference/feature-gates/)
-`TTLAfterFinished`.
- --&gt;
-
-
-
-
-
-&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
-&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.12 [alpha]&lt;/code&gt;
-&lt;/div&gt;
-
-
-&lt;p&gt;TTL 控制器提供了一个限制那些已经执行完成的资源对象生存期的 TTL (存活时间)机制。
-目前 TTL 控制器只能控制 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/controllers/job/&#39; target=&#39;_blank&#39;&gt;Job&lt;span class=&#39;tooltip-text&#39;&gt;一个运行后即结束的有限或批量任务&lt;/span&gt;
-&lt;/a&gt;， 可能会扩展到通解处理其它完成执行的资源
-如 Pod 和 自定义资源。
-Alpha Disclaimer: this feature is currently alpha, and can be enabled with both kube-apiserver and kube-controller-manager
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;feature gate&lt;/a&gt;
-&lt;code&gt;TTLAfterFinished&lt;/code&gt;.
-Alpha 版本的免责声明: 这个特性现在还是 alpha 版本， 可以在 kube-apiserver 中 kube-controller-manager
-通过 &lt;code&gt;TTLAfterFinished&lt;/code&gt; &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;功能阀&lt;/a&gt; 开启&lt;/p&gt;
-&lt;!-- body --&gt;
-&lt;!--
-## TTL Controller
-
-The TTL controller only supports Jobs for now. A cluster operator can use this feature to clean
-up finished Jobs (either `Complete` or `Failed`) automatically by specifying the
-`.spec.ttlSecondsAfterFinished` field of a Job, as in this
-[example](/docs/concepts/workloads/controllers/job/#clean-up-finished-jobs-automatically).
-The TTL controller will assume that a resource is eligible to be cleaned up
-TTL seconds after the resource has finished, in other words, when the TTL has expired. When the
-TTL controller cleans up a resource, it will delete it cascadingly, that is to say it will delete
-its dependent objects together with it. Note that when the resource is deleted,
-its lifecycle guarantees, such as finalizers, will be honored.
-
-The TTL seconds can be set at any time. Here are some examples for setting the
-`.spec.ttlSecondsAfterFinished` field of a Job:
-
-* Specify this field in the resource manifest, so that a Job can be cleaned up
-  automatically some time after it finishes.
-* Set this field of existing, already finished resources, to adopt this new
-  feature.
-* Use a
-  [mutating admission webhook](/docs/reference/access-authn-authz/extensible-admission-controllers/#admission-webhooks)
-  to set this field dynamically at resource creation time. Cluster administrators can
-  use this to enforce a TTL policy for finished resources.
-* Use a
-  [mutating admission webhook](/docs/reference/access-authn-authz/extensible-admission-controllers/#admission-webhooks)
-  to set this field dynamically after the resource has finished, and choose
-  different TTL values based on resource status, labels, etc.
- --&gt;
-&lt;h2 id=&#34;ttl-控制器&#34;&gt;TTL 控制器&lt;/h2&gt;
-&lt;p&gt;目前 TTL 控制器只支持 Job。 集群管理员可以通过该特性来自动清理已完成的 Job(无论 &lt;code&gt;Complete&lt;/code&gt; 或 &lt;code&gt;Failed&lt;/code&gt;)，
-只需要在 Job 对象上设置 &lt;code&gt;.spec.ttlSecondsAfterFinished&lt;/code&gt;， 见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/job/#clean-up-finished-jobs-automatically&#34;&gt;示例&lt;/a&gt;.
-TTL 控制器假定一个资源在完成后 TTL 秒之后就是能够被回收的，换句话来说，就是当 TTL 过期的时候。
-当 TTL 控制器清理一个资源时，会级联地删除，也就是说会连同它的从属对象一起删除。 要注意当一个资源被删除时，
-它的生命周期保证，如析构器，就会被触发。
-TTL 时间可以在任意时刻设置。 以下为在 Job 上设置 &lt;code&gt;.spec.ttlSecondsAfterFinished&lt;/code&gt; 的一些示例:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;在资源的配置清单中设置该字段，因而 Job 可以在完成后的某个时间点被自动清理。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;在已经存在，已经完成的资源上设置该字段，然后享受该特性。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;使用
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/extensible-admission-controllers/#admission-webhooks&#34;&gt;mutating admission webhook&lt;/a&gt;
-来在资源创建时动态添加该字段。集群管理员可以使用它来给已经完成的资源加持一个 TTL 策略&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;使用
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/extensible-admission-controllers/#admission-webhooks&#34;&gt;mutating admission webhook&lt;/a&gt;
-在资源完成时动态添加该字段。 通过不同的资源状态，标签，等来设置不同的 TTL 值&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;!--
-## Caveat
-
-### Updating TTL Seconds
-
-Note that the TTL period, e.g. `.spec.ttlSecondsAfterFinished` field of Jobs,
-can be modified after the resource is created or has finished. However, once the
-Job becomes eligible to be deleted (when the TTL has expired), the system won&#39;t
-guarantee that the Jobs will be kept, even if an update to extend the TTL
-returns a successful API response.
-
-### Time Skew
-
-Because TTL controller uses timestamps stored in the Kubernetes resources to
-determine whether the TTL has expired or not, this feature is sensitive to time
-skew in the cluster, which may cause TTL controller to clean up resource objects
-at the wrong time.
-
-In Kubernetes, it&#39;s required to run NTP on all nodes
-(see [#6159](https://github.com/kubernetes/kubernetes/issues/6159#issuecomment-93844058))
-to avoid time skew. Clocks aren&#39;t always correct, but the difference should be
-very small. Please be aware of this risk when setting a non-zero TTL.
- --&gt;
-&lt;h2 id=&#34;附加说明&#34;&gt;附加说明&lt;/h2&gt;
-&lt;h3 id=&#34;更新-ttl-时间&#34;&gt;更新 TTL 时间&lt;/h3&gt;
-&lt;p&gt;要注意 TTL 的时间， 例如 Job 的 &lt;code&gt;.spec.ttlSecondsAfterFinished&lt;/code&gt; 字段可以在资源创建或完成后进行修改。
-但是，当 Job 变得可以被删除时(当 TTL 过期后)， 系统就不保证 Job 对象会继续保留，即便增加 TTL 的请求 API 请求响应成功的。&lt;/p&gt;
-&lt;h3 id=&#34;时间偏差&#34;&gt;时间偏差&lt;/h3&gt;
-&lt;p&gt;因为 TTL 控制器使用存放于 k8s 资源中的时间戳来决定 TTL 是否已经过期， 这个特性对集群中的时间偏差很敏感。
-可能会导致 TTL 控制器在错误的时间清理资源对象。&lt;/p&gt;
-&lt;p&gt;在 k8s 系统中，需要在所有的节点上运行 NTP (见问题单 &lt;a href=&#34;https://github.com/kubernetes/kubernetes/issues/6159#issuecomment-93844058&#34;&gt;#6159&lt;/a&gt;)
-来避免引志时间偏差。 时钟不是始终正确的，但差异必须要特别小。 在设置非零 TTL 时一定要注意这个风险。&lt;/p&gt;
-&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/job/#clean-up-finished-jobs-automatically&#34;&gt;自动清理 Job&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href=&#34;https://github.com/kubernetes/enhancements/blob/master/keps/sig-apps/0026-ttl-after-finish.md&#34;&gt;设置文稿&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
 
       </description>
     </item>

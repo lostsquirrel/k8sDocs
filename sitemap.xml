@@ -4,402 +4,407 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/setup/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/tasks/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/tutorials/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/reference/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/reference/glossary/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/service/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/service-topology/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/dns-pod-service/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-snapshots/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/connect-applications-service/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-pvc-datasource/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/endpoint-slices/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-classes/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/ingress/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volume-snapshot-classes/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/ingress-controllers/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/dynamic-provisioning/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/network-policies/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-capacity/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/ephemeral-volumes/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/dual-stack/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/nodes/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/storage-limits/</loc>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/control-plane-node-communication/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/controller/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/cloud-controller/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/tasks/tools/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/setup/00-release/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/00-minikube/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/01-kind/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/00-what-is-k8s/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/01-components/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/02-k8s-api/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/00-images/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/01-container-environment/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/02-runtime-class/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/tasks/tools/00-install-kubectl/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/reference/07-kubectl/00-overview/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/00-kubernetes-objects/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/names/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/02-namespace/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/labels/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/04-annotation/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/05-field-selectors/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/init-containers/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/podpreset/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/disruptions/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/ephemeral-containers/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/deployment/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/replicaset/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/statefulset/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/daemonset/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/job/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/ttlafterfinished/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/cron-jobs/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/tasks/tools/01-install-minikube/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/examples/readme/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
@@ -408,17 +413,17 @@
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/examples/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/tutorials/00-hello-minikube/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://lostsquirrel.github.io/k8sDocs/docs/</loc>
-    <lastmod>2020-12-18T17:07:33+08:00</lastmod>
+    <lastmod>2020-12-18T17:54:04+08:00</lastmod>
     <priority>1</priority>
   </url>
   
