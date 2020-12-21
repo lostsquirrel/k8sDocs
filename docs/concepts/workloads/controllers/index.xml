@@ -2078,7 +2078,7 @@ The Deployment updates Pods in a rolling update
 fashion when `.spec.strategy.type==RollingUpdate`. You can specify `maxUnavailable` and `maxSurge` to control
 the rolling update process.
  --&gt;
-&lt;h4 id=&#34;deployment-滚动更新策略&#34;&gt;Deployment 滚动更新策略&lt;/h4&gt;
+&lt;h4 id=&#34;rolling-update-deployment&#34;&gt;Deployment 滚动更新策略&lt;/h4&gt;
 &lt;p&gt;当 &lt;code&gt;.spec.strategy.type==RollingUpdate&lt;/code&gt; 时 Deployment 以滚动方式更新 Pod。
 用户可以通过 &lt;code&gt;maxUnavailable&lt;/code&gt; 和 &lt;code&gt;maxSurge&lt;/code&gt; 来控制更新进程&lt;/p&gt;
 &lt;!--

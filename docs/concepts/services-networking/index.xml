@@ -6565,7 +6565,7 @@ virtual host being required.
 &lt;!--
 ### TLS
 
-You can secure an Ingress by specifying a &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secret&lt;span class=&#39;tooltip-text&#39;&gt;Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.&lt;/span&gt;
+You can secure an Ingress by specifying a &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secret&lt;span class=&#39;tooltip-text&#39;&gt;存放如密码, OAuth, ssh 密钥等敏感信息&lt;/span&gt;
 &lt;/a&gt;
 that contains a TLS private key and certificate. The Ingress resource only
 supports a single TLS port, 443, and assumes TLS termination at the ingress point
@@ -6659,12 +6659,12 @@ platform specific Ingress controller to understand how TLS works in your environ
 
  --&gt;
 &lt;h3 id=&#34;tls&#34;&gt;TLS&lt;/h3&gt;
-&lt;p&gt;用户可以能过一个包含 TLS 私钥和证书的 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secret&lt;span class=&#39;tooltip-text&#39;&gt;Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.&lt;/span&gt;
+&lt;p&gt;用户可以能过一个包含 TLS 私钥和证书的 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secret&lt;span class=&#39;tooltip-text&#39;&gt;存放如密码, OAuth, ssh 密钥等敏感信息&lt;/span&gt;
 &lt;/a&gt; 为 Ingress
 添加安全层。 Ingress 只支持一个 TLS 端口，&lt;code&gt;443&lt;/code&gt;， 并且假定 TLS 在 Ingress 终结(也就是
 到达 Service 及其 Pod 的流量是明文的)。
 如果 Ingress TLS 配置区中包含了多个主机名，那么它们根据 SNI TLS 扩展(需要 Ingress 控制器
-支持 SNI)中指定的主机名来区分请求。 TLS &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secret&lt;span class=&#39;tooltip-text&#39;&gt;Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.&lt;/span&gt;
+支持 SNI)中指定的主机名来区分请求。 TLS &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secret&lt;span class=&#39;tooltip-text&#39;&gt;存放如密码, OAuth, ssh 密钥等敏感信息&lt;/span&gt;
 &lt;/a&gt;
 中必须要包含名叫 &lt;code&gt;tls.crt&lt;/code&gt; 和 &lt;code&gt;tls.key&lt;/code&gt; 的键，其它分别存放 TLS 的证书和私钥。 例如:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
@@ -6676,7 +6676,7 @@ platform specific Ingress controller to understand how TLS works in your environ
   &lt;span style=&#34;color:#f92672&#34;&gt;tls.crt&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;base64 encoded cert&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;tls.key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;base64 encoded key&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;type&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kubernetes.io/tls&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在一个 Ingress 中引用该 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secret&lt;span class=&#39;tooltip-text&#39;&gt;Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在一个 Ingress 中引用该 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secret&lt;span class=&#39;tooltip-text&#39;&gt;存放如密码, OAuth, ssh 密钥等敏感信息&lt;/span&gt;
 &lt;/a&gt; 保证客户端到负载均衡器之间的
 连接是使用 TLS。必须要保证创建 TLS Secret 的证书中包含公用名(CN), 也就是 &lt;code&gt;sslexample.foo.com&lt;/code&gt;
 的全限定名(FQDN).&lt;/p&gt;

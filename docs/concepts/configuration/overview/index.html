@@ -20,10 +20,10 @@
 <meta property="og:description" content="本文主要加强和巩固从用户指引，入门文档，和示例中介绍过的配置的最佳实践。 这是一个活动文档，如果用户觉得有些内容文档上没有但可以对其他人有帮助" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/overview/" />
-<meta property="article:modified_time" content="2020-12-21T15:20:32+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2020-12-21T18:11:49+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="配置最佳实践">
 <meta itemprop="description" content="本文主要加强和巩固从用户指引，入门文档，和示例中介绍过的配置的最佳实践。 这是一个活动文档，如果用户觉得有些内容文档上没有但可以对其他人有帮助">
-<meta itemprop="dateModified" content="2020-12-21T15:20:32+08:00" />
+<meta itemprop="dateModified" content="2020-12-21T18:11:49+08:00" />
 <meta itemprop="wordCount" content="2527">
 
 
@@ -736,6 +736,12 @@
       <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsconfigurationoverview" href="/k8sDocs/docs/concepts/configuration/overview/">配置最佳实践</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsconfigurationconfigmap" href="/k8sDocs/docs/concepts/configuration/configmap/">ConfigMap</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -943,7 +949,7 @@ FOO_SERVICE_PORT<span style="color:#f92672">=</span>&lt;the port the Service is 
 </li>
 <li>
 <p>一个可选(但强烈推荐)的
-<a href="/docs/concepts/cluster-administration/addons/">集群插件</a>
+<a href="/k8sDocs/docs/concepts/cluster-administration/addons/">集群插件</a>
 就是 DNS 服务。 DNS 服务会监听 k8s API 中新增的 <code>Services</code> 并对应创建一系列 DNS 记录。
 如果集群中启动了 DNS 则 所有的 Pod 都可以自动通过 DNS 解析访问 <code>Services</code></p>
 </li>
@@ -953,18 +959,18 @@ FOO_SERVICE_PORT<span style="color:#f92672">=</span>&lt;the port the Service is 
 全集群内是唯一的。 如果没有显示地指定 <code>hostIP</code> 和 <code>protocol</code>，k8s 全使用 <code>0.0.0.0</code>
 作为默认的 <code>hostIP</code>， <code>TCP</code> 作为默认的 <code>protocol</code>.</p>
 <p>如果只为调试目的需要访问端口，可以使用
-<a href="/docs/tasks/access-application-cluster/access-cluster/#manually-constructing-apiserver-proxy-urls">apiserver proxy</a>
+<a href="/k8sDocs/docs/tasks/access-application-cluster/access-cluster/#manually-constructing-apiserver-proxy-urls">apiserver proxy</a>
 或
-<a href="/docs/tasks/access-application-cluster/port-forward-access-application-cluster/"><code>kubectl port-forward</code></a>.
+<a href="/k8sDocs/docs/tasks/access-application-cluster/port-forward-access-application-cluster/"><code>kubectl port-forward</code></a>.
 如果确实需要将 Pod 端口在节点上显露，在使用 <code>hostPort</code> 之前考虑使用 <code>hostPort</code>的
-<a href="/docs/concepts/services-networking/service/#nodeport">NodePort</a></p>
+<a href="/k8sDocs/docs/concepts/services-networking/service/#nodeport">NodePort</a></p>
 </li>
 <li>
 <p>与 <code>hostPort</code> 的理由一样，避免使用 <code>hostNetwork</code></p>
 </li>
 <li>
 <p>在不需要 <code>kube-proxy</code> 负载均衡的情况下，使用
-<a href="/docs/concepts/services-networking/service/#headless-services">headless Services</a>
+<a href="/k8sDocs/docs/concepts/services-networking/service/#headless-services">headless Services</a>
 (就是将 <code>ClusterIP</code> 设置为 <code>None</code>)
 来实现简单的服务发现</p>
 </li>
@@ -1002,7 +1008,7 @@ A desired state of an object is described by a Deployment, and if changes to tha
 来匹配 Pod， 移除相应的标签就可以认为是将其从一个控制器中移出或从一个 Service 服务后端移出。
 当移除一个现有 Pod 的标签后，它的控制器会创建一个新的 Pod 来代替它的位置。 这是一种在隔离环境中调试之前
 存活 Pod 的有效方式。 而要移除或添加标签，使用
-<a href="/k8sDocs/docs/reference/generated/kubectl/kubectl-commands#label"><code>kubectl label</code></a>.</p>
+<a href="https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#label"><code>kubectl label</code></a>.</p>
 </li>
 </ul>
 <!--
@@ -1036,8 +1042,8 @@ The [imagePullPolicy](/docs/concepts/containers/images/#updating-images) and the
 
 -->
 <h2 id="容器镜像">容器镜像</h2>
-<p><a href="/docs/concepts/containers/images/#updating-images">imagePullPolicy</a> 和镜像和标签会影响
-<a href="/docs/reference/command-line-tools-reference/kubelet/">kubelet</a>
+<p><a href="/k8sDocs/docs/concepts/containers/images/#updating-images">imagePullPolicy</a> 和镜像和标签会影响
+<a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/">kubelet</a>
 拉取指定的镜像。</p>
 <ul>
 <li><code>imagePullPolicy: IfNotPresent</code>: 镜像只在本地不存在时才会拉取。</li>
@@ -1097,7 +1103,7 @@ kubelet 使用解析的摘要下载(拉取)镜像，并使用这个镜像来启�
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-21 15:20:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/87499061a4f7c6c936287bac0fc56cfa904d38dc">publish configuration overview (8749906)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-21 18:11:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/a6ed23a84ec08769b0756a87c90e281e39ec1fdf">[WIP]start configmap (a6ed23a)</a>
 </div>
             
           </main>

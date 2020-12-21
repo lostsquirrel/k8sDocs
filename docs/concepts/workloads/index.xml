@@ -346,7 +346,7 @@ containters.
 ### Storage in Pods {#pod-storage}
 
 A Pod can specify a set of shared storage
-&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;volumes&lt;span class=&#39;tooltip-text&#39;&gt;A directory containing data, accessible to the containers in a pod.&lt;/span&gt;
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;volumes&lt;span class=&#39;tooltip-text&#39;&gt;一个可以被 Pod 中的容器访问的包含数据的目录&lt;/span&gt;
 &lt;/a&gt;. All containers
 in the Pod can access the shared volumes, allowing those containers to
 share data. Volumes also allow persistent data in a Pod to survive
@@ -356,7 +356,7 @@ Kubernetes implements shared storage and makes it available to Pods.
 
  --&gt;
 &lt;h3 id=&#34;pod-storage&#34;&gt;Pod 的存储&lt;/h3&gt;
-&lt;p&gt;一个 Pod 可以指定一组共享的存储 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;Volume&lt;span class=&#39;tooltip-text&#39;&gt;A directory containing data, accessible to the containers in a pod.&lt;/span&gt;
+&lt;p&gt;一个 Pod 可以指定一组共享的存储 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;卷(Volume)&lt;span class=&#39;tooltip-text&#39;&gt;一个可以被 Pod 中的容器访问的包含数据的目录&lt;/span&gt;
 &lt;/a&gt;。
 这个 Pod 内的所有容器都可以使用这个共享卷， 实现容器间的数据共享。卷也可以让其中的数据在， Pod
 被销毁重建后依然存在。更多关于 k8s 怎么实现共享存储及其在 Pod 中的使用，见 &lt;a href=&#34;../../05-storage/&#34;&gt;存储&lt;/a&gt;&lt;/p&gt;

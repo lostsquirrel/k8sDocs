@@ -5025,7 +5025,7 @@ This document describes the concept of cloning existing CSI Volumes in Kubernete
 
 The &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#csi&#39; target=&#39;_blank&#39;&gt;CSI&lt;span class=&#39;tooltip-text&#39;&gt;容器存储接口 (CSI)定义一个标准接口用于暴露存储系统到容器中&lt;/span&gt;
 &lt;/a&gt; Volume Cloning feature adds support for specifying existing &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/&#39; target=&#39;_blank&#39;&gt;PVC&lt;span class=&#39;tooltip-text&#39;&gt;索要定义在 PersistentVolume 中的存储资源，然后就可以将其以卷的方式挂载到容器中。&lt;/span&gt;
-&lt;/a&gt;s in the `dataSource` field to indicate a user would like to clone a &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;Volume&lt;span class=&#39;tooltip-text&#39;&gt;A directory containing data, accessible to the containers in a pod.&lt;/span&gt;
+&lt;/a&gt;s in the `dataSource` field to indicate a user would like to clone a &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;卷(Volume)&lt;span class=&#39;tooltip-text&#39;&gt;一个可以被 Pod 中的容器访问的包含数据的目录&lt;/span&gt;
 &lt;/a&gt;.
 
 A Clone is defined as a duplicate of an existing Kubernetes Volume that can be consumed as any standard Volume would be.  The only difference is that upon provisioning, rather than creating a &#34;new&#34; empty Volume, the back end device creates an exact duplicate of the specified Volume.
@@ -5050,7 +5050,7 @@ Users need to be aware of the following when using this feature:
 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/&#39; target=&#39;_blank&#39;&gt;PVC&lt;span class=&#39;tooltip-text&#39;&gt;索要定义在 PersistentVolume 中的存储资源，然后就可以将其以卷的方式挂载到容器中。&lt;/span&gt;
 &lt;/a&gt;
 表示用户希望克隆一个
-&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;Volume&lt;span class=&#39;tooltip-text&#39;&gt;A directory containing data, accessible to the containers in a pod.&lt;/span&gt;
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;卷(Volume)&lt;span class=&#39;tooltip-text&#39;&gt;一个可以被 Pod 中的容器访问的包含数据的目录&lt;/span&gt;
 &lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;这个克隆体是对现有的 k8s 卷的复制，可以用于任意标准卷可用的地方。 区别只有提供时不是创建一个新
 的空卷，而对源卷底层存储设备完全复制的卷&lt;/p&gt;

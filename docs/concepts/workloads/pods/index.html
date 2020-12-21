@@ -21,7 +21,7 @@
 <meta property="og:description" content="生产级别的容器编排系统" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/" />
-<meta property="og:updated_time" content="2020-12-21T15:20:32+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="og:updated_time" content="2020-12-21T18:11:49+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="Pod">
 <meta itemprop="description" content="生产级别的容器编排系统">
 <meta name="twitter:card" content="summary"/>
@@ -731,6 +731,12 @@
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsconfigurationoverview" href="/k8sDocs/docs/concepts/configuration/overview/">配置最佳实践</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsconfigurationconfigmap" href="/k8sDocs/docs/concepts/configuration/configmap/">ConfigMap</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -1144,7 +1150,7 @@ containters.
 ### Storage in Pods {#pod-storage}
 
 A Pod can specify a set of shared storage
-<a class='glossary-tooltip' href='/docs/concepts/storage/volumes/' target='_blank'>volumes<span class='tooltip-text'>A directory containing data, accessible to the containers in a pod.</span>
+<a class='glossary-tooltip' href='/k8sDocs/docs/concepts/storage/volumes/' target='_blank'>volumes<span class='tooltip-text'>一个可以被 Pod 中的容器访问的包含数据的目录</span>
 </a>. All containers
 in the Pod can access the shared volumes, allowing those containers to
 share data. Volumes also allow persistent data in a Pod to survive
@@ -1154,7 +1160,7 @@ Kubernetes implements shared storage and makes it available to Pods.
 
  -->
 <h3 id="pod-storage">Pod 的存储</h3>
-<p>一个 Pod 可以指定一组共享的存储 <a class='glossary-tooltip' href='/docs/concepts/storage/volumes/' target='_blank'>Volume<span class='tooltip-text'>A directory containing data, accessible to the containers in a pod.</span>
+<p>一个 Pod 可以指定一组共享的存储 <a class='glossary-tooltip' href='/k8sDocs/docs/concepts/storage/volumes/' target='_blank'>卷(Volume)<span class='tooltip-text'>一个可以被 Pod 中的容器访问的包含数据的目录</span>
 </a>。
 这个 Pod 内的所有容器都可以使用这个共享卷， 实现容器间的数据共享。卷也可以让其中的数据在， Pod
 被销毁重建后依然存在。更多关于 k8s 怎么实现共享存储及其在 Pod 中的使用，见 <a href="../../05-storage/">存储</a></p>
@@ -1414,6 +1420,8 @@ To understand the context for why Kubernetes wraps a common Pod API in other res
             
         
             
+        
+            
                 <div class="entry">
                     <h5>
                         <a href="/k8sDocs/docs/concepts/workloads/pods/init-containers/">初始化容器</a>
@@ -1484,7 +1492,7 @@ To understand the context for why Kubernetes wraps a common Pod API in other res
 	</div>
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-21 15:20:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/87499061a4f7c6c936287bac0fc56cfa904d38dc">publish configuration overview (8749906)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-21 18:11:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/a6ed23a84ec08769b0756a87c90e281e39ec1fdf">[WIP]start configmap (a6ed23a)</a>
 </div>
             
           </main>

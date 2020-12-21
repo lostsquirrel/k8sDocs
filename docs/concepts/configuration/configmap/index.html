@@ -1,0 +1,1335 @@
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.75.1" />
+
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
+<link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
+<link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="manifest" href="/k8sDocs/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/k8sDocs/images/kubernetes-192x192.png">
+
+<title>ConfigMap | Kubernetes</title><meta property="og:title" content="ConfigMap" />
+<meta property="og:description" content="A ConfigMap is 一个以键值对形式存储非敏感数据的 API 对象。 Pod 可以在环境变量，命令行参数或 volume一个可以被 Pod 中的容器访问的包含数据的目录 中的配置文件" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/configmap/" />
+<meta property="article:modified_time" content="2020-12-21T18:11:49+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="ConfigMap">
+<meta itemprop="description" content="A ConfigMap is 一个以键值对形式存储非敏感数据的 API 对象。 Pod 可以在环境变量，命令行参数或 volume一个可以被 Pod 中的容器访问的包含数据的目录 中的配置文件">
+<meta itemprop="dateModified" content="2020-12-21T18:11:49+08:00" />
+<meta itemprop="wordCount" content="2983">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="ConfigMap"/>
+<meta name="twitter:description" content="A ConfigMap is 一个以键值对形式存储非敏感数据的 API 对象。 Pod 可以在环境变量，命令行参数或 volume一个可以被 Pod 中的容器访问的包含数据的目录 中的配置文件"/>
+
+
+
+
+
+<link rel="preload" href="/k8sDocs/scss/main.min.537757ec8e00d87ec206229d5725b6d05e078dd447818e448f0802685603e730.css" as="style">
+<link href="/k8sDocs/scss/main.min.537757ec8e00d87ec206229d5725b6d05e078dd447818e448f0802685603e730.css" rel="stylesheet" integrity="">
+
+
+<script src="/k8sDocs/js/jquery-3.3.1.min.js" ></script>
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "url": "https://kubernetes.io",
+    "logo": "https://kubernetes.io/images/favicon.png",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://lostsquirrel.github.io/k8sDocs/search/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+
+  }
+</script>
+<meta name="theme-color" content="#326ce5">
+
+
+
+
+<link rel="stylesheet" href=/k8sDocs/css/base_fonts.css>
+
+<link rel="stylesheet" href="/k8sDocs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/k8sDocs/css/callouts.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
+
+
+
+<meta name="description" content="A ConfigMap is 一个以键值对形式存储非敏感数据的 API 对象。 Pod 可以在环境变量，命令行参数或 volume一个可以被 Pod 中的容器访问的包含数据的目录 中的配置文件">
+<meta property="og:description" content="A ConfigMap is 一个以键值对形式存储非敏感数据的 API 对象。 Pod 可以在环境变量，命令行参数或 volume一个可以被 Pod 中的容器访问的包含数据的目录 中的配置文件">
+<meta name="twitter:description" content="A ConfigMap is 一个以键值对形式存储非敏感数据的 API 对象。 Pod 可以在环境变量，命令行参数或 volume一个可以被 Pod 中的容器访问的包含数据的目录 中的配置文件">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/configmap/">
+<meta property="og:title" content="ConfigMap">
+<meta name="twitter:title" content="ConfigMap">
+<meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
+
+<meta name="twitter:image:alt" content="Kubernetes">
+
+<meta property="og:image" content="/k8sDocs/images/kubernetes-horizontal-color.png">
+
+<meta property="og:type" content="article">
+
+
+
+<script src="/k8sDocs/js/script.js"></script>
+
+
+    <title>ConfigMap | Kubernetes</title>
+  </head>
+  <body class="td-page td-documentation">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
+        <a class="navbar-brand" href="/k8sDocs/"></a>
+	<div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
+
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			
+			
+			<li class="nav-item mr-2 mb-lg-0">
+				
+				<a class="nav-link active" href="/k8sDocs/docs/" >Documentation</span></a>
+			</li>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</ul>
+	</div>
+  
+
+</nav>
+
+      
+      <div class="header-filler"></div>
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-md-nowrap">
+          <div class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+
+
+
+
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  
+  <form class="td-sidebar__search d-flex align-items-center d-lg-none">
+    
+
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  
+  <nav class="collapse td-sidebar-nav" id="td-section-nav">
+    
+    
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Kubernetes Documentation</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocs">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">概念(Concepts)</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconcepts">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">概览</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverview">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview00-what-is-k8s" href="/k8sDocs/docs/concepts/overview/00-what-is-k8s/">k8s 是什么</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview01-components" href="/k8sDocs/docs/concepts/overview/01-components/">k8s 组件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview02-k8s-api" href="/k8sDocs/docs/concepts/overview/02-k8s-api/">k8s API 说明</a>
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/working-with-objects/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">k8s 对象管理</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverviewworking-with-objects">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects00-kubernetes-objects" href="/k8sDocs/docs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectsnames" href="/k8sDocs/docs/concepts/overview/working-with-objects/names/">对象命令与ID</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects02-namespace" href="/k8sDocs/docs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectslabels" href="/k8sDocs/docs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects04-annotation" href="/k8sDocs/docs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects05-field-selectors" href="/k8sDocs/docs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects06-common-labels" href="/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/architecture/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">集群架构</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsarchitecture">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturenodes" href="/k8sDocs/docs/concepts/architecture/nodes/">节点</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontrol-plane-node-communication" href="/k8sDocs/docs/concepts/architecture/control-plane-node-communication/">控制中心与节点的通信</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontroller" href="/k8sDocs/docs/concepts/architecture/controller/">控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecloud-controller" href="/k8sDocs/docs/concepts/architecture/cloud-controller/">Cloud Controller Manager</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/containers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">容器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptscontainers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers00-images" href="/k8sDocs/docs/concepts/containers/00-images/">镜像</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers01-container-environment" href="/k8sDocs/docs/concepts/containers/01-container-environment/">容器环境</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers02-runtime-class" href="/k8sDocs/docs/concepts/containers/02-runtime-class/">Runtime Class</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainerscontainer-lifecycle-hooks" href="/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/">容器生命周期钩子</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">工作负载(Workload)</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloads">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/pods/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Pod</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloadspods">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-lifecycle" href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsinit-containers" href="/k8sDocs/docs/concepts/workloads/pods/init-containers/">初始化容器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-topology-spread-constraints" href="/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑分布约束条件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspodpreset" href="/k8sDocs/docs/concepts/workloads/pods/podpreset/">Pod 预设信息</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsdisruptions" href="/k8sDocs/docs/concepts/workloads/pods/disruptions/">Disruptions</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsephemeral-containers" href="/k8sDocs/docs/concepts/workloads/pods/ephemeral-containers/">临时容器</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/controllers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">控制器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloadscontrollers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdeployment" href="/k8sDocs/docs/concepts/workloads/controllers/deployment/">Deployment</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicaset" href="/k8sDocs/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersstatefulset" href="/k8sDocs/docs/concepts/workloads/controllers/statefulset/">StatefulSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdaemonset" href="/k8sDocs/docs/concepts/workloads/controllers/daemonset/">DaemonSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersjob" href="/k8sDocs/docs/concepts/workloads/controllers/job/">Job</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersgarbage-collection" href="/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/">垃圾回收</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersttlafterfinished" href="/k8sDocs/docs/concepts/workloads/controllers/ttlafterfinished/">用于已完成资源的 TTL 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollerscron-jobs" href="/k8sDocs/docs/concepts/workloads/controllers/cron-jobs/">CronJob</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicationcontroller" href="/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/services-networking/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Service, 负载均衡, 网络</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsservices-networking">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice" href="/k8sDocs/docs/concepts/services-networking/service/">Service</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice-topology" href="/k8sDocs/docs/concepts/services-networking/service-topology/">Service Topology</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdns-pod-service" href="/k8sDocs/docs/concepts/services-networking/dns-pod-service/">Service 和 Pod 的 DNS</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingconnect-applications-service" href="/k8sDocs/docs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingendpoint-slices" href="/k8sDocs/docs/concepts/services-networking/endpoint-slices/">EndpointSlice</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress" href="/k8sDocs/docs/concepts/services-networking/ingress/">Ingress</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress-controllers" href="/k8sDocs/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingnetwork-policies" href="/k8sDocs/docs/concepts/services-networking/network-policies/">网络策略</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingadd-entries-to-pod-etc-hosts-with-host-aliases" href="/k8sDocs/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdual-stack" href="/k8sDocs/docs/concepts/services-networking/dual-stack/">IPv4/IPv6 双栈</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsstorage">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolumes" href="/k8sDocs/docs/concepts/storage/volumes/">卷(Volume)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragepersistent-volumes" href="/k8sDocs/docs/concepts/storage/persistent-volumes/">持久化卷(PV)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshots" href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-pvc-datasource" href="/k8sDocs/docs/concepts/storage/volume-pvc-datasource/">CSI 卷克隆</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragestorage-classes" href="/k8sDocs/docs/concepts/storage/storage-classes/">StorageClass</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshot-classes" href="/k8sDocs/docs/concepts/storage/volume-snapshot-classes/">VolumeSnapshotClass</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragedynamic-provisioning" href="/k8sDocs/docs/concepts/storage/dynamic-provisioning/">卷动态供应</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragestorage-capacity" href="/k8sDocs/docs/concepts/storage/storage-capacity/">存储容量</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstorageephemeral-volumes" href="/k8sDocs/docs/concepts/storage/ephemeral-volumes/">临时卷</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragestorage-limits" href="/k8sDocs/docs/concepts/storage/storage-limits/">节点级别的卷限制</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/configuration/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">配置</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconceptsconfiguration">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsconfigurationoverview" href="/k8sDocs/docs/concepts/configuration/overview/">配置最佳实践</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsconfigurationconfigmap" href="/k8sDocs/docs/concepts/configuration/configmap/">ConfigMap</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+  </nav>
+</div>
+
+
+
+
+          </div>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	<ol class="breadcrumb spb-1">
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/">概念(Concepts)</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/">配置</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/configmap/">ConfigMap</a>
+</li>
+
+	</ol>
+</nav	>
+
+            
+              
+            
+              
+    <div class="td-content">
+    
+<p>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/configuration/configmap.md" id="editPageButton" target="_blank" data-proofer-ignore>
+    Edit This Page
+  </a>
+</p>
+
+  <h1>ConfigMap</h1>
+  
+  
+
+<!--
+---
+title: ConfigMaps
+content_type: concept
+weight: 20
+---
+ -->
+<!-- overview -->
+<!--
+
+<p><p>A ConfigMap is 一个以键值对形式存储非敏感数据的 API 对象。
+Pod 可以在环境变量，命令行参数或
+<a class='glossary-tooltip' href='/k8sDocs/docs/concepts/storage/volumes/' target='_blank'>volume<span class='tooltip-text'>一个可以被 Pod 中的容器访问的包含数据的目录</span>
+</a>
+中的配置文件中使用它。</p></p>
+<p>ConfigMap 允许用户将环境相关的配置从
+<a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-image' target='_blank'>镜像(Image)<span class='tooltip-text'>一个容器的存储实例，其中包含一系列运行应用所需要的软件。</span>
+</a>
+中解耦出来，这样可以很容易地实现应用的移植。</p>
+
+<blockquote class="caution">
+  <div><strong>注意：</strong> ConfigMap does not provide secrecy or encryption.
+If the data you want to store are confidential, use a
+<a class='glossary-tooltip' href='/k8sDocs/docs/concepts/configuration/secret/' target='_blank'>Secret<span class='tooltip-text'>存放如密码, OAuth, ssh 密钥等敏感信息</span>
+</a> rather than a ConfigMap,
+or use additional (third party) tools to keep your data private.</div>
+</blockquote>
+
+ -->
+<p><p>ConfigMap 就是 一个以键值对形式存储非敏感数据的 API 对象。
+Pod 可以在环境变量，命令行参数或
+<a class='glossary-tooltip' href='/k8sDocs/docs/concepts/storage/volumes/' target='_blank'>volume<span class='tooltip-text'>一个可以被 Pod 中的容器访问的包含数据的目录</span>
+</a>
+中的配置文件中使用它。</p></p>
+<p>ConfigMap 允许用户将环境相关的配置从
+<a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-image' target='_blank'>镜像(Image)<span class='tooltip-text'>一个容器的存储实例，其中包含一系列运行应用所需要的软件。</span>
+</a>
+中解耦出来，这样可以很容易地实现应用的移植。</p>
+<blockquote class="caution">
+  <div><strong>注意：</strong> ConfigMap 不提供保密性或对其加密。 如果想要存放的保留信息，请使用
+<a class='glossary-tooltip' href='/k8sDocs/docs/concepts/configuration/secret/' target='_blank'>Secret<span class='tooltip-text'>存放如密码, OAuth, ssh 密钥等敏感信息</span>
+</a>
+而不是 ConfigMap， 或使用外部(第三方)工具来保证数据的保密性。</div>
+</blockquote>
+
+<!-- body -->
+<!--
+## Motivation
+
+Use a ConfigMap for setting configuration data separately from application code.
+
+For example, imagine that you are developing an application that you can run on your
+own computer (for development) and in the cloud (to handle real traffic).
+You write the code to look in an environment variable named `DATABASE_HOST`.
+Locally, you set that variable to `localhost`. In the cloud, you set it to
+refer to a Kubernetes <a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
+</a>
+that exposes the database component to your cluster.
+This lets you fetch a container image running in the cloud and
+debug the exact same code locally if needed.
+
+A ConfigMap is not designed to hold large chunks of data. The data stored in a
+ConfigMap cannot exceed 1 MiB. If you need to store settings that are
+larger than this limit, you may want to consider mounting a volume or use a
+separate database or file service.
+ -->
+<h2 id="动机">动机</h2>
+<p>使用 ConfigMap 将配置数据与应用代码分离。</p>
+<p>例如，假设开发了一个应用，可以在本地机器上(开发)运行和云环境(处理生产流量)。 可以在代码中读取
+一个叫 <code>DATABASE_HOST</code> 环境变量。 在本地，可以将这个变量设置为 <code>localhost</code>。 在云环境中
+可以将它指定 k8s 集群中用于暴露数据库组件的
+<a class='glossary-tooltip' href='/k8sDocs/concepts/services-networking/service/' target='_blank'>Service<span class='tooltip-text'>以网络服务的方式让一个由一组 Pod 构成的应用可以对外提供服务的一种方式</span>
+</a>
+名称。 如果需要，这会使得用户可以在云环境中拉取容器镜像并运行的与本地调试使用的是同一套代码。</p>
+<p>ConfigMap 并不是设计来存放大块数据。 存放于 ConfigMap 的数据不能超过 1 MiB。 如果需要存储
+超过这个限制的配置数据， 可以考虑挂载一个卷，或使用独立的数据库或文件服务。</p>
+<!--
+## ConfigMap object
+
+A ConfigMap is an API [object](/docs/concepts/overview/working-with-objects/kubernetes-objects/)
+that lets you store configuration for other objects to use. Unlike most
+Kubernetes objects that have a `spec`, a ConfigMap has `data` and `binaryData`
+fields. These fields accepts key-value pairs as their values.  Both the `data`
+field and the `binaryData` are optional. The `data` field is designed to
+contain UTF-8 byte sequences while the `binaryData` field is designed to
+contain binary data.
+
+The name of a ConfigMap must be a valid
+[DNS subdomain name](/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+
+Each key under the `data` or the `binaryData` field must consist of
+alphanumeric characters, `-`, `_` or `.`. The keys stored in `data` must not
+overlap with the keys in the `binaryData` field.
+
+Starting from v1.19, you can add an `immutable` field to a ConfigMap
+definition to create an [immutable ConfigMap](#configmap-immutable).
+ -->
+<h2 id="configmap-对象">ConfigMap 对象</h2>
+<p>ConfigMap 是一个 API
+<a href="/k8sDocs/docs/concepts/overview/working-with-objects/kubernetes-objects/">对象</a>
+, 它可以让用户存放供其它对象使用的配置信息。 与其它大多数据 k8s 对象有 <code>spec</code> 不同， ConfigMap
+包含的字段有 <code>data</code> 和 <code>binaryData</code>。 这些字段接受键值对作为他们的值。 <code>data</code> 字段和
+<code>binaryData</code> 字段都是可选的。 <code>data</code> 字段设计上是用来存储 UTF-8 字节顺序的而 <code>binaryData</code>
+字段设计上是用来存储二进制数据的。</p>
+<p>ConfigMap 的名称必须是一个有效的
+<a href="/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.</p>
+<p><code>data</code> 或 <code>binaryData</code> 字段下的键必须由字母数字，<code>-</code>, <code>_</code> 或 <code>.</code> 组成。 <code>data</code> 存放的
+键与 <code>binaryData</code> 字段下面的键不能重复。</p>
+<p>从 k8s  v1.19 开始，可以在 ConfigMap 中添加 <code>immutable</code> 字段，定义一个
+<a href="#configmap-immutable">不可变的 ConfigMap</a>.</p>
+<!--
+## ConfigMaps and Pods
+
+You can write a Pod `spec` that refers to a ConfigMap and configures the container(s)
+in that Pod based on the data in the ConfigMap. The Pod and the ConfigMap must be in
+the same <a class='glossary-tooltip' href='/k8sDocs/docs/concepts/overview/working-with-objects/namespaces' target='_blank'>namespace<span class='tooltip-text'>一个用于在同一个物理集群中支持多个虚拟集群的抽象概念</span>
+</a>.
+
+Here's an example ConfigMap that has some keys with single values,
+and other keys where the value looks like a fragment of a configuration
+format.
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: game-demo
+data:
+  # property-like keys; each key maps to a simple value
+  player_initial_lives: "3"
+  ui_properties_file_name: "user-interface.properties"
+
+  # file-like keys
+  game.properties: |
+    enemy.types=aliens,monsters
+    player.maximum-lives=5
+  user-interface.properties: |
+    color.good=purple
+    color.bad=yellow
+    allow.textmode=true
+```
+
+There are four different ways that you can use a ConfigMap to configure
+a container inside a Pod:
+
+1. Inside a container command and args
+1. Environment variables for a container
+1. Add a file in read-only volume, for the application to read
+1. Write code to run inside the Pod that uses the Kubernetes API to read a ConfigMap
+
+These different methods lend themselves to different ways of modeling
+the data being consumed.
+For the first three methods, the
+<a class='glossary-tooltip' href='/docs/reference/generated/kubelet' target='_blank'>kubelet<span class='tooltip-text'>An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.</span>
+</a> uses the data from
+the ConfigMap when it launches container(s) for a Pod.
+
+The fourth method means you have to write code to read the ConfigMap and its data.
+However, because you're using the Kubernetes API directly, your application can
+subscribe to get updates whenever the ConfigMap changes, and react
+when that happens. By accessing the Kubernetes API directly, this
+technique also lets you access a ConfigMap in a different namespace.
+
+Here's an example Pod that uses values from `game-demo` to configure a Pod:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-demo-pod
+spec:
+  containers:
+    - name: demo
+      image: alpine
+      command: ["sleep", "3600"]
+      env:
+        # Define the environment variable
+        - name: PLAYER_INITIAL_LIVES # Notice that the case is different here
+                                     # from the key name in the ConfigMap.
+          valueFrom:
+            configMapKeyRef:
+              name: game-demo           # The ConfigMap this value comes from.
+              key: player_initial_lives # The key to fetch.
+        - name: UI_PROPERTIES_FILE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: game-demo
+              key: ui_properties_file_name
+      volumeMounts:
+      - name: config
+        mountPath: "/config"
+        readOnly: true
+  volumes:
+    # You set volumes at the Pod level, then mount them into containers inside that Pod
+    - name: config
+      configMap:
+        # Provide the name of the ConfigMap you want to mount.
+        name: game-demo
+        # An array of keys from the ConfigMap to create as files
+        items:
+        - key: "game.properties"
+          path: "game.properties"
+        - key: "user-interface.properties"
+          path: "user-interface.properties"
+```
+
+A ConfigMap doesn't differentiate between single line property values and
+multi-line file-like values.
+What matters is how Pods and other objects consume those values.
+
+For this example, defining a volume and mounting it inside the `demo`
+container as `/config` creates two files,
+`/config/game.properties` and `/config/user-interface.properties`,
+even though there are four keys in the ConfigMap. This is because the Pod
+definition specifies an `items` array in the `volumes` section.
+If you omit the `items` array entirely, every key  in the ConfigMap becomes
+a file with the same name as the key, and you get 4 files.
+-->
+<h2 id="configmap-和-pod">ConfigMap 和 Pod</h2>
+<p>用户可以在编写一个 Pod <code>spec</code> 中引用一个 ConfigMap 并基于这个 ConfigMap 中的数据来配置这个
+Pod 中的容器。 Pod 和 ConfigMap 必须在同一个
+<a class='glossary-tooltip' href='/k8sDocs/docs/concepts/overview/working-with-objects/namespaces' target='_blank'>命名空间(namespace)<span class='tooltip-text'>一个用于在同一个物理集群中支持多个虚拟集群的抽象概念</span>
+</a>.</p>
+<p>以下为一个 ConfigMap 的示例，其中包含几个有一个值的键和其它值看起来像是配置格式的片断的键</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ConfigMap</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">game-demo</span>
+<span style="color:#f92672">data</span>:
+  <span style="color:#75715e"># 属性格式的键; 每个键与一个值相映射</span>
+  <span style="color:#f92672">player_initial_lives</span>: <span style="color:#e6db74">&#34;3&#34;</span>
+  <span style="color:#f92672">ui_properties_file_name</span>: <span style="color:#e6db74">&#34;user-interface.properties&#34;</span>
+
+  <span style="color:#75715e"># 文件格式的键</span>
+  <span style="color:#f92672">game.properties</span>: <span style="color:#e6db74">|
+</span><span style="color:#e6db74">    enemy.types=aliens,monsters
+</span><span style="color:#e6db74">    player.maximum-lives=5
+</span><span style="color:#e6db74">  user-interface.properties: |
+</span><span style="color:#e6db74">    color.good=purple
+</span><span style="color:#e6db74">    color.bad=yellow
+</span><span style="color:#e6db74">    allow.textmode=true
+</span></code></pre></div><p>有以下四种方式可以使用 ConfigMap 配置 Pod 中的容器:</p>
+<ol>
+<li>在一个容器中的命令和参数</li>
+<li>容器中的环境变量</li>
+<li>添加一个文件到一个只读卷，用于应用读取</li>
+<li>在 Pod 中写代码使用 k8s API 来读取 ConfigMap</li>
+</ol>
+<p>这些不同的方式使得它们可以不用模式供给数据。
+对于前三种方式
+<a class='glossary-tooltip' href='/docs/reference/generated/kubelet' target='_blank'>kubelet<span class='tooltip-text'>An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.</span>
+</a> 在为 Pod 启动容器时
+使用 ConfigMap 中的数据。</p>
+<p>第四种方式意味着需要用户写代理来读取 ConfigMap 和其中的数据。 但因为直接使用的是 k8s API,
+应用可以通过订阅来获得 ConfigMap 变更时的更新， 并在其发生时做出反映。 通过直接访问 k8s API,
+这种方式也让用户能够访问其它命名空间的 ConfigMap。</p>
+<p>Here&rsquo;s an example Pod that uses values from <code>game-demo</code> to configure a Pod:
+以下示例中的 Pod 使用 <code>game-demo</code>  中的值来配置一个这个 Pod</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">configmap-demo-pod</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">containers</span>:
+    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">demo</span>
+      <span style="color:#f92672">image</span>: <span style="color:#ae81ff">alpine</span>
+      <span style="color:#f92672">command</span>: [<span style="color:#e6db74">&#34;sleep&#34;</span>, <span style="color:#e6db74">&#34;3600&#34;</span>]
+      <span style="color:#f92672">env</span>:
+        <span style="color:#75715e"># 定义环境变量</span>
+        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">PLAYER_INITIAL_LIVES # 注意这个键与 ConfigMap 键名称是不一样的</span>
+          <span style="color:#f92672">valueFrom</span>:
+            <span style="color:#f92672">configMapKeyRef</span>:
+              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">game-demo           # 引用 ConfigMap 的名称</span>
+              <span style="color:#f92672">key</span>: <span style="color:#ae81ff">player_initial_lives # 使用其中的键</span>
+        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">UI_PROPERTIES_FILE_NAME</span>
+          <span style="color:#f92672">valueFrom</span>:
+            <span style="color:#f92672">configMapKeyRef</span>:
+              <span style="color:#f92672">name</span>: <span style="color:#ae81ff">game-demo</span>
+              <span style="color:#f92672">key</span>: <span style="color:#ae81ff">ui_properties_file_name</span>
+      <span style="color:#f92672">volumeMounts</span>:
+      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">config</span>
+        <span style="color:#f92672">mountPath</span>: <span style="color:#e6db74">&#34;/config&#34;</span>
+        <span style="color:#f92672">readOnly</span>: <span style="color:#66d9ef">true</span>
+  <span style="color:#f92672">volumes</span>:
+    <span style="color:#75715e"># 可以在 Pod 级别设置卷， 然后将它们挂载到容器</span>
+    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">config</span>
+      <span style="color:#f92672">configMap</span>:
+        <span style="color:#75715e"># 想要挂载的 ConfigMap 的名称</span>
+        <span style="color:#f92672">name</span>: <span style="color:#ae81ff">game-demo</span>
+        <span style="color:#75715e"># ConfigMap 中用来创建文件的键的列表</span>
+        <span style="color:#f92672">items</span>:
+        - <span style="color:#f92672">key</span>: <span style="color:#e6db74">&#34;game.properties&#34;</span>
+          <span style="color:#f92672">path</span>: <span style="color:#e6db74">&#34;game.properties&#34;</span>
+        - <span style="color:#f92672">key</span>: <span style="color:#e6db74">&#34;user-interface.properties&#34;</span>
+          <span style="color:#f92672">path</span>: <span style="color:#e6db74">&#34;user-interface.properties&#34;</span>
+</code></pre></div><p>ConfigMap 是的单行属性值和多行的类似文件的值是没有不同的。重要的是 Pod 和其它对象是怎么使用这些值的。</p>
+<p>对于这个示例， 定义一个卷并将其挂载到 <code>demo</code> 容器中的 <code>/config</code> 目录，并创建两个文件，
+<code>/config/game.properties</code> 和 <code>/config/user-interface.properties</code>, 即便 ConfigMap
+中包含了四个键。 这是因为 Pod 中的 <code>volumes</code> 区域定义一个 <code>items</code> 数组。 如果省略了
+<code>items</code> 数组实体， 每个 ConfigMap 中的键就会变成以这个键名称一样的文件，这样就会有四个文件。</p>
+<h2 id="using-configmaps">Using ConfigMaps</h2>
+<p>ConfigMaps can be mounted as data volumes. ConfigMaps can also be used by other
+parts of the system, without being directly exposed to the Pod. For example,
+ConfigMaps can hold data that other parts of the system should use for configuration.</p>
+<p>The most common way to use ConfigMaps is to configure settings for
+containers running in a Pod in the same namespace. You can also use a
+ConfigMap separately.</p>
+<p>For example, you
+might encounter <a class='glossary-tooltip' href='/docs/concepts/cluster-administration/addons/' target='_blank'>addons<span class='tooltip-text'>Resources that extend the functionality of Kubernetes.</span>
+</a>
+or <a class='glossary-tooltip' href='/docs/concepts/extend-kubernetes/operator/' target='_blank'>operators<span class='tooltip-text'>A specialized controller used to manage a custom resource</span>
+</a> that
+adjust their behavior based on a ConfigMap.</p>
+<h3 id="using-configmaps-as-files-from-a-pod">Using ConfigMaps as files from a Pod</h3>
+<p>To consume a ConfigMap in a volume in a Pod:</p>
+<ol>
+<li>Create a ConfigMap or use an existing one. Multiple Pods can reference the
+same ConfigMap.</li>
+<li>Modify your Pod definition to add a volume under <code>.spec.volumes[]</code>. Name
+the volume anything, and have a <code>.spec.volumes[].configMap.name</code> field set
+to reference your ConfigMap object.</li>
+<li>Add a <code>.spec.containers[].volumeMounts[]</code> to each container that needs the
+ConfigMap. Specify <code>.spec.containers[].volumeMounts[].readOnly = true</code> and
+<code>.spec.containers[].volumeMounts[].mountPath</code> to an unused directory name
+where you would like the ConfigMap to appear.</li>
+<li>Modify your image or command line so that the program looks for files in
+that directory. Each key in the ConfigMap <code>data</code> map becomes the filename
+under <code>mountPath</code>.</li>
+</ol>
+<p>This is an example of a Pod that mounts a ConfigMap in a volume:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">mypod</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">containers</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">mypod</span>
+    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">redis</span>
+    <span style="color:#f92672">volumeMounts</span>:
+    - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">foo</span>
+      <span style="color:#f92672">mountPath</span>: <span style="color:#e6db74">&#34;/etc/foo&#34;</span>
+      <span style="color:#f92672">readOnly</span>: <span style="color:#66d9ef">true</span>
+  <span style="color:#f92672">volumes</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">foo</span>
+    <span style="color:#f92672">configMap</span>:
+      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">myconfigmap</span>
+</code></pre></div><p>Each ConfigMap you want to use needs to be referred to in <code>.spec.volumes</code>.</p>
+<p>If there are multiple containers in the Pod, then each container needs its
+own <code>volumeMounts</code> block, but only one <code>.spec.volumes</code> is needed per ConfigMap.</p>
+<h4 id="mounted-configmaps-are-updated-automatically">Mounted ConfigMaps are updated automatically</h4>
+<p>When a ConfigMap currently consumed in a volume is updated, projected keys are eventually updated as well.
+The kubelet checks whether the mounted ConfigMap is fresh on every periodic sync.
+However, the kubelet uses its local cache for getting the current value of the ConfigMap.
+The type of the cache is configurable using the <code>ConfigMapAndSecretChangeDetectionStrategy</code> field in
+the <a href="https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/kubelet/config/v1beta1/types.go">KubeletConfiguration struct</a>.
+A ConfigMap can be either propagated by watch (default), ttl-based, or simply redirecting
+all requests directly to the API server.
+As a result, the total delay from the moment when the ConfigMap is updated to the moment
+when new keys are projected to the Pod can be as long as the kubelet sync period + cache
+propagation delay, where the cache propagation delay depends on the chosen cache type
+(it equals to watch propagation delay, ttl of cache, or zero correspondingly).</p>
+<p>ConfigMaps consumed as environment variables are not updated automatically and require a pod restart.</p>
+<h2 id="configmap-immutable">Immutable ConfigMaps</h2>
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.19 [beta]</code>
+</div>
+
+
+<p>The Kubernetes beta feature <em>Immutable Secrets and ConfigMaps</em> provides an option to set
+individual Secrets and ConfigMaps as immutable. For clusters that extensively use ConfigMaps
+(at least tens of thousands of unique ConfigMap to Pod mounts), preventing changes to their
+data has the following advantages:</p>
+<ul>
+<li>protects you from accidental (or unwanted) updates that could cause applications outages</li>
+<li>improves performance of your cluster by significantly reducing load on kube-apiserver, by
+closing watches for ConfigMaps marked as immutable.</li>
+</ul>
+<p>This feature is controlled by the <code>ImmutableEphemeralVolumes</code>
+<a href="/docs/reference/command-line-tools-reference/feature-gates/">feature gate</a>.
+You can create an immutable ConfigMap by setting the <code>immutable</code> field to <code>true</code>.
+For example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ConfigMap</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#ae81ff">...</span>
+<span style="color:#f92672">data</span>:
+  <span style="color:#ae81ff">...</span>
+<span style="color:#f92672">immutable</span>: <span style="color:#66d9ef">true</span>
+</code></pre></div><p>Once a ConfigMap is marked as immutable, it is <em>not</em> possible to revert this change
+nor to mutate the contents of the <code>data</code> or the <code>binaryData</code> field. You can
+only delete and recreate the ConfigMap. Because existing Pods maintain a mount point
+to the deleted ConfigMap, it is recommended to recreate these pods.</p>
+<h2 id="相关资料">相关资料</h2>
+<ul>
+<li>Read about <a href="/docs/concepts/configuration/secret/">Secrets</a>.</li>
+<li>Read <a href="/docs/tasks/configure-pod-container/configure-pod-configmap/">Configure a Pod to Use a ConfigMap</a>.</li>
+<li>Read <a href="https://12factor.net/">The Twelve-Factor App</a> to understand the motivation for
+separating code from configuration.</li>
+</ul>
+
+
+
+            
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-21 18:11:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/a6ed23a84ec08769b0756a87c90e281e39ec1fdf">[WIP]start configmap (a6ed23a)</a>
+</div>
+            
+          </main>
+          <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
+            
+
+
+
+
+
+
+<div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+
+
+
+
+
+
+
+
+
+
+
+<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/configuration/configmap.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/configuration/configmap.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=ConfigMap" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
+
+</div>
+
+
+
+
+
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#动机">动机</a></li>
+    <li><a href="#configmap-对象">ConfigMap 对象</a></li>
+    <li><a href="#configmap-和-pod">ConfigMap 和 Pod</a></li>
+    <li><a href="#using-configmaps">Using ConfigMaps</a>
+      <ul>
+        <li><a href="#using-configmaps-as-files-from-a-pod">Using ConfigMaps as files from a Pod</a></li>
+      </ul>
+    </li>
+    <li><a href="#configmap-immutable">Immutable ConfigMaps</a></li>
+    <li><a href="#相关资料">相关资料</a></li>
+  </ul>
+</nav>
+
+
+
+          </div>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        
+        
+	
+		
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script src="/k8sDocs/js/main.min.446a2e681f8167f44314691b77368dd561bf0b67514487f3f0fd999316c6da4a.js" integrity="sha256-RGouaB&#43;BZ/RDFGkbdzaN1WG/C2dRRIfz8P2ZkxbG2ko=" crossorigin="anonymous"></script>
+
+
+
+
+  </body>
+</html>

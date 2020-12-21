@@ -89,7 +89,7 @@ that Pod can be replaced by a new, near-identical Pod, with even the same name i
 desired, but with a different UID.
 
 When something is said to have the same lifetime as a Pod, such as a
-&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;volume&lt;span class=&#39;tooltip-text&#39;&gt;A directory containing data, accessible to the containers in a pod.&lt;/span&gt;
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;volume&lt;span class=&#39;tooltip-text&#39;&gt;一个可以被 Pod 中的容器访问的包含数据的目录&lt;/span&gt;
 &lt;/a&gt;,
 that means that the thing exists as long as that specific Pod (with that exact UID)
 exists. If that Pod is deleted for any reason, and even if an identical replacement
@@ -122,14 +122,14 @@ web server that uses a persistent volume for shared storage between the containe
 k8s 通过一个叫 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/2-concepts/01-architecture/02-controller/&#39; target=&#39;_blank&#39;&gt;控制器&lt;span class=&#39;tooltip-text&#39;&gt;一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移&lt;/span&gt;
 &lt;/a&gt; 的更高层级的抽象,来处理这些相对来说是一次的的 Pod 实例的管理工作.&lt;/p&gt;
 &lt;p&gt;某个 Pod(拥有特定 UID) 是永远不会被重新调度到另一个节点上; 而是被一个基本相同, 甚至可以名称也相同,但 UID 不同的 Pod 所取代.&lt;/p&gt;
-&lt;p&gt;当某些对象(如 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;volume&lt;span class=&#39;tooltip-text&#39;&gt;A directory containing data, accessible to the containers in a pod.&lt;/span&gt;
+&lt;p&gt;当某些对象(如 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;volume&lt;span class=&#39;tooltip-text&#39;&gt;一个可以被 Pod 中的容器访问的包含数据的目录&lt;/span&gt;
 &lt;/a&gt;) 被描述为与 Pod 拥有一致的生命期,
 表示这些对象会与指定的 (拥有那个 UID 的) &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/pods/&#39; target=&#39;_blank&#39;&gt;Pod&lt;span class=&#39;tooltip-text&#39;&gt;Pod 表示集群中运行的一组容器的集合&lt;/span&gt;
 &lt;/a&gt; 同时存在,
 如果那个 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/pods/&#39; target=&#39;_blank&#39;&gt;Pod&lt;span class=&#39;tooltip-text&#39;&gt;Pod 表示集群中运行的一组容器的集合&lt;/span&gt;
 &lt;/a&gt; 因为某些原为被删除, 即便同样的代替 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/pods/&#39; target=&#39;_blank&#39;&gt;Pod&lt;span class=&#39;tooltip-text&#39;&gt;Pod 表示集群中运行的一组容器的集合&lt;/span&gt;
 &lt;/a&gt; 已经被创建,
-相关的对象(如 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;Volume&lt;span class=&#39;tooltip-text&#39;&gt;A directory containing data, accessible to the containers in a pod.&lt;/span&gt;
+相关的对象(如 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;卷(Volume)&lt;span class=&#39;tooltip-text&#39;&gt;一个可以被 Pod 中的容器访问的包含数据的目录&lt;/span&gt;
 &lt;/a&gt; 也会被随同 Pod 一起被销毁重建).&lt;/p&gt;
 &lt;p&gt;&lt;figure&gt;
     &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/docs/pod.svg&#34;
@@ -243,7 +243,7 @@ Each state has a specific meaning:
 If a container is not in either the `Running` or `Terminated` state, it `Waiting`.
 A container in the `Waiting` state is still running the operations it requires in
 order to complete start up: for example, pulling the container image from a container
-image registry, or applying &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secret&lt;span class=&#39;tooltip-text&#39;&gt;Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.&lt;/span&gt;
+image registry, or applying &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secret&lt;span class=&#39;tooltip-text&#39;&gt;存放如密码, OAuth, ssh 密钥等敏感信息&lt;/span&gt;
 &lt;/a&gt;
 data.
 When you use `kubectl` to query a Pod with a container that is `Waiting`, you also see
@@ -251,7 +251,7 @@ a Reason field to summarize why the container is in that state.
  --&gt;
 &lt;p&gt;当一个容器的状不是 &lt;code&gt;Running&lt;/code&gt; 或 &lt;code&gt;Terminated&lt;/code&gt; 就是 &lt;code&gt;Waiting&lt;/code&gt;。当一个容器状态为 &lt;code&gt;Waiting&lt;/code&gt;
 表示容器正在进行启动需要的前置操作: 如， 从镜像仓库拉取容器所需要的镜像， 或配置
-&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secret&lt;span class=&#39;tooltip-text&#39;&gt;Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.&lt;/span&gt;
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secret&lt;span class=&#39;tooltip-text&#39;&gt;存放如密码, OAuth, ssh 密钥等敏感信息&lt;/span&gt;
 &lt;/a&gt; 数据。&lt;/p&gt;
 &lt;p&gt;当 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubelet&#39; target=&#39;_blank&#39;&gt;Kubelet&lt;span class=&#39;tooltip-text&#39;&gt;An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.&lt;/span&gt;
 &lt;/a&gt; 查询到Pod中的状是 &lt;code&gt;Waiting&lt;/code&gt;， 同时也会看到
@@ -1041,7 +1041,7 @@ have some advantages for start-up related code:
   the need to jointly build a single app image.
 * Init containers can run with a different view of the filesystem than app containers in the
   same Pod. Consequently, they can be given access to
-  &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secrets&lt;span class=&#39;tooltip-text&#39;&gt;Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.&lt;/span&gt;
+  &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secrets&lt;span class=&#39;tooltip-text&#39;&gt;存放如密码, OAuth, ssh 密钥等敏感信息&lt;/span&gt;
 &lt;/a&gt; that app containers cannot access.
 * Because init containers run to completion before any app containers start, init containers offer
   a mechanism to block or delay app container startup until a set of preconditions are met. Once
@@ -1058,7 +1058,7 @@ have some advantages for start-up related code:
 &lt;code&gt;FROM&lt;/code&gt; 其它的镜像。&lt;/li&gt;
 &lt;li&gt;应用镜像的构建和部署角色可以独立工作，而不需要打在一个应用镜像里&lt;/li&gt;
 &lt;li&gt;同一个 Pod 的初始化化容器可以与应用容器运行在不同文件系统视角下， 因而可以让初始化容器可以读取
-应用容器不能读取的 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secrets&lt;span class=&#39;tooltip-text&#39;&gt;Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.&lt;/span&gt;
+应用容器不能读取的 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secrets&lt;span class=&#39;tooltip-text&#39;&gt;存放如密码, OAuth, ssh 密钥等敏感信息&lt;/span&gt;
 &lt;/a&gt;。&lt;/li&gt;
 &lt;li&gt;因为只能在初始化容器运行完成后应用容器才能启动， 初始化容器就提供了一种机制，可以让容器在
 达成一定前置条件之前应用容器会被阻塞或延迟。 当前置条件达成， Pod 中所有的应用容器可以并行启动。&lt;/li&gt;
@@ -1086,7 +1086,7 @@ Here are some ideas for how to use init containers:
   sleep 60
   ```
 
-* Clone a Git repository into a &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;Volume&lt;span class=&#39;tooltip-text&#39;&gt;A directory containing data, accessible to the containers in a pod.&lt;/span&gt;
+* Clone a Git repository into a &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;Volume&lt;span class=&#39;tooltip-text&#39;&gt;一个可以被 Pod 中的容器访问的包含数据的目录&lt;/span&gt;
 &lt;/a&gt;
 
 * Place values into a configuration file and run a template tool to dynamically
@@ -1108,7 +1108,7 @@ Here are some ideas for how to use init containers:
 &lt;li&gt;等待一定时间后再启动 Pod中的应用容器
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;sleep &lt;span style=&#34;color:#ae81ff&#34;&gt;60&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
-&lt;li&gt;从 Git 仓库中克隆一个库到 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;Volume&lt;span class=&#39;tooltip-text&#39;&gt;A directory containing data, accessible to the containers in a pod.&lt;/span&gt;
+&lt;li&gt;从 Git 仓库中克隆一个库到 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;Volume&lt;span class=&#39;tooltip-text&#39;&gt;一个可以被 Pod 中的容器访问的包含数据的目录&lt;/span&gt;
 &lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;将配置值放入配置文件，通过一个模板工具为应用容器动态生成配置文件， 例， 将 &lt;code&gt;POD_IP&lt;/code&gt; 放丰配置文件中
 通过如 &lt;code&gt;Jinja&lt;/code&gt; 这样的工具生成主应用的配置文件&lt;/li&gt;
@@ -2389,11 +2389,11 @@ secrets, volumes, volume mounts, and environment variables.&lt;/p&gt;
 
 &lt;p&gt;本文简单介绍 &lt;code&gt;PodPreset&lt;/code&gt;， 一个用于在特定时间向 Pod 中注入特定信息的对象。
 可注入的信息包括
-&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secret&lt;span class=&#39;tooltip-text&#39;&gt;Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.&lt;/span&gt;
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/secret/&#39; target=&#39;_blank&#39;&gt;Secret&lt;span class=&#39;tooltip-text&#39;&gt;存放如密码, OAuth, ssh 密钥等敏感信息&lt;/span&gt;
 &lt;/a&gt;,
-&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;Volume&lt;span class=&#39;tooltip-text&#39;&gt;A directory containing data, accessible to the containers in a pod.&lt;/span&gt;
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;卷(Volume)&lt;span class=&#39;tooltip-text&#39;&gt;一个可以被 Pod 中的容器访问的包含数据的目录&lt;/span&gt;
 &lt;/a&gt;,
-&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;Volume&lt;span class=&#39;tooltip-text&#39;&gt;A directory containing data, accessible to the containers in a pod.&lt;/span&gt;
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/&#39; target=&#39;_blank&#39;&gt;卷(Volume)&lt;span class=&#39;tooltip-text&#39;&gt;一个可以被 Pod 中的容器访问的包含数据的目录&lt;/span&gt;
 &lt;/a&gt; 挂载,
 和环境变量&lt;/p&gt;
 &lt;!-- body --&gt;
