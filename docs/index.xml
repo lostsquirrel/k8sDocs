@@ -5923,6 +5923,292 @@ SCTP 多重连接的 NAT 需要在对应的逻辑模块中有特殊逻辑&lt;/di
     </item>
     
     <item>
+      <title>Docs: 配置最佳实践</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/overview/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/overview/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- mikedanese
+title: Configuration Best Practices
+content_type: concept
+weight: 10
+---
+ --&gt;
+&lt;!-- overview --&gt;
+&lt;p&gt;本文主要加强和巩固从用户指引，入门文档，和示例中介绍过的配置的最佳实践。&lt;/p&gt;
+&lt;p&gt;这是一个活动文档，如果用户觉得有些内容文档上没有但可以对其他人有帮助，不要犹豫，赶紧提交问题单或
+提供 PR&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## General Configuration Tips
+
+- When defining configurations, specify the latest stable API version.
+
+- Configuration files should be stored in version control before being pushed to the cluster. This allows you to quickly roll back a configuration change if necessary. It also aids cluster re-creation and restoration.
+
+- Write your configuration files using YAML rather than JSON. Though these formats can be used interchangeably in almost all scenarios, YAML tends to be more user-friendly.
+
+- Group related objects into a single file whenever it makes sense. One file is often easier to manage than several. See the [guestbook-all-in-one.yaml](https://github.com/kubernetes/examples/tree/master/guestbook/all-in-one/guestbook-all-in-one.yaml) file as an example of this syntax.
+
+- Note also that many `kubectl` commands can be called on a directory. For example, you can call `kubectl apply` on a directory of config files.
+
+- Don&#39;t specify default values unnecessarily: simple, minimal configuration will make errors less likely.
+
+- Put object descriptions in annotations, to allow better introspection.
+ --&gt;
+&lt;h2 id=&#34;通用配置提示&#34;&gt;通用配置提示&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;在定义配置时，指定最新的稳定 API 版本。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;配置文件在推送到集群之前先保住到版本控制系统。 这样如果需要可以快速回滚配置变更。 也可以帮助集群重建或恢复。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用 YAML 格式编写配置文件而不是 JSON。 虽然这两个格式在几乎所有场景下都可以互换，但 YAML 对用户更友好。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;当几个对象有关系时将其放在一个文件中。 一个文件会比多个文件更容易管理。相关语法见示例
+&lt;a href=&#34;https://github.com/kubernetes/examples/tree/master/guestbook/all-in-one/guestbook-all-in-one.yaml&#34;&gt;guestbook-all-in-one.yaml&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;要知道 &lt;code&gt;kubectl&lt;/code&gt; 命令可以向一个目录调用，例如，可以对一个目录执行 &lt;code&gt;kubectl apply&lt;/code&gt;，表示
+执行其中的所有配置文件&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;请不要指定不必要的默认值: 简单，最小化配置，通常可以减少错误的产生。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;将对象描述加到注解中，让其可以对用户或自动化工具更友好。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+## &#34;Naked&#34; Pods versus ReplicaSets, Deployments, and Jobs {#naked-pods-vs-replicasets-deployments-and-jobs}
+
+- Don&#39;t use naked Pods (that is, Pods not bound to a [ReplicaSet](/docs/concepts/workloads/controllers/replicaset/) or [Deployment](/docs/concepts/workloads/controllers/deployment/)) if you can avoid it. Naked Pods will not be rescheduled in the event of a node failure.
+
+  A Deployment, which both creates a ReplicaSet to ensure that the desired number of Pods is always available, and specifies a strategy to replace Pods (such as [RollingUpdate](/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment)), is almost always preferable to creating Pods directly, except for some explicit [`restartPolicy: Never`](/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy) scenarios. A [Job](/docs/concepts/workloads/controllers/job/) may also be appropriate.
+--&gt;
+&lt;h2 id=&#34;naked-pods-vs-replicasets-deployments-and-jobs&#34;&gt;&amp;ldquo;裸奔&amp;quot;的 Pod VS ReplicaSet, Deployment, Job&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;如果能避免，尽量不要让 Pod 裸奔(也就是没有与
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/replicaset/&#34;&gt;ReplicaSet&lt;/a&gt;
+或
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/deployment/&#34;&gt;Deployment&lt;/a&gt;
+绑定的 Pod
+)。
+裸奔的 Pod 在节点挂掉之后不会重新调度。&lt;/p&gt;
+&lt;p&gt;面 Deployment， 在创建一个 ReplicaSet 来保证期望个数的 Pod 始终可用外，还可以指定替换策略
+(如
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment&#34;&gt;RollingUpdate&lt;/a&gt;
+)，
+除了一个具体场景
+(&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy&#34;&gt;&lt;code&gt;restartPolicy: Never&lt;/code&gt;&lt;/a&gt;)
+都推荐使用 Deployment 而不是直接创建 Pod。
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/job/&#34;&gt;Job&lt;/a&gt; 也是另一种选择。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+## Services
+
+- Create a [Service](/docs/concepts/services-networking/service/) before its corresponding backend workloads (Deployments or ReplicaSets), and before any workloads that need to access it. When Kubernetes starts a container, it provides environment variables pointing to all the Services which were running when the container was started. For example, if a Service named `foo` exists, all containers will get the following variables in their initial environment:
+
+  ```shell
+  FOO_SERVICE_HOST=&lt;the host the Service is running on&gt;
+  FOO_SERVICE_PORT=&lt;the port the Service is running on&gt;
+  ```
+
+  *This does imply an ordering requirement* - any `Service` that a `Pod` wants to access must be created before the `Pod` itself, or else the environment variables will not be populated.  DNS does not have this restriction.
+
+- An optional (though strongly recommended) [cluster add-on](/docs/concepts/cluster-administration/addons/) is a DNS server.  The
+DNS server watches the Kubernetes API for new `Services` and creates a set of DNS records for each.  If DNS has been enabled throughout the cluster then all `Pods` should be able to do name resolution of `Services` automatically.
+
+- Don&#39;t specify a `hostPort` for a Pod unless it is absolutely necessary. When you bind a Pod to a `hostPort`, it limits the number of places the Pod can be scheduled, because each &lt;`hostIP`, `hostPort`, `protocol`&gt; combination must be unique. If you don&#39;t specify the `hostIP` and `protocol` explicitly, Kubernetes will use `0.0.0.0` as the default `hostIP` and `TCP` as the default `protocol`.
+
+  If you only need access to the port for debugging purposes, you can use the [apiserver proxy](/docs/tasks/access-application-cluster/access-cluster/#manually-constructing-apiserver-proxy-urls) or [`kubectl port-forward`](/docs/tasks/access-application-cluster/port-forward-access-application-cluster/).
+
+  If you explicitly need to expose a Pod&#39;s port on the node, consider using a [NodePort](/docs/concepts/services-networking/service/#nodeport) Service before resorting to `hostPort`.
+
+- Avoid using `hostNetwork`, for the same reasons as `hostPort`.
+
+- Use [headless Services](/docs/concepts/services-networking/service/#headless-services) (which have a `ClusterIP` of `None`) for easy service discovery when you don&#39;t need `kube-proxy` load balancing.
+ --&gt;
+&lt;h2 id=&#34;service&#34;&gt;Service&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;在对应的后端工作负载(Deployments 或 ReplicaSets) 和任意访问它的工作负载之前创建一个
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/service/&#34;&gt;Service&lt;/a&gt;。
+当 k8s 启动一个容器时， 它会在容器启动时生成指向所有正在运行的 Service 的环境变量。
+例如， 如果存在一个叫 &lt;code&gt;foo&lt;/code&gt; 的 Service，所有都会有如下初始化环境变量:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;FOO_SERVICE_HOST&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;lt;the host the Service is running on&amp;gt;
+FOO_SERVICE_PORT&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;lt;the port the Service is running on&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;em&gt;这就存在一个隐式的启动顺序要求&lt;/em&gt; - 一个 Pod 想要访问的任意 Service 都需要在这个 Pod 创建
+之前就要存在，否则对应的环境变量就不会生成。 DNS 就没有这个限制。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;一个可选(但强烈推荐)的
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/cluster-administration/addons/&#34;&gt;集群插件&lt;/a&gt;
+就是 DNS 服务。 DNS 服务会监听 k8s API 中新增的 &lt;code&gt;Services&lt;/code&gt; 并对应创建一系列 DNS 记录。
+如果集群中启动了 DNS 则 所有的 Pod 都可以自动通过 DNS 解析访问 &lt;code&gt;Services&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果不必要，请不要为一个 Pod 指定 &lt;code&gt;hostPort&lt;/code&gt;。 当将一个 Pod 绑定到一个 &lt;code&gt;hostPort&lt;/code&gt; 时，
+就会限制这个 Pod 能调度的范围， 因为每个 &amp;lt;&lt;code&gt;hostIP&lt;/code&gt;, &lt;code&gt;hostPort&lt;/code&gt;, &lt;code&gt;protocol&lt;/code&gt;&amp;gt; 的组合在
+全集群内是唯一的。 如果没有显示地指定 &lt;code&gt;hostIP&lt;/code&gt; 和 &lt;code&gt;protocol&lt;/code&gt;，k8s 全使用 &lt;code&gt;0.0.0.0&lt;/code&gt;
+作为默认的 &lt;code&gt;hostIP&lt;/code&gt;， &lt;code&gt;TCP&lt;/code&gt; 作为默认的 &lt;code&gt;protocol&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;如果只为调试目的需要访问端口，可以使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/access-application-cluster/access-cluster/#manually-constructing-apiserver-proxy-urls&#34;&gt;apiserver proxy&lt;/a&gt;
+或
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/access-application-cluster/port-forward-access-application-cluster/&#34;&gt;&lt;code&gt;kubectl port-forward&lt;/code&gt;&lt;/a&gt;.
+如果确实需要将 Pod 端口在节点上显露，在使用 &lt;code&gt;hostPort&lt;/code&gt; 之前考虑使用 &lt;code&gt;hostPort&lt;/code&gt;的
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/service/#nodeport&#34;&gt;NodePort&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;与 &lt;code&gt;hostPort&lt;/code&gt; 的理由一样，避免使用 &lt;code&gt;hostNetwork&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在不需要 &lt;code&gt;kube-proxy&lt;/code&gt; 负载均衡的情况下，使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/service/#headless-services&#34;&gt;headless Services&lt;/a&gt;
+(就是将 &lt;code&gt;ClusterIP&lt;/code&gt; 设置为 &lt;code&gt;None&lt;/code&gt;)
+来实现简单的服务发现&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+## Using Labels
+
+- Define and use [labels](/docs/concepts/overview/working-with-objects/labels/) that identify __semantic attributes__ of your application or Deployment, such as `{ app: myapp, tier: frontend, phase: test, deployment: v3 }`. You can use these labels to select the appropriate Pods for other resources; for example, a Service that selects all `tier: frontend` Pods, or all `phase: test` components of `app: myapp`. See the [guestbook](https://github.com/kubernetes/examples/tree/master/guestbook/) app for examples of this approach.
+
+A Service can be made to span multiple Deployments by omitting release-specific labels from its selector. [Deployments](/docs/concepts/workloads/controllers/deployment/) make it easy to update a running service without downtime.
+
+A desired state of an object is described by a Deployment, and if changes to that spec are _applied_, the deployment controller changes the actual state to the desired state at a controlled rate.
+
+- You can manipulate labels for debugging. Because Kubernetes controllers (such as ReplicaSet) and Services match to Pods using selector labels, removing the relevant labels from a Pod will stop it from being considered by a controller or from being served traffic by a Service. If you remove the labels of an existing Pod, its controller will create a new Pod to take its place. This is a useful way to debug a previously &#34;live&#34; Pod in a &#34;quarantine&#34; environment. To interactively remove or add labels, use [`kubectl label`](/docs/reference/generated/kubectl/kubectl-commands#label).
+ --&gt;
+&lt;h2 id=&#34;使用标签&#34;&gt;使用标签&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;为应用或 Deployment 定义和使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/labels/&#34;&gt;标签&lt;/a&gt;
+来设置 &lt;strong&gt;有语义的属性&lt;/strong&gt;, 如
+&lt;code&gt;{ app: myapp, tier: frontend, phase: test, deployment: v3 }&lt;/code&gt;，
+这样其它的资源就可以通过这些标签来选择合适的 Pod; 例如， 一个 Service 可以选择所有
+&lt;code&gt;tier: frontend&lt;/code&gt; 的 Pod，或者 &lt;code&gt;app: myapp&lt;/code&gt; 的所有 &lt;code&gt;phase: test&lt;/code&gt; 组件。
+更多使用方式见示例
+&lt;a href=&#34;https://github.com/kubernetes/examples/tree/master/guestbook/&#34;&gt;guestbook&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;一个 Service 可以在选择器中省略与发布版本相关的标签，这样就可以横跨多个版本。这样
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/deployment/&#34;&gt;Deployments&lt;/a&gt;
+就可以很容易地在不停止提供服务的情况下实现服务的更新&lt;/p&gt;
+&lt;p&gt;一个对象的期望状态是以一个 Deployment 来描述的， 如果它的配置的变更被_执行_，则 Deployment
+控制器会以一个控制频率将实际状态变更到与期望状态相同。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;用户可以可能操作标签来方便调试。 因为 k8s 控制器(如 ReplicaSet) 和 Service 使用选择器标签
+来匹配 Pod， 移除相应的标签就可以认为是将其从一个控制器中移出或从一个 Service 服务后端移出。
+当移除一个现有 Pod 的标签后，它的控制器会创建一个新的 Pod 来代替它的位置。 这是一种在隔离环境中调试之前
+存活 Pod 的有效方式。 而要移除或添加标签，使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/reference/generated/kubectl/kubectl-commands#label&#34;&gt;&lt;code&gt;kubectl label&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+## Container Images
+
+The [imagePullPolicy](/docs/concepts/containers/images/#updating-images) and the tag of the image affect when the [kubelet](/docs/reference/command-line-tools-reference/kubelet/) attempts to pull the specified image.
+
+- `imagePullPolicy: IfNotPresent`: the image is pulled only if it is not already present locally.
+
+- `imagePullPolicy: Always`: every time the kubelet launches a container, the kubelet queries the container image registry to resolve the name to an image digest. If the kubelet has a container image with that exact digest cached locally, the kubelet uses its cached image; otherwise, the kubelet downloads (pulls) the image with the resolved digest, and uses that image to launch the container.
+
+- `imagePullPolicy` is omitted and either the image tag is `:latest` or it is omitted: `Always` is applied.
+
+- `imagePullPolicy` is omitted and the image tag is present but not `:latest`: `IfNotPresent` is applied.
+
+- `imagePullPolicy: Never`: the image is assumed to exist locally. No attempt is made to pull the image.
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; To make sure the container always uses the same version of the image, you can specify its &lt;a href=&#34;https://docs.docker.com/engine/reference/commandline/pull/#pull-an-image-by-digest-immutable-identifier&#34;&gt;digest&lt;/a&gt;; replace &lt;code&gt;&amp;lt;image-name&amp;gt;:&amp;lt;tag&amp;gt;&lt;/code&gt; with &lt;code&gt;&amp;lt;image-name&amp;gt;@&amp;lt;digest&amp;gt;&lt;/code&gt; (for example, &lt;code&gt;image@sha256:45b23dee08af5e43a7fea6c4cf9c25ccf269ee113168c19722f87876677c5cb2&lt;/code&gt;). The digest uniquely identifies a specific version of the image, so it is never updated by Kubernetes unless you change the digest value.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; You should avoid using the &lt;code&gt;:latest&lt;/code&gt; tag when deploying containers in production as it is harder to track which version of the image is running and more difficult to roll back properly.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; The caching semantics of the underlying image provider make even &lt;code&gt;imagePullPolicy: Always&lt;/code&gt; efficient. With Docker, for example, if the image already exists, the pull attempt is fast because all image layers are cached and no image download is needed.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+--&gt;
+&lt;h2 id=&#34;容器镜像&#34;&gt;容器镜像&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/images/#updating-images&#34;&gt;imagePullPolicy&lt;/a&gt; 和镜像和标签会影响
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/kubelet/&#34;&gt;kubelet&lt;/a&gt;
+拉取指定的镜像。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;imagePullPolicy: IfNotPresent&lt;/code&gt;: 镜像只在本地不存在时才会拉取。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;imagePullPolicy: Always&lt;/code&gt;: 每次 kubelet 启动一个容器时， kubelet 查询容器镜像仓库将名称解析为镜像摘要。
+如果 kubelet 发现本地缓存中有摘要完全相同的容器镜像时， kubelet 会使用缓存的镜像。否则，
+kubelet 使用解析的摘要下载(拉取)镜像，并使用这个镜像来启动容器。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;imagePullPolicy&lt;/code&gt; 如果该字段未设置而 镜像标签为 &lt;code&gt;:latest&lt;/code&gt;，或没有标签 则会被忽略或者如果未设置值，则默认执行 &lt;code&gt;Always&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;imagePullPolicy&lt;/code&gt; 如果该字段未设置而镜像设置了标签并且不是 &lt;code&gt;:latest&lt;/code&gt;，则该字段会应用为 &lt;code&gt;IfNotPresent&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;imagePullPolicy: Never&lt;/code&gt;: 假定镜像是本地存在。 不会尝试拉取镜像&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 要保证容器即便使用同一个版本的镜像，可以使用
+&lt;a href=&#34;https://docs.docker.com/engine/reference/commandline/pull/#pull-an-image-by-digest-immutable-identifier&#34;&gt;摘要&lt;/a&gt;;
+用 &lt;code&gt;&amp;lt;image-name&amp;gt;@&amp;lt;digest&amp;gt;&lt;/code&gt;(例如，&lt;code&gt;image@sha256:45b23dee08af5e43a7fea6c4cf9c25ccf269ee113168c19722f87876677c5cb2&lt;/code&gt;)
+代替 &lt;code&gt;&amp;lt;image-name&amp;gt;:&amp;lt;tag&amp;gt;&lt;/code&gt;。 摘要可以唯一标识指定版本的镜像， 所以在不修改摘要的情况，k8s
+不会改掉的这个镜像。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 在生产环境中应当避免使用 &lt;code&gt;:latest&lt;/code&gt; 标签，因为它会使得很难追踪正在运行的是哪个镜像，更难以实现
+回滚。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 底层镜像供应者的缓存主义使得即便 &lt;code&gt;imagePullPolicy: Always&lt;/code&gt; 也是高效的。 例如，Docker
+如果镜像已经存在， 摘取尝试会很快，因为镜像的所有层都已经缓存并不需要下载。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;!--
+## Using kubectl
+
+- Use `kubectl apply -f &lt;directory&gt;`. This looks for Kubernetes configuration in all `.yaml`, `.yml`, and `.json` files in `&lt;directory&gt;` and passes it to `apply`.
+
+- Use label selectors for `get` and `delete` operations instead of specific object names. See the sections on [label selectors](/docs/concepts/overview/working-with-objects/labels/#label-selectors) and [using labels effectively](/docs/concepts/cluster-administration/manage-deployment/#using-labels-effectively).
+
+- Use `kubectl create deployment` and `kubectl expose` to quickly create single-container Deployments and Services. See [Use a Service to Access an Application in a Cluster](/docs/tasks/access-application-cluster/service-access-application-cluster/) for an example.
+ --&gt;
+&lt;h2 id=&#34;使用-kubectl&#34;&gt;使用 kubectl&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;使用&lt;code&gt;kubectl apply -f &amp;lt;directory&amp;gt;&lt;/code&gt;. 这会查找 k8s 配置，包含 &lt;code&gt;&amp;lt;directory&amp;gt;&lt;/code&gt; 中的
+&lt;code&gt;.yaml&lt;/code&gt;, &lt;code&gt;.yml&lt;/code&gt;, &lt;code&gt;.json&lt;/code&gt; 文件，并作为 &lt;code&gt;apply&lt;/code&gt; 的参数&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用标签选择器作为 &lt;code&gt;get&lt;/code&gt; 和 &lt;code&gt;delete&lt;/code&gt; 操作的选择条件而不指定对象名称。 见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/labels/#label-selectors&#34;&gt;标签选择器&lt;/a&gt;
+和
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/cluster-administration/manage-deployment/#using-labels-effectively&#34;&gt;高效使用标签&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用 &lt;code&gt;kubectl create deployment&lt;/code&gt; 和 &lt;code&gt;kubectl expose&lt;/code&gt; 快速创建单容器的 Deployment 和 Service
+示例见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/access-application-cluster/service-access-application-cluster/&#34;&gt;使用 Service 访问集群中的应用&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: Service Topology</title>
       <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/service-topology/</link>
       <pubDate>Wed, 09 Sep 2020 00:00:00 +0000</pubDate>
@@ -27639,381 +27925,6 @@ Job 管理那些预期要终止的 Pod (如 批量任务)&lt;/p&gt;
 &lt;h2 id=&#34;cron-jobs&#34;&gt;&lt;code&gt;CronJob&lt;/code&gt;&lt;/h2&gt;
 &lt;p&gt;用户可以使用 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/cron-jobs/&#34;&gt;&lt;code&gt;CronJob&lt;/code&gt;&lt;/a&gt; 来创建一个在指定 时间/日期 运行的 Job,
 与 Unix 的 &lt;code&gt;cron&lt;/code&gt; 类似。&lt;/p&gt;
-
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: 垃圾回收</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/</link>
-      <pubDate>Mon, 31 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/</guid>
-      <description>
-        
-        
-        &lt;!--  
----
-title: Garbage Collection
-content_type: concept
-weight: 60
----
---&gt;
-&lt;!-- overview --&gt;
-&lt;p&gt;在 k8s 中垃圾回收的作用就是删除那些曾经有所有者，现在没有的对象。&lt;/p&gt;
-&lt;!-- body --&gt;
-&lt;!--
-## Owners and dependents
-
-Some Kubernetes objects are owners of other objects. For example, a ReplicaSet
-is the owner of a set of Pods. The owned objects are called *dependents* of the
-owner object. Every dependent object has a `metadata.ownerReferences` field that
-points to the owning object.
-
-Sometimes, Kubernetes sets the value of `ownerReference` automatically. For
-example, when you create a ReplicaSet, Kubernetes automatically sets the
-`ownerReference` field of each Pod in the ReplicaSet. In 1.8, Kubernetes
-automatically sets the value of `ownerReference` for objects created or adopted
-by ReplicationController, ReplicaSet, StatefulSet, DaemonSet, Deployment, Job
-and CronJob.
-
-You can also specify relationships between owners and dependents by manually
-setting the `ownerReference` field.
-
-Here&#39;s a configuration file for a ReplicaSet that has three Pods:
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;table class=&#34;includecode&#34; id=&#34;controllersreplicasetyaml&#34;&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;
-                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/controllers/replicaset.yaml&#34; download=&#34;controllers/replicaset.yaml&#34;&gt;
-                    &lt;code&gt;controllers/replicaset.yaml&lt;/code&gt;
-                &lt;/a&gt;
-                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;controllersreplicasetyaml&#39;)&#34; title=&#34;Copy controllers/replicaset.yaml to clipboard&#34;&gt;
-            &lt;/th&gt;
-        &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody&gt;
-        &lt;tr&gt;
-            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ReplicaSet&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-repset&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;replicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;pod-is-for&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;garbage-collection-example&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-        &lt;span style=&#34;color:#f92672&#34;&gt;pod-is-for&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;garbage-collection-example&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
-      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/tbody&gt;
-&lt;/table&gt;
-
-
-
-If you create the ReplicaSet and then view the Pod metadata, you can see
-OwnerReferences field:
-
-```shell
-kubectl apply -f https://k8s.io/examples/controllers/replicaset.yaml
-kubectl get pods --output=yaml
-```
-
-The output shows that the Pod owner is a ReplicaSet named `my-repset`:
-
-```yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  ...
-  ownerReferences:
-  - apiVersion: apps/v1
-    controller: true
-    blockOwnerDeletion: true
-    kind: ReplicaSet
-    name: my-repset
-    uid: d9607e19-f88f-11e6-a518-42010a800195
-  ...
-```
-
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;p&gt;Cross-namespace owner references are disallowed by design. This means:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Namespace-scoped dependents can only specify owners in the same namespace,
-and owners that are cluster-scoped.&lt;/li&gt;
-&lt;li&gt;Cluster-scoped dependents can only specify cluster-scoped owners, but not
-namespace-scoped owners.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/blockquote&gt;
-
- --&gt;
-&lt;h2 id=&#34;所有者和从属者&#34;&gt;所有者和从属者&lt;/h2&gt;
-&lt;p&gt;有些 k8s 对象是其它对象的所有者。 如，一个 ReplicaSet 就是一个 Pod 集合的所有者。
-那些被拥有的对象就叫所有者的 &lt;em&gt;从属者(dependents)&lt;/em&gt;， 每个从属者都有一个 &lt;code&gt;metadata.ownerReferences&lt;/code&gt;
-字段指向它的所有者。&lt;/p&gt;
-&lt;p&gt;有时候， k8s 会自动添加 &lt;code&gt;ownerReference&lt;/code&gt; 的值。 如，当创建一个 ReplicaSet 时， k8s 自动
-为这个 ReplicaSet 所属的 Pod 设置 &lt;code&gt;ownerReference&lt;/code&gt;。 在 &lt;code&gt;1.8&lt;/code&gt; 中， k8s 为创建或捕获对象
-自动设置 &lt;code&gt;ownerReference&lt;/code&gt;值的对象有 ReplicationController, ReplicaSet, StatefulSet,
-DaemonSet, Deployment, Job, CronJob.&lt;/p&gt;
-&lt;p&gt;用户可以通过设置 &lt;code&gt;ownerReference&lt;/code&gt; 字段来手动指定所有者和从属者之间的关系
-以下为一个包含 3 个 Pod 的 ReplicaSet 的配置文件:&lt;/p&gt;
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;table class=&#34;includecode&#34; id=&#34;controllersreplicasetyaml&#34;&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;
-                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/controllers/replicaset.yaml&#34; download=&#34;controllers/replicaset.yaml&#34;&gt;
-                    &lt;code&gt;controllers/replicaset.yaml&lt;/code&gt;
-                &lt;/a&gt;
-                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;controllersreplicasetyaml&#39;)&#34; title=&#34;Copy controllers/replicaset.yaml to clipboard&#34;&gt;
-            &lt;/th&gt;
-        &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody&gt;
-        &lt;tr&gt;
-            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ReplicaSet&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-repset&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;replicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;pod-is-for&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;garbage-collection-example&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-        &lt;span style=&#34;color:#f92672&#34;&gt;pod-is-for&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;garbage-collection-example&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
-      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/tbody&gt;
-&lt;/table&gt;
-
-
-&lt;p&gt;如果用户创建了 ReplicaSet 然后查看所属 Pod 的元数据(metadata), 就可以看到 &lt;code&gt;OwnerReferences&lt;/code&gt; 字段&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl apply -f replicaset.yaml
-kubectl get pods --output&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;yaml
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;从输出结果可以看到 Pod 的所有者是一个叫 &lt;code&gt;my-repset&lt;/code&gt; 的 ReplicaSet&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#ae81ff&#34;&gt;...&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;ownerReferences&lt;/span&gt;:
-  - &lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;controller&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;blockOwnerDeletion&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ReplicaSet&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-repset&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;uid&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;d9607e19-f88f-11e6-a518-42010a800195&lt;/span&gt;
-  &lt;span style=&#34;color:#ae81ff&#34;&gt;...&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;p&gt;在设计上跨命名空间的所属关系是不允许的。 这就是说:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;命名空间作用域内从属者只能指定同一个命名空间的对象为其所有者和集群作用域的所有者&lt;/li&gt;
-&lt;li&gt;集群作用哉的从属者只能指定集群作用域的所有者，不能指定命名空间作用域的所有者&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;!--
-## Controlling how the garbage collector deletes dependents
-
-When you delete an object, you can specify whether the object&#39;s dependents are
-also deleted automatically. Deleting dependents automatically is called *cascading
-deletion*.  There are two modes of *cascading deletion*: *background* and *foreground*.
-
-If you delete an object without deleting its dependents
-automatically, the dependents are said to be *orphaned*.
- --&gt;
-&lt;h2 id=&#34;控制垃圾回收器怎么删除从属者&#34;&gt;控制垃圾回收器怎么删除从属者&lt;/h2&gt;
-&lt;p&gt;当用户删除一个对象时，可能指定是否同时自动删除它的从属者。 自动删除从属都的行为叫做 &lt;em&gt;级联删除&lt;/em&gt;。
-级联删除又有两种模式 &lt;em&gt;后台&lt;/em&gt; 和 &lt;em&gt;前台&lt;/em&gt;。&lt;/p&gt;
-&lt;p&gt;如果用户在删除一个对象是没有自动删除它的所属者，这些从属者就认为是 &lt;em&gt;孤儿&lt;/em&gt;&lt;/p&gt;
-&lt;!--
-### Foreground cascading deletion
-
-In *foreground cascading deletion*, the root object first
-enters a &#34;deletion in progress&#34; state. In the &#34;deletion in progress&#34; state,
-the following things are true:
-
- * The object is still visible via the REST API
- * The object&#39;s `deletionTimestamp` is set
- * The object&#39;s `metadata.finalizers` contains the value &#34;foregroundDeletion&#34;.
-
-Once the &#34;deletion in progress&#34; state is set, the garbage
-collector deletes the object&#39;s dependents. Once the garbage collector has deleted all
-&#34;blocking&#34; dependents (objects with `ownerReference.blockOwnerDeletion=true`), it deletes
-the owner object.
-
-Note that in the &#34;foregroundDeletion&#34;, only dependents with
-`ownerReference.blockOwnerDeletion=true` block the deletion of the owner object.
-Kubernetes version 1.7 added an [admission controller](/docs/reference/access-authn-authz/admission-controllers/#ownerreferencespermissionenforcement) that controls user access to set
-`blockOwnerDeletion` to true based on delete permissions on the owner object, so that
-unauthorized dependents cannot delay deletion of an owner object.
-
-If an object&#39;s `ownerReferences` field is set by a controller (such as Deployment or ReplicaSet),
-blockOwnerDeletion is set automatically and you do not need to manually modify this field.
- --&gt;
-&lt;h3 id=&#34;前台级联删除&#34;&gt;前台级联删除&lt;/h3&gt;
-&lt;p&gt;In &lt;em&gt;foreground cascading deletion&lt;/em&gt;, the root object first
-enters a &amp;ldquo;deletion in progress&amp;rdquo; state. In the &amp;ldquo;deletion in progress&amp;rdquo; state,
-the following things are true:&lt;/p&gt;
-&lt;p&gt;在使用 &lt;em&gt;前台级联删除&lt;/em&gt; 时， 根对象先进入 &amp;ldquo;删除中&amp;rdquo; 状态。 在 &amp;ldquo;删除中&amp;rdquo; 状态时, 以下状态为真:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;依然可以通过 REST API 访问该对象&lt;/li&gt;
-&lt;li&gt;该对象上已经设置了 &lt;code&gt;deletionTimestamp&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;该对象上的 &lt;code&gt;metadata.finalizers&lt;/code&gt; 包含值 &amp;ldquo;foregroundDeletion&amp;rdquo;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;当 &amp;ldquo;删除中&amp;rdquo; 被设置后， 垃圾回收器就会删除它的从属对象。 当垃圾回收器删除所有 &amp;ldquo;阻塞&amp;rdquo; 的对象(包含 &lt;code&gt;ownerReference.blockOwnerDeletion=true&lt;/code&gt; 的对象)后，
-就会删除对象本身。&lt;/p&gt;
-&lt;p&gt;要注意到 &lt;em&gt;前台级联删除&lt;/em&gt; 只会被那些包含 &lt;code&gt;ownerReference.blockOwnerDeletion=true&lt;/code&gt; 对象的删除所阻塞。
-在 k8s &lt;code&gt;v1.7&lt;/code&gt; 添加了 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/reference/access-authn-authz/admission-controllers/#ownerreferencespermissionenforcement&#34;&gt;admission controller&lt;/a&gt;
-其上添加了基于所有者对象上的删除权限设置用户对 &lt;code&gt;blockOwnerDeletion&lt;/code&gt; 设置为 true 的权限。
-因此对于未授权的从属对象不会延迟其所有者对象的删除。&lt;/p&gt;
-&lt;p&gt;如果一个对象的 &lt;code&gt;ownerReferences&lt;/code&gt; 字段是由控制器(如 Deployment 或 ReplicaSet) 设置的，
-&lt;code&gt;blockOwnerDeletion&lt;/code&gt; 也会自动被设置，用户不需要手动修改该字段。&lt;/p&gt;
-&lt;!--
-### Background cascading deletion
-
-In *background cascading deletion*, Kubernetes deletes the owner object
-immediately and the garbage collector then deletes the dependents in
-the background.
- --&gt;
-&lt;h3 id=&#34;后台级联删除&#34;&gt;后台级联删除&lt;/h3&gt;
-&lt;p&gt;在使用 &lt;em&gt;后台级联删除&lt;/em&gt;, k8s 立马删除所有者对象，然后垃圾回器后台删除其从属对象&lt;/p&gt;
-&lt;!--
-### Setting the cascading deletion policy
-
-To control the cascading deletion policy, set the `propagationPolicy`
-field on the `deleteOptions` argument when deleting an Object. Possible values include &#34;Orphan&#34;,
-&#34;Foreground&#34;, or &#34;Background&#34;.
-
-Here&#39;s an example that deletes dependents in background:
-
-```shell
-kubectl proxy --port=8080
-curl -X DELETE localhost:8080/apis/apps/v1/namespaces/default/replicasets/my-repset \
-  -d &#39;{&#34;kind&#34;:&#34;DeleteOptions&#34;,&#34;apiVersion&#34;:&#34;v1&#34;,&#34;propagationPolicy&#34;:&#34;Background&#34;}&#39; \
-  -H &#34;Content-Type: application/json&#34;
-```
-
-Here&#39;s an example that deletes dependents in foreground:
-
-```shell
-kubectl proxy --port=8080
-curl -X DELETE localhost:8080/apis/apps/v1/namespaces/default/replicasets/my-repset \
-  -d &#39;{&#34;kind&#34;:&#34;DeleteOptions&#34;,&#34;apiVersion&#34;:&#34;v1&#34;,&#34;propagationPolicy&#34;:&#34;Foreground&#34;}&#39; \
-  -H &#34;Content-Type: application/json&#34;
-```
-
-Here&#39;s an example that orphans dependents:
-
-```shell
-kubectl proxy --port=8080
-curl -X DELETE localhost:8080/apis/apps/v1/namespaces/default/replicasets/my-repset \
-  -d &#39;{&#34;kind&#34;:&#34;DeleteOptions&#34;,&#34;apiVersion&#34;:&#34;v1&#34;,&#34;propagationPolicy&#34;:&#34;Orphan&#34;}&#39; \
-  -H &#34;Content-Type: application/json&#34;
-```
-
-kubectl also supports cascading deletion.
-To delete dependents automatically using kubectl, set `--cascade` to true.  To
-orphan dependents, set `--cascade` to false. The default value for `--cascade`
-is true.
-
-Here&#39;s an example that orphans the dependents of a ReplicaSet:
-
-```shell
-kubectl delete replicaset my-repset --cascade=false
-```
- --&gt;
-&lt;h3 id=&#34;设置级联删除策略&#34;&gt;设置级联删除策略&lt;/h3&gt;
-&lt;p&gt;想要控制级联删除策略, 可以在删除对象时设置 &lt;code&gt;deleteOptions&lt;/code&gt; 参数的 &lt;code&gt;propagationPolicy&lt;/code&gt; 字段，
-可选的值有 &amp;ldquo;Orphan&amp;rdquo;, &amp;ldquo;Foreground&amp;rdquo;, &amp;ldquo;Background&amp;rdquo;.
-以下为一个后台删除从属对象的示例:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl proxy --port&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
-curl -X DELETE localhost:8080/apis/apps/v1/namespaces/default/replicasets/my-repset &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;  -d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{&amp;#34;kind&amp;#34;:&amp;#34;DeleteOptions&amp;#34;,&amp;#34;apiVersion&amp;#34;:&amp;#34;v1&amp;#34;,&amp;#34;propagationPolicy&amp;#34;:&amp;#34;Background&amp;#34;}&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;  -H &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Content-Type: application/json&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;以下为一个前台删除从属对象的示例:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl proxy --port&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
-curl -X DELETE localhost:8080/apis/apps/v1/namespaces/default/replicasets/my-repset &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;  -d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{&amp;#34;kind&amp;#34;:&amp;#34;DeleteOptions&amp;#34;,&amp;#34;apiVersion&amp;#34;:&amp;#34;v1&amp;#34;,&amp;#34;propagationPolicy&amp;#34;:&amp;#34;Foreground&amp;#34;}&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;  -H &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Content-Type: application/json&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;以下为一个将从属对象设置为 孤儿的示例:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl proxy --port&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
-curl -X DELETE localhost:8080/apis/apps/v1/namespaces/default/replicasets/my-repset &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;  -d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{&amp;#34;kind&amp;#34;:&amp;#34;DeleteOptions&amp;#34;,&amp;#34;apiVersion&amp;#34;:&amp;#34;v1&amp;#34;,&amp;#34;propagationPolicy&amp;#34;:&amp;#34;Orphan&amp;#34;}&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;  -H &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Content-Type: application/json&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;kubectl 也支持级联删除。要使用 kubectl 自动删除从属对象， 设置 &lt;code&gt;--cascade&lt;/code&gt; 为 &lt;code&gt;true&lt;/code&gt;
-将从属对象设置为 孤儿 设置 &lt;code&gt;--cascade&lt;/code&gt; 为 &lt;code&gt;false&lt;/code&gt;. &lt;code&gt;--cascade&lt;/code&gt; 默认值为 &lt;code&gt;true&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;以下为一个将 ReplicaSet 从属对象设置为 孤儿的示例&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl delete replicaset my-repset --cascade&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;false
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
-### Additional note on Deployments
-
-Prior to 1.7, When using cascading deletes with Deployments you *must* use `propagationPolicy: Foreground`
-to delete not only the ReplicaSets created, but also their Pods. If this type of _propagationPolicy_
-is not used, only the ReplicaSets will be deleted, and the Pods will be orphaned.
-See [kubeadm/#149](https://github.com/kubernetes/kubeadm/issues/149#issuecomment-284766613) for more information.
- --&gt;
-&lt;h3 id=&#34;deployment-额外需要注意的地方&#34;&gt;Deployment 额外需要注意的地方&lt;/h3&gt;
-&lt;p&gt;Prior to 1.7, When using cascading deletes with Deployments you &lt;em&gt;must&lt;/em&gt; use &lt;code&gt;propagationPolicy: Foreground&lt;/code&gt;
-to delete not only the ReplicaSets created, but also their Pods. If this type of &lt;em&gt;propagationPolicy&lt;/em&gt;
-is not used, only the ReplicaSets will be deleted, and the Pods will be orphaned.
-See &lt;a href=&#34;https://github.com/kubernetes/kubeadm/issues/149#issuecomment-284766613&#34;&gt;kubeadm/#149&lt;/a&gt; for more information.&lt;/p&gt;
-&lt;p&gt;在 &lt;code&gt;1.7&lt;/code&gt; 版本之前， 当使用级联删除 Deployment 时，&lt;em&gt;必须&lt;/em&gt; 要使用 &lt;code&gt;propagationPolicy: Foreground&lt;/code&gt;
-来确定不止删除创建的  ReplicaSet，还要删除对应的 Pod。如果没有使用该类型的 &lt;em&gt;propagationPolicy&lt;/em&gt;，
-只有 ReplicaSet 会被删除，Pod 会被设置人孤儿。
-更多信息见 &lt;a href=&#34;https://github.com/kubernetes/kubeadm/issues/149#issuecomment-284766613&#34;&gt;kubeadm/#149&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&#34;已知问题&#34;&gt;已知问题&lt;/h2&gt;
-&lt;p&gt;见问题单 &lt;a href=&#34;https://github.com/kubernetes/kubernetes/issues/26120&#34;&gt;#26120&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/api-machinery/garbage-collection.md&#34;&gt;设计文稿 1&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/api-machinery/synchronous-garbage-collection.md&#34;&gt;设计文稿 2&lt;/a&gt;&lt;/p&gt;
 
       </description>
     </item>

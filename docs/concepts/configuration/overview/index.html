@@ -1,0 +1,1194 @@
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.75.1" />
+
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
+<link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
+<link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="manifest" href="/k8sDocs/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/k8sDocs/images/kubernetes-192x192.png">
+
+<title>配置最佳实践 | Kubernetes</title><meta property="og:title" content="配置最佳实践" />
+<meta property="og:description" content="本文主要加强和巩固从用户指引，入门文档，和示例中介绍过的配置的最佳实践。 这是一个活动文档，如果用户觉得有些内容文档上没有但可以对其他人有帮助" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/overview/" />
+<meta property="article:modified_time" content="2020-12-21T15:20:32+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="配置最佳实践">
+<meta itemprop="description" content="本文主要加强和巩固从用户指引，入门文档，和示例中介绍过的配置的最佳实践。 这是一个活动文档，如果用户觉得有些内容文档上没有但可以对其他人有帮助">
+<meta itemprop="dateModified" content="2020-12-21T15:20:32+08:00" />
+<meta itemprop="wordCount" content="2527">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="配置最佳实践"/>
+<meta name="twitter:description" content="本文主要加强和巩固从用户指引，入门文档，和示例中介绍过的配置的最佳实践。 这是一个活动文档，如果用户觉得有些内容文档上没有但可以对其他人有帮助"/>
+
+
+
+
+
+<link rel="preload" href="/k8sDocs/scss/main.min.537757ec8e00d87ec206229d5725b6d05e078dd447818e448f0802685603e730.css" as="style">
+<link href="/k8sDocs/scss/main.min.537757ec8e00d87ec206229d5725b6d05e078dd447818e448f0802685603e730.css" rel="stylesheet" integrity="">
+
+
+<script src="/k8sDocs/js/jquery-3.3.1.min.js" ></script>
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "url": "https://kubernetes.io",
+    "logo": "https://kubernetes.io/images/favicon.png",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://lostsquirrel.github.io/k8sDocs/search/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+
+  }
+</script>
+<meta name="theme-color" content="#326ce5">
+
+
+
+
+<link rel="stylesheet" href=/k8sDocs/css/base_fonts.css>
+
+<link rel="stylesheet" href="/k8sDocs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/k8sDocs/css/callouts.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
+
+
+
+<meta name="description" content="本文主要加强和巩固从用户指引，入门文档，和示例中介绍过的配置的最佳实践。 这是一个活动文档，如果用户觉得有些内容文档上没有但可以对其他人有帮助">
+<meta property="og:description" content="本文主要加强和巩固从用户指引，入门文档，和示例中介绍过的配置的最佳实践。 这是一个活动文档，如果用户觉得有些内容文档上没有但可以对其他人有帮助">
+<meta name="twitter:description" content="本文主要加强和巩固从用户指引，入门文档，和示例中介绍过的配置的最佳实践。 这是一个活动文档，如果用户觉得有些内容文档上没有但可以对其他人有帮助">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/overview/">
+<meta property="og:title" content="配置最佳实践">
+<meta name="twitter:title" content="配置最佳实践">
+<meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
+
+<meta name="twitter:image:alt" content="Kubernetes">
+
+<meta property="og:image" content="/k8sDocs/images/kubernetes-horizontal-color.png">
+
+<meta property="og:type" content="article">
+
+
+
+<script src="/k8sDocs/js/script.js"></script>
+
+
+    <title>配置最佳实践 | Kubernetes</title>
+  </head>
+  <body class="td-page td-documentation">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
+        <a class="navbar-brand" href="/k8sDocs/"></a>
+	<div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
+
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			
+			
+			<li class="nav-item mr-2 mb-lg-0">
+				
+				<a class="nav-link active" href="/k8sDocs/docs/" >Documentation</span></a>
+			</li>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</ul>
+	</div>
+  
+
+</nav>
+
+      
+      <div class="header-filler"></div>
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-md-nowrap">
+          <div class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+
+
+
+
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  
+  <form class="td-sidebar__search d-flex align-items-center d-lg-none">
+    
+
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  
+  <nav class="collapse td-sidebar-nav" id="td-section-nav">
+    
+    
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Kubernetes Documentation</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocs">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">概念(Concepts)</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconcepts">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">概览</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverview">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview00-what-is-k8s" href="/k8sDocs/docs/concepts/overview/00-what-is-k8s/">k8s 是什么</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview01-components" href="/k8sDocs/docs/concepts/overview/01-components/">k8s 组件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview02-k8s-api" href="/k8sDocs/docs/concepts/overview/02-k8s-api/">k8s API 说明</a>
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/working-with-objects/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">k8s 对象管理</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverviewworking-with-objects">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects00-kubernetes-objects" href="/k8sDocs/docs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectsnames" href="/k8sDocs/docs/concepts/overview/working-with-objects/names/">对象命令与ID</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects02-namespace" href="/k8sDocs/docs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectslabels" href="/k8sDocs/docs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects04-annotation" href="/k8sDocs/docs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects05-field-selectors" href="/k8sDocs/docs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects06-common-labels" href="/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/architecture/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">集群架构</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsarchitecture">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturenodes" href="/k8sDocs/docs/concepts/architecture/nodes/">节点</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontrol-plane-node-communication" href="/k8sDocs/docs/concepts/architecture/control-plane-node-communication/">控制中心与节点的通信</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontroller" href="/k8sDocs/docs/concepts/architecture/controller/">控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecloud-controller" href="/k8sDocs/docs/concepts/architecture/cloud-controller/">Cloud Controller Manager</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/containers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">容器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptscontainers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers00-images" href="/k8sDocs/docs/concepts/containers/00-images/">镜像</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers01-container-environment" href="/k8sDocs/docs/concepts/containers/01-container-environment/">容器环境</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers02-runtime-class" href="/k8sDocs/docs/concepts/containers/02-runtime-class/">Runtime Class</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainerscontainer-lifecycle-hooks" href="/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/">容器生命周期钩子</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">工作负载(Workload)</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloads">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/pods/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Pod</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloadspods">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-lifecycle" href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsinit-containers" href="/k8sDocs/docs/concepts/workloads/pods/init-containers/">初始化容器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-topology-spread-constraints" href="/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑分布约束条件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspodpreset" href="/k8sDocs/docs/concepts/workloads/pods/podpreset/">Pod 预设信息</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsdisruptions" href="/k8sDocs/docs/concepts/workloads/pods/disruptions/">Disruptions</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsephemeral-containers" href="/k8sDocs/docs/concepts/workloads/pods/ephemeral-containers/">临时容器</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/controllers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">控制器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloadscontrollers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdeployment" href="/k8sDocs/docs/concepts/workloads/controllers/deployment/">Deployment</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicaset" href="/k8sDocs/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersstatefulset" href="/k8sDocs/docs/concepts/workloads/controllers/statefulset/">StatefulSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdaemonset" href="/k8sDocs/docs/concepts/workloads/controllers/daemonset/">DaemonSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersjob" href="/k8sDocs/docs/concepts/workloads/controllers/job/">Job</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersgarbage-collection" href="/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/">垃圾回收</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersttlafterfinished" href="/k8sDocs/docs/concepts/workloads/controllers/ttlafterfinished/">用于已完成资源的 TTL 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollerscron-jobs" href="/k8sDocs/docs/concepts/workloads/controllers/cron-jobs/">CronJob</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicationcontroller" href="/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/services-networking/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Service, 负载均衡, 网络</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsservices-networking">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice" href="/k8sDocs/docs/concepts/services-networking/service/">Service</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice-topology" href="/k8sDocs/docs/concepts/services-networking/service-topology/">Service Topology</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdns-pod-service" href="/k8sDocs/docs/concepts/services-networking/dns-pod-service/">Service 和 Pod 的 DNS</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingconnect-applications-service" href="/k8sDocs/docs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingendpoint-slices" href="/k8sDocs/docs/concepts/services-networking/endpoint-slices/">EndpointSlice</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress" href="/k8sDocs/docs/concepts/services-networking/ingress/">Ingress</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress-controllers" href="/k8sDocs/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingnetwork-policies" href="/k8sDocs/docs/concepts/services-networking/network-policies/">网络策略</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingadd-entries-to-pod-etc-hosts-with-host-aliases" href="/k8sDocs/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdual-stack" href="/k8sDocs/docs/concepts/services-networking/dual-stack/">IPv4/IPv6 双栈</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsstorage">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolumes" href="/k8sDocs/docs/concepts/storage/volumes/">卷(Volume)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragepersistent-volumes" href="/k8sDocs/docs/concepts/storage/persistent-volumes/">持久化卷(PV)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshots" href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-pvc-datasource" href="/k8sDocs/docs/concepts/storage/volume-pvc-datasource/">CSI 卷克隆</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragestorage-classes" href="/k8sDocs/docs/concepts/storage/storage-classes/">StorageClass</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshot-classes" href="/k8sDocs/docs/concepts/storage/volume-snapshot-classes/">VolumeSnapshotClass</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragedynamic-provisioning" href="/k8sDocs/docs/concepts/storage/dynamic-provisioning/">卷动态供应</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragestorage-capacity" href="/k8sDocs/docs/concepts/storage/storage-capacity/">存储容量</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstorageephemeral-volumes" href="/k8sDocs/docs/concepts/storage/ephemeral-volumes/">临时卷</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragestorage-limits" href="/k8sDocs/docs/concepts/storage/storage-limits/">节点级别的卷限制</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/configuration/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">配置</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconceptsconfiguration">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsconfigurationoverview" href="/k8sDocs/docs/concepts/configuration/overview/">配置最佳实践</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+  </nav>
+</div>
+
+
+
+
+          </div>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	<ol class="breadcrumb spb-1">
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/">概念(Concepts)</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/">配置</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/overview/">配置最佳实践</a>
+</li>
+
+	</ol>
+</nav	>
+
+            
+              
+            
+              
+    <div class="td-content">
+    
+<p>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/configuration/overview.md" id="editPageButton" target="_blank" data-proofer-ignore>
+    Edit This Page
+  </a>
+</p>
+
+  <h1>配置最佳实践</h1>
+  
+  
+
+<!--
+---
+reviewers:
+- mikedanese
+title: Configuration Best Practices
+content_type: concept
+weight: 10
+---
+ -->
+<!-- overview -->
+<p>本文主要加强和巩固从用户指引，入门文档，和示例中介绍过的配置的最佳实践。</p>
+<p>这是一个活动文档，如果用户觉得有些内容文档上没有但可以对其他人有帮助，不要犹豫，赶紧提交问题单或
+提供 PR</p>
+<!-- body -->
+<!--
+## General Configuration Tips
+
+- When defining configurations, specify the latest stable API version.
+
+- Configuration files should be stored in version control before being pushed to the cluster. This allows you to quickly roll back a configuration change if necessary. It also aids cluster re-creation and restoration.
+
+- Write your configuration files using YAML rather than JSON. Though these formats can be used interchangeably in almost all scenarios, YAML tends to be more user-friendly.
+
+- Group related objects into a single file whenever it makes sense. One file is often easier to manage than several. See the [guestbook-all-in-one.yaml](https://github.com/kubernetes/examples/tree/master/guestbook/all-in-one/guestbook-all-in-one.yaml) file as an example of this syntax.
+
+- Note also that many `kubectl` commands can be called on a directory. For example, you can call `kubectl apply` on a directory of config files.
+
+- Don't specify default values unnecessarily: simple, minimal configuration will make errors less likely.
+
+- Put object descriptions in annotations, to allow better introspection.
+ -->
+<h2 id="通用配置提示">通用配置提示</h2>
+<ul>
+<li>
+<p>在定义配置时，指定最新的稳定 API 版本。</p>
+</li>
+<li>
+<p>配置文件在推送到集群之前先保住到版本控制系统。 这样如果需要可以快速回滚配置变更。 也可以帮助集群重建或恢复。</p>
+</li>
+<li>
+<p>使用 YAML 格式编写配置文件而不是 JSON。 虽然这两个格式在几乎所有场景下都可以互换，但 YAML 对用户更友好。</p>
+</li>
+<li>
+<p>当几个对象有关系时将其放在一个文件中。 一个文件会比多个文件更容易管理。相关语法见示例
+<a href="https://github.com/kubernetes/examples/tree/master/guestbook/all-in-one/guestbook-all-in-one.yaml">guestbook-all-in-one.yaml</a></p>
+</li>
+<li>
+<p>要知道 <code>kubectl</code> 命令可以向一个目录调用，例如，可以对一个目录执行 <code>kubectl apply</code>，表示
+执行其中的所有配置文件</p>
+</li>
+<li>
+<p>请不要指定不必要的默认值: 简单，最小化配置，通常可以减少错误的产生。</p>
+</li>
+<li>
+<p>将对象描述加到注解中，让其可以对用户或自动化工具更友好。</p>
+</li>
+</ul>
+<!--
+## "Naked" Pods versus ReplicaSets, Deployments, and Jobs {#naked-pods-vs-replicasets-deployments-and-jobs}
+
+- Don't use naked Pods (that is, Pods not bound to a [ReplicaSet](/docs/concepts/workloads/controllers/replicaset/) or [Deployment](/docs/concepts/workloads/controllers/deployment/)) if you can avoid it. Naked Pods will not be rescheduled in the event of a node failure.
+
+  A Deployment, which both creates a ReplicaSet to ensure that the desired number of Pods is always available, and specifies a strategy to replace Pods (such as [RollingUpdate](/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment)), is almost always preferable to creating Pods directly, except for some explicit [`restartPolicy: Never`](/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy) scenarios. A [Job](/docs/concepts/workloads/controllers/job/) may also be appropriate.
+-->
+<h2 id="naked-pods-vs-replicasets-deployments-and-jobs">&ldquo;裸奔&quot;的 Pod VS ReplicaSet, Deployment, Job</h2>
+<ul>
+<li>
+<p>如果能避免，尽量不要让 Pod 裸奔(也就是没有与
+<a href="/k8sDocs/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a>
+或
+<a href="/k8sDocs/docs/concepts/workloads/controllers/deployment/">Deployment</a>
+绑定的 Pod
+)。
+裸奔的 Pod 在节点挂掉之后不会重新调度。</p>
+<p>面 Deployment， 在创建一个 ReplicaSet 来保证期望个数的 Pod 始终可用外，还可以指定替换策略
+(如
+<a href="/k8sDocs/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment">RollingUpdate</a>
+)，
+除了一个具体场景
+(<a href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy"><code>restartPolicy: Never</code></a>)
+都推荐使用 Deployment 而不是直接创建 Pod。
+<a href="/k8sDocs/docs/concepts/workloads/controllers/job/">Job</a> 也是另一种选择。</p>
+</li>
+</ul>
+<!--
+## Services
+
+- Create a [Service](/docs/concepts/services-networking/service/) before its corresponding backend workloads (Deployments or ReplicaSets), and before any workloads that need to access it. When Kubernetes starts a container, it provides environment variables pointing to all the Services which were running when the container was started. For example, if a Service named `foo` exists, all containers will get the following variables in their initial environment:
+
+  ```shell
+  FOO_SERVICE_HOST=<the host the Service is running on>
+  FOO_SERVICE_PORT=<the port the Service is running on>
+  ```
+
+  *This does imply an ordering requirement* - any `Service` that a `Pod` wants to access must be created before the `Pod` itself, or else the environment variables will not be populated.  DNS does not have this restriction.
+
+- An optional (though strongly recommended) [cluster add-on](/docs/concepts/cluster-administration/addons/) is a DNS server.  The
+DNS server watches the Kubernetes API for new `Services` and creates a set of DNS records for each.  If DNS has been enabled throughout the cluster then all `Pods` should be able to do name resolution of `Services` automatically.
+
+- Don't specify a `hostPort` for a Pod unless it is absolutely necessary. When you bind a Pod to a `hostPort`, it limits the number of places the Pod can be scheduled, because each <`hostIP`, `hostPort`, `protocol`> combination must be unique. If you don't specify the `hostIP` and `protocol` explicitly, Kubernetes will use `0.0.0.0` as the default `hostIP` and `TCP` as the default `protocol`.
+
+  If you only need access to the port for debugging purposes, you can use the [apiserver proxy](/docs/tasks/access-application-cluster/access-cluster/#manually-constructing-apiserver-proxy-urls) or [`kubectl port-forward`](/docs/tasks/access-application-cluster/port-forward-access-application-cluster/).
+
+  If you explicitly need to expose a Pod's port on the node, consider using a [NodePort](/docs/concepts/services-networking/service/#nodeport) Service before resorting to `hostPort`.
+
+- Avoid using `hostNetwork`, for the same reasons as `hostPort`.
+
+- Use [headless Services](/docs/concepts/services-networking/service/#headless-services) (which have a `ClusterIP` of `None`) for easy service discovery when you don't need `kube-proxy` load balancing.
+ -->
+<h2 id="service">Service</h2>
+<ul>
+<li>
+<p>在对应的后端工作负载(Deployments 或 ReplicaSets) 和任意访问它的工作负载之前创建一个
+<a href="/docs/concepts/services-networking/service/">Service</a>。
+当 k8s 启动一个容器时， 它会在容器启动时生成指向所有正在运行的 Service 的环境变量。
+例如， 如果存在一个叫 <code>foo</code> 的 Service，所有都会有如下初始化环境变量:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">FOO_SERVICE_HOST<span style="color:#f92672">=</span>&lt;the host the Service is running on&gt;
+FOO_SERVICE_PORT<span style="color:#f92672">=</span>&lt;the port the Service is running on&gt;
+</code></pre></div><p><em>这就存在一个隐式的启动顺序要求</em> - 一个 Pod 想要访问的任意 Service 都需要在这个 Pod 创建
+之前就要存在，否则对应的环境变量就不会生成。 DNS 就没有这个限制。</p>
+</li>
+<li>
+<p>一个可选(但强烈推荐)的
+<a href="/docs/concepts/cluster-administration/addons/">集群插件</a>
+就是 DNS 服务。 DNS 服务会监听 k8s API 中新增的 <code>Services</code> 并对应创建一系列 DNS 记录。
+如果集群中启动了 DNS 则 所有的 Pod 都可以自动通过 DNS 解析访问 <code>Services</code></p>
+</li>
+<li>
+<p>如果不必要，请不要为一个 Pod 指定 <code>hostPort</code>。 当将一个 Pod 绑定到一个 <code>hostPort</code> 时，
+就会限制这个 Pod 能调度的范围， 因为每个 &lt;<code>hostIP</code>, <code>hostPort</code>, <code>protocol</code>&gt; 的组合在
+全集群内是唯一的。 如果没有显示地指定 <code>hostIP</code> 和 <code>protocol</code>，k8s 全使用 <code>0.0.0.0</code>
+作为默认的 <code>hostIP</code>， <code>TCP</code> 作为默认的 <code>protocol</code>.</p>
+<p>如果只为调试目的需要访问端口，可以使用
+<a href="/docs/tasks/access-application-cluster/access-cluster/#manually-constructing-apiserver-proxy-urls">apiserver proxy</a>
+或
+<a href="/docs/tasks/access-application-cluster/port-forward-access-application-cluster/"><code>kubectl port-forward</code></a>.
+如果确实需要将 Pod 端口在节点上显露，在使用 <code>hostPort</code> 之前考虑使用 <code>hostPort</code>的
+<a href="/docs/concepts/services-networking/service/#nodeport">NodePort</a></p>
+</li>
+<li>
+<p>与 <code>hostPort</code> 的理由一样，避免使用 <code>hostNetwork</code></p>
+</li>
+<li>
+<p>在不需要 <code>kube-proxy</code> 负载均衡的情况下，使用
+<a href="/docs/concepts/services-networking/service/#headless-services">headless Services</a>
+(就是将 <code>ClusterIP</code> 设置为 <code>None</code>)
+来实现简单的服务发现</p>
+</li>
+</ul>
+<!--
+## Using Labels
+
+- Define and use [labels](/docs/concepts/overview/working-with-objects/labels/) that identify __semantic attributes__ of your application or Deployment, such as `{ app: myapp, tier: frontend, phase: test, deployment: v3 }`. You can use these labels to select the appropriate Pods for other resources; for example, a Service that selects all `tier: frontend` Pods, or all `phase: test` components of `app: myapp`. See the [guestbook](https://github.com/kubernetes/examples/tree/master/guestbook/) app for examples of this approach.
+
+A Service can be made to span multiple Deployments by omitting release-specific labels from its selector. [Deployments](/docs/concepts/workloads/controllers/deployment/) make it easy to update a running service without downtime.
+
+A desired state of an object is described by a Deployment, and if changes to that spec are _applied_, the deployment controller changes the actual state to the desired state at a controlled rate.
+
+- You can manipulate labels for debugging. Because Kubernetes controllers (such as ReplicaSet) and Services match to Pods using selector labels, removing the relevant labels from a Pod will stop it from being considered by a controller or from being served traffic by a Service. If you remove the labels of an existing Pod, its controller will create a new Pod to take its place. This is a useful way to debug a previously "live" Pod in a "quarantine" environment. To interactively remove or add labels, use [`kubectl label`](/docs/reference/generated/kubectl/kubectl-commands#label).
+ -->
+<h2 id="使用标签">使用标签</h2>
+<ul>
+<li>
+<p>为应用或 Deployment 定义和使用
+<a href="/k8sDocs/docs/concepts/overview/working-with-objects/labels/">标签</a>
+来设置 <strong>有语义的属性</strong>, 如
+<code>{ app: myapp, tier: frontend, phase: test, deployment: v3 }</code>，
+这样其它的资源就可以通过这些标签来选择合适的 Pod; 例如， 一个 Service 可以选择所有
+<code>tier: frontend</code> 的 Pod，或者 <code>app: myapp</code> 的所有 <code>phase: test</code> 组件。
+更多使用方式见示例
+<a href="https://github.com/kubernetes/examples/tree/master/guestbook/">guestbook</a></p>
+<p>一个 Service 可以在选择器中省略与发布版本相关的标签，这样就可以横跨多个版本。这样
+<a href="/k8sDocs/docs/concepts/workloads/controllers/deployment/">Deployments</a>
+就可以很容易地在不停止提供服务的情况下实现服务的更新</p>
+<p>一个对象的期望状态是以一个 Deployment 来描述的， 如果它的配置的变更被_执行_，则 Deployment
+控制器会以一个控制频率将实际状态变更到与期望状态相同。</p>
+</li>
+<li>
+<p>用户可以可能操作标签来方便调试。 因为 k8s 控制器(如 ReplicaSet) 和 Service 使用选择器标签
+来匹配 Pod， 移除相应的标签就可以认为是将其从一个控制器中移出或从一个 Service 服务后端移出。
+当移除一个现有 Pod 的标签后，它的控制器会创建一个新的 Pod 来代替它的位置。 这是一种在隔离环境中调试之前
+存活 Pod 的有效方式。 而要移除或添加标签，使用
+<a href="/k8sDocs/docs/reference/generated/kubectl/kubectl-commands#label"><code>kubectl label</code></a>.</p>
+</li>
+</ul>
+<!--
+## Container Images
+
+The [imagePullPolicy](/docs/concepts/containers/images/#updating-images) and the tag of the image affect when the [kubelet](/docs/reference/command-line-tools-reference/kubelet/) attempts to pull the specified image.
+
+- `imagePullPolicy: IfNotPresent`: the image is pulled only if it is not already present locally.
+
+- `imagePullPolicy: Always`: every time the kubelet launches a container, the kubelet queries the container image registry to resolve the name to an image digest. If the kubelet has a container image with that exact digest cached locally, the kubelet uses its cached image; otherwise, the kubelet downloads (pulls) the image with the resolved digest, and uses that image to launch the container.
+
+- `imagePullPolicy` is omitted and either the image tag is `:latest` or it is omitted: `Always` is applied.
+
+- `imagePullPolicy` is omitted and the image tag is present but not `:latest`: `IfNotPresent` is applied.
+
+- `imagePullPolicy: Never`: the image is assumed to exist locally. No attempt is made to pull the image.
+
+<blockquote class="note">
+  <div><strong>说明：</strong> To make sure the container always uses the same version of the image, you can specify its <a href="https://docs.docker.com/engine/reference/commandline/pull/#pull-an-image-by-digest-immutable-identifier">digest</a>; replace <code>&lt;image-name&gt;:&lt;tag&gt;</code> with <code>&lt;image-name&gt;@&lt;digest&gt;</code> (for example, <code>image@sha256:45b23dee08af5e43a7fea6c4cf9c25ccf269ee113168c19722f87876677c5cb2</code>). The digest uniquely identifies a specific version of the image, so it is never updated by Kubernetes unless you change the digest value.</div>
+</blockquote>
+
+
+<blockquote class="note">
+  <div><strong>说明：</strong> You should avoid using the <code>:latest</code> tag when deploying containers in production as it is harder to track which version of the image is running and more difficult to roll back properly.</div>
+</blockquote>
+
+
+<blockquote class="note">
+  <div><strong>说明：</strong> The caching semantics of the underlying image provider make even <code>imagePullPolicy: Always</code> efficient. With Docker, for example, if the image already exists, the pull attempt is fast because all image layers are cached and no image download is needed.</div>
+</blockquote>
+
+-->
+<h2 id="容器镜像">容器镜像</h2>
+<p><a href="/docs/concepts/containers/images/#updating-images">imagePullPolicy</a> 和镜像和标签会影响
+<a href="/docs/reference/command-line-tools-reference/kubelet/">kubelet</a>
+拉取指定的镜像。</p>
+<ul>
+<li><code>imagePullPolicy: IfNotPresent</code>: 镜像只在本地不存在时才会拉取。</li>
+<li><code>imagePullPolicy: Always</code>: 每次 kubelet 启动一个容器时， kubelet 查询容器镜像仓库将名称解析为镜像摘要。
+如果 kubelet 发现本地缓存中有摘要完全相同的容器镜像时， kubelet 会使用缓存的镜像。否则，
+kubelet 使用解析的摘要下载(拉取)镜像，并使用这个镜像来启动容器。</li>
+<li><code>imagePullPolicy</code> 如果该字段未设置而 镜像标签为 <code>:latest</code>，或没有标签 则会被忽略或者如果未设置值，则默认执行 <code>Always</code></li>
+<li><code>imagePullPolicy</code> 如果该字段未设置而镜像设置了标签并且不是 <code>:latest</code>，则该字段会应用为 <code>IfNotPresent</code></li>
+<li><code>imagePullPolicy: Never</code>: 假定镜像是本地存在。 不会尝试拉取镜像</li>
+</ul>
+<blockquote class="note">
+  <div><strong>说明：</strong> 要保证容器即便使用同一个版本的镜像，可以使用
+<a href="https://docs.docker.com/engine/reference/commandline/pull/#pull-an-image-by-digest-immutable-identifier">摘要</a>;
+用 <code>&lt;image-name&gt;@&lt;digest&gt;</code>(例如，<code>image@sha256:45b23dee08af5e43a7fea6c4cf9c25ccf269ee113168c19722f87876677c5cb2</code>)
+代替 <code>&lt;image-name&gt;:&lt;tag&gt;</code>。 摘要可以唯一标识指定版本的镜像， 所以在不修改摘要的情况，k8s
+不会改掉的这个镜像。</div>
+</blockquote>
+
+<blockquote class="note">
+  <div><strong>说明：</strong> 在生产环境中应当避免使用 <code>:latest</code> 标签，因为它会使得很难追踪正在运行的是哪个镜像，更难以实现
+回滚。</div>
+</blockquote>
+
+<blockquote class="note">
+  <div><strong>说明：</strong> 底层镜像供应者的缓存主义使得即便 <code>imagePullPolicy: Always</code> 也是高效的。 例如，Docker
+如果镜像已经存在， 摘取尝试会很快，因为镜像的所有层都已经缓存并不需要下载。</div>
+</blockquote>
+
+<!--
+## Using kubectl
+
+- Use `kubectl apply -f <directory>`. This looks for Kubernetes configuration in all `.yaml`, `.yml`, and `.json` files in `<directory>` and passes it to `apply`.
+
+- Use label selectors for `get` and `delete` operations instead of specific object names. See the sections on [label selectors](/docs/concepts/overview/working-with-objects/labels/#label-selectors) and [using labels effectively](/docs/concepts/cluster-administration/manage-deployment/#using-labels-effectively).
+
+- Use `kubectl create deployment` and `kubectl expose` to quickly create single-container Deployments and Services. See [Use a Service to Access an Application in a Cluster](/docs/tasks/access-application-cluster/service-access-application-cluster/) for an example.
+ -->
+<h2 id="使用-kubectl">使用 kubectl</h2>
+<ul>
+<li>
+<p>使用<code>kubectl apply -f &lt;directory&gt;</code>. 这会查找 k8s 配置，包含 <code>&lt;directory&gt;</code> 中的
+<code>.yaml</code>, <code>.yml</code>, <code>.json</code> 文件，并作为 <code>apply</code> 的参数</p>
+</li>
+<li>
+<p>使用标签选择器作为 <code>get</code> 和 <code>delete</code> 操作的选择条件而不指定对象名称。 见
+<a href="/k8sDocs/docs/concepts/overview/working-with-objects/labels/#label-selectors">标签选择器</a>
+和
+<a href="/k8sDocs/docs/concepts/cluster-administration/manage-deployment/#using-labels-effectively">高效使用标签</a>.</p>
+</li>
+<li>
+<p>使用 <code>kubectl create deployment</code> 和 <code>kubectl expose</code> 快速创建单容器的 Deployment 和 Service
+示例见
+<a href="/k8sDocs/docs/tasks/access-application-cluster/service-access-application-cluster/">使用 Service 访问集群中的应用</a></p>
+</li>
+</ul>
+
+
+
+            
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-21 15:20:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/87499061a4f7c6c936287bac0fc56cfa904d38dc">publish configuration overview (8749906)</a>
+</div>
+            
+          </main>
+          <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
+            
+
+
+
+
+
+
+<div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+
+
+
+
+
+
+
+
+
+
+
+<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/configuration/overview.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/configuration/overview.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=%e9%85%8d%e7%bd%ae%e6%9c%80%e4%bd%b3%e5%ae%9e%e8%b7%b5" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
+
+</div>
+
+
+
+
+
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#通用配置提示">通用配置提示</a></li>
+    <li><a href="#naked-pods-vs-replicasets-deployments-and-jobs">&ldquo;裸奔&quot;的 Pod VS ReplicaSet, Deployment, Job</a></li>
+    <li><a href="#service">Service</a></li>
+    <li><a href="#使用标签">使用标签</a></li>
+    <li><a href="#容器镜像">容器镜像</a></li>
+    <li><a href="#使用-kubectl">使用 kubectl</a></li>
+  </ul>
+</nav>
+
+
+
+          </div>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        
+        
+	
+		
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script src="/k8sDocs/js/main.min.446a2e681f8167f44314691b77368dd561bf0b67514487f3f0fd999316c6da4a.js" integrity="sha256-RGouaB&#43;BZ/RDFGkbdzaN1WG/C2dRRIfz8P2ZkxbG2ko=" crossorigin="anonymous"></script>
+
+
+
+
+  </body>
+</html>
