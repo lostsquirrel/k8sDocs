@@ -1,18 +1,17 @@
 ---
-title: Image
+title: 镜像(Image)
 id: image
 date: 2018-04-12
-full_link: 
+full_link:
 short_description: >
-  Stored instance of a container that holds a set of software needed to run an application.
-
-aka: 
+  一个容器的存储实例，其中包含一系列运行应用所需要的软件。
+aka:
 tags:
 - fundamental
 ---
- Stored instance of a {{< glossary_tooltip term_id="container" >}} that holds a set of software needed to run an application.
-
+一个
+{{< glossary_tooltip term_id="container" >}}
+的存储实例，其中包含一系列运行应用所需要的软件。
 <!--more-->
-
-A way of packaging software that allows it to be stored in a container registry, pulled to a local system, and run as an application. Meta data is included in the image that can indicate what executable to run, who built it, and other information.
-
+一种打包软件的方式，让其可以存放在容器镜像仓库中，拉取到本地系统，以一个应用方式运行。
+镜像中的元数据可以指示执行哪个文件，谁构建了这个镜像，和其它的镜像。

@@ -2,19 +2,20 @@
 title: ConfigMap
 id: configmap
 date: 2018-04-12
-full_link: /docs/concepts/configuration/configmap/
+full_link: /k8sDocs/docs/concepts/configuration/configmap/
 short_description: >
-  An API object used to store non-confidential data in key-value pairs. Can be consumed as environment variables, command-line arguments, or configuraton files in a volume.
-
-aka: 
+  一个以键值对形式存储非敏感数据的 API 对象。 可以被用到环境变量，命令行参数或卷(volume)中的配置文件
+aka:
 tags:
 - core-object
 ---
- An API object used to store non-confidential data in key-value pairs.
-{{< glossary_tooltip text="Pods" term_id="pod" >}} can consume ConfigMaps as
-environment variables, command-line arguments, or as configuration files in a
-{{< glossary_tooltip text="volume" term_id="volume" >}}.
 
-<!--more--> 
+一个以键值对形式存储非敏感数据的 API 对象。
+Pod 可以在环境变量，命令行参数或
+{{< glossary_tooltip text="volume" term_id="volume" >}}
+中的配置文件中使用它。
+<!--more-->
 
-A ConfigMap allows you to decouple environment-specific configuration from your {{< glossary_tooltip text="container images" term_id="image" >}}, so that your applications are easily portable.
+ConfigMap 允许用户将环境相关的配置从
+{{< glossary_tooltip term_id="image" >}}
+中解耦出来，这样可以很容易地实现应用的移植。

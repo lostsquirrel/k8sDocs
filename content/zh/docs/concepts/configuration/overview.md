@@ -121,7 +121,7 @@ DNS server watches the Kubernetes API for new `Services` and creates a set of DN
   之前就要存在，否则对应的环境变量就不会生成。 DNS 就没有这个限制。
 
 - 一个可选(但强烈推荐)的
-  [集群插件](/docs/concepts/cluster-administration/addons/)
+  [集群插件](/k8sDocs/docs/concepts/cluster-administration/addons/)
   就是 DNS 服务。 DNS 服务会监听 k8s API 中新增的 `Services` 并对应创建一系列 DNS 记录。
   如果集群中启动了 DNS 则 所有的 Pod 都可以自动通过 DNS 解析访问 `Services`
 
@@ -131,16 +131,16 @@ DNS server watches the Kubernetes API for new `Services` and creates a set of DN
   作为默认的 `hostIP`， `TCP` 作为默认的 `protocol`.
 
   如果只为调试目的需要访问端口，可以使用
-  [apiserver proxy](/docs/tasks/access-application-cluster/access-cluster/#manually-constructing-apiserver-proxy-urls)
+  [apiserver proxy](/k8sDocs/docs/tasks/access-application-cluster/access-cluster/#manually-constructing-apiserver-proxy-urls)
   或
-  [`kubectl port-forward`](/docs/tasks/access-application-cluster/port-forward-access-application-cluster/).
+  [`kubectl port-forward`](/k8sDocs/docs/tasks/access-application-cluster/port-forward-access-application-cluster/).
   如果确实需要将 Pod 端口在节点上显露，在使用 `hostPort` 之前考虑使用 `hostPort`的
-  [NodePort](/docs/concepts/services-networking/service/#nodeport)
+  [NodePort](/k8sDocs/docs/concepts/services-networking/service/#nodeport)
 
 - 与 `hostPort` 的理由一样，避免使用 `hostNetwork`
 
 - 在不需要 `kube-proxy` 负载均衡的情况下，使用
-  [headless Services](/docs/concepts/services-networking/service/#headless-services)
+  [headless Services](/k8sDocs/docs/concepts/services-networking/service/#headless-services)
   (就是将 `ClusterIP` 设置为 `None`)
   来实现简单的服务发现
 <!--
@@ -177,7 +177,7 @@ A desired state of an object is described by a Deployment, and if changes to tha
   来匹配 Pod， 移除相应的标签就可以认为是将其从一个控制器中移出或从一个 Service 服务后端移出。
   当移除一个现有 Pod 的标签后，它的控制器会创建一个新的 Pod 来代替它的位置。 这是一种在隔离环境中调试之前
   存活 Pod 的有效方式。 而要移除或添加标签，使用
-  [`kubectl label`](/k8sDocs/docs/reference/generated/kubectl/kubectl-commands#label).
+  [`kubectl label`](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#label).
 
 <!--
 ## Container Images
@@ -209,8 +209,8 @@ The caching semantics of the underlying image provider make even `imagePullPolic
 
 ## 容器镜像
 
-[imagePullPolicy](/docs/concepts/containers/images/#updating-images) 和镜像和标签会影响
-[kubelet](/docs/reference/command-line-tools-reference/kubelet/)
+[imagePullPolicy](/k8sDocs/docs/concepts/containers/images/#updating-images) 和镜像和标签会影响
+[kubelet](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/)
 拉取指定的镜像。
 
 - `imagePullPolicy: IfNotPresent`: 镜像只在本地不存在时才会拉取。

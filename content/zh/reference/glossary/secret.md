@@ -2,17 +2,20 @@
 title: Secret
 id: secret
 date: 2018-04-12
-full_link: /docs/concepts/configuration/secret/
+full_link: /k8sDocs/docs/concepts/configuration/secret/
 short_description: >
-  Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.
-
-aka: 
+  存放如密码, OAuth, ssh 密钥等敏感信息
+aka:
 tags:
 - core-object
 - security
 ---
- Stores sensitive information, such as passwords, OAuth tokens, and ssh keys.
+ 存放如密码, OAuth, ssh 密钥等敏感信息
 
-<!--more--> 
-
-Allows for more control over how sensitive information is used and reduces the risk of accidental exposure, including [encryption](/docs/tasks/administer-cluster/encrypt-data/#ensure-all-secrets-are-encrypted) at rest.  A {{< glossary_tooltip text="Pod" term_id="pod" >}} references the secret as a file in a volume mount or by the kubelet pulling images for a pod. Secrets are great for confidential data and [ConfigMaps](/docs/tasks/configure-pod-container/configure-pod-configmap/) for non-confidential data.
+<!--more-->
+通过怎么使用敏感信息来控制意外暴露的风险，包括
+[encryption](/docs/tasks/administer-cluster/encrypt-data/#ensure-all-secrets-are-encrypted)
+{{< glossary_tooltip text="Pod" term_id="pod" >}} 可以以卷中的一个文件的方式引用 Secret
+或通过 kubelet 拉取一个 Pod 的镜像。Secret 对敏感信息相当有用，
+[ConfigMaps](/docs/tasks/configure-pod-container/configure-pod-configmap/)
+用于非敏感信息
