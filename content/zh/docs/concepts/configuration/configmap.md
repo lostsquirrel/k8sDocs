@@ -305,7 +305,7 @@ ConfigMap 是的单行属性值和多行的类似文件的值是没有不同的�
 `/config/game.properties` 和 `/config/user-interface.properties`, 即便 ConfigMap
 中包含了四个键。 这是因为 Pod 中的 `volumes` 区域定义一个 `items` 数组。 如果省略了
 `items` 数组实体， 每个 ConfigMap 中的键就会变成以这个键名称一样的文件，这样就会有四个文件。
-
+<!--
 ## Using ConfigMaps
 
 ConfigMaps can be mounted as data volumes. ConfigMaps can also be used by other
@@ -320,7 +320,22 @@ For example, you
 might encounter {{< glossary_tooltip text="addons" term_id="addons" >}}
 or {{< glossary_tooltip text="operators" term_id="operator-pattern" >}} that
 adjust their behavior based on a ConfigMap.
+ -->
 
+## 使用 ConfigMap
+
+ConfigMap 可以挂载为数据卷。 ConfigMap 也可以在不直接暴露给 Pod 的情况下被系统的其它部分使用。
+例如， ConfigMap 可以包含系统其它部分用于檲的数据。
+
+ConfigMap 最常用的一种方式就为在同一个命名空间中的 Pod 中运行的容器提供配置。 也可以单独使用
+ConfigMap
+
+例如，也可能遇到
+{{< glossary_tooltip text="addons" term_id="addons" >}}
+和
+{{< glossary_tooltip text="operators" term_id="operator-pattern" >}}
+基于 ConfigMap 来调整他们的行为。
+<!--
 ### Using ConfigMaps as files from a Pod
 
 To consume a ConfigMap in a volume in a Pod:
@@ -363,7 +378,47 @@ Each ConfigMap you want to use needs to be referred to in `.spec.volumes`.
 
 If there are multiple containers in the Pod, then each container needs its
 own `volumeMounts` block, but only one `.spec.volumes` is needed per ConfigMap.
+-->
 
+### 将 ConfigMap 以文件的方式用到 Pod 中
+
+在 Pod 中以卷的方式使用一个 ConfigMap:
+
+1. 创建一个新的 ConfigMap 或使用一个现有的。 多个 Pod 可以引用同一个 ConfigMap
+2. 修改 Pod 定义，在 `.spec.volumes[]` 下面添加一个卷。这卷的名称随便起， 但其中
+  `.spec.volumes[].configMap.name` 字段需要设置引用上一步提到的 ConfigMap 对象
+3. 在每一个需要访问这个 ConfigMap 的容器中添加 `.spec.containers[].volumeMounts[]`。
+  设置 `.spec.containers[].volumeMounts[].readOnly = true` 和
+  将 `.spec.containers[].volumeMounts[].mountPath` 指向一个期望的未使用的目录名
+4. 修改镜像或命令让容器中的程序查看目录中的文件。 ConfigMap 中 `data` 字典下的每一个键就会
+  对应 `mountPath` 目录中的一个文件名
+
+下面这个示例中就一个将一个 ConfigMap 挂载为卷的 Pod:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+  - name: mypod
+    image: redis
+    volumeMounts:
+    - name: foo
+      mountPath: "/etc/foo"
+      readOnly: true
+  volumes:
+  - name: foo
+    configMap:
+      name: myconfigmap
+```
+
+每个想要使用的 ConfigMap 都需要在 `.spec.volumes` 中被引用。
+
+如果 Pod 中有多个容器， 每个容器都需要有自己的 `volumeMounts` 块， 但每个 ConfigMap 只需要
+一个 `.spec.volumes`
+<!--
 #### Mounted ConfigMaps are updated automatically
 
 When a ConfigMap currently consumed in a volume is updated, projected keys are eventually updated as well.
@@ -379,6 +434,20 @@ propagation delay, where the cache propagation delay depends on the chosen cache
 (it equals to watch propagation delay, ttl of cache, or zero correspondingly).
 
 ConfigMaps consumed as environment variables are not updated automatically and require a pod restart.
+ -->
+#### 让挂载的 ConfigMap 自动更新
+
+当一个正在被以卷方式使用的 ConfigMap 更新时，与其相映射的键最终也会更新。 kubelet 会在每个
+同步周期检查挂载的 ConfigMap 是否更新。 但是， kubelet 会使用本地缓存来获取 ConfigMap 的
+当前值。 缓存的类型可以通过
+[KubeletConfiguration struct](https://github.com/kubernetes/kubernetes/blob/{{< param "docsbranch" >}}/staging/src/k8s.io/kubelet/config/v1beta1/types.go).
+中的 `ConfigMapAndSecretChangeDetectionStrategy` 字段来配置。 ConfigMap 的传播方式有
+监视(默认)，基于 ttl, 或简单地将所有请求直接重定向给 API server. 最终， 从 ConfigMap 更新
+到新的键被投射到 Pod 中的总延时就是 kubelet 同时间隔时长 + 缓存传播延时， 而其中缓存传播延时
+又基于缓存的类型(相应地它可能等于 监视传播延时，缓存的 TTL, 或零)。
+
+通过环境变量引用的 ConfigMap 是不能自动更新的，需要重启 Pod 才行。
+<!--
 ## Immutable ConfigMaps {#configmap-immutable}
 
 {{< feature-state for_k8s_version="v1.19" state="beta" >}}
@@ -411,10 +480,41 @@ Once a ConfigMap is marked as immutable, it is _not_ possible to revert this cha
 nor to mutate the contents of the `data` or the `binaryData` field. You can
 only delete and recreate the ConfigMap. Because existing Pods maintain a mount point
 to the deleted ConfigMap, it is recommended to recreate these pods.
+ -->
+
+## 不可变 ConfigMap {#configmap-immutable}
+
+{{< feature-state for_k8s_version="v1.19" state="beta" >}}
+
+这个 k8s 的 bata 特性 _不可变 Secret 和 ConfigMap_ 提供了一个可选项，可以让一个 Secret
+和 ConfigMap 变为不可变。 对于那些广泛使用 ConfigMap (一个 ConfigMap 至少被 10k Pod 挂载)，
+防止修改它们中的数据有以下好处:
+
+- 防止误操作(或不想要)的更新可能引发的应用事故
+- 当 ConfigMap 标记为不可变时会关闭监视，这样能极大地减少 kube-apiserver 的负载，从而改善
+  集群性能。
+
+这个特性通过设置 `ImmutableEphemeralVolumes`
+[功能阀](/docs/reference/command-line-tools-reference/feature-gates/)
+控制。 用户可以在 ConfigMap 中通过设置 `immutable` 字段为 `true` 让其成功不可变 ConfigMap
+
+示例：
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  ...
+data:
+  ...
+immutable: true
+```
+
+当一个 ConfigMap 被标记为不可变后，它就 _不_ 可能再被变会普通(可修改)的了，也不可能再修改其
+中 `data` 或 `binaryData` 字段的值。只能删除或重建 ConfigMap。 因为现在的 Pod 会维持
+对已经删除的 ConfigMap 挂载指向， 推荐对这些 Pod 也进行重建。
 
 ## {{% heading "whatsnext" %}}
 
-* Read about [Secrets](/docs/concepts/configuration/secret/).
-* Read [Configure a Pod to Use a ConfigMap](/docs/tasks/configure-pod-container/configure-pod-configmap/).
-* Read [The Twelve-Factor App](https://12factor.net/) to understand the motivation for
-  separating code from configuration.
+* 概念 [Secrets](/docs/concepts/configuration/secret/).
+* 实践 [配置一个 Pod 使用 ConfigMap](/docs/tasks/configure-pod-container/configure-pod-configmap/).
+* 阅读 [The Twelve-Factor App](https://12factor.net/) 以便理解分离代码和配置的动机
