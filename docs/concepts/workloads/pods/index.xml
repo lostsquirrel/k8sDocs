@@ -450,7 +450,7 @@ The Pod conditions you add must have names that meet the Kubernetes [label key f
 
 The `kubectl patch` command does not support patching object status.
 To set these `status.conditions` for the pod, applications and
-&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/extend-kubernetes/operator/&#39; target=&#39;_blank&#39;&gt;operators&lt;span class=&#39;tooltip-text&#39;&gt;A specialized controller used to manage a custom resource&lt;/span&gt;
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/extend-kubernetes/operator/&#39; target=&#39;_blank&#39;&gt;operators&lt;span class=&#39;tooltip-text&#39;&gt;A specialized controller used to manage a custom resource 一个用于管理自定义资源的专用控制器&lt;/span&gt;
 &lt;/a&gt; should use
 the `PATCH` action.
 You can use a [Kubernetes client library](/k8sDocs/reference/using-api/client-libraries/) to

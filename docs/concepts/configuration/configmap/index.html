@@ -20,11 +20,11 @@
 <meta property="og:description" content="A ConfigMap is 一个以键值对形式存储非敏感数据的 API 对象。 Pod 可以在环境变量，命令行参数或 volume一个可以被 Pod 中的容器访问的包含数据的目录 中的配置文件" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/configmap/" />
-<meta property="article:modified_time" content="2020-12-21T18:11:49+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2020-12-22T15:20:17+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="ConfigMap">
 <meta itemprop="description" content="A ConfigMap is 一个以键值对形式存储非敏感数据的 API 对象。 Pod 可以在环境变量，命令行参数或 volume一个可以被 Pod 中的容器访问的包含数据的目录 中的配置文件">
-<meta itemprop="dateModified" content="2020-12-21T18:11:49+08:00" />
-<meta itemprop="wordCount" content="2983">
+<meta itemprop="dateModified" content="2020-12-22T15:20:17+08:00" />
+<meta itemprop="wordCount" content="3612">
 
 
 
@@ -1126,36 +1126,93 @@ Pod 中的容器。 Pod 和 ConfigMap 必须在同一个
 <code>/config/game.properties</code> 和 <code>/config/user-interface.properties</code>, 即便 ConfigMap
 中包含了四个键。 这是因为 Pod 中的 <code>volumes</code> 区域定义一个 <code>items</code> 数组。 如果省略了
 <code>items</code> 数组实体， 每个 ConfigMap 中的键就会变成以这个键名称一样的文件，这样就会有四个文件。</p>
-<h2 id="using-configmaps">Using ConfigMaps</h2>
-<p>ConfigMaps can be mounted as data volumes. ConfigMaps can also be used by other
+<!--
+## Using ConfigMaps
+
+ConfigMaps can be mounted as data volumes. ConfigMaps can also be used by other
 parts of the system, without being directly exposed to the Pod. For example,
-ConfigMaps can hold data that other parts of the system should use for configuration.</p>
-<p>The most common way to use ConfigMaps is to configure settings for
+ConfigMaps can hold data that other parts of the system should use for configuration.
+
+The most common way to use ConfigMaps is to configure settings for
 containers running in a Pod in the same namespace. You can also use a
-ConfigMap separately.</p>
-<p>For example, you
-might encounter <a class='glossary-tooltip' href='/docs/concepts/cluster-administration/addons/' target='_blank'>addons<span class='tooltip-text'>Resources that extend the functionality of Kubernetes.</span>
+ConfigMap separately.
+
+For example, you
+might encounter <a class='glossary-tooltip' href='/k8sDocs/docs/concepts/cluster-administration/addons/' target='_blank'>addons<span class='tooltip-text'>扩展 k8s 功能的资源</span>
 </a>
-or <a class='glossary-tooltip' href='/docs/concepts/extend-kubernetes/operator/' target='_blank'>operators<span class='tooltip-text'>A specialized controller used to manage a custom resource</span>
+or <a class='glossary-tooltip' href='/docs/concepts/extend-kubernetes/operator/' target='_blank'>operators<span class='tooltip-text'>A specialized controller used to manage a custom resource 一个用于管理自定义资源的专用控制器</span>
 </a> that
-adjust their behavior based on a ConfigMap.</p>
-<h3 id="using-configmaps-as-files-from-a-pod">Using ConfigMaps as files from a Pod</h3>
-<p>To consume a ConfigMap in a volume in a Pod:</p>
+adjust their behavior based on a ConfigMap.
+ -->
+<h2 id="使用-configmap">使用 ConfigMap</h2>
+<p>ConfigMap 可以挂载为数据卷。 ConfigMap 也可以在不直接暴露给 Pod 的情况下被系统的其它部分使用。
+例如， ConfigMap 可以包含系统其它部分用于檲的数据。</p>
+<p>ConfigMap 最常用的一种方式就为在同一个命名空间中的 Pod 中运行的容器提供配置。 也可以单独使用
+ConfigMap</p>
+<p>例如，也可能遇到
+<a class='glossary-tooltip' href='/k8sDocs/docs/concepts/cluster-administration/addons/' target='_blank'>addons<span class='tooltip-text'>扩展 k8s 功能的资源</span>
+</a>
+和
+<a class='glossary-tooltip' href='/docs/concepts/extend-kubernetes/operator/' target='_blank'>operators<span class='tooltip-text'>A specialized controller used to manage a custom resource 一个用于管理自定义资源的专用控制器</span>
+</a>
+基于 ConfigMap 来调整他们的行为。</p>
+<!--
+### Using ConfigMaps as files from a Pod
+
+To consume a ConfigMap in a volume in a Pod:
+
+1. Create a ConfigMap or use an existing one. Multiple Pods can reference the
+   same ConfigMap.
+1. Modify your Pod definition to add a volume under `.spec.volumes[]`. Name
+   the volume anything, and have a `.spec.volumes[].configMap.name` field set
+   to reference your ConfigMap object.
+1. Add a `.spec.containers[].volumeMounts[]` to each container that needs the
+   ConfigMap. Specify `.spec.containers[].volumeMounts[].readOnly = true` and
+   `.spec.containers[].volumeMounts[].mountPath` to an unused directory name
+   where you would like the ConfigMap to appear.
+1. Modify your image or command line so that the program looks for files in
+   that directory. Each key in the ConfigMap `data` map becomes the filename
+   under `mountPath`.
+
+This is an example of a Pod that mounts a ConfigMap in a volume:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+  - name: mypod
+    image: redis
+    volumeMounts:
+    - name: foo
+      mountPath: "/etc/foo"
+      readOnly: true
+  volumes:
+  - name: foo
+    configMap:
+      name: myconfigmap
+```
+
+Each ConfigMap you want to use needs to be referred to in `.spec.volumes`.
+
+If there are multiple containers in the Pod, then each container needs its
+own `volumeMounts` block, but only one `.spec.volumes` is needed per ConfigMap.
+-->
+<h3 id="将-configmap-以文件的方式用到-pod-中">将 ConfigMap 以文件的方式用到 Pod 中</h3>
+<p>在 Pod 中以卷的方式使用一个 ConfigMap:</p>
 <ol>
-<li>Create a ConfigMap or use an existing one. Multiple Pods can reference the
-same ConfigMap.</li>
-<li>Modify your Pod definition to add a volume under <code>.spec.volumes[]</code>. Name
-the volume anything, and have a <code>.spec.volumes[].configMap.name</code> field set
-to reference your ConfigMap object.</li>
-<li>Add a <code>.spec.containers[].volumeMounts[]</code> to each container that needs the
-ConfigMap. Specify <code>.spec.containers[].volumeMounts[].readOnly = true</code> and
-<code>.spec.containers[].volumeMounts[].mountPath</code> to an unused directory name
-where you would like the ConfigMap to appear.</li>
-<li>Modify your image or command line so that the program looks for files in
-that directory. Each key in the ConfigMap <code>data</code> map becomes the filename
-under <code>mountPath</code>.</li>
+<li>创建一个新的 ConfigMap 或使用一个现有的。 多个 Pod 可以引用同一个 ConfigMap</li>
+<li>修改 Pod 定义，在 <code>.spec.volumes[]</code> 下面添加一个卷。这卷的名称随便起， 但其中
+<code>.spec.volumes[].configMap.name</code> 字段需要设置引用上一步提到的 ConfigMap 对象</li>
+<li>在每一个需要访问这个 ConfigMap 的容器中添加 <code>.spec.containers[].volumeMounts[]</code>。
+设置 <code>.spec.containers[].volumeMounts[].readOnly = true</code> 和
+将 <code>.spec.containers[].volumeMounts[].mountPath</code> 指向一个期望的未使用的目录名</li>
+<li>修改镜像或命令让容器中的程序查看目录中的文件。 ConfigMap 中 <code>data</code> 字典下的每一个键就会
+对应 <code>mountPath</code> 目录中的一个文件名</li>
 </ol>
-<p>This is an example of a Pod that mounts a ConfigMap in a volume:</p>
+<p>下面这个示例中就一个将一个 ConfigMap 挂载为卷的 Pod:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
 <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
 <span style="color:#f92672">metadata</span>:
@@ -1172,23 +1229,39 @@ under <code>mountPath</code>.</li>
   - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">foo</span>
     <span style="color:#f92672">configMap</span>:
       <span style="color:#f92672">name</span>: <span style="color:#ae81ff">myconfigmap</span>
-</code></pre></div><p>Each ConfigMap you want to use needs to be referred to in <code>.spec.volumes</code>.</p>
-<p>If there are multiple containers in the Pod, then each container needs its
-own <code>volumeMounts</code> block, but only one <code>.spec.volumes</code> is needed per ConfigMap.</p>
-<h4 id="mounted-configmaps-are-updated-automatically">Mounted ConfigMaps are updated automatically</h4>
-<p>When a ConfigMap currently consumed in a volume is updated, projected keys are eventually updated as well.
+</code></pre></div><p>每个想要使用的 ConfigMap 都需要在 <code>.spec.volumes</code> 中被引用。</p>
+<p>如果 Pod 中有多个容器， 每个容器都需要有自己的 <code>volumeMounts</code> 块， 但每个 ConfigMap 只需要
+一个 <code>.spec.volumes</code></p>
+<!--
+#### Mounted ConfigMaps are updated automatically
+
+When a ConfigMap currently consumed in a volume is updated, projected keys are eventually updated as well.
 The kubelet checks whether the mounted ConfigMap is fresh on every periodic sync.
 However, the kubelet uses its local cache for getting the current value of the ConfigMap.
-The type of the cache is configurable using the <code>ConfigMapAndSecretChangeDetectionStrategy</code> field in
-the <a href="https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/kubelet/config/v1beta1/types.go">KubeletConfiguration struct</a>.
+The type of the cache is configurable using the `ConfigMapAndSecretChangeDetectionStrategy` field in
+the [KubeletConfiguration struct](https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/kubelet/config/v1beta1/types.go).
 A ConfigMap can be either propagated by watch (default), ttl-based, or simply redirecting
 all requests directly to the API server.
 As a result, the total delay from the moment when the ConfigMap is updated to the moment
 when new keys are projected to the Pod can be as long as the kubelet sync period + cache
 propagation delay, where the cache propagation delay depends on the chosen cache type
-(it equals to watch propagation delay, ttl of cache, or zero correspondingly).</p>
-<p>ConfigMaps consumed as environment variables are not updated automatically and require a pod restart.</p>
-<h2 id="configmap-immutable">Immutable ConfigMaps</h2>
+(it equals to watch propagation delay, ttl of cache, or zero correspondingly).
+
+ConfigMaps consumed as environment variables are not updated automatically and require a pod restart.
+ -->
+<h4 id="让挂载的-configmap-自动更新">让挂载的 ConfigMap 自动更新</h4>
+<p>当一个正在被以卷方式使用的 ConfigMap 更新时，与其相映射的键最终也会更新。 kubelet 会在每个
+同步周期检查挂载的 ConfigMap 是否更新。 但是， kubelet 会使用本地缓存来获取 ConfigMap 的
+当前值。 缓存的类型可以通过
+<a href="https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/kubelet/config/v1beta1/types.go">KubeletConfiguration struct</a>.
+中的 <code>ConfigMapAndSecretChangeDetectionStrategy</code> 字段来配置。 ConfigMap 的传播方式有
+监视(默认)，基于 ttl, 或简单地将所有请求直接重定向给 API server. 最终， 从 ConfigMap 更新
+到新的键被投射到 Pod 中的总延时就是 kubelet 同时间隔时长 + 缓存传播延时， 而其中缓存传播延时
+又基于缓存的类型(相应地它可能等于 监视传播延时，缓存的 TTL, 或零)。</p>
+<p>通过环境变量引用的 ConfigMap 是不能自动更新的，需要重启 Pod 才行。</p>
+<!--
+## Immutable ConfigMaps {#configmap-immutable}
+
 
 
 
@@ -1199,19 +1272,59 @@ propagation delay, where the cache propagation delay depends on the chosen cache
 </div>
 
 
-<p>The Kubernetes beta feature <em>Immutable Secrets and ConfigMaps</em> provides an option to set
+
+The Kubernetes beta feature _Immutable Secrets and ConfigMaps_ provides an option to set
 individual Secrets and ConfigMaps as immutable. For clusters that extensively use ConfigMaps
 (at least tens of thousands of unique ConfigMap to Pod mounts), preventing changes to their
-data has the following advantages:</p>
+data has the following advantages:
+
+- protects you from accidental (or unwanted) updates that could cause applications outages
+- improves performance of your cluster by significantly reducing load on kube-apiserver, by
+  closing watches for ConfigMaps marked as immutable.
+
+This feature is controlled by the `ImmutableEphemeralVolumes`
+[feature gate](/docs/reference/command-line-tools-reference/feature-gates/).
+You can create an immutable ConfigMap by setting the `immutable` field to `true`.
+For example:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  ...
+data:
+  ...
+immutable: true
+```
+
+Once a ConfigMap is marked as immutable, it is _not_ possible to revert this change
+nor to mutate the contents of the `data` or the `binaryData` field. You can
+only delete and recreate the ConfigMap. Because existing Pods maintain a mount point
+to the deleted ConfigMap, it is recommended to recreate these pods.
+ -->
+<h2 id="configmap-immutable">不可变 ConfigMap</h2>
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.19 [beta]</code>
+</div>
+
+
+<p>这个 k8s 的 bata 特性 <em>不可变 Secret 和 ConfigMap</em> 提供了一个可选项，可以让一个 Secret
+和 ConfigMap 变为不可变。 对于那些广泛使用 ConfigMap (一个 ConfigMap 至少被 10k Pod 挂载)，
+防止修改它们中的数据有以下好处:</p>
 <ul>
-<li>protects you from accidental (or unwanted) updates that could cause applications outages</li>
-<li>improves performance of your cluster by significantly reducing load on kube-apiserver, by
-closing watches for ConfigMaps marked as immutable.</li>
+<li>防止误操作(或不想要)的更新可能引发的应用事故</li>
+<li>当 ConfigMap 标记为不可变时会关闭监视，这样能极大地减少 kube-apiserver 的负载，从而改善
+集群性能。</li>
 </ul>
-<p>This feature is controlled by the <code>ImmutableEphemeralVolumes</code>
-<a href="/docs/reference/command-line-tools-reference/feature-gates/">feature gate</a>.
-You can create an immutable ConfigMap by setting the <code>immutable</code> field to <code>true</code>.
-For example:</p>
+<p>这个特性通过设置 <code>ImmutableEphemeralVolumes</code>
+<a href="/docs/reference/command-line-tools-reference/feature-gates/">功能阀</a>
+控制。 用户可以在 ConfigMap 中通过设置 <code>immutable</code> 字段为 <code>true</code> 让其成功不可变 ConfigMap</p>
+<p>示例：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
 <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ConfigMap</span>
 <span style="color:#f92672">metadata</span>:
@@ -1219,22 +1332,20 @@ For example:</p>
 <span style="color:#f92672">data</span>:
   <span style="color:#ae81ff">...</span>
 <span style="color:#f92672">immutable</span>: <span style="color:#66d9ef">true</span>
-</code></pre></div><p>Once a ConfigMap is marked as immutable, it is <em>not</em> possible to revert this change
-nor to mutate the contents of the <code>data</code> or the <code>binaryData</code> field. You can
-only delete and recreate the ConfigMap. Because existing Pods maintain a mount point
-to the deleted ConfigMap, it is recommended to recreate these pods.</p>
+</code></pre></div><p>当一个 ConfigMap 被标记为不可变后，它就 <em>不</em> 可能再被变会普通(可修改)的了，也不可能再修改其
+中 <code>data</code> 或 <code>binaryData</code> 字段的值。只能删除或重建 ConfigMap。 因为现在的 Pod 会维持
+对已经删除的 ConfigMap 挂载指向， 推荐对这些 Pod 也进行重建。</p>
 <h2 id="相关资料">相关资料</h2>
 <ul>
-<li>Read about <a href="/docs/concepts/configuration/secret/">Secrets</a>.</li>
-<li>Read <a href="/docs/tasks/configure-pod-container/configure-pod-configmap/">Configure a Pod to Use a ConfigMap</a>.</li>
-<li>Read <a href="https://12factor.net/">The Twelve-Factor App</a> to understand the motivation for
-separating code from configuration.</li>
+<li>概念 <a href="/docs/concepts/configuration/secret/">Secrets</a>.</li>
+<li>实践 <a href="/docs/tasks/configure-pod-container/configure-pod-configmap/">配置一个 Pod 使用 ConfigMap</a>.</li>
+<li>阅读 <a href="https://12factor.net/">The Twelve-Factor App</a> 以便理解分离代码和配置的动机</li>
 </ul>
 
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-21 18:11:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/a6ed23a84ec08769b0756a87c90e281e39ec1fdf">[WIP]start configmap (a6ed23a)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-22 15:20:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/e228eb74cc8b072214fa345ce237b7d97efa1957">publish configmap (e228eb7)</a>
 </div>
             
           </main>
@@ -1274,12 +1385,12 @@ separating code from configuration.</li>
     <li><a href="#动机">动机</a></li>
     <li><a href="#configmap-对象">ConfigMap 对象</a></li>
     <li><a href="#configmap-和-pod">ConfigMap 和 Pod</a></li>
-    <li><a href="#using-configmaps">Using ConfigMaps</a>
+    <li><a href="#使用-configmap">使用 ConfigMap</a>
       <ul>
-        <li><a href="#using-configmaps-as-files-from-a-pod">Using ConfigMaps as files from a Pod</a></li>
+        <li><a href="#将-configmap-以文件的方式用到-pod-中">将 ConfigMap 以文件的方式用到 Pod 中</a></li>
       </ul>
     </li>
-    <li><a href="#configmap-immutable">Immutable ConfigMaps</a></li>
+    <li><a href="#configmap-immutable">不可变 ConfigMap</a></li>
     <li><a href="#相关资料">相关资料</a></li>
   </ul>
 </nav>
