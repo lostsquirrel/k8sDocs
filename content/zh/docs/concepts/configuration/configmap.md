@@ -495,7 +495,7 @@ to the deleted ConfigMap, it is recommended to recreate these pods.
   集群性能。
 
 这个特性通过设置 `ImmutableEphemeralVolumes`
-[功能阀](/docs/reference/command-line-tools-reference/feature-gates/)
+[功能阀](https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)
 控制。 用户可以在 ConfigMap 中通过设置 `immutable` 字段为 `true` 让其成功不可变 ConfigMap
 
 示例：
@@ -515,6 +515,6 @@ immutable: true
 
 ## {{% heading "whatsnext" %}}
 
-* 概念 [Secrets](/docs/concepts/configuration/secret/).
-* 实践 [配置一个 Pod 使用 ConfigMap](/docs/tasks/configure-pod-container/configure-pod-configmap/).
+* 概念 [Secrets](/k8sDocs/docs/concepts/configuration/secret/).
+* 实践 [配置一个 Pod 使用 ConfigMap](/k8sDocs/docs/tasks/configure-pod-container/configure-pod-configmap/).
 * 阅读 [The Twelve-Factor App](https://12factor.net/) 以便理解分离代码和配置的动机
