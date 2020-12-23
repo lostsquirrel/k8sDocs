@@ -20,10 +20,10 @@
 <meta property="og:description" content="A ConfigMap is 一个以键值对形式存储非敏感数据的 API 对象。 Pod 可以在环境变量，命令行参数或 volume一个可以被 Pod 中的容器访问的包含数据的目录 中的配置文件" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/configmap/" />
-<meta property="article:modified_time" content="2020-12-22T15:20:17+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2020-12-23T17:54:12+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="ConfigMap">
 <meta itemprop="description" content="A ConfigMap is 一个以键值对形式存储非敏感数据的 API 对象。 Pod 可以在环境变量，命令行参数或 volume一个可以被 Pod 中的容器访问的包含数据的目录 中的配置文件">
-<meta itemprop="dateModified" content="2020-12-22T15:20:17+08:00" />
+<meta itemprop="dateModified" content="2020-12-23T17:54:12+08:00" />
 <meta itemprop="wordCount" content="3612">
 
 
@@ -742,6 +742,12 @@
       <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsconfigurationconfigmap" href="/k8sDocs/docs/concepts/configuration/configmap/">ConfigMap</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsconfigurationsecret" href="/k8sDocs/docs/concepts/configuration/secret/">Secret</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -1322,7 +1328,7 @@ to the deleted ConfigMap, it is recommended to recreate these pods.
 集群性能。</li>
 </ul>
 <p>这个特性通过设置 <code>ImmutableEphemeralVolumes</code>
-<a href="/docs/reference/command-line-tools-reference/feature-gates/">功能阀</a>
+<a href="https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/">功能阀</a>
 控制。 用户可以在 ConfigMap 中通过设置 <code>immutable</code> 字段为 <code>true</code> 让其成功不可变 ConfigMap</p>
 <p>示例：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
@@ -1337,15 +1343,15 @@ to the deleted ConfigMap, it is recommended to recreate these pods.
 对已经删除的 ConfigMap 挂载指向， 推荐对这些 Pod 也进行重建。</p>
 <h2 id="相关资料">相关资料</h2>
 <ul>
-<li>概念 <a href="/docs/concepts/configuration/secret/">Secrets</a>.</li>
-<li>实践 <a href="/docs/tasks/configure-pod-container/configure-pod-configmap/">配置一个 Pod 使用 ConfigMap</a>.</li>
+<li>概念 <a href="/k8sDocs/docs/concepts/configuration/secret/">Secrets</a>.</li>
+<li>实践 <a href="/k8sDocs/docs/tasks/configure-pod-container/configure-pod-configmap/">配置一个 Pod 使用 ConfigMap</a>.</li>
 <li>阅读 <a href="https://12factor.net/">The Twelve-Factor App</a> 以便理解分离代码和配置的动机</li>
 </ul>
 
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-22 15:20:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/e228eb74cc8b072214fa345ce237b7d97efa1957">publish configmap (e228eb7)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-23 17:54:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/b7cc827f71e139428159c104a2176af37f1a3620">[WIP]secret day 2 (b7cc827)</a>
 </div>
             
           </main>
