@@ -2,21 +2,19 @@
 title: etcd
 id: etcd
 date: 2018-04-12
-full_link: /docs/tasks/administer-cluster/configure-upgrade-etcd/
+full_link: /k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/
 short_description: >
-  Consistent and highly-available key value store used as Kubernetes' backing store for all cluster data.
-
-aka: 
+  用来存储 k8s 所有集群数据的一致性和高可用键值存储
+aka:
 tags:
 - architecture
 - storage
 ---
- Consistent and highly-available key value store used as Kubernetes' backing store for all cluster data.
-
+ 用来存储 k8s 所有集群数据的一致性和高可用键值存储
 <!--more-->
 
-If your Kubernetes cluster uses etcd as its backing store, make sure you have a
-[back up](/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster) plan
-for those data.
+如果用户使用 etcd 作为 k8s 集群的后端存储，需要保证对这些数据
+[备份](/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster)
+计划
 
-You can find in-depth information about etcd in the official [documentation](https://etcd.io/docs/).
+关于 etcd 的更深入信息，可以参阅官方 [文档](https://etcd.io/docs/).

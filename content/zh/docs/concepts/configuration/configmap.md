@@ -510,7 +510,7 @@ immutable: true
 ```
 
 当一个 ConfigMap 被标记为不可变后，它就 _不_ 可能再被变会普通(可修改)的了，也不可能再修改其
-中 `data` 或 `binaryData` 字段的值。只能删除或重建 ConfigMap。 因为现在的 Pod 会维持
+中 `data` 或 `binaryData` 字段的值。只能删除或重建 ConfigMap。 因为现有的 Pod 会维持
 对已经删除的 ConfigMap 挂载指向， 推荐对这些 Pod 也进行重建。
 
 ## {{% heading "whatsnext" %}}
