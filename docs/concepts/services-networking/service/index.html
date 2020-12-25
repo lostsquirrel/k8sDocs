@@ -21,12 +21,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/service/" />
 <meta property="article:published_time" content="2020-09-09T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-12-23T17:54:12+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2020-12-25T17:49:30+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="Service">
 <meta itemprop="description" content="No need to modify your application to use an unfamiliar service discovery mechanism. Kubernetes gives Pods their own IP addresses and a single DNS name for a set of Pods, and can load-balance across them. content_type: concept weight: 10 --- -- 以网络服务的方式让一个由一组 PodPod 表示集群中运行的一组容器的集">
 <meta itemprop="datePublished" content="2020-09-09T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-12-23T17:54:12+08:00" />
-<meta itemprop="wordCount" content="13872">
+<meta itemprop="dateModified" content="2020-12-25T17:49:30+08:00" />
+<meta itemprop="wordCount" content="13896">
 
 
 
@@ -2693,7 +2693,7 @@ ensure that no two Services can collide. Kubernetes does that by allocating each
 Service its own IP address.
 
 To ensure each Service receives a unique IP, an internal allocator atomically
-updates a global allocation map in <a class='glossary-tooltip' href='/docs/tasks/administer-cluster/configure-upgrade-etcd/' target='_blank'>etcd<span class='tooltip-text'>Consistent and highly-available key value store used as Kubernetes' backing store for all cluster data.</span>
+updates a global allocation map in <a class='glossary-tooltip' href='/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/' target='_blank'>etcd<span class='tooltip-text'>用来存储 k8s 所有集群数据的一致性和高可用键值存储</span>
 </a>
 prior to creating each Service. The map object must exist in the registry for
 Services to get IP address assignments, otherwise creations will
@@ -2711,7 +2711,7 @@ IP addresses that are no longer used by any Services.
 <p>为了允许用户为 Service  选择一个端口，我们必须要确保不能有两个 Service 端口冲突。k8s 通过为每
 个 Service 分配 IP 地址来避免这个问题。</p>
 <p>为了保证每个 Service 接收的 IP 地址都是唯一的，在创建每个 Service 之间一个内部分配器原子地
-在 <a class='glossary-tooltip' href='/docs/tasks/administer-cluster/configure-upgrade-etcd/' target='_blank'>etcd<span class='tooltip-text'>Consistent and highly-available key value store used as Kubernetes' backing store for all cluster data.</span>
+在 <a class='glossary-tooltip' href='/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/' target='_blank'>etcd<span class='tooltip-text'>用来存储 k8s 所有集群数据的一致性和高可用键值存储</span>
 </a> 中更新一个全局的分配字典。 必须要能在这个映射中
 为 Service 分配指定 IP， 否则就会失败，错误信息为不能分配该 IP 地址。</p>
 <p>在控制中心中，一个后台控制器负载创建这个映射(需要支持使用内存锁的老版本k8s迁移)。k8s 还使用
@@ -2986,7 +2986,7 @@ SCTP 多重连接的 NAT 需要在对应的逻辑模块中有特殊逻辑</div>
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-23 17:54:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/b7cc827f71e139428159c104a2176af37f1a3620">[WIP]secret day 2 (b7cc827)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-25 17:49:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/340dc456fe979a6a9b0309cf2c2609f3546952a3">publish secrt (340dc45)</a>
 </div>
             
           </main>

@@ -20,10 +20,10 @@
 <meta property="og:description" content="A ConfigMap is 一个以键值对形式存储非敏感数据的 API 对象。 Pod 可以在环境变量，命令行参数或 volume一个可以被 Pod 中的容器访问的包含数据的目录 中的配置文件" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/configmap/" />
-<meta property="article:modified_time" content="2020-12-23T17:54:12+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2020-12-25T17:49:30+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="ConfigMap">
 <meta itemprop="description" content="A ConfigMap is 一个以键值对形式存储非敏感数据的 API 对象。 Pod 可以在环境变量，命令行参数或 volume一个可以被 Pod 中的容器访问的包含数据的目录 中的配置文件">
-<meta itemprop="dateModified" content="2020-12-23T17:54:12+08:00" />
+<meta itemprop="dateModified" content="2020-12-25T17:49:30+08:00" />
 <meta itemprop="wordCount" content="3612">
 
 
@@ -1339,7 +1339,7 @@ to the deleted ConfigMap, it is recommended to recreate these pods.
   <span style="color:#ae81ff">...</span>
 <span style="color:#f92672">immutable</span>: <span style="color:#66d9ef">true</span>
 </code></pre></div><p>当一个 ConfigMap 被标记为不可变后，它就 <em>不</em> 可能再被变会普通(可修改)的了，也不可能再修改其
-中 <code>data</code> 或 <code>binaryData</code> 字段的值。只能删除或重建 ConfigMap。 因为现在的 Pod 会维持
+中 <code>data</code> 或 <code>binaryData</code> 字段的值。只能删除或重建 ConfigMap。 因为现有的 Pod 会维持
 对已经删除的 ConfigMap 挂载指向， 推荐对这些 Pod 也进行重建。</p>
 <h2 id="相关资料">相关资料</h2>
 <ul>
@@ -1351,7 +1351,7 @@ to the deleted ConfigMap, it is recommended to recreate these pods.
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-23 17:54:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/b7cc827f71e139428159c104a2176af37f1a3620">[WIP]secret day 2 (b7cc827)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-25 17:49:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/340dc456fe979a6a9b0309cf2c2609f3546952a3">publish secrt (340dc45)</a>
 </div>
             
           </main>

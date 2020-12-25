@@ -5629,7 +5629,7 @@ ensure that no two Services can collide. Kubernetes does that by allocating each
 Service its own IP address.
 
 To ensure each Service receives a unique IP, an internal allocator atomically
-updates a global allocation map in &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/&#39; target=&#39;_blank&#39;&gt;etcd&lt;span class=&#39;tooltip-text&#39;&gt;Consistent and highly-available key value store used as Kubernetes&#39; backing store for all cluster data.&lt;/span&gt;
+updates a global allocation map in &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/&#39; target=&#39;_blank&#39;&gt;etcd&lt;span class=&#39;tooltip-text&#39;&gt;用来存储 k8s 所有集群数据的一致性和高可用键值存储&lt;/span&gt;
 &lt;/a&gt;
 prior to creating each Service. The map object must exist in the registry for
 Services to get IP address assignments, otherwise creations will
@@ -5647,7 +5647,7 @@ IP addresses that are no longer used by any Services.
 &lt;p&gt;为了允许用户为 Service  选择一个端口，我们必须要确保不能有两个 Service 端口冲突。k8s 通过为每
 个 Service 分配 IP 地址来避免这个问题。&lt;/p&gt;
 &lt;p&gt;为了保证每个 Service 接收的 IP 地址都是唯一的，在创建每个 Service 之间一个内部分配器原子地
-在 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/&#39; target=&#39;_blank&#39;&gt;etcd&lt;span class=&#39;tooltip-text&#39;&gt;Consistent and highly-available key value store used as Kubernetes&#39; backing store for all cluster data.&lt;/span&gt;
+在 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/&#39; target=&#39;_blank&#39;&gt;etcd&lt;span class=&#39;tooltip-text&#39;&gt;用来存储 k8s 所有集群数据的一致性和高可用键值存储&lt;/span&gt;
 &lt;/a&gt; 中更新一个全局的分配字典。 必须要能在这个映射中
 为 Service 分配指定 IP， 否则就会失败，错误信息为不能分配该 IP 地址。&lt;/p&gt;
 &lt;p&gt;在控制中心中，一个后台控制器负载创建这个映射(需要支持使用内存锁的老版本k8s迁移)。k8s 还使用
@@ -7074,7 +7074,7 @@ to the deleted ConfigMap, it is recommended to recreate these pods.
   &lt;span style=&#34;color:#ae81ff&#34;&gt;...&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;immutable&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;当一个 ConfigMap 被标记为不可变后，它就 &lt;em&gt;不&lt;/em&gt; 可能再被变会普通(可修改)的了，也不可能再修改其
-中 &lt;code&gt;data&lt;/code&gt; 或 &lt;code&gt;binaryData&lt;/code&gt; 字段的值。只能删除或重建 ConfigMap。 因为现在的 Pod 会维持
+中 &lt;code&gt;data&lt;/code&gt; 或 &lt;code&gt;binaryData&lt;/code&gt; 字段的值。只能删除或重建 ConfigMap。 因为现有的 Pod 会维持
 对已经删除的 ConfigMap 挂载指向， 推荐对这些 Pod 也进行重建。&lt;/p&gt;
 &lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
 &lt;ul&gt;
@@ -10604,11 +10604,109 @@ All listed keys must exist in the corresponding secret. Otherwise, the volume is
 &lt;p&gt;如果使用了 &lt;code&gt;.spec.volumes[].secret.items&lt;/code&gt;，则只有在 &lt;code&gt;items&lt;/code&gt; 中指定的键才会被投射。
 要使用 Secret 中所有键，则需要在  &lt;code&gt;items&lt;/code&gt; 字段把它们全部列举。
 所有列表的键都必须要在对应的 Secret 存在，否则，卷不能被创建。&lt;/p&gt;
-&lt;h4 id=&#34;secret-files-permissions&#34;&gt;Secret files permissions&lt;/h4&gt;
-&lt;p&gt;You can set the file access permission bits for a single Secret key.
-If you don&amp;rsquo;t specify any permissions, &lt;code&gt;0644&lt;/code&gt; is used by default.
-You can also set a default mode for the entire Secret volume and override per key if needed.&lt;/p&gt;
-&lt;p&gt;For example, you can specify a default mode like this:&lt;/p&gt;
+&lt;!--
+#### Secret files permissions
+
+You can set the file access permission bits for a single Secret key.
+If you don&#39;t specify any permissions, `0644` is used by default.
+You can also set a default mode for the entire Secret volume and override per key if needed.
+
+For example, you can specify a default mode like this:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+  - name: mypod
+    image: redis
+    volumeMounts:
+    - name: foo
+      mountPath: &#34;/etc/foo&#34;
+  volumes:
+  - name: foo
+    secret:
+      secretName: mysecret
+      defaultMode: 0400
+```
+
+Then, the secret will be mounted on `/etc/foo` and all the files created by the
+secret volume mount will have permission `0400`.
+
+Note that the JSON spec doesn&#39;t support octal notation, so use the value 256 for
+0400 permissions. If you use YAML instead of JSON for the Pod, you can use octal
+notation to specify permissions in a more natural way.
+
+Note if you `kubectl exec` into the Pod, you need to follow the symlink to find
+the expected file mode. For example,
+
+Check the secrets file mode on the pod.
+```
+kubectl exec mypod -it sh
+
+cd /etc/foo
+ls -l
+```
+
+The output is similar to this:
+```
+total 0
+lrwxrwxrwx 1 root root 15 May 18 00:18 password -&gt; ..data/password
+lrwxrwxrwx 1 root root 15 May 18 00:18 username -&gt; ..data/username
+```
+
+Follow the symlink to find the correct file mode.
+
+```
+cd /etc/foo/..data
+ls -l
+```
+
+The output is similar to this:
+```
+total 8
+-r-------- 1 root root 12 May 18 00:18 password
+-r-------- 1 root root  5 May 18 00:18 username
+```
+
+You can also use mapping, as in the previous example, and specify different
+permissions for different files like this:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+  - name: mypod
+    image: redis
+    volumeMounts:
+    - name: foo
+      mountPath: &#34;/etc/foo&#34;
+  volumes:
+  - name: foo
+    secret:
+      secretName: mysecret
+      items:
+      - key: username
+        path: my-group/my-username
+        mode: 0777
+```
+
+In this case, the file resulting in `/etc/foo/my-group/my-username` will have
+permission value of `0777`. If you use JSON, owing to JSON limitations, you
+must specify the mode in decimal notation, `511`.
+
+Note that this permission value might be displayed in decimal notation if you
+read it later.
+--&gt;
+&lt;h4 id=&#34;secret-files-permissions&#34;&gt;Secret 文件权限&lt;/h4&gt;
+&lt;p&gt;用户可以为 Secret 的每个键投射的文件设置权限。 如果不设置任何权限，则默认使用 &lt;code&gt;0644&lt;/code&gt;。
+也可以为整个 Secret 卷设置默认权限，如果需要也可以覆盖每个键的权限。&lt;/p&gt;
+&lt;p&gt;例如，指定默认模式可以如下:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -10625,31 +10723,27 @@ You can also set a default mode for the entire Secret volume and override per ke
     &lt;span style=&#34;color:#f92672&#34;&gt;secret&lt;/span&gt;:
       &lt;span style=&#34;color:#f92672&#34;&gt;secretName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysecret&lt;/span&gt;
       &lt;span style=&#34;color:#f92672&#34;&gt;defaultMode&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0400&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Then, the secret will be mounted on &lt;code&gt;/etc/foo&lt;/code&gt; and all the files created by the
-secret volume mount will have permission &lt;code&gt;0400&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Note that the JSON spec doesn&amp;rsquo;t support octal notation, so use the value 256 for
-0400 permissions. If you use YAML instead of JSON for the Pod, you can use octal
-notation to specify permissions in a more natural way.&lt;/p&gt;
-&lt;p&gt;Note if you &lt;code&gt;kubectl exec&lt;/code&gt; into the Pod, you need to follow the symlink to find
-the expected file mode. For example,&lt;/p&gt;
-&lt;p&gt;Check the secrets file mode on the pod.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在上面的例子中， Secret 会被挂载到 &lt;code&gt;/etc/foo&lt;/code&gt; 所有在 Secret 中创建的所有的文件权限就是 &lt;code&gt;0400&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;要注意 JSON 配置不支持八进制写法，所以 &lt;code&gt;0400&lt;/code&gt; 权限要用 256. 如果使用 YAML 而不是 JSON 定义
+Pod， 则可以直接使用常用的八进制写法来设置权限&lt;/p&gt;
+&lt;p&gt;注意，如果通过 &lt;code&gt;kubectl exec&lt;/code&gt; 进入 Pod 内部， 需要通过软连接来找到文件的权限模式。例如，
+检查 Pod 中的 Secret 文件的权限.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;kubectl exec mypod -it sh
 
 cd /etc/foo
 ls -l
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The output is similar to this:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;total 0
 lrwxrwxrwx 1 root root 15 May 18 00:18 password -&amp;gt; ..data/password
 lrwxrwxrwx 1 root root 15 May 18 00:18 username -&amp;gt; ..data/username
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Follow the symlink to find the correct file mode.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;权所软连接找到真正的文件权限模式&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;cd /etc/foo/..data
 ls -l
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The output is similar to this:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;total 8
 -r-------- 1 root root 12 May 18 00:18 password
 -r-------- 1 root root  5 May 18 00:18 username
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;You can also use mapping, as in the previous example, and specify different
-permissions for different files like this:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;用于也可以在使用映射时为不同文件指定不同权限，例如:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -10669,55 +10763,148 @@ permissions for different files like this:&lt;/p&gt;
       - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;username&lt;/span&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-group/my-username&lt;/span&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;mode&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0777&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In this case, the file resulting in &lt;code&gt;/etc/foo/my-group/my-username&lt;/code&gt; will have
-permission value of &lt;code&gt;0777&lt;/code&gt;. If you use JSON, owing to JSON limitations, you
-must specify the mode in decimal notation, &lt;code&gt;511&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Note that this permission value might be displayed in decimal notation if you
-read it later.&lt;/p&gt;
-&lt;h4 id=&#34;consuming-secret-values-from-volumes&#34;&gt;Consuming Secret values from volumes&lt;/h4&gt;
-&lt;p&gt;Inside the container that mounts a secret volume, the secret keys appear as
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在上面的例子中，最终生成的 &lt;code&gt;/etc/foo/my-group/my-username&lt;/code&gt; 的权限是 &lt;code&gt;0777&lt;/code&gt;。 如果使用的
+是 JSON， 就会受 JSON 的限制，就需要以十进制写法来设置权限模式为 &lt;code&gt;511&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;要注意如果在之后的读取中，这个权限值可以会以十进制来显示。&lt;/p&gt;
+&lt;!--
+#### Consuming Secret values from volumes
+
+Inside the container that mounts a secret volume, the secret keys appear as
 files and the secret values are base64 decoded and stored inside these files.
-This is the result of commands executed inside the container from the example above:&lt;/p&gt;
+This is the result of commands executed inside the container from the example above:
+
+```shell
+ls /etc/foo/
+```
+
+The output is similar to:
+
+```
+username
+password
+```
+
+```shell
+cat /etc/foo/username
+```
+
+The output is similar to:
+
+```
+admin
+```
+
+```shell
+cat /etc/foo/password
+```
+
+The output is similar to:
+
+```
+1f2d1e2e67df
+```
+
+The program in a container is responsible for reading the secrets from the
+files.
+--&gt;
+&lt;h4 id=&#34;consuming-secret-values-from-volumes&#34;&gt;使用投射到卷中的 Secret 值&lt;/h4&gt;
+&lt;p&gt;在挂载 Secret 卷的容器中，Secret 键会以文件名，Secret 的值在 base64 解码后存入文件中。
+下面是在上面示例中的容器中执行的命令:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;ls /etc/foo/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The output is similar to:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;username
 password
 &lt;/code&gt;&lt;/pre&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;cat /etc/foo/username
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The output is similar to:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;admin
 &lt;/code&gt;&lt;/pre&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;cat /etc/foo/password
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The output is similar to:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;1f2d1e2e67df
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The program in a container is responsible for reading the secrets from the
-files.&lt;/p&gt;
-&lt;h4 id=&#34;mounted-secrets-are-updated-automatically&#34;&gt;Mounted Secrets are updated automatically&lt;/h4&gt;
-&lt;p&gt;When a secret currently consumed in a volume is updated, projected keys are eventually updated as well.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;容器中的的程序要负责读取 Secret 投射出来的文件。&lt;/p&gt;
+&lt;!--
+#### Mounted Secrets are updated automatically
+
+When a secret currently consumed in a volume is updated, projected keys are eventually updated as well.
 The kubelet checks whether the mounted secret is fresh on every periodic sync.
 However, the kubelet uses its local cache for getting the current value of the Secret.
-The type of the cache is configurable using the &lt;code&gt;ConfigMapAndSecretChangeDetectionStrategy&lt;/code&gt; field in
-the &lt;a href=&#34;https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/kubelet/config/v1beta1/types.go&#34;&gt;KubeletConfiguration struct&lt;/a&gt;.
+The type of the cache is configurable using the `ConfigMapAndSecretChangeDetectionStrategy` field in
+the [KubeletConfiguration struct](https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/kubelet/config/v1beta1/types.go).
 A Secret can be either propagated by watch (default), ttl-based, or simply redirecting
 all requests directly to the API server.
 As a result, the total delay from the moment when the Secret is updated to the moment
 when new keys are projected to the Pod can be as long as the kubelet sync period + cache
 propagation delay, where the cache propagation delay depends on the chosen cache type
-(it equals to watch propagation delay, ttl of cache, or zero correspondingly).&lt;/p&gt;
+(it equals to watch propagation delay, ttl of cache, or zero correspondingly).
+
 &lt;blockquote class=&#34;note&#34;&gt;
   &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; A container using a Secret as a
 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes#using-subpath&#34;&gt;subPath&lt;/a&gt; volume mount will not receive
 Secret updates.&lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;using-secrets-as-environment-variables&#34;&gt;Using Secrets as environment variables&lt;/h3&gt;
-&lt;p&gt;To use a secret in an &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/containers/container-environment/&#39; target=&#39;_blank&#39;&gt;environment variable&lt;span class=&#39;tooltip-text&#39;&gt;容器环境变量是 name=value 对，用来给 Pod 中运行的容器提供有用的信息&lt;/span&gt;
+ --&gt;
+&lt;h4 id=&#34;mounted-secrets-are-updated-automatically&#34;&gt;挂载 Secret 的自动更新&lt;/h4&gt;
+&lt;p&gt;当一个正在被以卷方式使用的 Secret 更新时，与其相映射的键最终也会更新。kubelet 会在每个
+同步周期检查挂载的 Secret 是否更新。kubelet 会使用本地缓存来获取 Secret 的当前值。
+缓存的类型可以通过
+&lt;a href=&#34;https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/kubelet/config/v1beta1/types.go&#34;&gt;KubeletConfiguration struct&lt;/a&gt;.
+中的 &lt;code&gt;ConfigMapAndSecretChangeDetectionStrategy&lt;/code&gt; 字段来配置。 Secret 的传播方式有
+监视(默认)，基于 ttl, 或简单地将所有请求直接重定向给 API server. 最终， 从 Secret 更新
+到新的键被投射到 Pod 中的总延时就是 kubelet 同时间隔时长 + 缓存传播延时， 而其中缓存传播延时
+又基于缓存的类型(相应地它可能等于 监视传播延时，缓存的 TTL, 或零)。&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 容器使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes#using-subpath&#34;&gt;子目录&lt;/a&gt;
+方式挂载 Secret 的卷不会接收到 Secret 的更新。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;!--
+### Using Secrets as environment variables
+
+To use a secret in an &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/containers/container-environment/&#39; target=&#39;_blank&#39;&gt;environment variable&lt;span class=&#39;tooltip-text&#39;&gt;容器环境变量是 name=value 对，用来给 Pod 中运行的容器提供有用的信息&lt;/span&gt;
 &lt;/a&gt;
-in a Pod:&lt;/p&gt;
+in a Pod:
+
+1. Create a secret or use an existing one.  Multiple Pods can reference the same secret.
+1. Modify your Pod definition in each container that you wish to consume the value of a secret key to add an environment variable for each secret key you wish to consume. The environment variable that consumes the secret key should populate the secret&#39;s name and key in `env[].valueFrom.secretKeyRef`.
+1. Modify your image and/or command line so that the program looks for values in the specified environment variables.
+
+This is an example of a Pod that uses secrets from environment variables:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-env-pod
+spec:
+  containers:
+  - name: mycontainer
+    image: redis
+    env:
+      - name: SECRET_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: mysecret
+            key: username
+      - name: SECRET_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: mysecret
+            key: password
+  restartPolicy: Never
+```
+ --&gt;
+&lt;h3 id=&#34;using-secrets-as-environment-variables&#34;&gt;将 Secret 用作环境变量&lt;/h3&gt;
+&lt;p&gt;要将 Secret 用作 Pod 中的
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/containers/container-environment/&#39; target=&#39;_blank&#39;&gt;容器环境变量&lt;span class=&#39;tooltip-text&#39;&gt;容器环境变量是 name=value 对，用来给 Pod 中运行的容器提供有用的信息&lt;/span&gt;
+&lt;/a&gt;:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;Create a secret or use an existing one.  Multiple Pods can reference the same secret.&lt;/li&gt;
-&lt;li&gt;Modify your Pod definition in each container that you wish to consume the value of a secret key to add an environment variable for each secret key you wish to consume. The environment variable that consumes the secret key should populate the secret&amp;rsquo;s name and key in &lt;code&gt;env[].valueFrom.secretKeyRef&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;Modify your image and/or command line so that the program looks for values in the specified environment variables.&lt;/li&gt;
+&lt;li&gt;创建或使用一个现有的 Secret. 多个 Pod 可以引用同一个 Secret.&lt;/li&gt;
+&lt;li&gt;修改 Pod 中每个想要将 Secret 的键作为环境变量的容器的定义配置， 每个使用 Secret 键的环境
+变量都需要添加 &lt;code&gt;env[].valueFrom.secretKeyRef&lt;/code&gt; 将指向使用 Secret 键&lt;/li&gt;
+&lt;li&gt;修改镜像或命令以便让程序查看指定的环境变量&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;This is an example of a Pod that uses secrets from environment variables:&lt;/p&gt;
+&lt;p&gt;下面是一个使用 Secret 作为环境变量的 Pod 示例配置:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -10738,20 +10925,57 @@ in a Pod:&lt;/p&gt;
             &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysecret&lt;/span&gt;
             &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;password&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;restartPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Never&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;consuming-secret-values-from-environment-variables&#34;&gt;Consuming Secret Values from environment variables&lt;/h4&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+#### Consuming Secret Values from environment variables
+
+Inside a container that consumes a secret in an environment variables, the secret keys appear as
+normal environment variables containing the base64 decoded values of the secret data.
+This is the result of commands executed inside the container from the example above:
+
+```shell
+echo $SECRET_USERNAME
+```
+
+The output is similar to:
+
+```
+admin
+```
+
+```shell
+echo $SECRET_PASSWORD
+```
+
+The output is similar to:
+
+```
+1f2d1e2e67df
+```
+ --&gt;
+&lt;h4 id=&#34;consuming-secret-values-from-environment-variables&#34;&gt;使用 Secret 投射出来的环境变量&lt;/h4&gt;
 &lt;p&gt;Inside a container that consumes a secret in an environment variables, the secret keys appear as
 normal environment variables containing the base64 decoded values of the secret data.
-This is the result of commands executed inside the container from the example above:&lt;/p&gt;
+This is the result of commands executed inside the container from the example above:
+在使用 Secret 投射出来的环境变量的容器中，最终环境变量引用的 Secret 键的环境变量的值是 Secret
+数据 base64 解码的值。 下面是在容器中执行的命令示例；&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;echo $SECRET_USERNAME
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The output is similar to:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;admin
 &lt;/code&gt;&lt;/pre&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;echo $SECRET_PASSWORD
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The output is similar to:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;1f2d1e2e67df
-&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;environment-variables-are-not-updated-after-a-secret-update&#34;&gt;Environment variables are not updated after a secret update&lt;/h4&gt;
-&lt;p&gt;If a container already consumes a Secret in an environment variable, a Secret update will not be seen by the container unless it is restarted.
-There are third party solutions for triggering restarts when secrets change.&lt;/p&gt;
-&lt;h2 id=&#34;secret-immutable&#34;&gt;Immutable Secrets&lt;/h2&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;!--
+#### Environment variables are not updated after a secret update
+
+If a container already consumes a Secret in an environment variable, a Secret update will not be seen by the container unless it is restarted.
+There are third party solutions for triggering restarts when secrets change.
+ --&gt;
+&lt;h4 id=&#34;environment-variables-are-not-updated-after-a-secret-update&#34;&gt;环境变量不会在 Secret 更新后更新&lt;/h4&gt;
+&lt;p&gt;如果一个容器已经在以环境变量的方式使用一个 Secret, 容器在重启之前是看不到 Secret 的更新的。
+有第三方解决方案可以在 Secret 发生变更时来触发重启&lt;/p&gt;
+&lt;!--
+## Immutable Secrets {#secret-immutable}
+
 
 
 
@@ -10762,19 +10986,62 @@ There are third party solutions for triggering restarts when secrets change.&lt;
 &lt;/div&gt;
 
 
-&lt;p&gt;The Kubernetes beta feature &lt;em&gt;Immutable Secrets and ConfigMaps&lt;/em&gt; provides an option to set
+
+The Kubernetes beta feature _Immutable Secrets and ConfigMaps_ provides an option to set
 individual Secrets and ConfigMaps as immutable. For clusters that extensively use Secrets
 (at least tens of thousands of unique Secret to Pod mounts), preventing changes to their
-data has the following advantages:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;protects you from accidental (or unwanted) updates that could cause applications outages&lt;/li&gt;
-&lt;li&gt;improves performance of your cluster by significantly reducing load on kube-apiserver, by
-closing watches for secrets marked as immutable.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;This feature is controlled by the &lt;code&gt;ImmutableEphemeralVolumes&lt;/code&gt; &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;feature
-gate&lt;/a&gt;,
+data has the following advantages:
+
+- protects you from accidental (or unwanted) updates that could cause applications outages
+- improves performance of your cluster by significantly reducing load on kube-apiserver, by
+closing watches for secrets marked as immutable.
+
+This feature is controlled by the `ImmutableEphemeralVolumes` [feature
+gate](/docs/reference/command-line-tools-reference/feature-gates/),
 which is enabled by default since v1.19. You can create an immutable
-Secret by setting the &lt;code&gt;immutable&lt;/code&gt; field to &lt;code&gt;true&lt;/code&gt;. For example,&lt;/p&gt;
+Secret by setting the `immutable` field to `true`. For example,
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  ...
+data:
+  ...
+immutable: true
+```
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Once a Secret or ConfigMap is marked as immutable, it is &lt;em&gt;not&lt;/em&gt; possible to revert this change
+nor to mutate the contents of the &lt;code&gt;data&lt;/code&gt; field. You can only delete and recreate the Secret.
+Existing Pods maintain a mount point to the deleted Secret - it is recommended to recreate
+these pods.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+ --&gt;
+&lt;h2 id=&#34;secret-immutable&#34;&gt;不可变 Secret&lt;/h2&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.19 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;这个 k8s 的 bata 特性 &lt;em&gt;不可变 Secret 和 ConfigMap&lt;/em&gt; 提供了一个可选项，可以让一个 Secret
+和 ConfigMap 变为不可变。 对于那些广泛使用 Secret (一个 Secret 至少被 10k Pod 挂载)，
+防止修改它们中的数据有以下好处:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;防止误操作(或不想要)的更新可能引发的应用事故&lt;/li&gt;
+&lt;li&gt;当 Secret 标记为不可变时会关闭监视，这样能极大地减少 kube-apiserver 的负载，从而改善
+集群性能。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这个特性通过设置 &lt;code&gt;ImmutableEphemeralVolumes&lt;/code&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;功能阀&lt;/a&gt;
+控制。 从 k8s v1.19 开始该特性默认开启的。
+用户可以在 Secret 中通过设置 &lt;code&gt;immutable&lt;/code&gt; 字段为 &lt;code&gt;true&lt;/code&gt; 让其成功不可变 Secret&lt;/p&gt;
+&lt;p&gt;示例:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Secret&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -10783,75 +11050,198 @@ Secret by setting the &lt;code&gt;immutable&lt;/code&gt; field to &lt;code&gt;tr
   &lt;span style=&#34;color:#ae81ff&#34;&gt;...&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;immutable&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Once a Secret or ConfigMap is marked as immutable, it is &lt;em&gt;not&lt;/em&gt; possible to revert this change
-nor to mutate the contents of the &lt;code&gt;data&lt;/code&gt; field. You can only delete and recreate the Secret.
-Existing Pods maintain a mount point to the deleted Secret - it is recommended to recreate
-these pods.&lt;/div&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 当一个 Secret 或 ConfigMap 被标记为不可变后，它就 &lt;em&gt;不&lt;/em&gt; 可能再被变会普通， 也不可能再修改其
+&lt;code&gt;data&lt;/code&gt; 字段的内容。 只能删除或重建 Secret . 现有的 Pod 会维持对已经删除的 Secret 挂载指向，
+推荐对这些 Pod 也进行重建。&lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;using-imagepullsecrets&#34;&gt;Using imagePullSecrets&lt;/h3&gt;
-&lt;p&gt;The &lt;code&gt;imagePullSecrets&lt;/code&gt; field is a list of references to secrets in the same namespace.
-You can use an &lt;code&gt;imagePullSecrets&lt;/code&gt; to pass a secret that contains a Docker (or other) image registry
+&lt;!--
+### Using imagePullSecrets
+
+The `imagePullSecrets` field is a list of references to secrets in the same namespace.
+You can use an `imagePullSecrets` to pass a secret that contains a Docker (or other) image registry
 password to the kubelet. The kubelet uses this information to pull a private image on behalf of your Pod.
-See the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubernetes-api/v1.19/#podspec-v1-core&#34;&gt;PodSpec API&lt;/a&gt; for more information about the &lt;code&gt;imagePullSecrets&lt;/code&gt; field.&lt;/p&gt;
-&lt;h4 id=&#34;manually-specifying-an-imagepullsecret&#34;&gt;Manually specifying an imagePullSecret&lt;/h4&gt;
-&lt;p&gt;You can learn how to specify &lt;code&gt;ImagePullSecrets&lt;/code&gt; from the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod&#34;&gt;container images documentation&lt;/a&gt;.&lt;/p&gt;
-&lt;h3 id=&#34;arranging-for-imagepullsecrets-to-be-automatically-attached&#34;&gt;Arranging for imagePullSecrets to be automatically attached&lt;/h3&gt;
-&lt;p&gt;You can manually create &lt;code&gt;imagePullSecrets&lt;/code&gt;, and reference it from
+See the [PodSpec API](/docs/reference/generated/kubernetes-api/v1.19/#podspec-v1-core) for more information about the `imagePullSecrets` field.
+ --&gt;
+&lt;h3 id=&#34;using-imagepullsecrets&#34;&gt;使用 &lt;code&gt;imagePullSecrets&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;imagePullSecrets&lt;/code&gt; 字段值是一个引用同一个命名空间中的 Secret 的列表。用户可以使用
+&lt;code&gt;imagePullSecrets&lt;/code&gt; 向 Docker (或其它) 镜像仓库传递一个包含密码的 Secret 给 kubelet.
+kubelet 使用这些信息来为 Pod 从私有镜像仓库拉取镜像。更多关于 &lt;code&gt;imagePullSecrets&lt;/code&gt; 字段的信息见
+&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podspec-v1-core&#34;&gt;PodSpec API&lt;/a&gt;&lt;/p&gt;
+&lt;!--
+#### Manually specifying an imagePullSecret
+
+You can learn how to specify `ImagePullSecrets` from the [container images documentation](/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod).
+ --&gt;
+&lt;h4 id=&#34;manually-specifying-an-imagepullsecret&#34;&gt;手动指定一个 imagePullSecret&lt;/h4&gt;
+&lt;p&gt;用户可以通过
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod&#34;&gt;容器镜像文档&lt;/a&gt;
+学习怎么指定 &lt;code&gt;ImagePullSecrets&lt;/code&gt;&lt;/p&gt;
+&lt;!--
+### Arranging for imagePullSecrets to be automatically attached
+
+You can manually create `imagePullSecrets`, and reference it from
 a ServiceAccount. Any Pods created with that ServiceAccount
-or created with that ServiceAccount by default, will get their &lt;code&gt;imagePullSecrets&lt;/code&gt;
+or created with that ServiceAccount by default, will get their `imagePullSecrets`
 field set to that of the service account.
-See &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/configure-pod-container/configure-service-account/#add-imagepullsecrets-to-a-service-account&#34;&gt;Add ImagePullSecrets to a service account&lt;/a&gt;
-for a detailed explanation of that process.&lt;/p&gt;
-&lt;h3 id=&#34;automatic-mounting-of-manually-created-secrets&#34;&gt;Automatic mounting of manually created Secrets&lt;/h3&gt;
+See [Add ImagePullSecrets to a service account](/docs/tasks/configure-pod-container/configure-service-account/#add-imagepullsecrets-to-a-service-account)
+ for a detailed explanation of that process.
+ --&gt;
+&lt;h3 id=&#34;arranging-for-imagepullsecrets-to-be-automatically-attached&#34;&gt;设置 imagePullSecrets 自动加载&lt;/h3&gt;
+&lt;p&gt;用户可以手动创建 &lt;code&gt;imagePullSecrets&lt;/code&gt;，并在 ServiceAccount 中引用它。 任意以这个 ServiceAccount
+创建或默认以这个 ServiceAccount 创建的 Pod 都会获得它们的 &lt;code&gt;imagePullSecrets&lt;/code&gt; 字段为这个
+ServiceAccount。 更多对这个过程的详细解释见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/configure-pod-container/configure-service-account/#add-imagepullsecrets-to-a-service-account&#34;&gt;将 ImagePullSecrets 添加到 ServiceAccount&lt;/a&gt;&lt;/p&gt;
+&lt;!--
+### Automatic mounting of manually created Secrets
+
+Manually created secrets (for example, one containing a token for accessing a GitHub account)
+can be automatically attached to pods based on their service account.
+See [Injecting Information into Pods Using a PodPreset](/docs/tasks/inject-data-application/podpreset/) for a detailed explanation of that process.
+ --&gt;
+&lt;h3 id=&#34;automatic-mounting-of-manually-created-secrets&#34;&gt;自动挂载手动创建的 Secret&lt;/h3&gt;
 &lt;p&gt;Manually created secrets (for example, one containing a token for accessing a GitHub account)
 can be automatically attached to pods based on their service account.
-See &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/inject-data-application/podpreset/&#34;&gt;Injecting Information into Pods Using a PodPreset&lt;/a&gt; for a detailed explanation of that process.&lt;/p&gt;
-&lt;h2 id=&#34;details&#34;&gt;Details&lt;/h2&gt;
-&lt;h3 id=&#34;restrictions&#34;&gt;Restrictions&lt;/h3&gt;
-&lt;p&gt;Secret volume sources are validated to ensure that the specified object
+See &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/inject-data-application/podpreset/&#34;&gt;Injecting Information into Pods Using a PodPreset&lt;/a&gt; for a detailed explanation of that process.
+手动创建的 Secret (例如，一个包含 GitHub 账号)可以通过 ServiceAccount 自动挂载到 Pod。
+更多关于这个过程的解释见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/inject-data-application/podpreset/&#34;&gt;使用 PodPreset 向 Pod 中注入信息&lt;/a&gt;&lt;/p&gt;
+&lt;!--
+## Details
+
+### Restrictions
+
+Secret volume sources are validated to ensure that the specified object
 reference actually points to an object of type Secret. Therefore, a secret
-needs to be created before any Pods that depend on it.&lt;/p&gt;
-&lt;p&gt;Secret resources reside in a &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/namespaces&#39; target=&#39;_blank&#39;&gt;namespace&lt;span class=&#39;tooltip-text&#39;&gt;一个用于在同一个物理集群中支持多个虚拟集群的抽象概念&lt;/span&gt;
+needs to be created before any Pods that depend on it.
+
+Secret resources reside in a &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/namespaces&#39; target=&#39;_blank&#39;&gt;namespace&lt;span class=&#39;tooltip-text&#39;&gt;一个用于在同一个物理集群中支持多个虚拟集群的抽象概念&lt;/span&gt;
 &lt;/a&gt;.
-Secrets can only be referenced by Pods in that same namespace.&lt;/p&gt;
-&lt;p&gt;Individual secrets are limited to 1MiB in size. This is to discourage creation
+Secrets can only be referenced by Pods in that same namespace.
+
+Individual secrets are limited to 1MiB in size. This is to discourage creation
 of very large secrets which would exhaust the API server and kubelet memory.
 However, creation of many smaller secrets could also exhaust memory. More
-comprehensive limits on memory usage due to secrets is a planned feature.&lt;/p&gt;
-&lt;p&gt;The kubelet only supports the use of secrets for Pods where the secrets
+comprehensive limits on memory usage due to secrets is a planned feature.
+
+The kubelet only supports the use of secrets for Pods where the secrets
 are obtained from the API server.
-This includes any Pods created using &lt;code&gt;kubectl&lt;/code&gt;, or indirectly via a replication
+This includes any Pods created using `kubectl`, or indirectly via a replication
 controller. It does not include Pods created as a result of the kubelet
-&lt;code&gt;--manifest-url&lt;/code&gt; flag, its &lt;code&gt;--config&lt;/code&gt; flag, or its REST API (these are
-not common ways to create Pods.)&lt;/p&gt;
-&lt;p&gt;Secrets must be created before they are consumed in Pods as environment
+`--manifest-url` flag, its `--config` flag, or its REST API (these are
+not common ways to create Pods.)
+
+Secrets must be created before they are consumed in Pods as environment
 variables unless they are marked as optional. References to secrets that do
-not exist will prevent the Pod from starting.&lt;/p&gt;
-&lt;p&gt;References (&lt;code&gt;secretKeyRef&lt;/code&gt; field) to keys that do not exist in a named Secret
-will prevent the Pod from starting.&lt;/p&gt;
-&lt;p&gt;Secrets used to populate environment variables by the &lt;code&gt;envFrom&lt;/code&gt; field that have keys
+not exist will prevent the Pod from starting.
+
+References (`secretKeyRef` field) to keys that do not exist in a named Secret
+will prevent the Pod from starting.
+
+Secrets used to populate environment variables by the `envFrom` field that have keys
 that are considered invalid environment variable names will have those keys
 skipped. The Pod will be allowed to start. There will be an event whose
-reason is &lt;code&gt;InvalidVariableNames&lt;/code&gt; and the message will contain the list of
+reason is `InvalidVariableNames` and the message will contain the list of
 invalid keys that were skipped. The example shows a pod which refers to the
-default/mysecret that contains 2 invalid keys: &lt;code&gt;1badkey&lt;/code&gt; and &lt;code&gt;2alsobad&lt;/code&gt;.&lt;/p&gt;
+default/mysecret that contains 2 invalid keys: `1badkey` and `2alsobad`.
+
+```shell
+kubectl get events
+```
+
+The output is similar to:
+
+```
+LASTSEEN   FIRSTSEEN   COUNT     NAME            KIND      SUBOBJECT                         TYPE      REASON
+0s         0s          1         dapi-test-pod   Pod                                         Warning   InvalidEnvironmentVariableNames   kubelet, 127.0.0.1      Keys [1badkey, 2alsobad] from the EnvFrom secret default/mysecret were skipped since they are considered invalid environment variable names.
+```
+ --&gt;
+&lt;h2 id=&#34;details&#34;&gt;一些细节&lt;/h2&gt;
+&lt;h3 id=&#34;限制&#34;&gt;限制&lt;/h3&gt;
+&lt;p&gt;Secret 卷的源会被验证这个对象引用的确实是一个 Secret 类型的对象。 因此，Secret 需要在任意依赖
+它的 Pod 之前创建。&lt;/p&gt;
+&lt;p&gt;Secret 资源受限于
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/namespaces&#39; target=&#39;_blank&#39;&gt;命名空间(namespace)&lt;span class=&#39;tooltip-text&#39;&gt;一个用于在同一个物理集群中支持多个虚拟集群的抽象概念&lt;/span&gt;
+&lt;/a&gt;.
+Secret 只能被同一个命名空间中的 Pod 引用。&lt;/p&gt;
+&lt;p&gt;单个 Secret 的空间仅限于 1MiB. 非常不建议创建体积很大的 Secret 因为它可能会导致 API 服务
+和 kubelet 内存耗尽。但是创建许多小点的 Secret 也可能耗尽内存。 更多全面限制 Secret 使用
+的内存是一个计划的特性。&lt;/p&gt;
+&lt;p&gt;kubelet 只支持为 Pod 使用那些通过 API 服务获取的 Secret. 这包含任意通过 &lt;code&gt;kubectl&lt;/code&gt; 的 Pod，
+或通过副本控制器间接创建的。 但不支持通过 kubelet 的 &lt;code&gt;--manifest-url&lt;/code&gt;， &lt;code&gt;--config&lt;/code&gt;
+创建的 Pod， 或通过 kubelet REST API 创建的 Pod(这些都不创建 Pod 的常用方式)&lt;/p&gt;
+&lt;p&gt;Secret 必须在使用它作为环境变量的 Pod 之前先创建好，不然环境变量就只能标记为可选。 如果 Pod
+引用的 Secret 不存储就会阻止 Pod 启动。&lt;/p&gt;
+&lt;p&gt;引用(通过 &lt;code&gt;secretKeyRef&lt;/code&gt; 字段)的键在指定 Secret 中不存在也会阻止 Pod 启动。&lt;/p&gt;
+&lt;p&gt;通过 &lt;code&gt;envFrom&lt;/code&gt; 字段使用 Secret 作为环境变量时，如果其中的键被认为不是一个有效的环境变量名称
+则这些键就会被跳过。 Pod 会被允许启动。 这会产生一个事件，其中的原因是 &lt;code&gt;InvalidVariableNames&lt;/code&gt;
+信息中会包含被跳过的无效的键的列表。下面的示例中，显示一个引用 default/mysecret 的 Pod。 这个
+Secret 中包含两个无效的键: &lt;code&gt;1badkey&lt;/code&gt; 和 &lt;code&gt;2alsobad&lt;/code&gt;.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get events
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The output is similar to:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类别如下:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;LASTSEEN   FIRSTSEEN   COUNT     NAME            KIND      SUBOBJECT                         TYPE      REASON
 0s         0s          1         dapi-test-pod   Pod                                         Warning   InvalidEnvironmentVariableNames   kubelet, 127.0.0.1      Keys [1badkey, 2alsobad] from the EnvFrom secret default/mysecret were skipped since they are considered invalid environment variable names.
-&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;secret-and-pod-lifetime-interaction&#34;&gt;Secret and Pod lifetime interaction&lt;/h3&gt;
-&lt;p&gt;When a Pod is created by calling the Kubernetes API, there is no check if a referenced
+&lt;/code&gt;&lt;/pre&gt;&lt;!--
+### Secret and Pod lifetime interaction
+
+When a Pod is created by calling the Kubernetes API, there is no check if a referenced
 secret exists. Once a Pod is scheduled, the kubelet will try to fetch the
 secret value. If the secret cannot be fetched because it does not exist or
 because of a temporary lack of connection to the API server, the kubelet will
 periodically retry. It will report an event about the Pod explaining the
 reason it is not started yet. Once the secret is fetched, the kubelet will
-create and mount a volume containing it. None of the Pod&amp;rsquo;s containers will
-start until all the Pod&amp;rsquo;s volumes are mounted.&lt;/p&gt;
-&lt;h2 id=&#34;use-cases&#34;&gt;Use cases&lt;/h2&gt;
-&lt;h3 id=&#34;use-case-as-container-environment-variables&#34;&gt;Use-Case: As container environment variables&lt;/h3&gt;
-&lt;p&gt;Create a secret&lt;/p&gt;
+create and mount a volume containing it. None of the Pod&#39;s containers will
+start until all the Pod&#39;s volumes are mounted.
+--&gt;
+&lt;h3 id=&#34;secret-and-pod-lifetime-interaction&#34;&gt;Secret 和 Pod 生命周期交互&lt;/h3&gt;
+&lt;p&gt;当通过调用 k8s API 创建一个 Pod 时，并不会检查它引用的 Secret 是不是存储。 当 Pod 被调度时
+kubelet 会尝试获取 Secret 的值。 如果因为 Secret 不存在或暂时无法连接到 API 服务而导致
+无法获取 Secret, kubelet 会定期重试。 它会报告一个解释为啥 Pod 还没有启动的原因的事件。
+当 Secret 获取后， kubelet 会创建并挂载一个卷来存储它。 在 Pod 所有的卷挂载之前没有容器会
+启动。&lt;/p&gt;
+&lt;!--
+## Use cases
+
+### Use-Case: As container environment variables
+
+Create a secret
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+type: Opaque
+data:
+  USER_NAME: YWRtaW4=
+  PASSWORD: MWYyZDFlMmU2N2Rm
+```
+
+Create the Secret:
+```shell
+kubectl apply -f mysecret.yaml
+```
+
+Use `envFrom` to define all of the Secret&#39;s data as container environment variables. The key from the Secret becomes the environment variable name in the Pod.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-test-pod
+spec:
+  containers:
+    - name: test-container
+      image: k8s.gcr.io/busybox
+      command: [ &#34;/bin/sh&#34;, &#34;-c&#34;, &#34;env&#34; ]
+      envFrom:
+      - secretRef:
+          name: mysecret
+  restartPolicy: Never
+```
+ --&gt;
+&lt;h2 id=&#34;use-cases&#34;&gt;使用场景&lt;/h2&gt;
+&lt;h3 id=&#34;使用场景-作为容器环境变量&#34;&gt;使用场景: 作为容器环境变量&lt;/h3&gt;
+&lt;p&gt;Secret 定义&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Secret&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -10860,9 +11250,9 @@ start until all the Pod&amp;rsquo;s volumes are mounted.&lt;/p&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;data&lt;/span&gt;:
   &lt;span style=&#34;color:#f92672&#34;&gt;USER_NAME&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;YWRtaW4=&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;PASSWORD&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;MWYyZDFlMmU2N2Rm&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Create the Secret:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;创建 Secret:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl apply -f mysecret.yaml
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Use &lt;code&gt;envFrom&lt;/code&gt; to define all of the Secret&amp;rsquo;s data as container environment variables. The key from the Secret becomes the environment variable name in the Pod.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;使用 &lt;code&gt;envFrom&lt;/code&gt; 将 Secret 中的所有数据作为容器环境变量。 键会作为 Pod 中环境变量的名称。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -10876,18 +11266,18 @@ start until all the Pod&amp;rsquo;s volumes are mounted.&lt;/p&gt;
       - &lt;span style=&#34;color:#f92672&#34;&gt;secretRef&lt;/span&gt;:
           &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysecret&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;restartPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Never&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;use-case-pod-with-ssh-keys&#34;&gt;Use-Case: Pod with ssh keys&lt;/h3&gt;
-&lt;p&gt;Create a secret containing some ssh keys:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;使用场景-pod-中使用-ssh-密钥&#34;&gt;使用场景: Pod 中使用 SSH 密钥&lt;/h3&gt;
+&lt;p&gt;创建一个包含 SSH 密钥的 Secret:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create secret generic ssh-key-secret --from-file&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;ssh-privatekey&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/path/to/.ssh/id_rsa --from-file&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;ssh-publickey&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/path/to/.ssh/id_rsa.pub
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The output is similar to:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;命令输出类似如下:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;secret &amp;quot;ssh-key-secret&amp;quot; created
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;You can also create a &lt;code&gt;kustomization.yaml&lt;/code&gt; with a &lt;code&gt;secretGenerator&lt;/code&gt; field containing ssh keys.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;用户也可以使用一个包含 &lt;code&gt;secretGenerator&lt;/code&gt; 的 &lt;code&gt;kustomization.yaml&lt;/code&gt; 来装 SSH 密钥。&lt;/p&gt;
 &lt;blockquote class=&#34;caution&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; Think carefully before sending your own ssh keys: other users of the cluster may have access to the secret. Use a service account which you want to be accessible to all the users with whom you share the Kubernetes cluster, and can revoke this account if the users are compromised.&lt;/div&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 在上传 SSH 密钥之前要仔细考虑: 集群中的其他用户也可能访问这个 Secret. 使用一个 ServiceAccount
+来让集群中的部分用户可以访问这个 Secret，如果有用户发生泄漏可以废除这个 ServiceAccount.&lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;Now you can create a Pod which references the secret with the ssh key and
-consumes it in a volume:&lt;/p&gt;
+&lt;p&gt;现在就可以创建一个 Pod 并在其中通过卷使用 Secret 中的 SSH 密钥:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -10906,24 +11296,43 @@ consumes it in a volume:&lt;/p&gt;
     - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;secret-volume&lt;/span&gt;
       &lt;span style=&#34;color:#f92672&#34;&gt;readOnly&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
       &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/etc/secret-volume&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;When the container&amp;rsquo;s command runs, the pieces of the key will be available in:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;当 容器运行时，SSH 密钥就是在:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;/etc/secret-volume/ssh-publickey
 /etc/secret-volume/ssh-privatekey
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The container is then free to use the secret data to establish an ssh connection.&lt;/p&gt;
-&lt;h3 id=&#34;use-case-pods-with-prod--test-credentials&#34;&gt;Use-Case: Pods with prod / test credentials&lt;/h3&gt;
-&lt;p&gt;This example illustrates a Pod which consumes a secret containing production
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;这时容器就可以使用 Secret 中的数据来建立 SSH 连接。&lt;/p&gt;
+&lt;!--
+### Use-Case: Pods with prod / test credentials
+
+This example illustrates a Pod which consumes a secret containing production
 credentials and another Pod which consumes a secret with test environment
-credentials.&lt;/p&gt;
-&lt;p&gt;You can create a &lt;code&gt;kustomization.yaml&lt;/code&gt; with a &lt;code&gt;secretGenerator&lt;/code&gt; field or run
-&lt;code&gt;kubectl create secret&lt;/code&gt;.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create secret generic prod-db-secret --from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;username&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;produser --from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;password&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;Y4nys7f11
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The output is similar to:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;secret &amp;quot;prod-db-secret&amp;quot; created
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;You can also create a secret for test environment credentials.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create secret generic test-db-secret --from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;username&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;testuser --from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;password&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;iluvtests
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The output is similar to:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;secret &amp;quot;test-db-secret&amp;quot; created
-&lt;/code&gt;&lt;/pre&gt;&lt;blockquote class=&#34;note&#34;&gt;
+credentials.
+
+You can create a `kustomization.yaml` with a `secretGenerator` field or run
+`kubectl create secret`.
+
+```shell
+kubectl create secret generic prod-db-secret --from-literal=username=produser --from-literal=password=Y4nys7f11
+```
+
+The output is similar to:
+
+```
+secret &#34;prod-db-secret&#34; created
+```
+
+You can also create a secret for test environment credentials.
+
+```shell
+kubectl create secret generic test-db-secret --from-literal=username=testuser --from-literal=password=iluvtests
+```
+
+The output is similar to:
+
+```
+secret &#34;test-db-secret&#34; created
+```
+
+&lt;blockquote class=&#34;note&#34;&gt;
   &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;p&gt;Special characters such as &lt;code&gt;$&lt;/code&gt;, &lt;code&gt;\&lt;/code&gt;, &lt;code&gt;*&lt;/code&gt;, &lt;code&gt;=&lt;/code&gt;, and &lt;code&gt;!&lt;/code&gt; will be interpreted by your &lt;a href=&#34;https://en.wikipedia.org/wiki/Shell_(computing)&#34;&gt;shell&lt;/a&gt; and require escaping.
 In most shells, the easiest way to escape the password is to surround it with single quotes (&lt;code&gt;&#39;&lt;/code&gt;).
 For example, if your actual password is &lt;code&gt;S!B\*d$zDsb=&lt;/code&gt;, you should execute the command this way:&lt;/p&gt;
@@ -10932,7 +11341,121 @@ For example, if your actual password is &lt;code&gt;S!B\*d$zDsb=&lt;/code&gt;, y
 &lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;Now make the Pods:&lt;/p&gt;
+
+Now make the Pods:
+
+```shell
+cat &lt;&lt;EOF &gt; pod.yaml
+apiVersion: v1
+kind: List
+items:
+- kind: Pod
+  apiVersion: v1
+  metadata:
+    name: prod-db-client-pod
+    labels:
+      name: prod-db-client
+  spec:
+    volumes:
+    - name: secret-volume
+      secret:
+        secretName: prod-db-secret
+    containers:
+    - name: db-client-container
+      image: myClientImage
+      volumeMounts:
+      - name: secret-volume
+        readOnly: true
+        mountPath: &#34;/etc/secret-volume&#34;
+- kind: Pod
+  apiVersion: v1
+  metadata:
+    name: test-db-client-pod
+    labels:
+      name: test-db-client
+  spec:
+    volumes:
+    - name: secret-volume
+      secret:
+        secretName: test-db-secret
+    containers:
+    - name: db-client-container
+      image: myClientImage
+      volumeMounts:
+      - name: secret-volume
+        readOnly: true
+        mountPath: &#34;/etc/secret-volume&#34;
+EOF
+```
+
+Add the pods to the same kustomization.yaml:
+
+```shell
+cat &lt;&lt;EOF &gt;&gt; kustomization.yaml
+resources:
+- pod.yaml
+EOF
+```
+
+Apply all those objects on the API server by running:
+
+```shell
+kubectl apply -k .
+```
+
+Both containers will have the following files present on their filesystems with the values for each container&#39;s environment:
+
+```
+/etc/secret-volume/username
+/etc/secret-volume/password
+```
+
+Note how the specs for the two Pods differ only in one field; this facilitates
+creating Pods with different capabilities from a common Pod template.
+
+You could further simplify the base Pod specification by using two service accounts:
+
+1. `prod-user` with the `prod-db-secret`
+1. `test-user` with the `test-db-secret`
+
+The Pod specification is shortened to:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: prod-db-client-pod
+  labels:
+    name: prod-db-client
+spec:
+  serviceAccount: prod-db-client
+  containers:
+  - name: db-client-container
+    image: myClientImage
+```
+ --&gt;
+&lt;h3 id=&#34;应用场景-使用生产测试凭据的-pod&#34;&gt;应用场景: 使用生产/测试凭据的 Pod&lt;/h3&gt;
+&lt;p&gt;本次示例演示的是一个使用包含生产环境凭据的 Secret 的 Pod 和另一个使用包含测试环境凭据的 Pod&lt;/p&gt;
+&lt;p&gt;用户可以通过对一个包含 &lt;code&gt;secretGenerator&lt;/code&gt; 字段的 &lt;code&gt;kustomization.yaml&lt;/code&gt; 执行
+&lt;code&gt;kubectl create secret&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create secret generic prod-db-secret --from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;username&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;produser --from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;password&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;Y4nys7f11
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;secret &amp;quot;prod-db-secret&amp;quot; created
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;同样的方式为测试环境创建 Secret&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create secret generic test-db-secret --from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;username&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;testuser --from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;password&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;iluvtests
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;secret &amp;quot;test-db-secret&amp;quot; created
+&lt;/code&gt;&lt;/pre&gt;&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;p&gt;特殊字符，如 &lt;code&gt;$&lt;/code&gt;, &lt;code&gt;\&lt;/code&gt;, &lt;code&gt;*&lt;/code&gt;, &lt;code&gt;=&lt;/code&gt;, 和 &lt;code&gt;!&lt;/code&gt;，会被
+&lt;a href=&#34;https://en.wikipedia.org/wiki/Shell_(computing)&#34;&gt;shell&lt;/a&gt;
+解释，所以需要转义.  在大多数 SHELL 中， 对密码进行转义最简单的方式就是用单引号(&lt;code&gt;&#39;&lt;/code&gt;)包起来。
+例如，如果实际的密码是 &lt;code&gt;S!B\*d$zDsb=&lt;/code&gt;, 可以执行下面的命令:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create secret generic dev-db-secret --from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;username&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;devuser --from-literal&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;password&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;S!B\*d$zDsb=&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;不需要对文件中的特殊字符进行转义 (&lt;code&gt;--from-file&lt;/code&gt;).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;添加 Pod 配置:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;cat &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt; pod.yaml
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;apiVersion: v1
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;kind: List
@@ -10974,24 +11497,23 @@ For example, if your actual password is &lt;code&gt;S!B\*d$zDsb=&lt;/code&gt;, y
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;        readOnly: true
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;        mountPath: &amp;#34;/etc/secret-volume&amp;#34;
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;EOF&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Add the pods to the same kustomization.yaml:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;将这些 Pod 添加到同一个 kustomization.yaml:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;cat &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt;&amp;gt; kustomization.yaml
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;resources:
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;- pod.yaml
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;EOF&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Apply all those objects on the API server by running:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;通过下面的命令将所有的对象提交到 API 服务:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl apply -k .
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Both containers will have the following files present on their filesystems with the values for each container&amp;rsquo;s environment:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;两个容器中都会在它们的文件存在以下文件，其中包含的是各自环境对应的值:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;/etc/secret-volume/username
 /etc/secret-volume/password
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Note how the specs for the two Pods differ only in one field; this facilitates
-creating Pods with different capabilities from a common Pod template.&lt;/p&gt;
-&lt;p&gt;You could further simplify the base Pod specification by using two service accounts:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;两个 Pod 定义中的区别只有一个字段，这使得通过同一个 Pod 模板创建不同功能的 Pod 变得更容易。&lt;/p&gt;
+&lt;p&gt;还可以通过以下两个 ServiceAccount 进一步简化基础 Pod 定义:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;&lt;code&gt;prod-user&lt;/code&gt; with the &lt;code&gt;prod-db-secret&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;test-user&lt;/code&gt; with the &lt;code&gt;test-db-secret&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;包含 &lt;code&gt;prod-db-secret&lt;/code&gt; 的 &lt;code&gt;prod-user&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;包含 &lt;code&gt;test-db-secret&lt;/code&gt; 的 &lt;code&gt;test-user&lt;/code&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;The Pod specification is shortened to:&lt;/p&gt;
+&lt;p&gt;Pod 定义就简化为:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -11003,10 +11525,56 @@ creating Pods with different capabilities from a common Pod template.&lt;/p&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
   - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;db-client-container&lt;/span&gt;
     &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myClientImage&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;use-case-dotfiles-in-a-secret-volume&#34;&gt;Use-case: dotfiles in a secret volume&lt;/h3&gt;
-&lt;p&gt;You can make your data &amp;ldquo;hidden&amp;rdquo; by defining a key that begins with a dot.
-This key represents a dotfile or &amp;ldquo;hidden&amp;rdquo; file. For example, when the following secret
-is mounted into a volume, &lt;code&gt;secret-volume&lt;/code&gt;:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+### Use-case: dotfiles in a secret volume
+
+You can make your data &#34;hidden&#34; by defining a key that begins with a dot.
+This key represents a dotfile or &#34;hidden&#34; file. For example, when the following secret
+is mounted into a volume, `secret-volume`:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dotfile-secret
+data:
+  .secret-file: dmFsdWUtMg0KDQo=
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-dotfiles-pod
+spec:
+  volumes:
+  - name: secret-volume
+    secret:
+      secretName: dotfile-secret
+  containers:
+  - name: dotfile-test-container
+    image: k8s.gcr.io/busybox
+    command:
+    - ls
+    - &#34;-l&#34;
+    - &#34;/etc/secret-volume&#34;
+    volumeMounts:
+    - name: secret-volume
+      readOnly: true
+      mountPath: &#34;/etc/secret-volume&#34;
+```
+
+The volume will contain a single file, called `.secret-file`, and
+the `dotfile-test-container` will have this file present at the path
+`/etc/secret-volume/.secret-file`.
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Files beginning with dot characters are hidden from the output of  &lt;code&gt;ls -l&lt;/code&gt;;
+you must use &lt;code&gt;ls -la&lt;/code&gt; to see them when listing directory contents.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+ --&gt;
+&lt;h3 id=&#34;use-case-dotfiles-in-a-secret-volume&#34;&gt;应用场景: Secret 卷中的点文件(隐藏文件)&lt;/h3&gt;
+&lt;p&gt;用户可以在 Secret 的 data 下面的键设置为以点开头的格式，这样投射出的文件名就是以点开头，也就是隐藏文件
+例如， 下面的 Secret 在挂载到 &lt;code&gt;secret-volume&lt;/code&gt; 卷:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Secret&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -11034,71 +11602,125 @@ is mounted into a volume, &lt;code&gt;secret-volume&lt;/code&gt;:&lt;/p&gt;
     - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;secret-volume&lt;/span&gt;
       &lt;span style=&#34;color:#f92672&#34;&gt;readOnly&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
       &lt;span style=&#34;color:#f92672&#34;&gt;mountPath&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/etc/secret-volume&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The volume will contain a single file, called &lt;code&gt;.secret-file&lt;/code&gt;, and
-the &lt;code&gt;dotfile-test-container&lt;/code&gt; will have this file present at the path
-&lt;code&gt;/etc/secret-volume/.secret-file&lt;/code&gt;.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;最终 卷中就会包含一个文件，文件名为 &lt;code&gt;.secret-file&lt;/code&gt;， 而在 &lt;code&gt;dotfile-test-container&lt;/code&gt; 中
+这个文件的路径就是 &lt;code&gt;/etc/secret-volume/.secret-file&lt;/code&gt;.&lt;/p&gt;
 &lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Files beginning with dot characters are hidden from the output of  &lt;code&gt;ls -l&lt;/code&gt;;
-you must use &lt;code&gt;ls -la&lt;/code&gt; to see them when listing directory contents.&lt;/div&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;code&gt;ls -l&lt;/code&gt; 命令的输出结果中是没有以点开头的文件的；要查看这些文件需要使用命令 &lt;code&gt;ls -la&lt;/code&gt;&lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;use-case-secret-visible-to-one-container-in-a-pod&#34;&gt;Use-case: Secret visible to one container in a Pod&lt;/h3&gt;
-&lt;p&gt;Consider a program that needs to handle HTTP requests, do some complex business
+&lt;!--
+### Use-case: Secret visible to one container in a Pod
+
+Consider a program that needs to handle HTTP requests, do some complex business
 logic, and then sign some messages with an HMAC. Because it has complex
 application logic, there might be an unnoticed remote file reading exploit in
-the server, which could expose the private key to an attacker.&lt;/p&gt;
-&lt;p&gt;This could be divided into two processes in two containers: a frontend container
+the server, which could expose the private key to an attacker.
+
+This could be divided into two processes in two containers: a frontend container
 which handles user interaction and business logic, but which cannot see the
 private key; and a signer container that can see the private key, and responds
-to simple signing requests from the frontend (for example, over localhost networking).&lt;/p&gt;
-&lt;p&gt;With this partitioned approach, an attacker now has to trick the application
+to simple signing requests from the frontend (for example, over localhost networking).
+
+With this partitioned approach, an attacker now has to trick the application
 server into doing something rather arbitrary, which may be harder than getting
-it to read a file.&lt;/p&gt;
+it to read a file.
+ --&gt;
 &lt;!-- TODO: explain how to do this while still using automation. --&gt;
-&lt;h2 id=&#34;best-practices&#34;&gt;Best practices&lt;/h2&gt;
-&lt;h3 id=&#34;clients-that-use-the-secret-api&#34;&gt;Clients that use the Secret API&lt;/h3&gt;
-&lt;p&gt;When deploying applications that interact with the Secret API, you should
-limit access using &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/authorization/&#34;&gt;authorization policies&lt;/a&gt; such as &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/rbac/&#34;&gt;RBAC&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Secrets often hold values that span a spectrum of importance, many of which can
+&lt;h3 id=&#34;use-case-secret-visible-to-one-container-in-a-pod&#34;&gt;应用场景: 让 Secret 只在 Pod 中的一个容器中可见&lt;/h3&gt;
+&lt;p&gt;假设有一个程序，需要处理 HTTP 请求，完成一些复杂的业务逻辑，最后使用 HMAC 对一些消息做签名。
+因为其中有些复杂的业务逻辑，其中可以包含一个没有发现的远程文件读取， 这可能导致将私钥暴露给攻击者。&lt;/p&gt;
+&lt;p&gt;这时就可以把这个程序拆分成两个进程运行在两个容器中: 一个前端容器，用来处理用户交互和业务逻辑，
+但是它不能看到私钥； 另一个签发容器，其中可以看到私钥，只提供为前端容器一个简单签发请求功能
+(例如， 通过本地(localhost)网络).&lt;/p&gt;
+&lt;p&gt;通过这种拆分方式， 攻击都现在只能在前端容器中，而不是整个应用，这样可能增加读取文件的难度。&lt;/p&gt;
+&lt;!-- TODO: explain how to do this while still using automation. --&gt;
+&lt;!--
+## Best practices
+
+### Clients that use the Secret API
+
+When deploying applications that interact with the Secret API, you should
+limit access using [authorization policies](
+/docs/reference/access-authn-authz/authorization/) such as [RBAC](
+/docs/reference/access-authn-authz/rbac/).
+
+Secrets often hold values that span a spectrum of importance, many of which can
 cause escalations within Kubernetes (e.g. service account tokens) and to
 external systems. Even if an individual app can reason about the power of the
 secrets it expects to interact with, other apps within the same namespace can
-render those assumptions invalid.&lt;/p&gt;
-&lt;p&gt;For these reasons &lt;code&gt;watch&lt;/code&gt; and &lt;code&gt;list&lt;/code&gt; requests for secrets within a namespace are
+render those assumptions invalid.
+
+For these reasons `watch` and `list` requests for secrets within a namespace are
 extremely powerful capabilities and should be avoided, since listing secrets allows
 the clients to inspect the values of all secrets that are in that namespace. The ability to
-&lt;code&gt;watch&lt;/code&gt; and &lt;code&gt;list&lt;/code&gt; all secrets in a cluster should be reserved for only the most
-privileged, system-level components.&lt;/p&gt;
-&lt;p&gt;Applications that need to access the Secret API should perform &lt;code&gt;get&lt;/code&gt; requests on
+`watch` and `list` all secrets in a cluster should be reserved for only the most
+privileged, system-level components.
+
+Applications that need to access the Secret API should perform `get` requests on
 the secrets they need. This lets administrators restrict access to all secrets
-while &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/rbac/#referring-to-resources&#34;&gt;white-listing access to individual instances&lt;/a&gt; that
-the app needs.&lt;/p&gt;
-&lt;p&gt;For improved performance over a looping &lt;code&gt;get&lt;/code&gt;, clients can design resources that
-reference a secret then &lt;code&gt;watch&lt;/code&gt; the resource, re-requesting the secret when the
-reference changes. Additionally, a &lt;a href=&#34;https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/bulk_watch.md&#34;&gt;&amp;ldquo;bulk watch&amp;rdquo; API&lt;/a&gt;
-to let clients &lt;code&gt;watch&lt;/code&gt; individual resources has also been proposed, and will likely
-be available in future releases of Kubernetes.&lt;/p&gt;
-&lt;h2 id=&#34;security-properties&#34;&gt;Security properties&lt;/h2&gt;
-&lt;h3 id=&#34;protections&#34;&gt;Protections&lt;/h3&gt;
-&lt;p&gt;Because secrets can be created independently of the Pods that use
+while [white-listing access to individual instances](
+/docs/reference/access-authn-authz/rbac/#referring-to-resources) that
+the app needs.
+
+For improved performance over a looping `get`, clients can design resources that
+reference a secret then `watch` the resource, re-requesting the secret when the
+reference changes. Additionally, a [&#34;bulk watch&#34; API](
+https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/bulk_watch.md)
+to let clients `watch` individual resources has also been proposed, and will likely
+be available in future releases of Kubernetes.
+ --&gt;
+&lt;h2 id=&#34;best-practices&#34;&gt;最佳实践&lt;/h2&gt;
+&lt;h3 id=&#34;clients-that-use-the-secret-api&#34;&gt;使用 Secret API 的那些客户端&lt;/h3&gt;
+&lt;p&gt;在部署与 Secret API 交互的应用时，用户需要使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/authorization/&#34;&gt;授权策略&lt;/a&gt;
+如
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/rbac/&#34;&gt;RBAC&lt;/a&gt;
+来限制访问&lt;/p&gt;
+&lt;p&gt;Secret 经常包含的值都是很重要的，它们从集群内(如 服务账号令牌) 和外部系统。 即便有天大的理由
+让一个应该可以访问这些 Secret, 同一个命名空间的其它应用也会推翻这些理由。
+&lt;blockquote&gt;
+  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;p&gt;因为这些原因在一个命名空间中对 Secret 的 &lt;code&gt;watch&lt;/code&gt; 和 &lt;code&gt;list&lt;/code&gt; 的请求就是相当强大的能力，并应该被避免，
+因为列举 Secret 可以让客户端可以查看命名空间中的所有 Secret 的值。 对所有 Secret 使用
+&lt;code&gt;watch&lt;/code&gt; 和 &lt;code&gt;list&lt;/code&gt; 的能力在集群中应该只提供给最高权限，系统级别的组件。&lt;/p&gt;
+&lt;p&gt;需要访问 Secret API 的应用对其需要的 Secret 执行 &lt;code&gt;get&lt;/code&gt; 请求。 这让管理员通过
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/rbac/#referring-to-resources&#34;&gt;访问独立实例的白名单&lt;/a&gt;
+限制所有的 Secret 只被需要的应用访问。&lt;/p&gt;
+&lt;p&gt;为了改善使用 &lt;code&gt;get&lt;/code&gt; 轮询的性能， 客户端可以设计资源，这些资源可以引用一个 Secret 然后 &lt;code&gt;watch&lt;/code&gt;
+这个资源， 在引用变量时，重新请求 Secret. 另外，
+&lt;a href=&#34;https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/bulk_watch.md&#34;&gt;&amp;ldquo;bulk watch&amp;rdquo; API&lt;/a&gt;
+让客户端 &lt;code&gt;watch&lt;/code&gt; 独立资源的提议已经有了， 可以在未来版本中的 k8s 中就有了。&lt;/p&gt;
+&lt;!--
+## Security properties
+
+### Protections
+
+Because secrets can be created independently of the Pods that use
 them, there is less risk of the secret being exposed during the workflow of
 creating, viewing, and editing Pods. The system can also take additional
 precautions with Secrets, such as avoiding writing them to disk where
-possible.&lt;/p&gt;
-&lt;p&gt;A secret is only sent to a node if a Pod on that node requires it.
-The kubelet stores the secret into a &lt;code&gt;tmpfs&lt;/code&gt; so that the secret is not written
+possible.
+
+A secret is only sent to a node if a Pod on that node requires it.
+The kubelet stores the secret into a `tmpfs` so that the secret is not written
 to disk storage. Once the Pod that depends on the secret is deleted, the kubelet
-will delete its local copy of the secret data as well.&lt;/p&gt;
-&lt;p&gt;There may be secrets for several Pods on the same node. However, only the
+will delete its local copy of the secret data as well.
+
+There may be secrets for several Pods on the same node. However, only the
 secrets that a Pod requests are potentially visible within its containers.
-Therefore, one Pod does not have access to the secrets of another Pod.&lt;/p&gt;
-&lt;p&gt;There may be several containers in a Pod. However, each container in a Pod has
-to request the secret volume in its &lt;code&gt;volumeMounts&lt;/code&gt; for it to be visible within
-the container. This can be used to construct useful &lt;a href=&#34;#use-case-secret-visible-to-one-container-in-a-pod&#34;&gt;security partitions at the
-Pod level&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;On most Kubernetes distributions, communication between users
+Therefore, one Pod does not have access to the secrets of another Pod.
+
+There may be several containers in a Pod. However, each container in a Pod has
+to request the secret volume in its `volumeMounts` for it to be visible within
+the container. This can be used to construct useful [security partitions at the
+Pod level](#use-case-secret-visible-to-one-container-in-a-pod).
+
+On most Kubernetes distributions, communication between users
 and the API server, and from the API server to the kubelets, is protected by SSL/TLS.
-Secrets are protected when transmitted over these channels.&lt;/p&gt;
+Secrets are protected when transmitted over these channels.
+
 
 
 
@@ -11109,41 +11731,102 @@ Secrets are protected when transmitted over these channels.&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;p&gt;You can enable &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/encrypt-data/&#34;&gt;encryption at rest&lt;/a&gt;
-for secret data, so that the secrets are not stored in the clear into &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/&#39; target=&#39;_blank&#39;&gt;etcd&lt;span class=&#39;tooltip-text&#39;&gt;Consistent and highly-available key value store used as Kubernetes&#39; backing store for all cluster data.&lt;/span&gt;
+
+You can enable [encryption at rest](/docs/tasks/administer-cluster/encrypt-data/)
+for secret data, so that the secrets are not stored in the clear into &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/&#39; target=&#39;_blank&#39;&gt;etcd&lt;span class=&#39;tooltip-text&#39;&gt;用来存储 k8s 所有集群数据的一致性和高可用键值存储&lt;/span&gt;
+&lt;/a&gt;.
+ --&gt;
+&lt;h2 id=&#34;security-properties&#34;&gt;安全属性&lt;/h2&gt;
+&lt;h3 id=&#34;protections&#34;&gt;保护&lt;/h3&gt;
+&lt;p&gt;因为 Secret 可以独立于使用它们的 Pod 外创建，这就使得 Secret 在创建，查看，和编辑 Pod 时，
+暴露的风险减少。 系统还可以对 Secret 添加额外的保护， 比如，尽量避免将它们写入磁盘。&lt;/p&gt;
+&lt;p&gt;Secret 只会在节点上有 Pod 需要它时才会发到这个节点。 kubelet 会将 Secret 存储在 &lt;code&gt;tmpfs&lt;/code&gt;，
+这样 Secret 就不会被写入到磁盘存储。 当信赖这个 Secret 的 Pod 被删除时， kubelet 就会删除
+本地的 Secret 数据备份。&lt;/p&gt;
+&lt;p&gt;当一个节点上有多个 Secret 被多个 Pod 使用时。 只有被 Pod 请求的 Secret 才会在它的容器中可见。
+因此， 一个 Pod 没有访问另一个 Pod 中的 Secret 的权限。&lt;/p&gt;
+&lt;p&gt;Pod 中可能有多个容器，每个容器都可以在其 &lt;code&gt;volumeMounts&lt;/code&gt; 请求 Secret 卷，这样它就能在容器中。
+这些可以用来构建有用的
+&lt;a href=&#34;#use-case-secret-visible-to-one-container-in-a-pod&#34;&gt;Pod 级别的安全分隔&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;在大多数 k8s 发行版本中， 用户与 API 服务之间的通信， 和从 API 服务到 kubelet 通信, 是由 SSL/TLS
+保护。 Secret 通过这些通道的传输是受保护的。&lt;/p&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.13 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;用户也可以启用对 Secret 数据
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/encrypt-data/&#34;&gt;加密&lt;/a&gt;，
+，这样 Secret 不会以明文的形式存入
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/&#39; target=&#39;_blank&#39;&gt;etcd&lt;span class=&#39;tooltip-text&#39;&gt;用来存储 k8s 所有集群数据的一致性和高可用键值存储&lt;/span&gt;
 &lt;/a&gt;.&lt;/p&gt;
-&lt;h3 id=&#34;risks&#34;&gt;Risks&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;In the API server, secret data is stored in &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/&#39; target=&#39;_blank&#39;&gt;etcd&lt;span class=&#39;tooltip-text&#39;&gt;Consistent and highly-available key value store used as Kubernetes&#39; backing store for all cluster data.&lt;/span&gt;
+&lt;!--
+### Risks
+
+ - In the API server, secret data is stored in &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/&#39; target=&#39;_blank&#39;&gt;etcd&lt;span class=&#39;tooltip-text&#39;&gt;用来存储 k8s 所有集群数据的一致性和高可用键值存储&lt;/span&gt;
 &lt;/a&gt;;
-therefore:
+   therefore:
+   - Administrators should enable encryption at rest for cluster data (requires v1.13 or later).
+   - Administrators should limit access to etcd to admin users.
+   - Administrators may want to wipe/shred disks used by etcd when no longer in use.
+   - If running etcd in a cluster, administrators should make sure to use SSL/TLS
+     for etcd peer-to-peer communication.
+ - If you configure the secret through a manifest (JSON or YAML) file which has
+   the secret data encoded as base64, sharing this file or checking it in to a
+   source repository means the secret is compromised. Base64 encoding is _not_ an
+   encryption method and is considered the same as plain text.
+ - Applications still need to protect the value of secret after reading it from the volume,
+   such as not accidentally logging it or transmitting it to an untrusted party.
+ - A user who can create a Pod that uses a secret can also see the value of that secret. Even
+   if the API server policy does not allow that user to read the Secret, the user could
+   run a Pod which exposes the secret.
+ - Currently, anyone with root permission on any node can read _any_ secret from the API server,
+   by impersonating the kubelet. It is a planned feature to only send secrets to
+   nodes that actually require them, to restrict the impact of a root exploit on a
+   single node.
+ --&gt;
+&lt;h3 id=&#34;risks&#34;&gt;风险&lt;/h3&gt;
 &lt;ul&gt;
-&lt;li&gt;Administrators should enable encryption at rest for cluster data (requires v1.13 or later).&lt;/li&gt;
-&lt;li&gt;Administrators should limit access to etcd to admin users.&lt;/li&gt;
-&lt;li&gt;Administrators may want to wipe/shred disks used by etcd when no longer in use.&lt;/li&gt;
-&lt;li&gt;If running etcd in a cluster, administrators should make sure to use SSL/TLS
-for etcd peer-to-peer communication.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在 API 服务中，Secret 的数据被存储在
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/&#39; target=&#39;_blank&#39;&gt;etcd&lt;span class=&#39;tooltip-text&#39;&gt;用来存储 k8s 所有集群数据的一致性和高可用键值存储&lt;/span&gt;
+&lt;/a&gt;;
+因此:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;管理员应该启动对集群数据的静态加密(需要 k8s v1.13+)&lt;/li&gt;
+&lt;li&gt;管理员应该限制只有管理员能访问 etcd&lt;/li&gt;
+&lt;li&gt;管理员可能希望对 etcd 不再使用的存储磁盘，进行清除/粉碎&lt;/li&gt;
+&lt;li&gt;如果在集群中运行 etcd, 管理员应该保证在 etcd 的点对点通信之间使用 SSL/TLS&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;If you configure the secret through a manifest (JSON or YAML) file which has
-the secret data encoded as base64, sharing this file or checking it in to a
-source repository means the secret is compromised. Base64 encoding is &lt;em&gt;not&lt;/em&gt; an
-encryption method and is considered the same as plain text.&lt;/li&gt;
-&lt;li&gt;Applications still need to protect the value of secret after reading it from the volume,
-such as not accidentally logging it or transmitting it to an untrusted party.&lt;/li&gt;
-&lt;li&gt;A user who can create a Pod that uses a secret can also see the value of that secret. Even
-if the API server policy does not allow that user to read the Secret, the user could
-run a Pod which exposes the secret.&lt;/li&gt;
-&lt;li&gt;Currently, anyone with root permission on any node can read &lt;em&gt;any&lt;/em&gt; secret from the API server,
-by impersonating the kubelet. It is a planned feature to only send secrets to
-nodes that actually require them, to restrict the impact of a root exploit on a
-single node.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果用户通过配置(JSON 或 YAML)文件来管理 Secret, Secret 中数据是进行 base64， 分享这些
+文件或将其提供到源代码系统就意味着 Secret 已经泄漏。 Base64 编码并 &lt;em&gt;不&lt;/em&gt; 是一种加密方式，
+其实和明文没啥区别。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;应用在从卷中读取到 Secret 的值后还是要注意保护，例如不要意外地写入日志或传输到一个不受信的部分。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果一个用户可以创建一个使用 Secret 的 Pod 就代表他们可以看到 Secret 的值。即便 API 服务
+的策略不允许这个用户读取 Secret, 用户也可以通过运行一个可以暴露 Secret 的 Pod&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;目前，任何在任意节点上有 root 权限的用户，可以冒充 kubelet 从 API 服务读取 &lt;em&gt;任意&lt;/em&gt; Secret,
+有一个计划的特性将只允许将 Secret 发送给那些真的需要它的节点，来避免单个节点上被其它 root
+权限用户访问。&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;Learn how to &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/configmap-secret/managing-secret-using-kubectl/&#34;&gt;manage Secret using &lt;code&gt;kubectl&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Learn how to &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/configmap-secret/managing-secret-using-config-file/&#34;&gt;manage Secret using config file&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Learn how to &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/configmap-secret/managing-secret-using-kustomize/&#34;&gt;manage Secret using kustomize&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/configmap-secret/managing-secret-using-kubectl/&#34;&gt;使用 &lt;code&gt;kubectl&lt;/code&gt; 管理 Secret&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/configmap-secret/managing-secret-using-config-file/&#34;&gt;使用配置文件管理 Secret &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/configmap-secret/managing-secret-using-kustomize/&#34;&gt;使用 kustomize 管理 Secret&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>

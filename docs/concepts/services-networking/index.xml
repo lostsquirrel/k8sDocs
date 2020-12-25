@@ -1883,7 +1883,7 @@ ensure that no two Services can collide. Kubernetes does that by allocating each
 Service its own IP address.
 
 To ensure each Service receives a unique IP, an internal allocator atomically
-updates a global allocation map in &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/&#39; target=&#39;_blank&#39;&gt;etcd&lt;span class=&#39;tooltip-text&#39;&gt;Consistent and highly-available key value store used as Kubernetes&#39; backing store for all cluster data.&lt;/span&gt;
+updates a global allocation map in &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/&#39; target=&#39;_blank&#39;&gt;etcd&lt;span class=&#39;tooltip-text&#39;&gt;用来存储 k8s 所有集群数据的一致性和高可用键值存储&lt;/span&gt;
 &lt;/a&gt;
 prior to creating each Service. The map object must exist in the registry for
 Services to get IP address assignments, otherwise creations will
@@ -1901,7 +1901,7 @@ IP addresses that are no longer used by any Services.
 &lt;p&gt;为了允许用户为 Service  选择一个端口，我们必须要确保不能有两个 Service 端口冲突。k8s 通过为每
 个 Service 分配 IP 地址来避免这个问题。&lt;/p&gt;
 &lt;p&gt;为了保证每个 Service 接收的 IP 地址都是唯一的，在创建每个 Service 之间一个内部分配器原子地
-在 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/&#39; target=&#39;_blank&#39;&gt;etcd&lt;span class=&#39;tooltip-text&#39;&gt;Consistent and highly-available key value store used as Kubernetes&#39; backing store for all cluster data.&lt;/span&gt;
+在 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/configure-upgrade-etcd/&#39; target=&#39;_blank&#39;&gt;etcd&lt;span class=&#39;tooltip-text&#39;&gt;用来存储 k8s 所有集群数据的一致性和高可用键值存储&lt;/span&gt;
 &lt;/a&gt; 中更新一个全局的分配字典。 必须要能在这个映射中
 为 Service 分配指定 IP， 否则就会失败，错误信息为不能分配该 IP 地址。&lt;/p&gt;
 &lt;p&gt;在控制中心中，一个后台控制器负载创建这个映射(需要支持使用内存锁的老版本k8s迁移)。k8s 还使用
