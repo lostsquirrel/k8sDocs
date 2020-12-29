@@ -3497,65 +3497,62 @@ of ephemeral local storage a Pod can consume.
 &lt;/blockquote&gt;
 
 &lt;p&gt;作为一个 beta 特性， k8s 可以让用户跟踪，保留，限制一个 Pod 可以使用的临时本地存储。&lt;/p&gt;
-&lt;h3 id=&#34;configurations-for-local-ephemeral-storage&#34;&gt;Configurations for local ephemeral storage&lt;/h3&gt;
-&lt;p&gt;Kubernetes supports two ways to configure local ephemeral storage on a node:
-&lt;div id=&#34;local_storage_configurations&#34;&gt;
-&lt;ul&gt;&lt;li&gt;&lt;a href=&#34;#local_storage_configurations-0&#34;&gt;Single filesystem&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#local_storage_configurations-1&#34;&gt;Two filesystems&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div id=&#34;local_storage_configurations-0&#34;&gt;&lt;p&gt;In this configuration, you place all different kinds of ephemeral local data
-(&lt;code&gt;emptyDir&lt;/code&gt; volumes, writeable layers, container images, logs) into one filesystem.
-The most effective way to configure the kubelet means dedicating this filesystem
-to Kubernetes (kubelet) data.&lt;/p&gt;
-&lt;p&gt;The kubelet also writes
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/cluster-administration/logging/#logging-at-the-node-level&#34;&gt;node-level container logs&lt;/a&gt;
-and treats these similarly to ephemeral local storage.&lt;/p&gt;
-&lt;p&gt;The kubelet writes logs to files inside its configured log directory (&lt;code&gt;/var/log&lt;/code&gt;
-by default); and has a base directory for other locally stored data
-(&lt;code&gt;/var/lib/kubelet&lt;/code&gt; by default).&lt;/p&gt;
-&lt;p&gt;Typically, both &lt;code&gt;/var/lib/kubelet&lt;/code&gt; and &lt;code&gt;/var/log&lt;/code&gt; are on the system root filesystem,
-and the kubelet is designed with that layout in mind.&lt;/p&gt;
-&lt;p&gt;Your node can have as many other filesystems, not used for Kubernetes,
-as you like.&lt;/p&gt;
-&lt;/div&gt;&lt;div id=&#34;local_storage_configurations-1&#34;&gt;&lt;p&gt;You have a filesystem on the node that you&amp;rsquo;re using for ephemeral data that
-comes from running Pods: logs, and &lt;code&gt;emptyDir&lt;/code&gt; volumes. You can use this filesystem
-for other data (for example: system logs not related to Kubernetes); it can even
-be the root filesystem.&lt;/p&gt;
-&lt;p&gt;The kubelet also writes
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/cluster-administration/logging/#logging-at-the-node-level&#34;&gt;node-level container logs&lt;/a&gt;
-into the first filesystem, and treats these similarly to ephemeral local storage.&lt;/p&gt;
-&lt;p&gt;You also use a separate filesystem, backed by a different logical storage device.
-In this configuration, the directory where you tell the kubelet to place
-container image layers and writeable layers is on this second filesystem.&lt;/p&gt;
-&lt;p&gt;The first filesystem does not hold any image layers or writeable layers.&lt;/p&gt;
-&lt;p&gt;Your node can have as many other filesystems, not used for Kubernetes,
-as you like.&lt;/p&gt;
-&lt;/div&gt;&lt;/div&gt;&lt;script&gt;$(function(){$(&#34;#local_storage_configurations&#34;).tabs();});&lt;/script&gt;&lt;/p&gt;
-&lt;p&gt;The kubelet can measure how much local storage it is using. It does this provided
-that:&lt;/p&gt;
+&lt;h3 id=&#34;configurations-for-local-ephemeral-storage&#34;&gt;本地临时存储的配置&lt;/h3&gt;
+&lt;p&gt;k8s 支持两种在节点上配置本地临时存储的方式:&lt;/p&gt;
+&lt;p&gt;&lt;div id=&#34;local_storage_configurations&#34;&gt;
+&lt;ul&gt;&lt;li&gt;&lt;a href=&#34;#local_storage_configurations-0&#34;&gt;Single filesystem&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#local_storage_configurations-1&#34;&gt;Two filesystems&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div id=&#34;local_storage_configurations-0&#34;&gt;&lt;p&gt;在这种配置中， 用户可以将所有不同类型的临时本地数据(&lt;code&gt;emptyDir&lt;/code&gt; 卷，可写层，容器镜像，日志)
+都放到一个文件系统中。 最有效配置 kubelet 的含义就是将这个文件系统用于 k8s (kubelet)的数据。&lt;/p&gt;
+&lt;p&gt;kubelet 还会将
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/cluster-administration/logging/#logging-at-the-node-level&#34;&gt;节点级别的容器日志&lt;/a&gt;
+并将其类似临时本地存储处理。&lt;/p&gt;
+&lt;p&gt;kubelet 会将日志文件写入它配置的日志目录(默认: &lt;code&gt;/var/log&lt;/code&gt;); 还有一个用于其它本地数据存储的
+基础目录(默认为 &lt;code&gt;/var/lib/kubelet&lt;/code&gt;)&lt;/p&gt;
+&lt;p&gt;通常情况下， &lt;code&gt;/var/lib/kubelet&lt;/code&gt; 和 &lt;code&gt;/var/log&lt;/code&gt; 都是在系统根文件系统上，kubelet 在设置上
+也就是这个结构的。&lt;/p&gt;
+&lt;p&gt;节点上可以有任意数量的其它文件系统，不是给 k8s 用的，随便怎么用都可以。&lt;/p&gt;
+&lt;/div&gt;&lt;div id=&#34;local_storage_configurations-1&#34;&gt;&lt;p&gt;在节点上有一个文件系统被用来入那些来自运行 Pod 的: 日志，&lt;code&gt;emptyDir&lt;/code&gt; 卷的临时数据。也可以使用
+这个文件系统来存其它数据(例如: 与 k8s 不相关的系统日志)；甚至也可以是根文件系统。&lt;/p&gt;
+&lt;p&gt;kubelet 也会将
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/cluster-administration/logging/#logging-at-the-node-level&#34;&gt;节点级别的容器日志&lt;/a&gt;
+写入到第一个文件系统，并将其当作和临时本地存储差不多的东西。&lt;/p&gt;
+&lt;p&gt;也可以使用另一个后端为另一个逻辑存储设备的文件系统。 在这个配置中， 给 kubelet 放置容器镜像层
+和可写层的目录都是在第二个文件系统上。&lt;/p&gt;
+&lt;p&gt;第一个文件系统不包含任何镜像层和可写层。&lt;/p&gt;
+&lt;p&gt;节点上可以有任意数量的其它文件系统，不是给 k8s 用的，随便怎么用都可以。&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;script&gt;$(function(){$(&#34;#local_storage_configurations&#34;).tabs();});&lt;/script&gt;
+&lt;blockquote&gt;
+  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;p&gt;kubelet 可以测量它自己用了多少本地存储。&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;the &lt;code&gt;LocalStorageCapacityIsolation&lt;/code&gt;
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;feature gate&lt;/a&gt;
-is enabled (the feature is on by default), and&lt;/li&gt;
-&lt;li&gt;you have set up the node using one of the supported configurations
-for local ephemeral storage.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;启用了 &lt;code&gt;LocalStorageCapacityIsolation&lt;/code&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;功能阀&lt;/a&gt;
+(该特性默认是开启的)，&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;需要设置节点使用一种支持的本地临时存储配置。&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;If you have a different configuration, then the kubelet does not apply resource
-limits for ephemeral local storage.&lt;/p&gt;
+&lt;p&gt;如果有不同的配置， kubelet 就不能对临时本地存储执行资源限制。&lt;/p&gt;
 &lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; The kubelet tracks &lt;code&gt;tmpfs&lt;/code&gt; emptyDir volumes as container memory use, rather
-than as local ephemeral storage.&lt;/div&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; kubelet 将 &lt;code&gt;tmpfs&lt;/code&gt; &lt;code&gt;emptyDir&lt;/code&gt; 卷作为容器使用的内存来跟踪，而不是被当作本地临时存储。&lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;setting-requests-and-limits-for-local-ephemeral-storage&#34;&gt;Setting requests and limits for local ephemeral storage&lt;/h3&gt;
-&lt;p&gt;You can use &lt;em&gt;ephemeral-storage&lt;/em&gt; for managing local ephemeral storage. Each Container of a Pod can specify one or more of the following:&lt;/p&gt;
+&lt;h3 id=&#34;setting-requests-and-limits-for-local-ephemeral-storage&#34;&gt;为本地临时存储设置请求和限制&lt;/h3&gt;
+&lt;p&gt;用户可以使用 &lt;em&gt;临时存储(ephemeral-storage)&lt;/em&gt; 来管理本地临时存储。 Pod 中的每个容器都可以指定
+以下配置中的一个或多个:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;spec.containers[].resources.limits.ephemeral-storage&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;spec.containers[].resources.requests.ephemeral-storage&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Limits and requests for &lt;code&gt;ephemeral-storage&lt;/code&gt; are measured in bytes. You can express storage as
-a plain integer or as a fixed-point number using one of these suffixes:
-E, P, T, G, M, K. You can also use the power-of-two equivalents: Ei, Pi, Ti, Gi,
-Mi, Ki. For example, the following represent roughly the same value:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;128974848, 129e6, 129M, 123Mi
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In the following example, the Pod has two Containers. Each Container has a request of 2GiB of local ephemeral storage. Each Container has a limit of 4GiB of local ephemeral storage. Therefore, the Pod has a request of 4GiB of local ephemeral storage, and a limit of 8GiB of local ephemeral storage.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;ephemeral-storage&lt;/code&gt; 的请求和限制是以字节来计量的。 可以直接以整数或小数加以下后缀中的一个来表达数量:
+E, P, T, G, M, K. 也可以使用2次幂的约等单位:Ei, Pi, Ti, Gi, Mi, Ki. 例如，下面这个值
+大约都是相等的:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;128974848, 129e6, 129M, 123Mi
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;在下面的示例中， 这个 Pod 中有两个容器。 每个容器请求了 2GiB 本地临时存储。 每个容器还有一个
+4GiB 本地临时存储限制。 因此， Pod 就有一个 4 4GiB 的本地临时存储的请求和一个 8GiB 的本地临时存储限制。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -3576,20 +3573,144 @@ Mi, Ki. For example, the following represent roughly the same value:&lt;/p&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;ephemeral-storage&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2Gi&amp;#34;&lt;/span&gt;
       &lt;span style=&#34;color:#f92672&#34;&gt;limits&lt;/span&gt;:
         &lt;span style=&#34;color:#f92672&#34;&gt;ephemeral-storage&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;4Gi&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;how-pods-with-ephemeral-storage-requests-are-scheduled&#34;&gt;How Pods with ephemeral-storage requests are scheduled&lt;/h3&gt;
-&lt;p&gt;When you create a Pod, the Kubernetes scheduler selects a node for the Pod to
-run on. Each node has a maximum amount of local ephemeral storage it can provide for Pods. For more information, see &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/reserve-compute-resources/#node-allocatable&#34;&gt;Node Allocatable&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The scheduler ensures that the sum of the resource requests of the scheduled Containers is less than the capacity of the node.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+### How Pods with ephemeral-storage requests are scheduled
+
+When you create a Pod, the Kubernetes scheduler selects a node for the Pod to
+run on. Each node has a maximum amount of local ephemeral storage it can provide for Pods. For more information, see [Node Allocatable](/docs/tasks/administer-cluster/reserve-compute-resources/#node-allocatable).
+
+The scheduler ensures that the sum of the resource requests of the scheduled Containers is less than the capacity of the node.
+ --&gt;
+&lt;h3 id=&#34;how-pods-with-ephemeral-storage-requests-are-scheduled&#34;&gt;包含临时存储请求的 Pod 是怎么调度的&lt;/h3&gt;
+&lt;p&gt;当创建一个 Pod 时，k8s 调度器会为 Pod 选择一个节点让它在上面运行。 每个节点上都有一个他可以
+为 Pod 提供的最大数量的本地临时存储。 更多信息见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/reserve-compute-resources/#node-allocatable&#34;&gt;节点可分配量&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;调度器确保其调度的容器所请求的资源是小于节点对应资源的容量。&lt;/p&gt;
+&lt;!--
+### Ephemeral storage consumption management {#resource-emphemeralstorage-consumption}
+
+If the kubelet is managing local ephemeral storage as a resource, then the
+kubelet measures storage use in:
+
+- `emptyDir` volumes, except _tmpfs_ `emptyDir` volumes
+- directories holding node-level logs
+- writeable container layers
+
+If a Pod is using more ephemeral storage than you allow it to, the kubelet
+sets an eviction signal that triggers Pod eviction.
+
+For container-level isolation, if a Container&#39;s writable layer and log
+usage exceeds its storage limit, the kubelet marks the Pod for eviction.
+
+For pod-level isolation the kubelet works out an overall Pod storage limit by
+summing the limits for the containers in that Pod. In this case, if the sum of
+the local ephemeral storage usage from all containers and also the Pod&#39;s `emptyDir`
+volumes exceeds the overall Pod storage limit, then the kubelet also marks the Pod
+for eviction.
+
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; &lt;p&gt;If the kubelet is not measuring local ephemeral storage, then a Pod
+that exceeds its local storage limit will not be evicted for breaching
+local storage resource limits.&lt;/p&gt;
+&lt;p&gt;However, if the filesystem space for writeable container layers, node-level logs,
+or &lt;code&gt;emptyDir&lt;/code&gt; volumes falls low, the node
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#39; target=&#39;_blank&#39;&gt;taints&lt;span class=&#39;tooltip-text&#39;&gt;A core object consisting of three required properties: key, value, and effect. Taints prevent the scheduling of pods on nodes or node groups.&lt;/span&gt;
+&lt;/a&gt; itself as short on local storage
+and this taint triggers eviction for any Pods that don&amp;rsquo;t specifically tolerate the taint.&lt;/p&gt;
+&lt;p&gt;See the supported &lt;a href=&#34;#configurations-for-local-ephemeral-storage&#34;&gt;configurations&lt;/a&gt;
+for ephemeral local storage.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+The kubelet supports different ways to measure Pod storage use:
+
+&lt;div id=&#34;resource-emphemeralstorage-measurement&#34;&gt;
+&lt;ul&gt;&lt;li&gt;&lt;a href=&#34;#resource-emphemeralstorage-measurement-0&#34;&gt;Periodic scanning&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#resource-emphemeralstorage-measurement-1&#34;&gt;Filesystem project quota&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div id=&#34;resource-emphemeralstorage-measurement-0&#34;&gt;&lt;p&gt;The kubelet performs regular, scheduled checks that scan each
+&lt;code&gt;emptyDir&lt;/code&gt; volume, container log directory, and writeable container layer.&lt;/p&gt;
+&lt;p&gt;The scan measures how much space is used.&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;p&gt;In this mode, the kubelet does not track open file descriptors
+for deleted files.&lt;/p&gt;
+&lt;p&gt;If you (or a container) create a file inside an &lt;code&gt;emptyDir&lt;/code&gt; volume,
+something then opens that file, and you delete the file while it is
+still open, then the inode for the deleted file stays until you close
+that file but the kubelet does not categorize the space as in use.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;&lt;div id=&#34;resource-emphemeralstorage-measurement-1&#34;&gt;&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.15 [alpha]&lt;/code&gt;
+&lt;/div&gt;
+&lt;p&gt;Project quotas are an operating-system level feature for managing
+storage use on filesystems. With Kubernetes, you can enable project
+quotas for monitoring storage use. Make sure that the filesystem
+backing the &lt;code&gt;emptyDir&lt;/code&gt; volumes, on the node, provides project quota support.
+For example, XFS and ext4fs offer project quotas.&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Project quotas let you monitor storage use; they do not enforce limits.&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Kubernetes uses project IDs starting from &lt;code&gt;1048576&lt;/code&gt;. The IDs in use are
+registered in &lt;code&gt;/etc/projects&lt;/code&gt; and &lt;code&gt;/etc/projid&lt;/code&gt;. If project IDs in
+this range are used for other purposes on the system, those project
+IDs must be registered in &lt;code&gt;/etc/projects&lt;/code&gt; and &lt;code&gt;/etc/projid&lt;/code&gt; so that
+Kubernetes does not use them.&lt;/p&gt;
+&lt;p&gt;Quotas are faster and more accurate than directory scanning. When a
+directory is assigned to a project, all files created under a
+directory are created in that project, and the kernel merely has to
+keep track of how many blocks are in use by files in that project.&lt;br&gt;
+If a file is created and deleted, but has an open file descriptor,
+it continues to consume space. Quota tracking records that space accurately
+whereas directory scans overlook the storage used by deleted files.&lt;/p&gt;
+&lt;p&gt;If you want to use project quotas, you should:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Enable the &lt;code&gt;LocalStorageCapacityIsolationFSQuotaMonitoring=true&lt;/code&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;feature gate&lt;/a&gt;
+in the kubelet configuration.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Ensure that the root filesystem (or optional runtime filesystem)
+has project quotas enabled. All XFS filesystems support project quotas.
+For ext4 filesystems, you need to enable the project quota tracking feature
+while the filesystem is not mounted.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# For ext4, with /dev/block-device not mounted&lt;/span&gt;
+sudo tune2fs -O project -Q prjquota /dev/block-device
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Ensure that the root filesystem (or optional runtime filesystem) is
+mounted with project quotas enabled. For both XFS and ext4fs, the
+mount option is named &lt;code&gt;prjquota&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;script&gt;$(function(){$(&#34;#resource-emphemeralstorage-measurement&#34;).tabs();});&lt;/script&gt;
+ --&gt;
 &lt;h3 id=&#34;resource-emphemeralstorage-consumption&#34;&gt;Ephemeral storage consumption management&lt;/h3&gt;
 &lt;p&gt;If the kubelet is managing local ephemeral storage as a resource, then the
-kubelet measures storage use in:&lt;/p&gt;
+kubelet measures storage use in:
+如果使用 kubelet 管理本地临时存储作为资源，则 kubelet 使用下面这些的计算存储量:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;code&gt;emptyDir&lt;/code&gt; volumes, except &lt;em&gt;tmpfs&lt;/em&gt; &lt;code&gt;emptyDir&lt;/code&gt; volumes&lt;/li&gt;
-&lt;li&gt;directories holding node-level logs&lt;/li&gt;
-&lt;li&gt;writeable container layers&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;emptyDir&lt;/code&gt; volumes, except &lt;em&gt;tmpfs&lt;/em&gt; &lt;code&gt;emptyDir&lt;/code&gt; volumes&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;directories holding node-level logs&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;writeable container layers&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;除了 &lt;em&gt;tmpfs&lt;/em&gt; 外的 &lt;code&gt;emptyDir&lt;/code&gt; 卷&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;存放节点级别日志的目录&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;容器可写层&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;If a Pod is using more ephemeral storage than you allow it to, the kubelet
-sets an eviction signal that triggers Pod eviction.&lt;/p&gt;
+sets an eviction signal that triggers Pod eviction.
+如果 Pod 使用了比允许更多多的临时存储， kubelet 会设置一个驱逐信号来触发 Pod 的驱逐。&lt;/p&gt;
 &lt;p&gt;For container-level isolation, if a Container&amp;rsquo;s writable layer and log
 usage exceeds its storage limit, the kubelet marks the Pod for eviction.&lt;/p&gt;
 &lt;p&gt;For pod-level isolation the kubelet works out an overall Pod storage limit by
