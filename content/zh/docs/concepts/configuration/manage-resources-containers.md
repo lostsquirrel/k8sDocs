@@ -689,116 +689,89 @@ If you want to use project quotas, you should:
 {{< /tabs >}}
  -->
 
-### Ephemeral storage consumption management {#resource-emphemeralstorage-consumption}
+### 临时存储用量管理 {#resource-emphemeralstorage-consumption}
 
-If the kubelet is managing local ephemeral storage as a resource, then the
-kubelet measures storage use in:
 如果使用 kubelet 管理本地临时存储作为资源，则 kubelet 使用下面这些的计算存储量:
-
-- `emptyDir` volumes, except _tmpfs_ `emptyDir` volumes
-- directories holding node-level logs
-- writeable container layers
 
 - 除了 _tmpfs_ 外的 `emptyDir` 卷
 - 存放节点级别日志的目录
 - 容器可写层
 
-If a Pod is using more ephemeral storage than you allow it to, the kubelet
-sets an eviction signal that triggers Pod eviction.
 如果 Pod 使用了比允许更多多的临时存储， kubelet 会设置一个驱逐信号来触发 Pod 的驱逐。
 
-For container-level isolation, if a Container's writable layer and log
-usage exceeds its storage limit, the kubelet marks the Pod for eviction.
+对于容器级别隔离， 如果一个容器的可写层和日志使用超过它的存储限制，kubelet 会将该 Pod 标记为
+驱逐状态。
 
-For pod-level isolation the kubelet works out an overall Pod storage limit by
-summing the limits for the containers in that Pod. In this case, if the sum of
-the local ephemeral storage usage from all containers and also the Pod's `emptyDir`
-volumes exceeds the overall Pod storage limit, then the kubelet also marks the Pod
-for eviction.
+对于 Pod 级别隔离， kubelet 会将 Pod 中所以容器的限额总数作为 Pod 的存储限额。 在这种情况下
+，如果所有容器使用的本地临时存储和 Pod 的 `emptyDir` 卷超出 Pod 存储总限制，则 kubelet 也
+将该 Pod 标记为驱逐状态。
 
 {{< caution >}}
-If the kubelet is not measuring local ephemeral storage, then a Pod
-that exceeds its local storage limit will not be evicted for breaching
-local storage resource limits.
 
-However, if the filesystem space for writeable container layers, node-level logs,
-or `emptyDir` volumes falls low, the node
-{{< glossary_tooltip text="taints" term_id="taint" >}} itself as short on local storage
-and this taint triggers eviction for any Pods that don't specifically tolerate the taint.
+如果 kubelet 没有测量本地临时存储，则那些超出它本地存储限制的 Pod 不会因为违反本地存储资源限制
+而被驱逐
 
-See the supported [configurations](#configurations-for-local-ephemeral-storage)
-for ephemeral local storage.
+但是， 如果文件系统中用于可写容器层，节点级别日志或 `emptyDir` 卷空间不足， 节点上也有本地存储的
+{{< glossary_tooltip term_id="taint" >}}
+这个毒点(Taint)会触发对所有没指定能够忍耐该毒点(taint) Pod 驱逐。
+
+临时本地存储支持的配置，见
+[配置](#configurations-for-local-ephemeral-storage)章节
 {{< /caution >}}
 
-The kubelet supports different ways to measure Pod storage use:
-
+kubelet 支持不同的方式测量 Pod 存储用量:
 {{< tabs name="resource-emphemeralstorage-measurement" >}}
 {{% tab name="Periodic scanning" %}}
-The kubelet performs regular, scheduled checks that scan each
-`emptyDir` volume, container log directory, and writeable container layer.
 
-The scan measures how much space is used.
+kubelet 执行常规，定时检查每个 `emptyDir` 卷，容器日志目录，可写容器层。
+
+这种扫描测量使用了多少空间。
 
 {{< note >}}
-In this mode, the kubelet does not track open file descriptors
-for deleted files.
+在这种模式下， kubelet 不会跟踪删除文件的打开文件描述符。
 
-If you (or a container) create a file inside an `emptyDir` volume,
-something then opens that file, and you delete the file while it is
-still open, then the inode for the deleted file stays until you close
-that file but the kubelet does not categorize the space as in use.
+如果用户(或一个容器)在一个 `emptyDir` 卷中创建了一个文件，再有其它程序再打开了这个文件，又在
+它还在打开状态时把它删除了，在它被关闭之前这个被删除文件的索引节点还在但 kubelet 不会计算这个
+文件使用的空间。
 {{< /note >}}
 {{% /tab %}}
 {{% tab name="Filesystem project quota" %}}
 
 {{< feature-state for_k8s_version="v1.15" state="alpha" >}}
 
-Project quotas are an operating-system level feature for managing
-storage use on filesystems. With Kubernetes, you can enable project
-quotas for monitoring storage use. Make sure that the filesystem
-backing the `emptyDir` volumes, on the node, provides project quota support.
-For example, XFS and ext4fs offer project quotas.
-
+项目配额是一个操作系统级别的特性，用来管理文件系统上在存储使用。 通过 k8s 用户可以启用项目配额
+来监控存储用量。 要确保在节点上以 `emptyDir` 卷为后端的文件系统支持提供项目配额。例如， XFS
+和 ext4fs 提供项目配额。
 {{< note >}}
-Project quotas let you monitor storage use; they do not enforce limits.
+项目配额让用户监控存储用量；但不会强制限制用量。
 {{< /note >}}
 
-Kubernetes uses project IDs starting from `1048576`. The IDs in use are
-registered in `/etc/projects` and `/etc/projid`. If project IDs in
-this range are used for other purposes on the system, those project
-IDs must be registered in `/etc/projects` and `/etc/projid` so that
-Kubernetes does not use them.
+k8s 使用的项目 ID 从 `1048576` 开始。 被使用的 ID 被注册在  `/etc/projects` 和 `/etc/projid`.
+如果这个范围的项目 ID 被用于系统其它目的， 这些项目 ID 必要注册到 `/etc/projects` 和 `/etc/projid`
+这样 k8s 才不会使用它们。
 
-Quotas are faster and more accurate than directory scanning. When a
-directory is assigned to a project, all files created under a
-directory are created in that project, and the kernel merely has to
-keep track of how many blocks are in use by files in that project.  
-If a file is created and deleted, but has an open file descriptor,
-it continues to consume space. Quota tracking records that space accurately
-whereas directory scans overlook the storage used by deleted files.
+配额比目录扫描更快和更精确。当一个目录被分配给一个项目时，所以在那个目录中创建的文件就是在那个
+项目中创建，内核只需要保持跟踪有多个块被这个项目中的文件所使用。 如果有一个文件创建然后删除，
+但有一个打开文件描述符， 它继续消耗空间。 配置跟踪记录精确空间，通过被删除文件所使用的存储。
 
-If you want to use project quotas, you should:
+如果想要使用项目配置，可以:
 
-* Enable the `LocalStorageCapacityIsolationFSQuotaMonitoring=true`
-  [feature gate](/docs/reference/command-line-tools-reference/feature-gates/)
-  in the kubelet configuration.
+- 在 kubelet 配置中启用 `LocalStorageCapacityIsolationFSQuotaMonitoring=true`
+  [功能阀](/docs/reference/command-line-tools-reference/feature-gates/)
 
-* Ensure that the root filesystem (or optional runtime filesystem)
-  has project quotas enabled. All XFS filesystems support project quotas.
-  For ext4 filesystems, you need to enable the project quota tracking feature
-  while the filesystem is not mounted.
+- 要确保根文件系统(或可选运行时文件系统)中启动了项目配额。所有 XFS 文件系统都支持项目配额。
+  对于 ext4 文件系统，需要在文件系统挂载之前启用项目配额跟踪特性。
   ```bash
   # For ext4, with /dev/block-device not mounted
   sudo tune2fs -O project -Q prjquota /dev/block-device
   ```
 
-* Ensure that the root filesystem (or optional runtime filesystem) is
-  mounted with project quotas enabled. For both XFS and ext4fs, the
-  mount option is named `prjquota`.
-
+- 要确保根文件系统(或可选运行时文件系统)以启用项目配置挂载。 对于 XFS 和 ext4fs 挂载选项名
+  都叫 `prjquota`.
 {{% /tab %}}
 {{< /tabs >}}
 
+<!--
 ## Extended resources
 
 Extended resources are fully-qualified resource names outside the
@@ -808,18 +781,43 @@ consume the non-Kubernetes-built-in resources.
 There are two steps required to use Extended Resources. First, the cluster
 operator must advertise an Extended Resource. Second, users must request the
 Extended Resource in Pods.
+ -->
 
+## 扩展资源 {#extended-resources}
+
+扩展资源是 `kubernetes.io` 域名外的全限定资源名。 它们允许集群管理员配置并且用户消费非 k8s
+内置资源。
+
+要使用扩展资源需要以下两个步骤。 第一步， 集群管理必须指定一个扩展资源。第二步，用户必须在 Pod
+中请求扩展资源。
+
+<!--
 ### Managing extended resources
 
 #### Node-level extended resources
 
 Node-level extended resources are tied to nodes.
+ -->
 
+### 管理扩展资源 {#managing-extended-resources}
+
+#### 节点级别扩展资源 {#node-level-extended-resources}
+
+节点级别扩展资源与节点是绑在一起的
+
+<!--
 ##### Device plugin managed resources
 See [Device
 Plugin](/docs/concepts/extend-kubernetes/compute-storage-net/device-plugins/)
 for how to advertise device plugin managed resources on each node.
+ -->
 
+##### 设备插件管理的资源 {#device-plugin-managed-resources}
+
+怎么在每个节点上指定设备插件来管理资源，见
+[设备插件](/k8sDocs/docs/concepts/extend-kubernetes/compute-storage-net/device-plugins/)
+
+<!--
 ##### Other resources
 To advertise a new node-level extended resource, the cluster operator can
 submit a `PATCH` HTTP request to the API server to specify the available
@@ -850,7 +848,35 @@ in the patch path. The operation path value in JSON-Patch is interpreted as a
 JSON-Pointer. For more details, see
 [IETF RFC 6901, section 3](https://tools.ietf.org/html/rfc6901#section-3).
 {{< /note >}}
+ -->
 
+##### 其它资源 {#other-resources}
+
+为添加一个新的节点级别的扩展资源， 集群管理可以通过提交一个 `PATCH` HTTP 请求到 API 服务来
+指定集群中这个节点上 `status.capacity` 的可用数量。 在这个操作之后， 节点的 `status.capacity`
+会包含一个新的资源。 `status.allocatable` 字段会被 kubelet 在包含新资源异步更新。 因为
+调度使用节点上 `status.allocatable` 值来检测 Pod 适配性， 在因新资源而变更的节点容量和
+调度到这个节点上请求这个资源的第一个 Pod 之间会有一个短暂的延迟。
+
+**示例:**
+
+下面的这个示例中显示怎么使用 `curl` 来执行一个 HTTP 请求在主控节点为 `k8s-master` 名叫
+`k8s-node-1` 的节点上创建五个 "example.com/foo" 资源
+
+```shell
+curl --header "Content-Type: application/json-patch+json" \
+--request PATCH \
+--data '[{"op": "add", "path": "/status/capacity/example.com~1foo", "value": "5"}]' \
+http://k8s-master:8080/api/v1/nodes/k8s-node-1/status
+```
+
+{{< note >}}
+在上面的请求中，在 `PATCH` 请求路径中 `~1` 是对 `/` 字符的编码。 JSON-Patch 中的操作路径值
+会被翻译为 JSON-Pointer. 详细信息，见
+[IETF RFC 6901, section 3](https://tools.ietf.org/html/rfc6901#section-3).
+{{< /note >}}
+
+<!--
 #### Cluster-level extended resources
 
 Cluster-level extended resources are not tied to nodes. They are usually managed
@@ -889,7 +915,44 @@ extender.
   ]
 }
 ```
+ -->
 
+#### 集群级别的扩展资源 {#cluster-level-extended-resources}
+
+集群级别的扩展资源是没有与节点绑定的。 它们通常是被调度扩展来管理的，调度扩展处理资源消耗和资源配额。
+
+用户可以指定在
+[调度策略配置](https://github.com/kubernetes/kubernetes/blob/release-1.10/pkg/scheduler/api/v1/types.go#L31).
+中由调度扩展处理的扩展资源
+**Example:**
+
+下面的调度策略配置指示的是由调度扩展处理的集群级别扩展资源 "example.com/foo"。
+
+- 只有 Pod 请求 "example.com/foo" 时，调度器才会发送一个 Pod 给调度扩展器
+- `ignoredByScheduler` 字段不胜感激调度器不检查 `PodFitsResources` 中的 "example.com/foo" 资源。
+
+```json
+{
+  "kind": "Policy",
+  "apiVersion": "v1",
+  "extenders": [
+    {
+      "urlPrefix":"<extender-endpoint>",
+      "bindVerb": "bind",
+      "managedResources": [
+        {
+          "name": "example.com/foo",
+          "ignoredByScheduler": true
+        }
+      ]
+    }
+  ]
+}
+```
+
+{{<todo-optimize >}}
+
+<!--
 ### Consuming extended resources
 
 Users can consume extended resources in Pod specs just like CPU and memory.
@@ -937,11 +1000,62 @@ spec:
       limits:
         example.com/foo: 1
 ```
+ -->
 
+
+### 使用扩展资源 {#consuming-extended-resources}
+
+用户可以在 Pod 中像 CPU 和 内存一样消费扩展资源。调度器会处理好资源计数，所以不会有超出可用数量的
+资源会分配给 Pod.
+
+API 服务限制扩展资源的数量只能是整数。 _有效的_ 数量示例有 `3`, `3000m` 和 `3Ki`。 _无效的_
+数量示例有  `0.5`， `1500m`。
+
+{{< note >}}
+扩展资源替换了模糊的整数资源。 用户可以使用被保留的 `kubernetes.io` 外的任意域名作为前缀。
+{{< /note >}}
+
+在一个 Pod 中使用一个扩展资源，就是在容器配置的 `spec.containers[].resources.limits`
+字典中包含资源名称作为健名。
+
+{{< note >}}
+扩展资源不能超限，所以请求和限制如果在同一个容器中同时配置了，则必须相同。
+{{< /note >}}
+
+一个 Pod 只有在所有的资源请求都满足时才会调度， 包括 CPU，内存和任意扩展资源。 在资源请求被
+满足之前 Pod 会卡在 `PENDING` 状态。
+**Example:**
+
+下面的 Pod 中请求的 2 CPU 和 1 "example.com/foo"(一个扩展资源)
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: my-container
+    image: myimage
+    resources:
+      requests:
+        cpu: 2
+        example.com/foo: 1
+      limits:
+        example.com/foo: 1
+```
+
+<!--
 ## PID limiting
 
 Process ID (PID) limits allow for the configuration of a kubelet to limit the number of PIDs that a given Pod can consume. See [Pid Limiting](/docs/concepts/policy/pid-limiting/) for information.
+ -->
 
+## PID 限制 {#pid-limiting}
+
+进程 ID (PID) 限制允许对 kubelet 配置让它限制可以给予 Pod 消费的 PID 的数量。 更多信息见
+[PID 限制](/k8sDocs/docs/concepts/policy/pid-limiting/)
+
+<!--
 ## Troubleshooting
 
 ### My Pods are pending with event message failedScheduling
@@ -1018,12 +1132,82 @@ gives the amount of resources that are available to Pods. For more information, 
 The [resource quota](/docs/concepts/policy/resource-quotas/) feature can be configured
 to limit the total amount of resources that can be consumed. If used in conjunction
 with namespaces, it can prevent one team from hogging all the resources.
+ -->
 
-### My Container is terminated
+## 问题排查 {#troubleshooting}
 
-Your Container might get terminated because it is resource-starved. To check
-whether a Container is being killed because it is hitting a resource limit, call
-`kubectl describe pod` on the Pod of interest:
+### Pod 挂起事件信息为 `failedScheduling` {#my-pods-are-pending-with-event-message-failedscheduling}
+
+如果调度器不能为 Pod 找到一个适合它的节点， Pod 在找到一个合适的地方之前会保留在未调度状态。
+每次调度器在为 Pod 找地方失败都会产生一个事件，就像下面这样:
+```shell
+kubectl describe pod frontend | grep -A 3 Events
+```
+```
+Events:
+  FirstSeen LastSeen   Count  From          Subobject   PathReason      Message
+  36s   5s     6      {scheduler }              FailedScheduling  Failed for reason PodExceedsFreeCPU and possibly others
+```
+
+在上面的例子中， 这个叫 "frontend" 的 Pod 因为节点上的 CPU 资源不足导致调度失败。 类似的错误
+消息还可能是因为内存不足(PodExceedsFreeMemory). 通常，如果一个 Pod 因为这些类型的消息而
+挂起，有下面这些选项可以尝试:
+
+- 添加更多节点到集群。
+- 终止不再需要的 Pod 为挂起的 Pod 腾点空间
+- 检查 Pod 是不是比所有的节点都大。 例如， 如果所有的节点都有一个 `cpu: 1` 的容量，然后一个
+  Pod 请求了 `cpu: 1.1`，就永远不会被调度。
+
+用户可以通过 `kubectl describe nodes` 命令来检查节点容量和已经被分配的量。 例如:
+
+```shell
+kubectl describe nodes e2e-test-node-pool-4lw4
+```
+```
+Name:            e2e-test-node-pool-4lw4
+[ ... lines removed for clarity ...]
+Capacity:
+ cpu:                               2
+ memory:                            7679792Ki
+ pods:                              110
+Allocatable:
+ cpu:                               1800m
+ memory:                            7474992Ki
+ pods:                              110
+[ ... lines removed for clarity ...]
+Non-terminated Pods:        (5 in total)
+  Namespace    Name                                  CPU Requests  CPU Limits  Memory Requests  Memory Limits
+  ---------    ----                                  ------------  ----------  ---------------  -------------
+  kube-system  fluentd-gcp-v1.38-28bv1               100m (5%)     0 (0%)      200Mi (2%)       200Mi (2%)
+  kube-system  kube-dns-3297075139-61lj3             260m (13%)    0 (0%)      100Mi (1%)       170Mi (2%)
+  kube-system  kube-proxy-e2e-test-...               100m (5%)     0 (0%)      0 (0%)           0 (0%)
+  kube-system  monitoring-influxdb-grafana-v4-z1m12  200m (10%)    200m (10%)  600Mi (8%)       600Mi (8%)
+  kube-system  node-problem-detector-v0.1-fj7m3      20m (1%)      200m (10%)  20Mi (0%)        100Mi (1%)
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  CPU Requests    CPU Limits    Memory Requests    Memory Limits
+  ------------    ----------    ---------------    -------------
+  680m (34%)      400m (20%)    920Mi (11%)        1070Mi (13%)
+```
+
+在上面的输出中， 就可以看出来如果有一个 Pod 请求超出了 1120m CPU 或 6.23Gi 内存，那么它就不适合
+调度到这个节点上。
+
+从 `Pods` 区域可以看到哪些 Pod 在这个节点上用了多少资源。
+
+可以用于 Pod 的资源要比节点的容量少些，因为系统守护进行需要使用部分可用资源。
+[NodeStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#nodestatus-v1-core)
+的 `allocatable` 字段显示了可以分配给 Pod 的资源数量。 更多信息见
+[Node Allocatable Resources](https://git.k8s.io/community/contributors/design-proposals/node/node-allocatable.md).
+
+[资源配额](/docs/concepts/policy/resource-quotas/) 特性可以用来配置可以使用的资源总数。
+如果与命名空间配置使用，可以防止一个项目组吃完所有的资源。
+
+
+### 容器被干掉了 {#my-container-is-terminated}
+
+容器可能因为资源不足而被干掉。 要检查一个容器是不是因为达到资源限制而被杀掉，对 Pod 执行
+`kubectl describe pod` 命令:
 
 ```shell
 kubectl describe pod simmemleak-hra99
@@ -1065,11 +1249,9 @@ Events:
   Tue, 07 Jul 2015 12:53:51 -0700   Tue, 07 Jul 2015 12:53:51 -0700  1      {kubelet kubernetes-node-tf0f}    spec.containers{simmemleak}         created     Created with docker id 87348f12526a
 ```
 
-In the preceding example, the `Restart Count:  5` indicates that the `simmemleak`
-Container in the Pod was terminated and restarted five times.
+在上面的例子中， `Restart Count:  5` 表示 Pod 中叫 `simmemleak` 容器被干掉和重启了5次。
 
-You can call `kubectl get pod` with the `-o go-template=...` option to fetch the status
-of previously terminated Containers:
+用户可以使用命令 `kubectl get pod` 加 `-o go-template=...` 选项来获取前面被干掉的容器的状态:
 
 ```shell
 kubectl get pod -o go-template='{{range.status.containerStatuses}}{{"Container Name: "}}{{.name}}{{"\r\nLastState: "}}{{.lastState}}{{end}}'  simmemleak-hra99
@@ -1079,16 +1261,11 @@ Container Name: simmemleak
 LastState: map[terminated:map[exitCode:137 reason:OOM Killed startedAt:2015-07-07T20:58:43Z finishedAt:2015-07-07T20:58:43Z containerID:docker://0e4095bba1feccdfe7ef9fb6ebffe972b4b14285d5acdec6f0d3ae8a22fad8b2]]
 ```
 
-You can see that the Container was terminated because of `reason:OOM Killed`, where `OOM` stands for Out Of Memory.
-
-
-
-
-
+这样就可以看出来这个容器是因为 `reason:OOM Killed` 被干掉，而 `OOM` 表示内存炸了。
 
 ## {{% heading "whatsnext" %}}
 
-
+<!--
 * Get hands-on experience [assigning Memory resources to Containers and Pods](/docs/tasks/configure-pod-container/assign-memory-resource/).
 
 * Get hands-on experience [assigning CPU resources to Containers and Pods](/docs/tasks/configure-pod-container/assign-cpu-resource/).
@@ -1101,3 +1278,15 @@ You can see that the Container was terminated because of `reason:OOM Killed`, wh
 * Read the [ResourceRequirements](/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#resourcerequirements-v1-core) API reference
 
 * Read about [project quotas](https://xfs.org/docs/xfsdocs-xml-dev/XFS_User_Guide/tmp/en-US/html/xfs-quotas.html) in XFS
+ -->
+
+- 实践 [为容器和 Pod 分配内存资源](/k8sDocs/docs/tasks/configure-pod-container/assign-memory-resource/).
+- 实践 [为容器和 Pod 分配CPU资源](/k8sDocs/docs/tasks/configure-pod-container/assign-cpu-resource/).
+- 更多关于请求和限制的区别信息见
+  [Resource QoS](https://git.k8s.io/community/contributors/design-proposals/node/resource-qos.md).
+- API 文档
+  [Container](https://kubernetes.io/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#container-v1-core)
+- API 文档
+  [ResourceRequirements](https://kubernetes.io/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#resourcerequirements-v1-core)
+- XFS
+  [项目配额](https://xfs.org/docs/xfsdocs-xml-dev/XFS_User_Guide/tmp/en-US/html/xfs-quotas.html)
