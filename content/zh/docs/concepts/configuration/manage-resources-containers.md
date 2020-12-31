@@ -472,7 +472,7 @@ kubelet 还可以使用这种类型的存储来放置
 k8s 支持两种在节点上配置本地临时存储的方式:
 
 {{< tabs name="local_storage_configurations" >}}
-{{% tab name="Single filesystem" %}}
+{{% tab name="单文件系统" %}}
 
 在这种配置中， 用户可以将所有不同类型的临时本地数据(`emptyDir` 卷，可写层，容器镜像，日志)
 都放到一个文件系统中。 最有效配置 kubelet 的含义就是将这个文件系统用于 k8s (kubelet)的数据。
@@ -490,7 +490,7 @@ kubelet 会将日志文件写入它配置的日志目录(默认: `/var/log`); �
 节点上可以有任意数量的其它文件系统，不是给 k8s 用的，随便怎么用都可以。
 {{% /tab %}}
 
-{{% tab name="Two filesystems" %}}
+{{% tab name="双文件系统" %}}
 
 在节点上有一个文件系统被用来入那些来自运行 Pod 的: 日志，`emptyDir` 卷的临时数据。也可以使用
 这个文件系统来存其它数据(例如: 与 k8s 不相关的系统日志)；甚至也可以是根文件系统。
@@ -721,7 +721,7 @@ If you want to use project quotas, you should:
 
 kubelet 支持不同的方式测量 Pod 存储用量:
 {{< tabs name="resource-emphemeralstorage-measurement" >}}
-{{% tab name="Periodic scanning" %}}
+{{% tab name="定期扫描" %}}
 
 kubelet 执行常规，定时检查每个 `emptyDir` 卷，容器日志目录，可写容器层。
 
@@ -735,7 +735,7 @@ kubelet 执行常规，定时检查每个 `emptyDir` 卷，容器日志目录，
 文件使用的空间。
 {{< /note >}}
 {{% /tab %}}
-{{% tab name="Filesystem project quota" %}}
+{{% tab name="文件系统项目配额" %}}
 
 {{< feature-state for_k8s_version="v1.15" state="alpha" >}}
 
