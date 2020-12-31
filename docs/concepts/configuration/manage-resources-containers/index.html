@@ -20,11 +20,11 @@
 <meta property="og:description" content="Automatically places containers based on their resource requirements and other constraints, while not sacrificing availability. Mix critical and best-effort workloads in order to drive up utilization and save even more resources. --- -- PodPod 表示集群中运行的一组容器的集合 , you can optionally specify how much of each resource a Container一" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/manage-resources-containers/" />
-<meta property="article:modified_time" content="2020-12-30T16:59:05+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2020-12-31T17:22:54+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="管理容器资源">
 <meta itemprop="description" content="Automatically places containers based on their resource requirements and other constraints, while not sacrificing availability. Mix critical and best-effort workloads in order to drive up utilization and save even more resources. --- -- PodPod 表示集群中运行的一组容器的集合 , you can optionally specify how much of each resource a Container一">
-<meta itemprop="dateModified" content="2020-12-30T16:59:05+08:00" />
-<meta itemprop="wordCount" content="8468">
+<meta itemprop="dateModified" content="2020-12-31T17:22:54+08:00" />
+<meta itemprop="wordCount" content="8473">
 
 
 
@@ -754,6 +754,12 @@
       <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsconfigurationmanage-resources-containers" href="/k8sDocs/docs/concepts/configuration/manage-resources-containers/">管理容器资源</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsconfigurationorganize-cluster-access-kubeconfig" href="/k8sDocs/docs/concepts/configuration/organize-cluster-access-kubeconfig/">使用 kubeconfig 文件组织集群访问</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -1284,8 +1290,12 @@ of ephemeral local storage a Pod can consume.
 <p>作为一个 beta 特性， k8s 可以让用户跟踪，保留，限制一个 Pod 可以使用的临时本地存储。</p>
 <h3 id="configurations-for-local-ephemeral-storage">本地临时存储的配置</h3>
 <p>k8s 支持两种在节点上配置本地临时存储的方式:</p>
-<p><div id="local_storage_configurations">
-<ul><li><a href="#local_storage_configurations-0">Single filesystem</a></li><li><a href="#local_storage_configurations-1">Two filesystems</a></li></ul><div id="local_storage_configurations-0"><p>在这种配置中， 用户可以将所有不同类型的临时本地数据(<code>emptyDir</code> 卷，可写层，容器镜像，日志)
+<p><ul class="nav nav-tabs" id="local_storage_configurations" role="tablist"><li class="nav-item"><a data-toggle="tab" class="nav-link active" href="#local_storage_configurations-0" role="tab" aria-controls="local_storage_configurations-0" aria-selected="true">单文件系统</a></li>
+	  
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#local_storage_configurations-1" role="tab" aria-controls="local_storage_configurations-1">双文件系统</a></li></ul>
+<div class="tab-content" id="local_storage_configurations"><div id="local_storage_configurations-0" class="tab-pane show active" role="tabpanel" aria-labelledby="local_storage_configurations-0">
+
+<p><p>在这种配置中， 用户可以将所有不同类型的临时本地数据(<code>emptyDir</code> 卷，可写层，容器镜像，日志)
 都放到一个文件系统中。 最有效配置 kubelet 的含义就是将这个文件系统用于 k8s (kubelet)的数据。</p>
 <p>kubelet 还会将
 <a href="/docs/concepts/cluster-administration/logging/#logging-at-the-node-level">节点级别的容器日志</a>
@@ -1295,7 +1305,10 @@ of ephemeral local storage a Pod can consume.
 <p>通常情况下， <code>/var/lib/kubelet</code> 和 <code>/var/log</code> 都是在系统根文件系统上，kubelet 在设置上
 也就是这个结构的。</p>
 <p>节点上可以有任意数量的其它文件系统，不是给 k8s 用的，随便怎么用都可以。</p>
-</div><div id="local_storage_configurations-1"><p>在节点上有一个文件系统被用来入那些来自运行 Pod 的: 日志，<code>emptyDir</code> 卷的临时数据。也可以使用
+</div>
+  <div id="local_storage_configurations-1" class="tab-pane" role="tabpanel" aria-labelledby="local_storage_configurations-1">
+
+<p><p>在节点上有一个文件系统被用来入那些来自运行 Pod 的: 日志，<code>emptyDir</code> 卷的临时数据。也可以使用
 这个文件系统来存其它数据(例如: 与 k8s 不相关的系统日志)；甚至也可以是根文件系统。</p>
 <p>kubelet 也会将
 <a href="/docs/concepts/cluster-administration/logging/#logging-at-the-node-level">节点级别的容器日志</a>
@@ -1304,7 +1317,8 @@ of ephemeral local storage a Pod can consume.
 和可写层的目录都是在第二个文件系统上。</p>
 <p>第一个文件系统不包含任何镜像层和可写层。</p>
 <p>节点上可以有任意数量的其它文件系统，不是给 k8s 用的，随便怎么用都可以。</p>
-</div></div><script>$(function(){$("#local_storage_configurations").tabs();});</script>
+</div></div>
+
 <blockquote>
   <div><strong>TODO: </strong>说得不太清楚，需要实践理解后再考虑怎么修改</div>
 </blockquote>
@@ -1410,8 +1424,12 @@ for ephemeral local storage.</p>
 
 The kubelet supports different ways to measure Pod storage use:
 
-<div id="resource-emphemeralstorage-measurement">
-<ul><li><a href="#resource-emphemeralstorage-measurement-0">Periodic scanning</a></li><li><a href="#resource-emphemeralstorage-measurement-1">Filesystem project quota</a></li></ul><div id="resource-emphemeralstorage-measurement-0"><p>The kubelet performs regular, scheduled checks that scan each
+<ul class="nav nav-tabs" id="resource-emphemeralstorage-measurement" role="tablist"><li class="nav-item"><a data-toggle="tab" class="nav-link active" href="#resource-emphemeralstorage-measurement-0" role="tab" aria-controls="resource-emphemeralstorage-measurement-0" aria-selected="true">Periodic scanning</a></li>
+	  
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#resource-emphemeralstorage-measurement-1" role="tab" aria-controls="resource-emphemeralstorage-measurement-1">Filesystem project quota</a></li></ul>
+<div class="tab-content" id="resource-emphemeralstorage-measurement"><div id="resource-emphemeralstorage-measurement-0" class="tab-pane show active" role="tabpanel" aria-labelledby="resource-emphemeralstorage-measurement-0">
+
+<p><p>The kubelet performs regular, scheduled checks that scan each
 <code>emptyDir</code> volume, container log directory, and writeable container layer.</p>
 <p>The scan measures how much space is used.</p>
 <blockquote class="note">
@@ -1423,7 +1441,10 @@ still open, then the inode for the deleted file stays until you close
 that file but the kubelet does not categorize the space as in use.</p>
 </div>
 </blockquote>
-</div><div id="resource-emphemeralstorage-measurement-1"><div style="margin-top: 10px; margin-bottom: 10px;">
+</div>
+  <div id="resource-emphemeralstorage-measurement-1" class="tab-pane" role="tabpanel" aria-labelledby="resource-emphemeralstorage-measurement-1">
+
+<p><div style="margin-top: 10px; margin-bottom: 10px;">
 <b>功能特性状态:</b> <code>Kubernetes v1.15 [alpha]</code>
 </div>
 <p>Project quotas are an operating-system level feature for managing
@@ -1467,7 +1488,8 @@ mounted with project quotas enabled. For both XFS and ext4fs, the
 mount option is named <code>prjquota</code>.</p>
 </li>
 </ul>
-</div></div><script>$(function(){$("#resource-emphemeralstorage-measurement").tabs();});</script>
+</div></div>
+
  -->
 <h3 id="resource-emphemeralstorage-consumption">临时存储用量管理</h3>
 <p>如果使用 kubelet 管理本地临时存储作为资源，则 kubelet 使用下面这些的计算存储量:</p>
@@ -1495,8 +1517,12 @@ mount option is named <code>prjquota</code>.</p>
 </blockquote>
 
 <p>kubelet 支持不同的方式测量 Pod 存储用量:
-<div id="resource-emphemeralstorage-measurement">
-<ul><li><a href="#resource-emphemeralstorage-measurement-0">Periodic scanning</a></li><li><a href="#resource-emphemeralstorage-measurement-1">Filesystem project quota</a></li></ul><div id="resource-emphemeralstorage-measurement-0"><p>kubelet 执行常规，定时检查每个 <code>emptyDir</code> 卷，容器日志目录，可写容器层。</p>
+<ul class="nav nav-tabs" id="resource-emphemeralstorage-measurement" role="tablist"><li class="nav-item"><a data-toggle="tab" class="nav-link active" href="#resource-emphemeralstorage-measurement-0" role="tab" aria-controls="resource-emphemeralstorage-measurement-0" aria-selected="true">定期扫描</a></li>
+	  
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#resource-emphemeralstorage-measurement-1" role="tab" aria-controls="resource-emphemeralstorage-measurement-1">文件系统项目配额</a></li></ul>
+<div class="tab-content" id="resource-emphemeralstorage-measurement"><div id="resource-emphemeralstorage-measurement-0" class="tab-pane show active" role="tabpanel" aria-labelledby="resource-emphemeralstorage-measurement-0">
+
+<p><p>kubelet 执行常规，定时检查每个 <code>emptyDir</code> 卷，容器日志目录，可写容器层。</p>
 <p>这种扫描测量使用了多少空间。</p>
 <blockquote class="note">
   <div><strong>说明：</strong> <p>在这种模式下， kubelet 不会跟踪删除文件的打开文件描述符。</p>
@@ -1505,7 +1531,10 @@ mount option is named <code>prjquota</code>.</p>
 文件使用的空间。</p>
 </div>
 </blockquote>
-</div><div id="resource-emphemeralstorage-measurement-1"><div style="margin-top: 10px; margin-bottom: 10px;">
+</div>
+  <div id="resource-emphemeralstorage-measurement-1" class="tab-pane" role="tabpanel" aria-labelledby="resource-emphemeralstorage-measurement-1">
+
+<p><div style="margin-top: 10px; margin-bottom: 10px;">
 <b>功能特性状态:</b> <code>Kubernetes v1.15 [alpha]</code>
 </div>
 <p>项目配额是一个操作系统级别的特性，用来管理文件系统上在存储使用。 通过 k8s 用户可以启用项目配额
@@ -1537,7 +1566,8 @@ sudo tune2fs -O project -Q prjquota /dev/block-device
 都叫 <code>prjquota</code>.</p>
 </li>
 </ul>
-</div></div><script>$(function(){$("#resource-emphemeralstorage-measurement").tabs();});</script></p>
+</div></div>
+</p>
 <!--
 ## Extended resources
 
@@ -1993,7 +2023,7 @@ LastState: map[terminated:map[exitCode:137 reason:OOM Killed startedAt:2015-07-0
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-30 16:59:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/0b15573711e35d4e58247f288e154695763aaaba">publish manage container resources (0b15573)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-31 17:22:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/565055d7e293c655225f185bd6154b38514a0b60">publish Organizing Cluster Access Using kubeconfig Files (565055d)</a>
 </div>
             
           </main>

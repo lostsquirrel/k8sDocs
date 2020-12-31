@@ -21,12 +21,12 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/service/" />
 <meta property="article:published_time" content="2020-09-09T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-12-30T16:59:05+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2020-12-31T17:22:54+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="Service">
 <meta itemprop="description" content="No need to modify your application to use an unfamiliar service discovery mechanism. Kubernetes gives Pods their own IP addresses and a single DNS name for a set of Pods, and can load-balance across them. content_type: concept weight: 10 --- -- 以网络服务的方式让一个由一组 PodPod 表示集群中运行的一组容器的集">
 <meta itemprop="datePublished" content="2020-09-09T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2020-12-30T16:59:05+08:00" />
-<meta itemprop="wordCount" content="13896">
+<meta itemprop="dateModified" content="2020-12-31T17:22:54+08:00" />
+<meta itemprop="wordCount" content="13907">
 
 
 
@@ -754,6 +754,12 @@
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsconfigurationmanage-resources-containers" href="/k8sDocs/docs/concepts/configuration/manage-resources-containers/">管理容器资源</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsconfigurationorganize-cluster-access-kubeconfig" href="/k8sDocs/docs/concepts/configuration/organize-cluster-access-kubeconfig/">使用 kubeconfig 文件组织集群访问</a>
       
       
     </li>
@@ -1897,109 +1903,181 @@ In a split-horizon DNS environment you would need two Services to be able to rou
 You can achieve this by adding one the following annotations to a Service.
 The annotation to add depends on the cloud Service provider you're using.
 
-<div id="service_tabs">
-<ul><li><a href="#service_tabs-0">Default</a></li><li><a href="#service_tabs-1">GCP</a></li><li><a href="#service_tabs-2">AWS</a></li><li><a href="#service_tabs-3">Azure</a></li><li><a href="#service_tabs-4">IBM Cloud</a></li><li><a href="#service_tabs-5">OpenStack</a></li><li><a href="#service_tabs-6">Baidu Cloud</a></li><li><a href="#service_tabs-7">Tencent Cloud</a></li><li><a href="#service_tabs-8">Alibaba Cloud</a></li></ul><div id="service_tabs-0"><p>Select one of the tabs.</p>
-</div><div id="service_tabs-1"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+<ul class="nav nav-tabs" id="service_tabs" role="tablist"><li class="nav-item"><a data-toggle="tab" class="nav-link active" href="#service_tabs-0" role="tab" aria-controls="service_tabs-0" aria-selected="true">Default</a></li>
+	  
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-1" role="tab" aria-controls="service_tabs-1">GCP</a></li>
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-2" role="tab" aria-controls="service_tabs-2">AWS</a></li>
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-3" role="tab" aria-controls="service_tabs-3">Azure</a></li>
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-4" role="tab" aria-controls="service_tabs-4">IBM Cloud</a></li>
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-5" role="tab" aria-controls="service_tabs-5">OpenStack</a></li>
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-6" role="tab" aria-controls="service_tabs-6">Baidu Cloud</a></li>
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-7" role="tab" aria-controls="service_tabs-7">Tencent Cloud</a></li>
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-8" role="tab" aria-controls="service_tabs-8">Alibaba Cloud</a></li></ul>
+<div class="tab-content" id="service_tabs"><div id="service_tabs-0" class="tab-pane show active" role="tabpanel" aria-labelledby="service_tabs-0">
+
+<p><p>Select one of the tabs.</p>
+</div>
+  <div id="service_tabs-1" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-1">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
     <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
     <span style="color:#f92672">annotations</span>:
         <span style="color:#f92672">cloud.google.com/load-balancer-type</span>: <span style="color:#e6db74">&#34;Internal&#34;</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div><div id="service_tabs-2"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+</code></pre></div></div>
+  <div id="service_tabs-2" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-2">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
     <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
     <span style="color:#f92672">annotations</span>:
         <span style="color:#f92672">service.beta.kubernetes.io/aws-load-balancer-internal</span>: <span style="color:#e6db74">&#34;true&#34;</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div><div id="service_tabs-3"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+</code></pre></div></div>
+  <div id="service_tabs-3" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-3">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
     <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
     <span style="color:#f92672">annotations</span>:
         <span style="color:#f92672">service.beta.kubernetes.io/azure-load-balancer-internal</span>: <span style="color:#e6db74">&#34;true&#34;</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div><div id="service_tabs-4"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+</code></pre></div></div>
+  <div id="service_tabs-4" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-4">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
     <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
     <span style="color:#f92672">annotations</span>:
         <span style="color:#f92672">service.kubernetes.io/ibm-load-balancer-cloud-provider-ip-type</span>: <span style="color:#e6db74">&#34;private&#34;</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div><div id="service_tabs-5"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+</code></pre></div></div>
+  <div id="service_tabs-5" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-5">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
     <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
     <span style="color:#f92672">annotations</span>:
         <span style="color:#f92672">service.beta.kubernetes.io/openstack-internal-load-balancer</span>: <span style="color:#e6db74">&#34;true&#34;</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div><div id="service_tabs-6"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+</code></pre></div></div>
+  <div id="service_tabs-6" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-6">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
     <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
     <span style="color:#f92672">annotations</span>:
         <span style="color:#f92672">service.beta.kubernetes.io/cce-load-balancer-internal-vpc</span>: <span style="color:#e6db74">&#34;true&#34;</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div><div id="service_tabs-7"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+</code></pre></div></div>
+  <div id="service_tabs-7" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-7">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
   <span style="color:#f92672">annotations</span>:
     <span style="color:#f92672">service.kubernetes.io/qcloud-loadbalancer-internal-subnetid</span>: <span style="color:#ae81ff">subnet-xxxxx</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div><div id="service_tabs-8"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+</code></pre></div></div>
+  <div id="service_tabs-8" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-8">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
   <span style="color:#f92672">annotations</span>:
     <span style="color:#f92672">service.beta.kubernetes.io/alibaba-cloud-loadbalancer-address-type</span>: <span style="color:#e6db74">&#34;intranet&#34;</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div></div><script>$(function(){$("#service_tabs").tabs();});</script>
+</code></pre></div></div></div>
+
  -->
 <h4 id="内部负载均衡器">内部负载均衡器</h4>
 <p>在一个混搭的环境中，有时候需要在同一个(虚拟)网络地址段从 Service 间路由流量。</p>
 <p>在一个水平分割的 DNS 环境，需要有两个 Service 才能够分别路由外部和内部的流量到 Endpoint.</p>
 <p>可以通过在 Service 上添加以下注解中的一个来达成这个目的。 添加哪个注解基于你用的云提供商。</p>
-<div id="service_tabs">
-<ul><li><a href="#service_tabs-0">Default</a></li><li><a href="#service_tabs-1">GCP</a></li><li><a href="#service_tabs-2">AWS</a></li><li><a href="#service_tabs-3">Azure</a></li><li><a href="#service_tabs-4">IBM Cloud</a></li><li><a href="#service_tabs-5">OpenStack</a></li><li><a href="#service_tabs-6">Baidu Cloud</a></li><li><a href="#service_tabs-7">Tencent Cloud</a></li><li><a href="#service_tabs-8">Alibaba Cloud</a></li></ul><div id="service_tabs-0"><p>选择其中一个标签</p>
-</div><div id="service_tabs-1"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+<ul class="nav nav-tabs" id="service_tabs" role="tablist"><li class="nav-item"><a data-toggle="tab" class="nav-link active" href="#service_tabs-0" role="tab" aria-controls="service_tabs-0" aria-selected="true">Default</a></li>
+	  
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-1" role="tab" aria-controls="service_tabs-1">GCP</a></li>
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-2" role="tab" aria-controls="service_tabs-2">AWS</a></li>
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-3" role="tab" aria-controls="service_tabs-3">Azure</a></li>
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-4" role="tab" aria-controls="service_tabs-4">IBM Cloud</a></li>
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-5" role="tab" aria-controls="service_tabs-5">OpenStack</a></li>
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-6" role="tab" aria-controls="service_tabs-6">Baidu Cloud</a></li>
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-7" role="tab" aria-controls="service_tabs-7">Tencent Cloud</a></li>
+		<li class="nav-item"><a data-toggle="tab" class="nav-link" href="#service_tabs-8" role="tab" aria-controls="service_tabs-8">Alibaba Cloud</a></li></ul>
+<div class="tab-content" id="service_tabs"><div id="service_tabs-0" class="tab-pane show active" role="tabpanel" aria-labelledby="service_tabs-0">
+
+<p><p>选择其中一个标签</p>
+</div>
+  <div id="service_tabs-1" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-1">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
     <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
     <span style="color:#f92672">annotations</span>:
         <span style="color:#f92672">cloud.google.com/load-balancer-type</span>: <span style="color:#e6db74">&#34;Internal&#34;</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div><div id="service_tabs-2"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+</code></pre></div></div>
+  <div id="service_tabs-2" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-2">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
     <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
     <span style="color:#f92672">annotations</span>:
         <span style="color:#f92672">service.beta.kubernetes.io/aws-load-balancer-internal</span>: <span style="color:#e6db74">&#34;true&#34;</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div><div id="service_tabs-3"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+</code></pre></div></div>
+  <div id="service_tabs-3" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-3">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
     <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
     <span style="color:#f92672">annotations</span>:
         <span style="color:#f92672">service.beta.kubernetes.io/azure-load-balancer-internal</span>: <span style="color:#e6db74">&#34;true&#34;</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div><div id="service_tabs-4"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+</code></pre></div></div>
+  <div id="service_tabs-4" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-4">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
     <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
     <span style="color:#f92672">annotations</span>:
         <span style="color:#f92672">service.kubernetes.io/ibm-load-balancer-cloud-provider-ip-type</span>: <span style="color:#e6db74">&#34;private&#34;</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div><div id="service_tabs-5"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+</code></pre></div></div>
+  <div id="service_tabs-5" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-5">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
     <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
     <span style="color:#f92672">annotations</span>:
         <span style="color:#f92672">service.beta.kubernetes.io/openstack-internal-load-balancer</span>: <span style="color:#e6db74">&#34;true&#34;</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div><div id="service_tabs-6"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+</code></pre></div></div>
+  <div id="service_tabs-6" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-6">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
     <span style="color:#f92672">name</span>: <span style="color:#ae81ff">my-service</span>
     <span style="color:#f92672">annotations</span>:
         <span style="color:#f92672">service.beta.kubernetes.io/cce-load-balancer-internal-vpc</span>: <span style="color:#e6db74">&#34;true&#34;</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div><div id="service_tabs-7"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+</code></pre></div></div>
+  <div id="service_tabs-7" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-7">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
   <span style="color:#f92672">annotations</span>:
     <span style="color:#f92672">service.kubernetes.io/qcloud-loadbalancer-internal-subnetid</span>: <span style="color:#ae81ff">subnet-xxxxx</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div><div id="service_tabs-8"><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
+</code></pre></div></div>
+  <div id="service_tabs-8" class="tab-pane" role="tabpanel" aria-labelledby="service_tabs-8">
+
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">[<span style="color:#ae81ff">...]</span>
 <span style="color:#f92672">metadata</span>:
   <span style="color:#f92672">annotations</span>:
     <span style="color:#f92672">service.beta.kubernetes.io/alibaba-cloud-loadbalancer-address-type</span>: <span style="color:#e6db74">&#34;intranet&#34;</span>
 [<span style="color:#ae81ff">...]</span>
-</code></pre></div></div></div><script>$(function(){$("#service_tabs").tabs();});</script>
+</code></pre></div></div></div>
+
 <!--
 #### TLS support on AWS {#ssl-support-on-aws}
 
@@ -2992,7 +3070,7 @@ SCTP 多重连接的 NAT 需要在对应的逻辑模块中有特殊逻辑</div>
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-30 16:59:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/0b15573711e35d4e58247f288e154695763aaaba">publish manage container resources (0b15573)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2020-12-31 17:22:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/565055d7e293c655225f185bd6154b38514a0b60">publish Organizing Cluster Access Using kubeconfig Files (565055d)</a>
 </div>
             
           </main>

@@ -2986,21 +2986,37 @@ of a volume are preserved when it is unmounted. It supports both VMFS and VSAN d
 
 Choose one of the following methods to create a VMDK.
 
-&lt;div id=&#34;tabs_volumes&#34;&gt;
-&lt;ul&gt;&lt;li&gt;&lt;a href=&#34;#tabs_volumes-0&#34;&gt;Create using vmkfstools&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#tabs_volumes-1&#34;&gt;Create using vmware-vdiskmanager&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div id=&#34;tabs_volumes-0&#34;&gt;&lt;p&gt;First ssh into ESX, then use the following command to create a VMDK:&lt;/p&gt;
+&lt;ul class=&#34;nav nav-tabs&#34; id=&#34;tabs_volumes&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link active&#34; href=&#34;#tabs_volumes-0&#34; role=&#34;tab&#34; aria-controls=&#34;tabs_volumes-0&#34; aria-selected=&#34;true&#34;&gt;Create using vmkfstools&lt;/a&gt;&lt;/li&gt;
+	  
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#tabs_volumes-1&#34; role=&#34;tab&#34; aria-controls=&#34;tabs_volumes-1&#34;&gt;Create using vmware-vdiskmanager&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;div class=&#34;tab-content&#34; id=&#34;tabs_volumes&#34;&gt;&lt;div id=&#34;tabs_volumes-0&#34; class=&#34;tab-pane show active&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;tabs_volumes-0&#34;&gt;
+
+&lt;p&gt;&lt;p&gt;First ssh into ESX, then use the following command to create a VMDK:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;vmkfstools -c 2G /vmfs/volumes/DatastoreName/volumes/myDisk.vmdk
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;tabs_volumes-1&#34;&gt;&lt;p&gt;Use the following command to create a VMDK:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;tabs_volumes-1&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;tabs_volumes-1&#34;&gt;
+
+&lt;p&gt;&lt;p&gt;Use the following command to create a VMDK:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;vmware-vdiskmanager -c -t &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; -s 40GB -a lsilogic myDisk.vmdk
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;script&gt;$(function(){$(&#34;#tabs_volumes&#34;).tabs();});&lt;/script&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+
  --&gt;
 &lt;h4 id=&#34;创建-vmdk-卷&#34;&gt;创建 VMDK 卷&lt;/h4&gt;
 &lt;p&gt;选择以下方式中的一种创建 VMDK&lt;/p&gt;
-&lt;div id=&#34;tabs_volumes&#34;&gt;
-&lt;ul&gt;&lt;li&gt;&lt;a href=&#34;#tabs_volumes-0&#34;&gt;Create using vmkfstools&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#tabs_volumes-1&#34;&gt;Create using vmware-vdiskmanager&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div id=&#34;tabs_volumes-0&#34;&gt;&lt;p&gt;先 ssh 到 ESX 中，然后使用用下面的命令创建一个 VMDK&lt;/p&gt;
+&lt;ul class=&#34;nav nav-tabs&#34; id=&#34;tabs_volumes&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link active&#34; href=&#34;#tabs_volumes-0&#34; role=&#34;tab&#34; aria-controls=&#34;tabs_volumes-0&#34; aria-selected=&#34;true&#34;&gt;Create using vmkfstools&lt;/a&gt;&lt;/li&gt;
+	  
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#tabs_volumes-1&#34; role=&#34;tab&#34; aria-controls=&#34;tabs_volumes-1&#34;&gt;Create using vmware-vdiskmanager&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;div class=&#34;tab-content&#34; id=&#34;tabs_volumes&#34;&gt;&lt;div id=&#34;tabs_volumes-0&#34; class=&#34;tab-pane show active&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;tabs_volumes-0&#34;&gt;
+
+&lt;p&gt;&lt;p&gt;先 ssh 到 ESX 中，然后使用用下面的命令创建一个 VMDK&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;vmkfstools -c 2G /vmfs/volumes/DatastoreName/volumes/myDisk.vmdk
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;tabs_volumes-1&#34;&gt;&lt;p&gt;使用下面的命令创建一个 VMDK&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;tabs_volumes-1&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;tabs_volumes-1&#34;&gt;
+
+&lt;p&gt;&lt;p&gt;使用下面的命令创建一个 VMDK&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;vmware-vdiskmanager -c -t &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; -s 40GB -a lsilogic myDisk.vmdk
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;script&gt;$(function(){$(&#34;#tabs_volumes&#34;).tabs();});&lt;/script&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+
 &lt;!--
 #### vSphere VMDK Example configuration
 
@@ -4827,109 +4843,181 @@ In a split-horizon DNS environment you would need two Services to be able to rou
 You can achieve this by adding one the following annotations to a Service.
 The annotation to add depends on the cloud Service provider you&#39;re using.
 
-&lt;div id=&#34;service_tabs&#34;&gt;
-&lt;ul&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-0&#34;&gt;Default&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-1&#34;&gt;GCP&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-2&#34;&gt;AWS&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-3&#34;&gt;Azure&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-4&#34;&gt;IBM Cloud&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-5&#34;&gt;OpenStack&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-6&#34;&gt;Baidu Cloud&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-7&#34;&gt;Tencent Cloud&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-8&#34;&gt;Alibaba Cloud&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div id=&#34;service_tabs-0&#34;&gt;&lt;p&gt;Select one of the tabs.&lt;/p&gt;
-&lt;/div&gt;&lt;div id=&#34;service_tabs-1&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;ul class=&#34;nav nav-tabs&#34; id=&#34;service_tabs&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link active&#34; href=&#34;#service_tabs-0&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-0&#34; aria-selected=&#34;true&#34;&gt;Default&lt;/a&gt;&lt;/li&gt;
+	  
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-1&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-1&#34;&gt;GCP&lt;/a&gt;&lt;/li&gt;
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-2&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-2&#34;&gt;AWS&lt;/a&gt;&lt;/li&gt;
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-3&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-3&#34;&gt;Azure&lt;/a&gt;&lt;/li&gt;
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-4&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-4&#34;&gt;IBM Cloud&lt;/a&gt;&lt;/li&gt;
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-5&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-5&#34;&gt;OpenStack&lt;/a&gt;&lt;/li&gt;
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-6&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-6&#34;&gt;Baidu Cloud&lt;/a&gt;&lt;/li&gt;
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-7&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-7&#34;&gt;Tencent Cloud&lt;/a&gt;&lt;/li&gt;
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-8&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-8&#34;&gt;Alibaba Cloud&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;div class=&#34;tab-content&#34; id=&#34;service_tabs&#34;&gt;&lt;div id=&#34;service_tabs-0&#34; class=&#34;tab-pane show active&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-0&#34;&gt;
+
+&lt;p&gt;&lt;p&gt;Select one of the tabs.&lt;/p&gt;
+&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-1&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-1&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-service&lt;/span&gt;
     &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
         &lt;span style=&#34;color:#f92672&#34;&gt;cloud.google.com/load-balancer-type&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Internal&amp;#34;&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;service_tabs-2&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-2&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-2&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-service&lt;/span&gt;
     &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
         &lt;span style=&#34;color:#f92672&#34;&gt;service.beta.kubernetes.io/aws-load-balancer-internal&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;service_tabs-3&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-3&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-3&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-service&lt;/span&gt;
     &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
         &lt;span style=&#34;color:#f92672&#34;&gt;service.beta.kubernetes.io/azure-load-balancer-internal&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;service_tabs-4&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-4&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-4&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-service&lt;/span&gt;
     &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
         &lt;span style=&#34;color:#f92672&#34;&gt;service.kubernetes.io/ibm-load-balancer-cloud-provider-ip-type&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;private&amp;#34;&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;service_tabs-5&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-5&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-5&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-service&lt;/span&gt;
     &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
         &lt;span style=&#34;color:#f92672&#34;&gt;service.beta.kubernetes.io/openstack-internal-load-balancer&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;service_tabs-6&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-6&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-6&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-service&lt;/span&gt;
     &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
         &lt;span style=&#34;color:#f92672&#34;&gt;service.beta.kubernetes.io/cce-load-balancer-internal-vpc&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;service_tabs-7&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-7&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-7&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
   &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;service.kubernetes.io/qcloud-loadbalancer-internal-subnetid&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;subnet-xxxxx&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;service_tabs-8&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-8&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-8&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
   &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;service.beta.kubernetes.io/alibaba-cloud-loadbalancer-address-type&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;intranet&amp;#34;&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;script&gt;$(function(){$(&#34;#service_tabs&#34;).tabs();});&lt;/script&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+
  --&gt;
 &lt;h4 id=&#34;内部负载均衡器&#34;&gt;内部负载均衡器&lt;/h4&gt;
 &lt;p&gt;在一个混搭的环境中，有时候需要在同一个(虚拟)网络地址段从 Service 间路由流量。&lt;/p&gt;
 &lt;p&gt;在一个水平分割的 DNS 环境，需要有两个 Service 才能够分别路由外部和内部的流量到 Endpoint.&lt;/p&gt;
 &lt;p&gt;可以通过在 Service 上添加以下注解中的一个来达成这个目的。 添加哪个注解基于你用的云提供商。&lt;/p&gt;
-&lt;div id=&#34;service_tabs&#34;&gt;
-&lt;ul&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-0&#34;&gt;Default&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-1&#34;&gt;GCP&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-2&#34;&gt;AWS&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-3&#34;&gt;Azure&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-4&#34;&gt;IBM Cloud&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-5&#34;&gt;OpenStack&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-6&#34;&gt;Baidu Cloud&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-7&#34;&gt;Tencent Cloud&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#service_tabs-8&#34;&gt;Alibaba Cloud&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div id=&#34;service_tabs-0&#34;&gt;&lt;p&gt;选择其中一个标签&lt;/p&gt;
-&lt;/div&gt;&lt;div id=&#34;service_tabs-1&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;ul class=&#34;nav nav-tabs&#34; id=&#34;service_tabs&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link active&#34; href=&#34;#service_tabs-0&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-0&#34; aria-selected=&#34;true&#34;&gt;Default&lt;/a&gt;&lt;/li&gt;
+	  
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-1&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-1&#34;&gt;GCP&lt;/a&gt;&lt;/li&gt;
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-2&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-2&#34;&gt;AWS&lt;/a&gt;&lt;/li&gt;
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-3&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-3&#34;&gt;Azure&lt;/a&gt;&lt;/li&gt;
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-4&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-4&#34;&gt;IBM Cloud&lt;/a&gt;&lt;/li&gt;
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-5&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-5&#34;&gt;OpenStack&lt;/a&gt;&lt;/li&gt;
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-6&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-6&#34;&gt;Baidu Cloud&lt;/a&gt;&lt;/li&gt;
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-7&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-7&#34;&gt;Tencent Cloud&lt;/a&gt;&lt;/li&gt;
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#service_tabs-8&#34; role=&#34;tab&#34; aria-controls=&#34;service_tabs-8&#34;&gt;Alibaba Cloud&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;div class=&#34;tab-content&#34; id=&#34;service_tabs&#34;&gt;&lt;div id=&#34;service_tabs-0&#34; class=&#34;tab-pane show active&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-0&#34;&gt;
+
+&lt;p&gt;&lt;p&gt;选择其中一个标签&lt;/p&gt;
+&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-1&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-1&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-service&lt;/span&gt;
     &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
         &lt;span style=&#34;color:#f92672&#34;&gt;cloud.google.com/load-balancer-type&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Internal&amp;#34;&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;service_tabs-2&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-2&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-2&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-service&lt;/span&gt;
     &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
         &lt;span style=&#34;color:#f92672&#34;&gt;service.beta.kubernetes.io/aws-load-balancer-internal&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;service_tabs-3&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-3&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-3&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-service&lt;/span&gt;
     &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
         &lt;span style=&#34;color:#f92672&#34;&gt;service.beta.kubernetes.io/azure-load-balancer-internal&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;service_tabs-4&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-4&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-4&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-service&lt;/span&gt;
     &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
         &lt;span style=&#34;color:#f92672&#34;&gt;service.kubernetes.io/ibm-load-balancer-cloud-provider-ip-type&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;private&amp;#34;&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;service_tabs-5&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-5&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-5&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-service&lt;/span&gt;
     &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
         &lt;span style=&#34;color:#f92672&#34;&gt;service.beta.kubernetes.io/openstack-internal-load-balancer&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;service_tabs-6&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-6&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-6&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;my-service&lt;/span&gt;
     &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
         &lt;span style=&#34;color:#f92672&#34;&gt;service.beta.kubernetes.io/cce-load-balancer-internal-vpc&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;service_tabs-7&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-7&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-7&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
   &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;service.kubernetes.io/qcloud-loadbalancer-internal-subnetid&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;subnet-xxxxx&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id=&#34;service_tabs-8&#34;&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&#34;service_tabs-8&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;service_tabs-8&#34;&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
   &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;service.beta.kubernetes.io/alibaba-cloud-loadbalancer-address-type&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;intranet&amp;#34;&lt;/span&gt;
 [&lt;span style=&#34;color:#ae81ff&#34;&gt;...]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;script&gt;$(function(){$(&#34;#service_tabs&#34;).tabs();});&lt;/script&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+
 &lt;!--
 #### TLS support on AWS {#ssl-support-on-aws}
 
@@ -13970,8 +14058,12 @@ of ephemeral local storage a Pod can consume.
 &lt;p&gt;作为一个 beta 特性， k8s 可以让用户跟踪，保留，限制一个 Pod 可以使用的临时本地存储。&lt;/p&gt;
 &lt;h3 id=&#34;configurations-for-local-ephemeral-storage&#34;&gt;本地临时存储的配置&lt;/h3&gt;
 &lt;p&gt;k8s 支持两种在节点上配置本地临时存储的方式:&lt;/p&gt;
-&lt;p&gt;&lt;div id=&#34;local_storage_configurations&#34;&gt;
-&lt;ul&gt;&lt;li&gt;&lt;a href=&#34;#local_storage_configurations-0&#34;&gt;Single filesystem&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#local_storage_configurations-1&#34;&gt;Two filesystems&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div id=&#34;local_storage_configurations-0&#34;&gt;&lt;p&gt;在这种配置中， 用户可以将所有不同类型的临时本地数据(&lt;code&gt;emptyDir&lt;/code&gt; 卷，可写层，容器镜像，日志)
+&lt;p&gt;&lt;ul class=&#34;nav nav-tabs&#34; id=&#34;local_storage_configurations&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link active&#34; href=&#34;#local_storage_configurations-0&#34; role=&#34;tab&#34; aria-controls=&#34;local_storage_configurations-0&#34; aria-selected=&#34;true&#34;&gt;单文件系统&lt;/a&gt;&lt;/li&gt;
+	  
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#local_storage_configurations-1&#34; role=&#34;tab&#34; aria-controls=&#34;local_storage_configurations-1&#34;&gt;双文件系统&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;div class=&#34;tab-content&#34; id=&#34;local_storage_configurations&#34;&gt;&lt;div id=&#34;local_storage_configurations-0&#34; class=&#34;tab-pane show active&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;local_storage_configurations-0&#34;&gt;
+
+&lt;p&gt;&lt;p&gt;在这种配置中， 用户可以将所有不同类型的临时本地数据(&lt;code&gt;emptyDir&lt;/code&gt; 卷，可写层，容器镜像，日志)
 都放到一个文件系统中。 最有效配置 kubelet 的含义就是将这个文件系统用于 k8s (kubelet)的数据。&lt;/p&gt;
 &lt;p&gt;kubelet 还会将
 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/cluster-administration/logging/#logging-at-the-node-level&#34;&gt;节点级别的容器日志&lt;/a&gt;
@@ -13981,7 +14073,10 @@ of ephemeral local storage a Pod can consume.
 &lt;p&gt;通常情况下， &lt;code&gt;/var/lib/kubelet&lt;/code&gt; 和 &lt;code&gt;/var/log&lt;/code&gt; 都是在系统根文件系统上，kubelet 在设置上
 也就是这个结构的。&lt;/p&gt;
 &lt;p&gt;节点上可以有任意数量的其它文件系统，不是给 k8s 用的，随便怎么用都可以。&lt;/p&gt;
-&lt;/div&gt;&lt;div id=&#34;local_storage_configurations-1&#34;&gt;&lt;p&gt;在节点上有一个文件系统被用来入那些来自运行 Pod 的: 日志，&lt;code&gt;emptyDir&lt;/code&gt; 卷的临时数据。也可以使用
+&lt;/div&gt;
+  &lt;div id=&#34;local_storage_configurations-1&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;local_storage_configurations-1&#34;&gt;
+
+&lt;p&gt;&lt;p&gt;在节点上有一个文件系统被用来入那些来自运行 Pod 的: 日志，&lt;code&gt;emptyDir&lt;/code&gt; 卷的临时数据。也可以使用
 这个文件系统来存其它数据(例如: 与 k8s 不相关的系统日志)；甚至也可以是根文件系统。&lt;/p&gt;
 &lt;p&gt;kubelet 也会将
 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/cluster-administration/logging/#logging-at-the-node-level&#34;&gt;节点级别的容器日志&lt;/a&gt;
@@ -13990,7 +14085,8 @@ of ephemeral local storage a Pod can consume.
 和可写层的目录都是在第二个文件系统上。&lt;/p&gt;
 &lt;p&gt;第一个文件系统不包含任何镜像层和可写层。&lt;/p&gt;
 &lt;p&gt;节点上可以有任意数量的其它文件系统，不是给 k8s 用的，随便怎么用都可以。&lt;/p&gt;
-&lt;/div&gt;&lt;/div&gt;&lt;script&gt;$(function(){$(&#34;#local_storage_configurations&#34;).tabs();});&lt;/script&gt;
+&lt;/div&gt;&lt;/div&gt;
+
 &lt;blockquote&gt;
   &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
 &lt;/blockquote&gt;
@@ -14096,8 +14192,12 @@ for ephemeral local storage.&lt;/p&gt;
 
 The kubelet supports different ways to measure Pod storage use:
 
-&lt;div id=&#34;resource-emphemeralstorage-measurement&#34;&gt;
-&lt;ul&gt;&lt;li&gt;&lt;a href=&#34;#resource-emphemeralstorage-measurement-0&#34;&gt;Periodic scanning&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#resource-emphemeralstorage-measurement-1&#34;&gt;Filesystem project quota&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div id=&#34;resource-emphemeralstorage-measurement-0&#34;&gt;&lt;p&gt;The kubelet performs regular, scheduled checks that scan each
+&lt;ul class=&#34;nav nav-tabs&#34; id=&#34;resource-emphemeralstorage-measurement&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link active&#34; href=&#34;#resource-emphemeralstorage-measurement-0&#34; role=&#34;tab&#34; aria-controls=&#34;resource-emphemeralstorage-measurement-0&#34; aria-selected=&#34;true&#34;&gt;Periodic scanning&lt;/a&gt;&lt;/li&gt;
+	  
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#resource-emphemeralstorage-measurement-1&#34; role=&#34;tab&#34; aria-controls=&#34;resource-emphemeralstorage-measurement-1&#34;&gt;Filesystem project quota&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;div class=&#34;tab-content&#34; id=&#34;resource-emphemeralstorage-measurement&#34;&gt;&lt;div id=&#34;resource-emphemeralstorage-measurement-0&#34; class=&#34;tab-pane show active&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;resource-emphemeralstorage-measurement-0&#34;&gt;
+
+&lt;p&gt;&lt;p&gt;The kubelet performs regular, scheduled checks that scan each
 &lt;code&gt;emptyDir&lt;/code&gt; volume, container log directory, and writeable container layer.&lt;/p&gt;
 &lt;p&gt;The scan measures how much space is used.&lt;/p&gt;
 &lt;blockquote class=&#34;note&#34;&gt;
@@ -14109,7 +14209,10 @@ still open, then the inode for the deleted file stays until you close
 that file but the kubelet does not categorize the space as in use.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/blockquote&gt;
-&lt;/div&gt;&lt;div id=&#34;resource-emphemeralstorage-measurement-1&#34;&gt;&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;/div&gt;
+  &lt;div id=&#34;resource-emphemeralstorage-measurement-1&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;resource-emphemeralstorage-measurement-1&#34;&gt;
+
+&lt;p&gt;&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
 &lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.15 [alpha]&lt;/code&gt;
 &lt;/div&gt;
 &lt;p&gt;Project quotas are an operating-system level feature for managing
@@ -14153,7 +14256,8 @@ mounted with project quotas enabled. For both XFS and ext4fs, the
 mount option is named &lt;code&gt;prjquota&lt;/code&gt;.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;/div&gt;&lt;/div&gt;&lt;script&gt;$(function(){$(&#34;#resource-emphemeralstorage-measurement&#34;).tabs();});&lt;/script&gt;
+&lt;/div&gt;&lt;/div&gt;
+
  --&gt;
 &lt;h3 id=&#34;resource-emphemeralstorage-consumption&#34;&gt;临时存储用量管理&lt;/h3&gt;
 &lt;p&gt;如果使用 kubelet 管理本地临时存储作为资源，则 kubelet 使用下面这些的计算存储量:&lt;/p&gt;
@@ -14181,8 +14285,12 @@ mount option is named &lt;code&gt;prjquota&lt;/code&gt;.&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;kubelet 支持不同的方式测量 Pod 存储用量:
-&lt;div id=&#34;resource-emphemeralstorage-measurement&#34;&gt;
-&lt;ul&gt;&lt;li&gt;&lt;a href=&#34;#resource-emphemeralstorage-measurement-0&#34;&gt;Periodic scanning&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a href=&#34;#resource-emphemeralstorage-measurement-1&#34;&gt;Filesystem project quota&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div id=&#34;resource-emphemeralstorage-measurement-0&#34;&gt;&lt;p&gt;kubelet 执行常规，定时检查每个 &lt;code&gt;emptyDir&lt;/code&gt; 卷，容器日志目录，可写容器层。&lt;/p&gt;
+&lt;ul class=&#34;nav nav-tabs&#34; id=&#34;resource-emphemeralstorage-measurement&#34; role=&#34;tablist&#34;&gt;&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link active&#34; href=&#34;#resource-emphemeralstorage-measurement-0&#34; role=&#34;tab&#34; aria-controls=&#34;resource-emphemeralstorage-measurement-0&#34; aria-selected=&#34;true&#34;&gt;定期扫描&lt;/a&gt;&lt;/li&gt;
+	  
+		&lt;li class=&#34;nav-item&#34;&gt;&lt;a data-toggle=&#34;tab&#34; class=&#34;nav-link&#34; href=&#34;#resource-emphemeralstorage-measurement-1&#34; role=&#34;tab&#34; aria-controls=&#34;resource-emphemeralstorage-measurement-1&#34;&gt;文件系统项目配额&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;div class=&#34;tab-content&#34; id=&#34;resource-emphemeralstorage-measurement&#34;&gt;&lt;div id=&#34;resource-emphemeralstorage-measurement-0&#34; class=&#34;tab-pane show active&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;resource-emphemeralstorage-measurement-0&#34;&gt;
+
+&lt;p&gt;&lt;p&gt;kubelet 执行常规，定时检查每个 &lt;code&gt;emptyDir&lt;/code&gt; 卷，容器日志目录，可写容器层。&lt;/p&gt;
 &lt;p&gt;这种扫描测量使用了多少空间。&lt;/p&gt;
 &lt;blockquote class=&#34;note&#34;&gt;
   &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;p&gt;在这种模式下， kubelet 不会跟踪删除文件的打开文件描述符。&lt;/p&gt;
@@ -14191,7 +14299,10 @@ mount option is named &lt;code&gt;prjquota&lt;/code&gt;.&lt;/p&gt;
 文件使用的空间。&lt;/p&gt;
 &lt;/div&gt;
 &lt;/blockquote&gt;
-&lt;/div&gt;&lt;div id=&#34;resource-emphemeralstorage-measurement-1&#34;&gt;&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;/div&gt;
+  &lt;div id=&#34;resource-emphemeralstorage-measurement-1&#34; class=&#34;tab-pane&#34; role=&#34;tabpanel&#34; aria-labelledby=&#34;resource-emphemeralstorage-measurement-1&#34;&gt;
+
+&lt;p&gt;&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
 &lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.15 [alpha]&lt;/code&gt;
 &lt;/div&gt;
 &lt;p&gt;项目配额是一个操作系统级别的特性，用来管理文件系统上在存储使用。 通过 k8s 用户可以启用项目配额
@@ -14223,7 +14334,8 @@ sudo tune2fs -O project -Q prjquota /dev/block-device
 都叫 &lt;code&gt;prjquota&lt;/code&gt;.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;/div&gt;&lt;/div&gt;&lt;script&gt;$(function(){$(&#34;#resource-emphemeralstorage-measurement&#34;).tabs();});&lt;/script&gt;&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;
+&lt;/p&gt;
 &lt;!--
 ## Extended resources
 
@@ -19089,6 +19201,253 @@ the volume snapshot class. Different parameters may be accepted depending on the
  --&gt;
 &lt;h2 id=&#34;其它参数-parameters&#34;&gt;其它参数 (&lt;code&gt;parameters&lt;/code&gt;)&lt;/h2&gt;
 &lt;p&gt;卷快照类别有描述属于该类别的卷快照的参数。 可以接受哪些的参数基于不同的驱动 &lt;code&gt;driver&lt;/code&gt;.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 使用 kubeconfig 文件组织集群访问</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/organize-cluster-access-kubeconfig/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/organize-cluster-access-kubeconfig/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+title: Organizing Cluster Access Using kubeconfig Files
+content_type: concept
+weight: 60
+---
+ --&gt;
+&lt;!-- overview --&gt;
+&lt;p&gt;kubeconfig 文件用来组织关于集群，用户，命名空间，和认证机制信息。 &lt;code&gt;kubectl&lt;/code&gt; 命令行工具使用
+kubeconfig 文件来查找其用以选择集群和与集群 API 服务通信的信息。&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 一个用于配置集群访问的文件就叫做 &lt;em&gt;kubeconfig 文件&lt;/em&gt;。 这是引用配置文件的常用方式。 但并不意味
+着有一个叫 &lt;code&gt;kubeconfig&lt;/code&gt; 的文件。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;默认情况下， &lt;code&gt;kubectl&lt;/code&gt; 会在 &lt;code&gt;$HOME/.kube&lt;/code&gt; 目录中寻找一个叫 &lt;code&gt;config&lt;/code&gt; 的文件。 用户可以通过
+&lt;code&gt;KUBECONFIG&lt;/code&gt; 环境变量来设置其它的 kubeconfig 文件。&lt;/p&gt;
+&lt;p&gt;创建和设置 kubeconfig 文件的详细指南，见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/access-application-cluster/configure-access-multiple-clusters&#34;&gt;配置多集群访问&lt;/a&gt;.&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## Supporting multiple clusters, users, and authentication mechanisms
+
+Suppose you have several clusters, and your users and components authenticate
+in a variety of ways. For example:
+
+- A running kubelet might authenticate using certificates.
+- A user might authenticate using tokens.
+- Administrators might have sets of certificates that they provide to individual users.
+
+With kubeconfig files, you can organize your clusters, users, and namespaces.
+You can also define contexts to quickly and easily switch between
+clusters and namespaces.
+ --&gt;
+&lt;h2 id=&#34;supporting-multiple-clusters-users-and-authentication-mechanisms&#34;&gt;支持多集群，用户，认证机制&lt;/h2&gt;
+&lt;p&gt;假设你有几个集群，并且你的用户和组件有不同的认证方式。 例如:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一个运行的 kubelet 可能使用证书来认证。&lt;/li&gt;
+&lt;li&gt;一个用户可能使用使用令牌来认证&lt;/li&gt;
+&lt;li&gt;管理员可能为每个用户提供认证证书&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;通过 kubeconfig 文件，就可以组织你的集群，用户， 和命名空间。 你也可以通过定义上下文的方式实现
+快速在不同集群和命名空间之间切换。&lt;/p&gt;
+&lt;!--
+## Context
+
+A *context* element in a kubeconfig file is used to group access parameters
+under a convenient name. Each context has three parameters: cluster, namespace, and user.
+By default, the `kubectl` command-line tool uses parameters from
+the *current context* to communicate with the cluster.
+
+To choose the current context:
+```
+kubectl config use-context
+```
+ --&gt;
+&lt;h2 id=&#34;context&#34;&gt;上下文&lt;/h2&gt;
+&lt;p&gt;在一个 kubeconfig 文件中的一个 &lt;em&gt;上下文&lt;/em&gt; 元素以一个方便的名称的方式来组织访问参数。每个上下文
+有三个参数: 集群，命名空间，和用户。 默认情况下， &lt;code&gt;kubectl&lt;/code&gt; 命令行工具使用来自 &lt;em&gt;当前上下文&lt;/em&gt;
+中的参数来与集群通信。&lt;/p&gt;
+&lt;p&gt;要选择当前上下文,使用下面的命令:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl config use-context
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+## The KUBECONFIG environment variable
+
+The `KUBECONFIG` environment variable holds a list of kubeconfig files.
+For Linux and Mac, the list is colon-delimited. For Windows, the list
+is semicolon-delimited. The `KUBECONFIG` environment variable is not
+required. If the `KUBECONFIG` environment variable doesn&#39;t exist,
+`kubectl` uses the default kubeconfig file, `$HOME/.kube/config`.
+
+If the `KUBECONFIG` environment variable does exist, `kubectl` uses
+an effective configuration that is the result of merging the files
+listed in the `KUBECONFIG` environment variable.
+ --&gt;
+&lt;h2 id=&#34;the-kubeconfig-environment-variable&#34;&gt;&lt;code&gt;KUBECONFIG&lt;/code&gt; 环境变量&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;KUBECONFIG&lt;/code&gt; 环境变量中包含的是一个 kubeconfig 文件的列表。 对于 Linux 和 Mac，列表是用
+冒号(&lt;code&gt;:&lt;/code&gt;)分隔。 对于 Windows， 列表分隔符是分号(&lt;code&gt;;&lt;/code&gt;).  &lt;code&gt;KUBECONFIG&lt;/code&gt; 环境变量不是必要的。
+如果 &lt;code&gt;KUBECONFIG&lt;/code&gt; 环境变量不存在， &lt;code&gt;kubectl&lt;/code&gt; 会使用默认的 kubeconfig 文件 &lt;code&gt;$HOME/.kube/config&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;如果 &lt;code&gt;KUBECONFIG&lt;/code&gt; 环境变量是存在的，&lt;code&gt;kubectl&lt;/code&gt; 会使用一个由 &lt;code&gt;KUBECONFIG&lt;/code&gt; 环境变量列举的
+文件合并结果作为有效配置。&lt;/p&gt;
+&lt;!--
+## Merging kubeconfig files
+
+To see your configuration, enter this command:
+
+```shell
+kubectl config view
+```
+
+As described previously, the output might be from a single kubeconfig file,
+or it might be the result of merging several kubeconfig files.
+
+Here are the rules that `kubectl` uses when it merges kubeconfig files:
+
+1. If the `--kubeconfig` flag is set, use only the specified file. Do not merge.
+   Only one instance of this flag is allowed.
+
+   Otherwise, if the `KUBECONFIG` environment variable is set, use it as a
+   list of files that should be merged.
+   Merge the files listed in the `KUBECONFIG` environment variable
+   according to these rules:
+
+   * Ignore empty filenames.
+   * Produce errors for files with content that cannot be deserialized.
+   * The first file to set a particular value or map key wins.
+   * Never change the value or map key.
+     Example: Preserve the context of the first file to set `current-context`.
+     Example: If two files specify a `red-user`, use only values from the first file&#39;s `red-user`.
+     Even if the second file has non-conflicting entries under `red-user`, discard them.
+
+   For an example of setting the `KUBECONFIG` environment variable, see
+   [Setting the KUBECONFIG environment variable](/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#set-the-kubeconfig-environment-variable).
+
+   Otherwise, use the default kubeconfig file, `$HOME/.kube/config`, with no merging.
+
+1. Determine the context to use based on the first hit in this chain:
+
+    1. Use the `--context` command-line flag if it exists.
+    1. Use the `current-context` from the merged kubeconfig files.
+
+   An empty context is allowed at this point.
+
+1. Determine the cluster and user. At this point, there might or might not be a context.
+   Determine the cluster and user based on the first hit in this chain,
+   which is run twice: once for user and once for cluster:
+
+   1. Use a command-line flag if it exists: `--user` or `--cluster`.
+   1. If the context is non-empty, take the user or cluster from the context.
+
+   The user and cluster can be empty at this point.
+
+1. Determine the actual cluster information to use. At this point, there might or
+   might not be cluster information.
+   Build each piece of the cluster information based on this chain; the first hit wins:
+
+   1. Use command line flags if they exist: `--server`, `--certificate-authority`, `--insecure-skip-tls-verify`.
+   1. If any cluster information attributes exist from the merged kubeconfig files, use them.
+   1. If there is no server location, fail.
+
+1. Determine the actual user information to use. Build user information using the same
+   rules as cluster information, except allow only one authentication
+   technique per user:
+
+   1. Use command line flags if they exist: `--client-certificate`, `--client-key`, `--username`, `--password`, `--token`.
+   1. Use the `user` fields from the merged kubeconfig files.
+   1. If there are two conflicting techniques, fail.
+
+1. For any information still missing, use default values and potentially
+   prompt for authentication information.
+ --&gt;
+&lt;h2 id=&#34;merging-kubeconfig-files&#34;&gt;合并 &lt;code&gt;kubeconfig&lt;/code&gt; 文件&lt;/h2&gt;
+&lt;p&gt;要看现在的配置，输入下面的命令:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl config view
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;就如之间所描述的， 输出结果可能来自单个 kubeconfig 文件，也可能是几个 kubeconfig 文件合并的
+结果。&lt;/p&gt;
+&lt;p&gt;以下为 &lt;code&gt;kubectl&lt;/code&gt; 在合并 kubeconfig 文件使用的规则:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;如果设置 &lt;code&gt;--kubeconfig&lt;/code&gt; 标志，就只使用这个指定的文件。不合并配置文件。这个标志只允许有一个实例。&lt;/p&gt;
+&lt;p&gt;否则，如果设置了 &lt;code&gt;KUBECONFIG&lt;/code&gt; 环境变量，就会使用其中列举文件合并的结果。 合并 &lt;code&gt;KUBECONFIG&lt;/code&gt;
+环境变量中列举的文件合并会依照如下规则:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;忽略空文件名。&lt;/li&gt;
+&lt;li&gt;文件内容不能被反序列化则会生成错误&lt;/li&gt;
+&lt;li&gt;排在前面的文件中的键(以及其值)会作为最终结果中的键值&lt;/li&gt;
+&lt;li&gt;永远不修改值或字典键
+示例: 保留第一个设置 &lt;code&gt;current-context&lt;/code&gt; 文件中的上下文。
+示例: 如果有两个文件配置了 &lt;code&gt;red-user&lt;/code&gt;, 使用排在前面的那个文件 &lt;code&gt;red-user&lt;/code&gt; 的值。
+即便第二个文件 &lt;code&gt;red-user&lt;/code&gt; 的实体与第一个不冲突，也会把它们整体都丢弃了&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这里有一个 &lt;code&gt;KUBECONFIG&lt;/code&gt; 环境变量的示例，详见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#set-the-kubeconfig-environment-variable&#34;&gt;设置 &lt;code&gt;KUBECONFIG&lt;/code&gt; 环境变量&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;再没有就使用默认的 &lt;code&gt;kubeconfig&lt;/code&gt; 文件，&lt;code&gt;$HOME/.kube/config&lt;/code&gt;， 没得其它合并。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;基于这个链的第一个命中来决定上下文:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;如果有则使用 &lt;code&gt;--context&lt;/code&gt; 命令行标志&lt;/li&gt;
+&lt;li&gt;使用合并 &lt;code&gt;kubeconfig&lt;/code&gt; 文件中的 &lt;code&gt;current-context&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;在这个点允许空的上下文&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;确定集群和用户，在这个点上，可能有也可能没有上下文。 基于下面这个链中的第一个命中的集群和用户，
+这个会被运行两次: 一次用于用户和一次用于集群&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;如果有命令标志则使用该标志: &lt;code&gt;--user&lt;/code&gt; 或 &lt;code&gt;--cluster&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;如果上下文不是空的，则使用这个上下文中的用户或集群&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;在这一级用户和集群可以是空的&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;决定实际使用的集群信息， 在这一级， 可能有也可能没有集群信息。 会依据下面这个链中的片段来构建集群信息；
+第一个命中会作为最终结果:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;即便存在，也使用的命令标志: &lt;code&gt;--server&lt;/code&gt;, &lt;code&gt;--certificate-authority&lt;/code&gt;, &lt;code&gt;--insecure-skip-tls-verify&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;如果合并后的 kubeconfig 文件中有任意集群信息的属性存在，这使用它们。&lt;/li&gt;
+&lt;li&gt;如果其中没有服务地址信息，则会失败&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;决定实际使用的用户信息。 构建用户信息使用与集群信息相同的规则，只是限制一个用户只能有一个认证机制:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;如果存在则使用的标记: &lt;code&gt;--client-certificate&lt;/code&gt;, &lt;code&gt;--client-key&lt;/code&gt;, &lt;code&gt;--username&lt;/code&gt;, &lt;code&gt;--password&lt;/code&gt;, &lt;code&gt;--token&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;使用合并后的 kubeconfig 文件中的 &lt;code&gt;user&lt;/code&gt; 字段。&lt;/li&gt;
+&lt;li&gt;如果有两种冲突的认证机制，则会失败&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;对于到这一步还缺失的信息，使用默认值和潜在的输入提示认证信息。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;!--
+
+## File references
+
+File and path references in a kubeconfig file are relative to the location of the kubeconfig file.
+File references on the command line are relative to the current working directory.
+In `$HOME/.kube/config`, relative paths are stored relatively, and absolute paths
+are stored absolutely.
+ --&gt;
+&lt;h2 id=&#34;file-references&#34;&gt;文件引用&lt;/h2&gt;
+&lt;p&gt;文件和 kubeconfig 文件中的路径引用是相同对 kubeconfig 文件的路径的。 命令行的文件引用是
+相对于目前的工作目录的。 在 &lt;code&gt;$HOME/.kube/config&lt;/code&gt; 中, 相对路径以相路径式存储，绝对路径以绝对路径存储。&lt;/p&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;!--
+* [Configure Access to Multiple Clusters](/docs/tasks/access-application-cluster/configure-access-multiple-clusters/)
+* [`kubectl config`](/docs/reference/generated/kubectl/kubectl-commands#config)
+--&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/access-application-cluster/configure-access-multiple-clusters/&#34;&gt;配置多集群访问&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#config&#34;&gt;&lt;code&gt;kubectl config&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
       </description>
     </item>
@@ -28812,927 +29171,6 @@ it is created.
 &lt;h3 id=&#34;暂停&#34;&gt;暂停&lt;/h3&gt;
 &lt;p&gt;&lt;code&gt;.spec.paused&lt;/code&gt; 是一个可选布尔字段，用于暂停和恢复 Deployment。 Deployment 有没有暂停的区别是对 PodTemplateSpec 变更， 暂停的 Deployment
 在被恢复之前不会触发更新。 Deployment 创建时默认没有暂停。&lt;/p&gt;
-
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: ReplicaSet</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/replicaset/</link>
-      <pubDate>Thu, 13 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/replicaset/</guid>
-      <description>
-        
-        
-        &lt;!--
----
-reviewers:
-- Kashomon
-- bprashanth
-- madhusudancs
-title: ReplicaSet
-content_type: concept
-weight: 20
----
- --&gt;
-&lt;!-- overview --&gt;
-&lt;!--
-A ReplicaSet&#39;s purpose is to maintain a stable set of replica Pods running at any given time. As such, it is often
-used to guarantee the availability of a specified number of identical Pods.
- --&gt;
-&lt;p&gt;&lt;code&gt;ReplicaSet&lt;/code&gt; 的作用是在任意时间内维持一个稳定的 Pod 副本集。因此它经常被用来保证特定 Pod 在指定的数量以提供可用性。&lt;/p&gt;
-&lt;!-- body --&gt;
-&lt;!--
-## How a ReplicaSet works
-
-A ReplicaSet is defined with fields, including a selector that specifies how to identify Pods it can acquire, a number
-of replicas indicating how many Pods it should be maintaining, and a pod template specifying the data of new Pods
-it should create to meet the number of replicas criteria. A ReplicaSet then fulfills its purpose by creating
-and deleting Pods as needed to reach the desired number. When a ReplicaSet needs to create new Pods, it uses its Pod
-template.
-
-A ReplicaSet is linked to its Pods via the Pods&#39; [metadata.ownerReferences](/docs/concepts/workloads/controllers/garbage-collection/#owners-and-dependents)
-field, which specifies what resource the current object is owned by. All Pods acquired by a ReplicaSet have their owning
-ReplicaSet&#39;s identifying information within their ownerReferences field. It&#39;s through this link that the ReplicaSet
-knows of the state of the Pods it is maintaining and plans accordingly.
-
-A ReplicaSet identifies new Pods to acquire by using its selector. If there is a Pod that has no OwnerReference or the
-OwnerReference is not a &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/2-concepts/01-architecture/02-controller/&#39; target=&#39;_blank&#39;&gt;控制器&lt;span class=&#39;tooltip-text&#39;&gt;一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移&lt;/span&gt;
-&lt;/a&gt; and it matches a ReplicaSet&#39;s selector, it will be immediately acquired by said
-ReplicaSet.
- --&gt;
-&lt;h2 id=&#34;how-a-replicaset-works&#34;&gt;&lt;code&gt;ReplicaSet&lt;/code&gt; 是怎么工作的&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;ReplicaSet&lt;/code&gt; 通过以下字段定义，
-&lt;code&gt;selector&lt;/code&gt; 标签选择器，决定集合中的 Pod，
-&lt;code&gt;replicas&lt;/code&gt; 副本数量， 需要维持多少个副本，
-&lt;code&gt;template&lt;/code&gt; Pod 的定义模板，
-&lt;code&gt;ReplicaSet&lt;/code&gt; 会创建 Pod 或删除 Pod 让 Pod 的数量达到预期的数量。
-&lt;code&gt;ReplicaSet&lt;/code&gt; 在需要创建新的 Pod 时会依照 Pod 的定义模来创建 Pod。&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;ReplicaSet&lt;/code&gt; 通过 Pod 上的 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/#owners-and-dependents&#34;&gt;metadata.ownerReferences&lt;/a&gt;
-字段实现它们的所以关系。 所以属于该 &lt;code&gt;ReplicaSet&lt;/code&gt; 的每一个 Pod 上面都有自己的 ownerReferences 字段来存储它们自己的 &lt;code&gt;ReplicaSet&lt;/code&gt; 信息&lt;/p&gt;
-&lt;p&gt;通过这个链接信息 &lt;code&gt;ReplicaSet&lt;/code&gt; 可以知道对应的 Pod 的状态，并根据状态进行相应的维护与计划&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;ReplicaSet&lt;/code&gt; 通过选择器识别新的 Pod。 如果一个 Pod 上没有 &lt;code&gt;OwnerReference&lt;/code&gt; 或 &lt;code&gt;OwnerReference&lt;/code&gt;
-不是一个 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/2-concepts/01-architecture/02-controller/&#39; target=&#39;_blank&#39;&gt;控制器&lt;span class=&#39;tooltip-text&#39;&gt;一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移&lt;/span&gt;
-&lt;/a&gt; 然后它又匹配该 &lt;code&gt;ReplicaSet&lt;/code&gt; 的选择器，
-那么它马上就会被该 &lt;code&gt;ReplicaSet&lt;/code&gt; 捕获。&lt;/p&gt;
-&lt;blockquote&gt;
-  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;!--
-## When to use a ReplicaSet
-
-A ReplicaSet ensures that a specified number of pod replicas are running at any given
-time. However, a Deployment is a higher-level concept that manages ReplicaSets and
-provides declarative updates to Pods along with a lot of other useful features.
-Therefore, we recommend using Deployments instead of directly using ReplicaSets, unless
-you require custom update orchestration or don&#39;t require updates at all.
-
-This actually means that you may never need to manipulate ReplicaSet objects:
-use a Deployment instead, and define your application in the spec section.
- --&gt;
-&lt;h2 id=&#34;什么时候应该用-replicaset&#34;&gt;什么时候应该用 &lt;code&gt;ReplicaSet&lt;/code&gt;&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;ReplicaSet&lt;/code&gt; 保证在任意时间点上某个 Pod 的拥有指定的副本数。
-但是 &lt;code&gt;Deployment&lt;/code&gt; 是一个更高层级的抽象概念，实现对 &lt;code&gt;ReplicaSet&lt;/code&gt; 的管理并提供了对 Pod 的声明式更新及其它一系列有用的特性。
-所以，我们建议使用 &lt;code&gt;Deployment&lt;/code&gt; 而不是直接使用 &lt;code&gt;ReplicaSet&lt;/code&gt;
-除非用户需要自定义的更新编排甚至干脆不需要更新。&lt;/p&gt;
-&lt;p&gt;也就是说一般用户永远都不需要操作 &lt;code&gt;ReplicaSet&lt;/code&gt;： 使用 &lt;code&gt;Deployment&lt;/code&gt; 更佳，只需要在 &lt;code&gt;spec&lt;/code&gt; 区域定义应用就行&lt;/p&gt;
-&lt;!--
-## Example
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;table class=&#34;includecode&#34; id=&#34;controllersfrontendyaml&#34;&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;
-                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/controllers/frontend.yaml&#34; download=&#34;controllers/frontend.yaml&#34;&gt;
-                    &lt;code&gt;controllers/frontend.yaml&lt;/code&gt;
-                &lt;/a&gt;
-                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;controllersfrontendyaml&#39;)&#34; title=&#34;Copy controllers/frontend.yaml to clipboard&#34;&gt;
-            &lt;/th&gt;
-        &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody&gt;
-        &lt;tr&gt;
-            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ReplicaSet&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;guestbook&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#75715e&#34;&gt;# modify replicas according to your case&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;replicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-        &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
-      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;php-redis&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;registry.cn-hangzhou.aliyuncs.com/lisong/gb-frontend:v3-google_samples&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/tbody&gt;
-&lt;/table&gt;
-
-
-
-Saving this manifest into `frontend.yaml` and submitting it to a Kubernetes cluster will
-create the defined ReplicaSet and the Pods that it manages.
-
-```shell
-kubectl apply -f https://kubernetes.io/examples/controllers/frontend.yaml
-```
-
-You can then get the current ReplicaSets deployed:
-
-```shell
-kubectl get rs
-```
-
-And see the frontend one you created:
-
-```shell
-NAME       DESIRED   CURRENT   READY   AGE
-frontend   3         3         3       6s
-```
-
-You can also check on the state of the ReplicaSet:
-
-```shell
-kubectl describe rs/frontend
-```
-
-And you will see output similar to:
-
-```shell
-Name:         frontend
-Namespace:    default
-Selector:     tier=frontend
-Labels:       app=guestbook
-              tier=frontend
-Annotations:  kubectl.kubernetes.io/last-applied-configuration:
-                {&#34;apiVersion&#34;:&#34;apps/v1&#34;,&#34;kind&#34;:&#34;ReplicaSet&#34;,&#34;metadata&#34;:{&#34;annotations&#34;:{},&#34;labels&#34;:{&#34;app&#34;:&#34;guestbook&#34;,&#34;tier&#34;:&#34;frontend&#34;},&#34;name&#34;:&#34;frontend&#34;,...
-Replicas:     3 current / 3 desired
-Pods Status:  3 Running / 0 Waiting / 0 Succeeded / 0 Failed
-Pod Template:
-  Labels:  tier=frontend
-  Containers:
-   php-redis:
-    Image:        gcr.io/google_samples/gb-frontend:v3
-    Port:         &lt;none&gt;
-    Host Port:    &lt;none&gt;
-    Environment:  &lt;none&gt;
-    Mounts:       &lt;none&gt;
-  Volumes:        &lt;none&gt;
-Events:
-  Type    Reason            Age   From                   Message
-  ----    ------            ----  ----                   -------
-  Normal  SuccessfulCreate  117s  replicaset-controller  Created pod: frontend-wtsmm
-  Normal  SuccessfulCreate  116s  replicaset-controller  Created pod: frontend-b2zdv
-  Normal  SuccessfulCreate  116s  replicaset-controller  Created pod: frontend-vcmts
-```
-
-And lastly you can check for the Pods brought up:
-
-```shell
-kubectl get pods
-```
-
-You should see Pod information similar to:
-
-```shell
-NAME             READY   STATUS    RESTARTS   AGE
-frontend-b2zdv   1/1     Running   0          6m36s
-frontend-vcmts   1/1     Running   0          6m36s
-frontend-wtsmm   1/1     Running   0          6m36s
-```
-
-You can also verify that the owner reference of these pods is set to the frontend ReplicaSet.
-To do this, get the yaml of one of the Pods running:
-
-```shell
-kubectl get pods frontend-b2zdv -o yaml
-```
-
-The output will look similar to this, with the frontend ReplicaSet&#39;s info set in the metadata&#39;s ownerReferences field:
-
-```shell
-apiVersion: v1
-kind: Pod
-metadata:
-  creationTimestamp: &#34;2020-02-12T07:06:16Z&#34;
-  generateName: frontend-
-  labels:
-    tier: frontend
-  name: frontend-b2zdv
-  namespace: default
-  ownerReferences:
-  - apiVersion: apps/v1
-    blockOwnerDeletion: true
-    controller: true
-    kind: ReplicaSet
-    name: frontend
-    uid: f391f6db-bb9b-4c09-ae74-6a1f77f3d5cf
-...
-```
- --&gt;
-&lt;h2 id=&#34;示例&#34;&gt;示例&lt;/h2&gt;
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;table class=&#34;includecode&#34; id=&#34;controllersfrontendyaml&#34;&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;
-                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/controllers/frontend.yaml&#34; download=&#34;controllers/frontend.yaml&#34;&gt;
-                    &lt;code&gt;controllers/frontend.yaml&lt;/code&gt;
-                &lt;/a&gt;
-                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;controllersfrontendyaml&#39;)&#34; title=&#34;Copy controllers/frontend.yaml to clipboard&#34;&gt;
-            &lt;/th&gt;
-        &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody&gt;
-        &lt;tr&gt;
-            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ReplicaSet&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;guestbook&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#75715e&#34;&gt;# modify replicas according to your case&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;replicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-        &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
-      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;php-redis&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;registry.cn-hangzhou.aliyuncs.com/lisong/gb-frontend:v3-google_samples&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/tbody&gt;
-&lt;/table&gt;
-
-
-&lt;p&gt;将以上配置保存到 &lt;code&gt;frontend.yaml&lt;/code&gt;， 然后发布到 k8s 集群，就会在集群中创建一个 ReplicaSet 和对应 Pod。&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl apply -f frontend.yaml
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;可以通过以下命令查看当前部署的 &lt;code&gt;ReplicaSet&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get rs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果中有类似如下如果:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;NAME       DESIRED   CURRENT   READY   AGE
-frontend   &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;         &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;         &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;       6s
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;也可以通过以下命令查看 &lt;code&gt;ReplicaSet&lt;/code&gt; 状态:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl describe rs/frontend
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;Name:         frontend
-Namespace:    default
-Selector:     tier&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;frontend
-Labels:       app&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;guestbook
-              tier&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;frontend
-Annotations:  kubectl.kubernetes.io/last-applied-configuration:
-                &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;apiVersion&amp;#34;&lt;/span&gt;:&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;apps/v1&amp;#34;&lt;/span&gt;,&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;kind&amp;#34;&lt;/span&gt;:&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ReplicaSet&amp;#34;&lt;/span&gt;,&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;metadata&amp;#34;&lt;/span&gt;:&lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;annotations&amp;#34;&lt;/span&gt;:&lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;,&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;labels&amp;#34;&lt;/span&gt;:&lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;app&amp;#34;&lt;/span&gt;:&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;guestbook&amp;#34;&lt;/span&gt;,&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tier&amp;#34;&lt;/span&gt;:&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;frontend&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;,&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;:&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;frontend&amp;#34;&lt;/span&gt;,...
-Replicas:     &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; current / &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; desired
-Pods Status:  &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; Running / &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; Waiting / &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; Succeeded / &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; Failed
-Pod Template:
-  Labels:  tier&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;frontend
-  Containers:
-   php-redis:
-    Image:        gcr.io/google_samples/gb-frontend:v3
-    Port:         &amp;lt;none&amp;gt;
-    Host Port:    &amp;lt;none&amp;gt;
-    Environment:  &amp;lt;none&amp;gt;
-    Mounts:       &amp;lt;none&amp;gt;
-  Volumes:        &amp;lt;none&amp;gt;
-Events:
-  Type    Reason            Age   From                   Message
-  ----    ------            ----  ----                   -------
-  Normal  SuccessfulCreate  117s  replicaset-controller  Created pod: frontend-wtsmm
-  Normal  SuccessfulCreate  116s  replicaset-controller  Created pod: frontend-b2zdv
-  Normal  SuccessfulCreate  116s  replicaset-controller  Created pod: frontend-vcmts
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;最后再用以下命令查看创建的 Pod:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get pods
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;NAME             READY   STATUS    RESTARTS   AGE
-frontend-b2zdv   1/1     Running   &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;          6m36s
-frontend-vcmts   1/1     Running   &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;          6m36s
-frontend-wtsmm   1/1     Running   &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;          6m36s
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;通过以正下命令输出的 yaml 可以验证这些 Pod 所属 &lt;code&gt;ReplicaSet&lt;/code&gt;：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get pods frontend-b2zdv -o yaml
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下，可以看到 &lt;code&gt;metadata.ownerReferences&lt;/code&gt; 字段中就是这个叫 &lt;code&gt;frontend&lt;/code&gt; 的 &lt;code&gt;ReplicaSet&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;apiVersion: v1
-kind: Pod
-metadata:
-  creationTimestamp: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2020-02-12T07:06:16Z&amp;#34;&lt;/span&gt;
-  generateName: frontend-
-  labels:
-    tier: frontend
-  name: frontend-b2zdv
-  namespace: default
-  ownerReferences:
-  - apiVersion: apps/v1
-    blockOwnerDeletion: true
-    controller: true
-    kind: ReplicaSet
-    name: frontend
-    uid: f391f6db-bb9b-4c09-ae74-6a1f77f3d5cf
-...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
-## Non-Template Pod acquisitions
-
-While you can create bare Pods with no problems, it is strongly recommended to make sure that the bare Pods do not have
-labels which match the selector of one of your ReplicaSets. The reason for this is because a ReplicaSet is not limited
-to owning Pods specified by its template-- it can acquire other Pods in the manner specified in the previous sections.
-
-Take the previous frontend ReplicaSet example, and the Pods specified in the  following manifest:
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;table class=&#34;includecode&#34; id=&#34;podspod-rsyaml&#34;&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;
-                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/pod-rs.yaml&#34; download=&#34;pods/pod-rs.yaml&#34;&gt;
-                    &lt;code&gt;pods/pod-rs.yaml&lt;/code&gt;
-                &lt;/a&gt;
-                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;podspod-rsyaml&#39;)&#34; title=&#34;Copy pods/pod-rs.yaml to clipboard&#34;&gt;
-            &lt;/th&gt;
-        &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody&gt;
-        &lt;tr&gt;
-            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pod1&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
-  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;hello1&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;registry.cn-hangzhou.aliyuncs.com/lisong/hello-app:2.0-google-samples&lt;/span&gt;
-
----
-
-&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pod2&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
-  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;hello2&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;registry.cn-hangzhou.aliyuncs.com/lisong/hello-app:1.0-google-samples&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/tbody&gt;
-&lt;/table&gt;
-
-
-
-As those Pods do not have a Controller (or any object) as their owner reference and match the selector of the frontend
-ReplicaSet, they will immediately be acquired by it.
-
-Suppose you create the Pods after the frontend ReplicaSet has been deployed and has set up its initial Pod replicas to
-fulfill its replica count requirement:
-
-```shell
-kubectl apply -f https://kubernetes.io/examples/pods/pod-rs.yaml
-```
-
-The new Pods will be acquired by the ReplicaSet, and then immediately terminated as the ReplicaSet would be over
-its desired count.
-
-Fetching the Pods:
-
-```shell
-kubectl get pods
-```
-
-The output shows that the new Pods are either already terminated, or in the process of being terminated:
-
-```shell
-NAME             READY   STATUS        RESTARTS   AGE
-frontend-b2zdv   1/1     Running       0          10m
-frontend-vcmts   1/1     Running       0          10m
-frontend-wtsmm   1/1     Running       0          10m
-pod1             0/1     Terminating   0          1s
-pod2             0/1     Terminating   0          1s
-```
-
-If you create the Pods first:
-
-```shell
-kubectl apply -f https://kubernetes.io/examples/pods/pod-rs.yaml
-```
-
-And then create the ReplicaSet however:
-
-```shell
-kubectl apply -f https://kubernetes.io/examples/controllers/frontend.yaml
-```
-
-You shall see that the ReplicaSet has acquired the Pods and has only created new ones according to its spec until the
-number of its new Pods and the original matches its desired count. As fetching the Pods:
-
-```shell
-kubectl get pods
-```
-
-Will reveal in its output:
-```shell
-NAME             READY   STATUS    RESTARTS   AGE
-frontend-hmmj2   1/1     Running   0          9s
-pod1             1/1     Running   0          36s
-pod2             1/1     Running   0          36s
-```
-
-In this manner, a ReplicaSet can own a non-homogenous set of Pods
- --&gt;
-&lt;h2 id=&#34;不是自己模板定义的-pod-的捕获&#34;&gt;不是自己模板定义的 Pod 的捕获&lt;/h2&gt;
-&lt;p&gt;用户可以自由的创建裸 Pod， 但是推荐在创建裸 Pod 时不要在上面打上已经存在的 &lt;code&gt;ReplicaSet&lt;/code&gt; 选择器对应的标签。
-不这么做的原因是 &lt;code&gt;ReplicaSet&lt;/code&gt; 并不仅限于自身模板创建的 Pod， 也可以捕获其它拥有对应标签的 Pod(上一节介绍过)&lt;/p&gt;
-&lt;p&gt;继续上一个例子中的 &lt;code&gt;frontend&lt;/code&gt; &lt;code&gt;ReplicaSet&lt;/code&gt;， 再加下如下定义的 Pod&lt;/p&gt;
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;table class=&#34;includecode&#34; id=&#34;podspod-rsyaml&#34;&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;
-                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/pod-rs.yaml&#34; download=&#34;pods/pod-rs.yaml&#34;&gt;
-                    &lt;code&gt;pods/pod-rs.yaml&lt;/code&gt;
-                &lt;/a&gt;
-                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;podspod-rsyaml&#39;)&#34; title=&#34;Copy pods/pod-rs.yaml to clipboard&#34;&gt;
-            &lt;/th&gt;
-        &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody&gt;
-        &lt;tr&gt;
-            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pod1&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
-  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;hello1&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;registry.cn-hangzhou.aliyuncs.com/lisong/hello-app:2.0-google-samples&lt;/span&gt;
-
----
-
-&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pod2&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
-  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;hello2&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;registry.cn-hangzhou.aliyuncs.com/lisong/hello-app:1.0-google-samples&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/tbody&gt;
-&lt;/table&gt;
-
-
-&lt;p&gt;这些 Pod 没并有在所属者引用上有控制器(或其它对象)， 但是它上面的标签又被 &lt;code&gt;frontend&lt;/code&gt; &lt;code&gt;ReplicaSet&lt;/code&gt;
-的选择器所匹配，它们马上就会被这个 &lt;code&gt;ReplicaSet&lt;/code&gt; 捕获。&lt;/p&gt;
-&lt;p&gt;假设 Pod 的创建时间是在 &lt;code&gt;frontend&lt;/code&gt; &lt;code&gt;ReplicaSet&lt;/code&gt; 部署之后，并且其创建的 Pod 已经达到了所期望的数量：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl apply -f pod-rs.yaml
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;新创建的 Pod 会被 &lt;code&gt;ReplicaSet&lt;/code&gt; 捕获，然后发现 &lt;code&gt;ReplicaSet&lt;/code&gt; 副本数已经超过预期数量，所以就会终止这些多余的 Pod&lt;/p&gt;
-&lt;p&gt;查看 Pod 状态:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get pods
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出类似如下，会发现新创建的 Pod 正在被干掉或已经被干掉:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;NAME             READY   STATUS        RESTARTS   AGE
-frontend-b2zdv   1/1     Running       &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;          10m
-frontend-vcmts   1/1     Running       &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;          10m
-frontend-wtsmm   1/1     Running       &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;          10m
-pod1             0/1     Terminating   &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;          1s
-pod2             0/1     Terminating   &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;          1s
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果创建的顺序调换一下，先创建这些 Pod:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl apply -f pod-rs.yaml
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;然后再创建 &lt;code&gt;ReplicaSet&lt;/code&gt;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl apply -f frontend.yaml
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这次就会发现 &lt;code&gt;ReplicaSet&lt;/code&gt; 会捕获已经创建的两个 Pod，然后根据预期的状态中需要3个，所以就再创建一个新的，就完工了。
-再次查看 Pod 状态&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get pods
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果就会变得不一样，具体如下:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;NAME             READY   STATUS    RESTARTS   AGE
-frontend-hmmj2   1/1     Running   &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;          9s
-pod1             1/1     Running   &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;          36s
-pod2             1/1     Running   &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;          36s
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;也就是， &lt;code&gt;ReplicaSet&lt;/code&gt; 下属的 Pod 可以是不是通过本身模板创建的 Pod&lt;/p&gt;
-&lt;!--  
-## Writing a ReplicaSet manifest
-
-As with all other Kubernetes API objects, a ReplicaSet needs the `apiVersion`, `kind`, and `metadata` fields.
-For ReplicaSets, the kind is always just ReplicaSet.
-In Kubernetes 1.9 the API version `apps/v1` on the ReplicaSet kind is the current version and is enabled by default. The API version `apps/v1beta2` is deprecated.
-Refer to the first lines of the `frontend.yaml` example for guidance.
-
-The name of a ReplicaSet object must be a valid
-[DNS subdomain name](/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
-
-A ReplicaSet also needs a [`.spec` section](https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status).
---&gt;
-&lt;h2 id=&#34;编写-replicaset-定义清单&#34;&gt;编写 &lt;code&gt;ReplicaSet&lt;/code&gt; 定义清单&lt;/h2&gt;
-&lt;p&gt;与其它所以其它 k8s API 对象一样， &lt;code&gt;ReplicaSet&lt;/code&gt; 需要有 &lt;code&gt;apiVersion&lt;/code&gt;, &lt;code&gt;kind&lt;/code&gt;, &lt;code&gt;metadata&lt;/code&gt; 字段.
-对于 &lt;code&gt;ReplicaSet&lt;/code&gt;， &lt;code&gt;kind&lt;/code&gt; 字段就一直是 &lt;code&gt;ReplicaSet&lt;/code&gt;。
-在 k8s v1.9+ &lt;code&gt;apiVersion&lt;/code&gt; 字段的值为 &lt;code&gt;apps/v1&lt;/code&gt;，默认开启。 API 版本 &lt;code&gt;apps/v1beta2&lt;/code&gt; 被废弃。
-具体可以看之前示例中 &lt;code&gt;frontend.yaml&lt;/code&gt; 文件内容。&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;ReplicaSet&lt;/code&gt; 名称必须是一个有效的 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;.
-&lt;code&gt;ReplicaSet&lt;/code&gt; 还必须要有一个
-&lt;a href=&#34;https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status&#34;&gt;&lt;code&gt;.spec&lt;/code&gt; 字段&lt;/a&gt;.&lt;/p&gt;
-&lt;!--
-### Pod Template
-
-The `.spec.template` is a [pod template](/docs/concepts/workloads/Pods/pod-overview/#pod-templates) which is also
-required to have labels in place. In our `frontend.yaml` example we had one label: `tier: frontend`.
-Be careful not to overlap with the selectors of other controllers, lest they try to adopt this Pod.
-
-For the template&#39;s [restart policy](/docs/concepts/workloads/Pods/pod-lifecycle/#restart-policy) field,
-`.spec.template.spec.restartPolicy`, the only allowed value is `Always`, which is the default.
- --&gt;
-&lt;h3 id=&#34;pod-模板&#34;&gt;Pod 模板&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;.spec.template&lt;/code&gt; 字段就是 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/Pods/pod-overview/#pod-templates&#34;&gt;pod template&lt;/a&gt; 而且其中还必须要定义标签.
-在示例中的 &lt;code&gt;frontend.yaml&lt;/code&gt; 打的标签是: &lt;code&gt;tier: frontend&lt;/code&gt;.
-注意不能与其它控制器的选择器相重叠，以免它们会争抢这个 Pod&lt;/p&gt;
-&lt;p&gt;模板中的 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/Pods/pod-lifecycle/#restart-policy&#34;&gt;重启策略&lt;/a&gt; 字段,
-&lt;code&gt;.spec.template.spec.restartPolicy&lt;/code&gt;, 允许的值只能是 &lt;code&gt;Always&lt;/code&gt;, 默认也是  &lt;code&gt;Always&lt;/code&gt;.&lt;/p&gt;
-&lt;!--
-### Pod Selector
-
-The `.spec.selector` field is a [label selector](/docs/concepts/overview/working-with-objects/labels/). As discussed
-[earlier](#how-a-replicaset-works) these are the labels used to identify potential Pods to acquire. In our
-`frontend.yaml` example, the selector was:
-```shell
-matchLabels:
-	tier: frontend
-```
-
-In the ReplicaSet, `.spec.template.metadata.labels` must match `spec.selector`, or it will
-be rejected by the API.
-
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; For 2 ReplicaSets specifying the same &lt;code&gt;.spec.selector&lt;/code&gt; but different &lt;code&gt;.spec.template.metadata.labels&lt;/code&gt; and &lt;code&gt;.spec.template.spec&lt;/code&gt; fields, each ReplicaSet ignores the Pods created by the other ReplicaSet.&lt;/div&gt;
-&lt;/blockquote&gt;
-
- --&gt;
-&lt;h3 id=&#34;pod-选择器&#34;&gt;Pod 选择器&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;.spec.selector&lt;/code&gt; 字段是一个 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/labels/&#34;&gt;标签选择器&lt;/a&gt;
-&lt;a href=&#34;#how-a-replicaset-works&#34;&gt;之前&lt;/a&gt;讨论过，这些标签用于识别潜在的捕获对象。 在之前示例中 &lt;code&gt;frontend.yaml&lt;/code&gt;
-定义的选择器如下:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;tier&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在 &lt;code&gt;ReplicaSet&lt;/code&gt; 中， &lt;code&gt;.spec.template.metadata.labels&lt;/code&gt; 必须要与 &lt;code&gt;spec.selector&lt;/code&gt; 匹配，否则会被 API 拒绝。
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 如果两个 &lt;code&gt;ReplicaSet&lt;/code&gt; 拥有相同的 &lt;code&gt;.spec.selector&lt;/code&gt;， 但 &lt;code&gt;.spec.template.metadata.labels&lt;/code&gt; 和 &lt;code&gt;.spec.template.spec&lt;/code&gt; 字段不同
-则相互之间会忽略对方创建的 Pod&lt;/div&gt;
-&lt;/blockquote&gt;
-&lt;/p&gt;
-&lt;p&gt;HOW？&lt;/p&gt;
-&lt;!--
-### Replicas
-
-You can specify how many Pods should run concurrently by setting `.spec.replicas`. The ReplicaSet will create/delete
-its Pods to match this number.
-
-If you do not specify `.spec.replicas`, then it defaults to 1.
- --&gt;
-&lt;h3 id=&#34;副本数&#34;&gt;副本数&lt;/h3&gt;
-&lt;p&gt;用户可以通过 &lt;code&gt;.spec.replicas&lt;/code&gt; 设置需要同时运行 Pod 的数量。 &lt;code&gt;ReplicaSet&lt;/code&gt; 会创建/删除 它管理的 Pod 以达成该数量。
-如果在配置中没有 &lt;code&gt;.spec.replicas&lt;/code&gt;， 则默认为 1.&lt;/p&gt;
-&lt;!--
-## Working with ReplicaSets
-
-### Deleting a ReplicaSet and its Pods
-
-To delete a ReplicaSet and all of its Pods, use [`kubectl delete`](/docs/reference/generated/kubectl/kubectl-commands#delete). The [Garbage collector](/docs/concepts/workloads/controllers/garbage-collection/) automatically deletes all of the dependent Pods by default.
-
-When using the REST API or the `client-go` library, you must set `propagationPolicy` to `Background` or `Foreground` in
-the -d option.
-For example:
-```shell
-kubectl proxy --port=8080
-curl -X DELETE  &#39;localhost:8080/apis/apps/v1/namespaces/default/replicasets/frontend&#39; \
-&gt; -d &#39;{&#34;kind&#34;:&#34;DeleteOptions&#34;,&#34;apiVersion&#34;:&#34;v1&#34;,&#34;propagationPolicy&#34;:&#34;Foreground&#34;}&#39; \
-&gt; -H &#34;Content-Type: application/json&#34;
-```
- --&gt;
-&lt;h2 id=&#34;replicaset-的使用&#34;&gt;ReplicaSet 的使用&lt;/h2&gt;
-&lt;h3 id=&#34;删除一个-replicaset-及其-pod&#34;&gt;删除一个 &lt;code&gt;ReplicaSet&lt;/code&gt; 及其 Pod&lt;/h3&gt;
-&lt;p&gt;要删除一个 &lt;code&gt;ReplicaSet&lt;/code&gt; 及其所属的全部 Pod， 可以使用 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubectl/kubectl-commands#delete&#34;&gt;&lt;code&gt;kubectl delete&lt;/code&gt;&lt;/a&gt;
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/&#34;&gt;垃圾回收&lt;/a&gt; 默认会自动删除它所属的全部 Pod。&lt;/p&gt;
-&lt;p&gt;当使用  &lt;code&gt;REST API&lt;/code&gt; 或 &lt;code&gt;client-go&lt;/code&gt; 库， 必须将 &lt;code&gt;propagationPolicy&lt;/code&gt; 设置为 &lt;code&gt;Background&lt;/code&gt; 或 &lt;code&gt;Foreground&lt;/code&gt;
-例如:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl proxy --port&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
-curl -X DELETE  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;localhost:8080/apis/apps/v1/namespaces/default/replicasets/frontend&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;&amp;gt; -d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{&amp;#34;kind&amp;#34;:&amp;#34;DeleteOptions&amp;#34;,&amp;#34;apiVersion&amp;#34;:&amp;#34;v1&amp;#34;,&amp;#34;propagationPolicy&amp;#34;:&amp;#34;Foreground&amp;#34;}&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;&amp;gt; -H &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Content-Type: application/json&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
-### Deleting just a ReplicaSet
-
-You can delete a ReplicaSet without affecting any of its Pods using [`kubectl delete`](/docs/reference/generated/kubectl/kubectl-commands#delete) with the `--cascade=false` option.
-When using the REST API or the `client-go` library, you must set `propagationPolicy` to `Orphan`.
-For example:
-```shell
-kubectl proxy --port=8080
-curl -X DELETE  &#39;localhost:8080/apis/apps/v1/namespaces/default/replicasets/frontend&#39; \
-&gt; -d &#39;{&#34;kind&#34;:&#34;DeleteOptions&#34;,&#34;apiVersion&#34;:&#34;v1&#34;,&#34;propagationPolicy&#34;:&#34;Orphan&#34;}&#39; \
-&gt; -H &#34;Content-Type: application/json&#34;
-```
-
-Once the original is deleted, you can create a new ReplicaSet to replace it.  As long
-as the old and new `.spec.selector` are the same, then the new one will adopt the old Pods.
-However, it will not make any effort to make existing Pods match a new, different pod template.
-To update Pods to a new spec in a controlled way, use a
-[Deployment](/docs/concepts/workloads/controllers/deployment/#creating-a-deployment), as ReplicaSets do not support a rolling update directly.
- --&gt;
-&lt;h3 id=&#34;仅删除-replicaset&#34;&gt;仅删除 &lt;code&gt;ReplicaSet&lt;/code&gt;&lt;/h3&gt;
-&lt;p&gt;用户可以通过 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubectl/kubectl-commands#delete&#34;&gt;&lt;code&gt;kubectl delete&lt;/code&gt;&lt;/a&gt;
-加 &lt;code&gt;--cascade=false&lt;/code&gt; 选项，实现仅删除 &lt;code&gt;ReplicaSet&lt;/code&gt; 对象，而不删除其所属的 Pod。
-当使用  &lt;code&gt;REST API&lt;/code&gt; 或 &lt;code&gt;client-go&lt;/code&gt; 库， 必须将 &lt;code&gt;propagationPolicy&lt;/code&gt; 设置为 &lt;code&gt;Orphan&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;例如:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl proxy --port&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
-curl -X DELETE  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;localhost:8080/apis/apps/v1/namespaces/default/replicasets/frontend&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;&amp;gt; -d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{&amp;#34;kind&amp;#34;:&amp;#34;DeleteOptions&amp;#34;,&amp;#34;apiVersion&amp;#34;:&amp;#34;v1&amp;#34;,&amp;#34;propagationPolicy&amp;#34;:&amp;#34;Orphan&amp;#34;}&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;&amp;gt; -H &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Content-Type: application/json&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;当原来的 &lt;code&gt;ReplicaSet&lt;/code&gt; 就可以创建一个新的来替代它。 新创建的 ReplicaSet 的 &lt;code&gt;.spec.selector&lt;/code&gt; 需要与原来的一样， 这样它就能接管这些 Pod。
-但是它不会让旧的 Pod 使用新的模板。
-而想要以控制器方式更新 Pod 的模板，需要使用 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/deployment/#creating-a-deployment&#34;&gt;Deployment&lt;/a&gt;
-因为 &lt;code&gt;ReplicaSet&lt;/code&gt; 不支持直接的滚动更新。&lt;/p&gt;
-&lt;!--
-### Isolating Pods from a ReplicaSet
-
-You can remove Pods from a ReplicaSet by changing their labels. This technique may be used to remove Pods
-from service for debugging, data recovery, etc. Pods that are removed in this way will be replaced automatically (
-assuming that the number of replicas is not also changed).
- --&gt;
-&lt;h3 id=&#34;将-pod-从-replicaset-剥离出来&#34;&gt;将 Pod 从 &lt;code&gt;ReplicaSet&lt;/code&gt; 剥离出来&lt;/h3&gt;
-&lt;p&gt;用户可以通过修改标签的方式将 Pod 从 &lt;code&gt;ReplicaSet&lt;/code&gt; 中移出， 也可以通过这种方式将 Pod 从其它的服务中移出后用作调度，数据恢复等。
-用这种方式移出的 Pod 会自动被替代(如果副本数没有同步修改)&lt;/p&gt;
-&lt;!--
-### Scaling a ReplicaSet
-
-A ReplicaSet can be easily scaled up or down by simply updating the `.spec.replicas` field. The ReplicaSet controller
-ensures that a desired number of Pods with a matching label selector are available and operational.
- --&gt;
-&lt;h3 id=&#34;replicaset-容量伸缩&#34;&gt;&lt;code&gt;ReplicaSet&lt;/code&gt; 容量伸缩&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;ReplicaSet&lt;/code&gt; 可以通过修改 &lt;code&gt;.spec.replicas&lt;/code&gt; 字段来实现容量的扩大或缩小。 &lt;code&gt;ReplicaSet&lt;/code&gt; 控制器会保证 所属的 Pod 的数量与预期的相同&lt;/p&gt;
-&lt;!--
-### ReplicaSet as a Horizontal Pod Autoscaler Target
-
-A ReplicaSet can also be a target for
-[Horizontal Pod Autoscalers (HPA)](/docs/tasks/run-application/horizontal-pod-autoscale/). That is,
-a ReplicaSet can be auto-scaled by an HPA. Here is an example HPA targeting
-the ReplicaSet we created in the previous example.
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;table class=&#34;includecode&#34; id=&#34;controllershpa-rsyaml&#34;&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;
-                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/controllers/hpa-rs.yaml&#34; download=&#34;controllers/hpa-rs.yaml&#34;&gt;
-                    &lt;code&gt;controllers/hpa-rs.yaml&lt;/code&gt;
-                &lt;/a&gt;
-                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;controllershpa-rsyaml&#39;)&#34; title=&#34;Copy controllers/hpa-rs.yaml to clipboard&#34;&gt;
-            &lt;/th&gt;
-        &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody&gt;
-        &lt;tr&gt;
-            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;autoscaling/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;HorizontalPodAutoscaler&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend-scaler&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;scaleTargetRef&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ReplicaSet&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;minReplicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;maxReplicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;targetCPUUtilizationPercentage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;50&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/tbody&gt;
-&lt;/table&gt;
-
-
-
-Saving this manifest into `hpa-rs.yaml` and submitting it to a Kubernetes cluster should
-create the defined HPA that autoscales the target ReplicaSet depending on the CPU usage
-of the replicated Pods.
-
-```shell
-kubectl apply -f https://k8s.io/examples/controllers/hpa-rs.yaml
-```
-
-Alternatively, you can use the `kubectl autoscale` command to accomplish the same
-(and it&#39;s easier!)
-
-```shell
-kubectl autoscale rs frontend --max=10 --min=3 --cpu-percent=50
-```
- --&gt;
-&lt;h3 id=&#34;replicaset-作为-pod-水平自动扩展目标&#34;&gt;&lt;code&gt;ReplicaSet&lt;/code&gt; 作为 Pod 水平自动扩展目标&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;ReplicaSet&lt;/code&gt; 也可作为 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/run-application/horizontal-pod-autoscale/&#34;&gt;Horizontal Pod Autoscalers (HPA)&lt;/a&gt;
-的目标。 也就是 &lt;code&gt;ReplicaSet&lt;/code&gt; 可以通过一个 HPA 来自动伸缩。 以下为一个 &lt;code&gt;ReplicaSet&lt;/code&gt; 为目标的 HPA 的示例:&lt;/p&gt;
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;table class=&#34;includecode&#34; id=&#34;controllershpa-rsyaml&#34;&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;
-                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/controllers/hpa-rs.yaml&#34; download=&#34;controllers/hpa-rs.yaml&#34;&gt;
-                    &lt;code&gt;controllers/hpa-rs.yaml&lt;/code&gt;
-                &lt;/a&gt;
-                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;controllershpa-rsyaml&#39;)&#34; title=&#34;Copy controllers/hpa-rs.yaml to clipboard&#34;&gt;
-            &lt;/th&gt;
-        &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody&gt;
-        &lt;tr&gt;
-            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;autoscaling/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;HorizontalPodAutoscaler&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend-scaler&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;scaleTargetRef&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ReplicaSet&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;frontend&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;minReplicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;maxReplicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;targetCPUUtilizationPercentage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;50&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/tbody&gt;
-&lt;/table&gt;
-
-
-&lt;p&gt;将配置文件内容存入 &lt;code&gt;hpa-rs.yaml&lt;/code&gt; 并提交到 k8s 集群， 会创建一个 HPA，它会根据所属 Pod CPU使用自动伸缩目标 &lt;code&gt;ReplicaSet&lt;/code&gt; 的容量&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl apply -f hpa-rs.yaml
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;相应的，也可能通过 &lt;code&gt;kubectl autoscale&lt;/code&gt; 达到相同的效果(更容易)&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl autoscale rs frontend --max&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt; --min&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; --cpu-percent&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;50&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
-## Alternatives to ReplicaSet
-
-### Deployment (recommended)
-
-[`Deployment`](/docs/concepts/workloads/controllers/deployment/) is an object which can own ReplicaSets and update
-them and their Pods via declarative, server-side rolling updates.
-While ReplicaSets can be used independently, today they&#39;re  mainly used by Deployments as a mechanism to orchestrate Pod
-creation, deletion and updates. When you use Deployments you don’t have to worry about managing the ReplicaSets that
-they create. Deployments own and manage their ReplicaSets.
-As such, it is recommended to use Deployments when you want ReplicaSets.
- --&gt;
-&lt;h2 id=&#34;replicaset-替代方案&#34;&gt;&lt;code&gt;ReplicaSet&lt;/code&gt; 替代方案&lt;/h2&gt;
-&lt;h3 id=&#34;deployment-推荐&#34;&gt;Deployment (推荐)&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/deployment/&#34;&gt;&lt;code&gt;Deployment&lt;/code&gt;&lt;/a&gt; 对象可以包含 &lt;code&gt;ReplicaSet&lt;/code&gt; 并且可以通过声明方式更新自身及所属的 Pod，
-服务端滚动更新。 虽然 ReplicaSet 可以独立使用，但是现在主要是使用 Deployment 作为组织 Pod 创建，删除，更新的方式。
-当用户使用 &lt;code&gt;Deployment&lt;/code&gt; 不需要关心它所创建的 &lt;code&gt;ReplicaSet&lt;/code&gt;， &lt;code&gt;Deployment&lt;/code&gt; 会管理所属的 &lt;code&gt;ReplicaSet&lt;/code&gt;
-因此用户在想要使用 &lt;code&gt;ReplicaSet&lt;/code&gt; 时推荐使用 &lt;code&gt;Deployment&lt;/code&gt; 代替。&lt;/p&gt;
-&lt;!--
-### Bare Pods
-
-Unlike the case where a user directly created Pods, a ReplicaSet replaces Pods that are deleted or terminated for any reason, such as in the case of node failure or disruptive node maintenance, such as a kernel upgrade. For this reason, we recommend that you use a ReplicaSet even if your application requires only a single Pod. Think of it similarly to a process supervisor, only it supervises multiple Pods across multiple nodes instead of individual processes on a single node. A ReplicaSet delegates local container restarts to some agent on the node (for example, Kubelet or Docker).
- --&gt;
-&lt;h3 id=&#34;让-pod-裸奔&#34;&gt;让 Pod 裸奔&lt;/h3&gt;
-&lt;p&gt;与用户直接创建 Pod 不同， &lt;code&gt;ReplicaSet&lt;/code&gt; 在 Pod 因为某些原因被删除或终止时会创建替代的 Pod， 这些原因可能是 节点挂了，节点因维护如升级内格而引起的计划内故障。
-对于这些原因，我们建议用户使用 &lt;code&gt;ReplicaSet&lt;/code&gt; 即便这个应用只需要一个 Pod。 可以把它认为是一个进程监控， 只是它可以监控多个节点上的多个 Pod，而不是一个节点上的一个进程。
-&lt;code&gt;ReplicaSet&lt;/code&gt; 会委托节点上的代理(如 kubelet 或 docker)来实现对本地容器的重启。&lt;/p&gt;
-&lt;!--
-### Job
-
-Use a [`Job`](/docs/concepts/jobs/run-to-completion-finite-workloads/) instead of a ReplicaSet for Pods that are expected to terminate on their own
-(that is, batch jobs).
- --&gt;
-&lt;h3 id=&#34;job&#34;&gt;Job&lt;/h3&gt;
-&lt;p&gt;在运行那会在有限时间内自己运行结束后自动终止的 Pod(批处理任务)，请使用 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/jobs/run-to-completion-finite-workloads/&#34;&gt;&lt;code&gt;Job&lt;/code&gt;&lt;/a&gt;,就不要用 &lt;code&gt;ReplicaSet&lt;/code&gt;了&lt;/p&gt;
-&lt;!--
-### DaemonSet
-
-Use a [`DaemonSet`](/docs/concepts/workloads/controllers/daemonset/) instead of a ReplicaSet for Pods that provide a
-machine-level function, such as machine monitoring or machine logging.  These Pods have a lifetime that is tied
-to a machine lifetime: the Pod needs to be running on the machine before other Pods start, and are
-safe to terminate when the machine is otherwise ready to be rebooted/shutdown.
- --&gt;
-&lt;h3 id=&#34;daemonset&#34;&gt;DaemonSet&lt;/h3&gt;
-&lt;p&gt;当 Pod 需要使用到机器级别的功能，如机器监控或机器日志时，使用 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/daemonset/&#34;&gt;&lt;code&gt;DaemonSet&lt;/code&gt;&lt;/a&gt;
-因为这些 Pod 的生存期会与对应机器的生存期绑定在一起: 这些 Pod 需要在机器上其它 Pod 运行之前就在节点上运行， 只有在机器准备重启或关机时才能
-安全的终止。&lt;/p&gt;
-&lt;!--
-### ReplicationController
-
-ReplicaSets are the successors to [_ReplicationControllers_](/docs/concepts/workloads/controllers/replicationcontroller/).
-The two serve the same purpose, and behave similarly, except that a ReplicationController does not support set-based
-selector requirements as described in the [labels user guide](/docs/concepts/overview/working-with-objects/labels/#label-selectors).
-As such, ReplicaSets are preferred over ReplicationControllers
- --&gt;
-&lt;h3 id=&#34;replicationcontroller&#34;&gt;ReplicationController&lt;/h3&gt;
-&lt;p&gt;ReplicaSet 是  &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/&#34;&gt;&lt;em&gt;ReplicationControllers&lt;/em&gt;&lt;/a&gt; 的继任者。
-它们两个可以达成相同的目的，而且行为方式也相似， 除了 &lt;code&gt;ReplicationController&lt;/code&gt; 不支持像
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/labels/#label-selectors&#34;&gt;标签使用&lt;/a&gt; 中介绍的基于集合的选择器。
-因此相对于 ReplicationControllers 推荐使用 &lt;code&gt;ReplicaSet&lt;/code&gt;&lt;/p&gt;
 
       </description>
     </item>

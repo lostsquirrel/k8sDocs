@@ -16,24 +16,22 @@
 <link rel="manifest" href="/k8sDocs/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/k8sDocs/images/kubernetes-192x192.png">
 
-<title>Ingress 控制器 | Kubernetes</title><meta property="og:title" content="Ingress 控制器" />
-<meta property="og:description" content="要使一个 Ingress 工作的前提是集群中必须要有一个 Ingress 控制器在运行。 与其它类型的控制器作为 kube-controller-manager 的一部分运行不同， Ingress 不会自动在集群中 运行。 使用本文选择最适合" />
+<title>使用 kubeconfig 文件组织集群访问 | Kubernetes</title><meta property="og:title" content="使用 kubeconfig 文件组织集群访问" />
+<meta property="og:description" content="kubeconfig 文件用来组织关于集群，用户，命名空间，和认证机制信息。 kubectl 命令行工具使用 kubeconfig 文件来查找其用以选择集群和与集群 API 服务通信的信息。 说明： 一个用于配" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/ingress-controllers/" />
-<meta property="article:published_time" content="2020-09-23T00:00:00+00:00" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/organize-cluster-access-kubeconfig/" />
 <meta property="article:modified_time" content="2020-12-31T17:22:54+08:00" /><meta property="og:site_name" content="Kubernetes" />
-<meta itemprop="name" content="Ingress 控制器">
-<meta itemprop="description" content="要使一个 Ingress 工作的前提是集群中必须要有一个 Ingress 控制器在运行。 与其它类型的控制器作为 kube-controller-manager 的一部分运行不同， Ingress 不会自动在集群中 运行。 使用本文选择最适合">
-<meta itemprop="datePublished" content="2020-09-23T00:00:00+00:00" />
+<meta itemprop="name" content="使用 kubeconfig 文件组织集群访问">
+<meta itemprop="description" content="kubeconfig 文件用来组织关于集群，用户，命名空间，和认证机制信息。 kubectl 命令行工具使用 kubeconfig 文件来查找其用以选择集群和与集群 API 服务通信的信息。 说明： 一个用于配">
 <meta itemprop="dateModified" content="2020-12-31T17:22:54+08:00" />
-<meta itemprop="wordCount" content="662">
+<meta itemprop="wordCount" content="1480">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Ingress 控制器"/>
-<meta name="twitter:description" content="要使一个 Ingress 工作的前提是集群中必须要有一个 Ingress 控制器在运行。 与其它类型的控制器作为 kube-controller-manager 的一部分运行不同， Ingress 不会自动在集群中 运行。 使用本文选择最适合"/>
+<meta name="twitter:title" content="使用 kubeconfig 文件组织集群访问"/>
+<meta name="twitter:description" content="kubeconfig 文件用来组织关于集群，用户，命名空间，和认证机制信息。 kubectl 命令行工具使用 kubeconfig 文件来查找其用以选择集群和与集群 API 服务通信的信息。 说明： 一个用于配"/>
 
 
 
@@ -77,12 +75,12 @@
 
 
 
-<meta name="description" content="要使一个 Ingress 工作的前提是集群中必须要有一个 Ingress 控制器在运行。 与其它类型的控制器作为 kube-controller-manager 的一部分运行不同， Ingress 不会自动在集群中 运行。 使用本文选择最适合">
-<meta property="og:description" content="要使一个 Ingress 工作的前提是集群中必须要有一个 Ingress 控制器在运行。 与其它类型的控制器作为 kube-controller-manager 的一部分运行不同， Ingress 不会自动在集群中 运行。 使用本文选择最适合">
-<meta name="twitter:description" content="要使一个 Ingress 工作的前提是集群中必须要有一个 Ingress 控制器在运行。 与其它类型的控制器作为 kube-controller-manager 的一部分运行不同， Ingress 不会自动在集群中 运行。 使用本文选择最适合">
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/ingress-controllers/">
-<meta property="og:title" content="Ingress 控制器">
-<meta name="twitter:title" content="Ingress 控制器">
+<meta name="description" content="kubeconfig 文件用来组织关于集群，用户，命名空间，和认证机制信息。 kubectl 命令行工具使用 kubeconfig 文件来查找其用以选择集群和与集群 API 服务通信的信息。 说明： 一个用于配">
+<meta property="og:description" content="kubeconfig 文件用来组织关于集群，用户，命名空间，和认证机制信息。 kubectl 命令行工具使用 kubeconfig 文件来查找其用以选择集群和与集群 API 服务通信的信息。 说明： 一个用于配">
+<meta name="twitter:description" content="kubeconfig 文件用来组织关于集群，用户，命名空间，和认证机制信息。 kubectl 命令行工具使用 kubeconfig 文件来查找其用以选择集群和与集群 API 服务通信的信息。 说明： 一个用于配">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/organize-cluster-access-kubeconfig/">
+<meta property="og:title" content="使用 kubeconfig 文件组织集群访问">
+<meta name="twitter:title" content="使用 kubeconfig 文件组织集群访问">
 <meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
 
 <meta name="twitter:image:alt" content="Kubernetes">
@@ -96,7 +94,7 @@
 <script src="/k8sDocs/js/script.js"></script>
 
 
-    <title>Ingress 控制器 | Kubernetes</title>
+    <title>使用 kubeconfig 文件组织集群访问 | Kubernetes</title>
   </head>
   <body class="td-page td-documentation">
     <header>
@@ -559,10 +557,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/services-networking/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Service, 负载均衡, 网络</a>
+    <a  href="/k8sDocs/docs/concepts/services-networking/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Service, 负载均衡, 网络</a>
   </li>
   <ul>
-    <li class="collapse show" id="k8sdocsdocsconceptsservices-networking">
+    <li class="collapse " id="k8sdocsdocsconceptsservices-networking">
       
       
       
@@ -605,7 +603,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsservices-networkingingress-controllers" href="/k8sDocs/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress-controllers" href="/k8sDocs/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a>
       
       
       
@@ -725,10 +723,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/configuration/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">配置</a>
+    <a  href="/k8sDocs/docs/concepts/configuration/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">配置</a>
   </li>
   <ul>
-    <li class="collapse " id="k8sdocsdocsconceptsconfiguration">
+    <li class="collapse show" id="k8sdocsdocsconceptsconfiguration">
       
       
       
@@ -759,7 +757,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsconfigurationorganize-cluster-access-kubeconfig" href="/k8sDocs/docs/concepts/configuration/organize-cluster-access-kubeconfig/">使用 kubeconfig 文件组织集群访问</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsconfigurationorganize-cluster-access-kubeconfig" href="/k8sDocs/docs/concepts/configuration/organize-cluster-access-kubeconfig/">使用 kubeconfig 文件组织集群访问</a>
       
       
     </li>
@@ -817,14 +815,14 @@
 
 
 <li class="breadcrumb-item" >
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/">Service, 负载均衡, 网络</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/">配置</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/organize-cluster-access-kubeconfig/">使用 kubeconfig 文件组织集群访问</a>
 </li>
 
 	</ol>
@@ -837,170 +835,248 @@
     <div class="td-content">
     
 <p>
-  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/services-networking/ingress-controllers.md" id="editPageButton" target="_blank" data-proofer-ignore>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/configuration/organize-cluster-access-kubeconfig.md" id="editPageButton" target="_blank" data-proofer-ignore>
     Edit This Page
   </a>
 </p>
 
-  <h1>Ingress 控制器</h1>
+  <h1>使用 kubeconfig 文件组织集群访问</h1>
   
   
 
 <!--
 ---
-title: Ingress Controllers
-reviewers:
+title: Organizing Cluster Access Using kubeconfig Files
 content_type: concept
-weight: 40
---- -->
-<!-- overview -->
-<!--
-In order for the Ingress resource to work, the cluster must have an ingress controller running.
-
-Unlike other types of controllers which run as part of the `kube-controller-manager` binary, Ingress controllers
-are not started automatically with a cluster. Use this page to choose the ingress controller implementation
-that best fits your cluster.
-
-Kubernetes as a project currently supports and maintains [GCE](https://git.k8s.io/ingress-gce/README.md) and
-  [nginx](https://git.k8s.io/ingress-nginx/README.md) controllers.
+weight: 60
+---
  -->
-<p>要使一个 Ingress 工作的前提是集群中必须要有一个 Ingress 控制器在运行。</p>
-<p>与其它类型的控制器作为 <code>kube-controller-manager</code> 的一部分运行不同， Ingress 不会自动在集群中
-运行。 使用本文选择最适合你的集群的 Ingress 控制器实现。</p>
-<p>k8s 项目目前支持和维护
-<a href="https://git.k8s.io/ingress-gce/README.md">GCE</a>
-和
-<a href="https://git.k8s.io/ingress-nginx/README.md">nginx</a>
-控制器</p>
+<!-- overview -->
+<p>kubeconfig 文件用来组织关于集群，用户，命名空间，和认证机制信息。 <code>kubectl</code> 命令行工具使用
+kubeconfig 文件来查找其用以选择集群和与集群 API 服务通信的信息。</p>
+<blockquote class="note">
+  <div><strong>说明：</strong> 一个用于配置集群访问的文件就叫做 <em>kubeconfig 文件</em>。 这是引用配置文件的常用方式。 但并不意味
+着有一个叫 <code>kubeconfig</code> 的文件。</div>
+</blockquote>
+
+<p>默认情况下， <code>kubectl</code> 会在 <code>$HOME/.kube</code> 目录中寻找一个叫 <code>config</code> 的文件。 用户可以通过
+<code>KUBECONFIG</code> 环境变量来设置其它的 kubeconfig 文件。</p>
+<p>创建和设置 kubeconfig 文件的详细指南，见
+<a href="/k8sDocs/docs/tasks/access-application-cluster/configure-access-multiple-clusters">配置多集群访问</a>.</p>
 <!-- body -->
 <!--
-## Additional controllers
+## Supporting multiple clusters, users, and authentication mechanisms
 
-* [AKS Application Gateway Ingress Controller](https://github.com/Azure/application-gateway-kubernetes-ingress) is an ingress controller that enables ingress to [AKS clusters](https://docs.microsoft.com/azure/aks/kubernetes-walkthrough-portal) using the [Azure Application Gateway](https://docs.microsoft.com/azure/application-gateway/overview).
-* [Ambassador](https://www.getambassador.io/) API Gateway is an [Envoy](https://www.envoyproxy.io) based ingress
-  controller with [community](https://www.getambassador.io/docs) or
-  [commercial](https://www.getambassador.io/pro/) support from [Datawire](https://www.datawire.io/).
-* [AppsCode Inc.](https://appscode.com) offers support and maintenance for the most widely used [HAProxy](https://www.haproxy.org/) based ingress controller [Voyager](https://appscode.com/products/voyager).
-* [AWS ALB Ingress Controller](https://github.com/kubernetes-sigs/aws-alb-ingress-controller) enables ingress using the [AWS Application Load Balancer](https://aws.amazon.com/elasticloadbalancing/).
-* [Contour](https://projectcontour.io/) is an [Envoy](https://www.envoyproxy.io/) based ingress controller
-  provided and supported by VMware.
-* Citrix provides an [Ingress Controller](https://github.com/citrix/citrix-k8s-ingress-controller) for its hardware (MPX), virtualized (VPX) and [free containerized (CPX) ADC](https://www.citrix.com/products/citrix-adc/cpx-express.html) for [baremetal](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/deployment/baremetal) and [cloud](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/deployment) deployments.
-* F5 Networks provides [support and maintenance](https://support.f5.com/csp/article/K86859508)
-  for the [F5 BIG-IP Container Ingress Services for Kubernetes](https://clouddocs.f5.com/containers/latest/userguide/kubernetes/).
-* [Gloo](https://gloo.solo.io) is an open-source ingress controller based on [Envoy](https://www.envoyproxy.io) which offers API Gateway functionality with enterprise support from [solo.io](https://www.solo.io).  
-* [HAProxy Ingress](https://haproxy-ingress.github.io) is a highly customizable community-driven ingress controller for HAProxy.
-* [HAProxy Technologies](https://www.haproxy.com/) offers support and maintenance for the [HAProxy Ingress Controller for Kubernetes](https://github.com/haproxytech/kubernetes-ingress). See the [official documentation](https://www.haproxy.com/documentation/hapee/1-9r1/traffic-management/kubernetes-ingress-controller/).
-* [Istio](https://istio.io/) based ingress controller
-  [Control Ingress Traffic](https://istio.io/docs/tasks/traffic-management/ingress/).
-* [Kong](https://konghq.com/) offers [community](https://discuss.konghq.com/c/kubernetes) or
-  [commercial](https://konghq.com/kong-enterprise/) support and maintenance for the
-  [Kong Ingress Controller for Kubernetes](https://github.com/Kong/kubernetes-ingress-controller).
-* [NGINX, Inc.](https://www.nginx.com/) offers support and maintenance for the
-  [NGINX Ingress Controller for Kubernetes](https://www.nginx.com/products/nginx/kubernetes-ingress-controller).
-* [Skipper](https://opensource.zalando.com/skipper/kubernetes/ingress-controller/) HTTP router and reverse proxy for service composition, including use cases like Kubernetes Ingress, designed as a library to build your custom proxy
-* [Traefik](https://github.com/containous/traefik) is a fully featured ingress controller
-  ([Let's Encrypt](https://letsencrypt.org), secrets, http2, websocket), and it also comes with commercial
-  support by [Containous](https://containo.us/services).
+Suppose you have several clusters, and your users and components authenticate
+in a variety of ways. For example:
+
+- A running kubelet might authenticate using certificates.
+- A user might authenticate using tokens.
+- Administrators might have sets of certificates that they provide to individual users.
+
+With kubeconfig files, you can organize your clusters, users, and namespaces.
+You can also define contexts to quickly and easily switch between
+clusters and namespaces.
  -->
-<h2 id="其它的控制器">其它的控制器</h2>
+<h2 id="supporting-multiple-clusters-users-and-authentication-mechanisms">支持多集群，用户，认证机制</h2>
+<p>假设你有几个集群，并且你的用户和组件有不同的认证方式。 例如:</p>
 <ul>
-<li><a href="https://github.com/Azure/application-gateway-kubernetes-ingress">AKS Application Gateway Ingress Controller</a>
-是使用
-<a href="https://docs.microsoft.com/azure/application-gateway/overview">Azure Application Gateway</a>
-为
-<a href="https://docs.microsoft.com/azure/aks/kubernetes-walkthrough-portal">AKS 集群</a>
-提供入口的 Ingress 控制器</li>
-<li><a href="https://www.getambassador.io/">Ambassador</a> API 网关
-是一个基于
-<a href="https://www.envoyproxy.io">Envoy</a>
-的 Ingress 控制器
-有 <a href="https://www.getambassador.io/docs">社区</a> 支持和
-来自
-<a href="https://www.datawire.io/">Datawire</a>
-的
-<a href="https://www.getambassador.io/pro/">商业</a> 支持</li>
-<li><a href="https://appscode.com">AppsCode Inc.</a> 提供了最广泛使用的基于
-<a href="https://www.haproxy.org/">HAProxy</a>
-的 Ingress 控制器
-<a href="https://appscode.com/products/voyager">Voyager</a></li>
-<li><a href="https://github.com/kubernetes-sigs/aws-alb-ingress-controller">AWS ALB Ingress Controller</a>
-使用
-<a href="https://aws.amazon.com/elasticloadbalancing/">AWS Application Load Balancer</a>
-实现 Ingress</li>
-<li><a href="https://projectcontour.io/">Contour</a>
-由 VMware 提供和支持的基于 <a href="https://www.envoyproxy.io/">Envoy</a> 的 Ingress 控制器</li>
-<li>Citrix 为它的
-<a href="https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/deployment/baremetal">baremetal</a>
-和
-<a href="https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/deployment">cloud</a>
-上部署的硬件(MPX),虚拟化(VPX)和
-<a href="https://www.citrix.com/products/citrix-adc/cpx-express.html">free containerized (CPX) ADC</a>
-提供的 <a href="https://github.com/citrix/citrix-k8s-ingress-controller">Ingress 控制器</a></li>
-<li><code>F5 Networks</code> 为
-<a href="https://clouddocs.f5.com/containers/latest/userguide/kubernetes/">F5 BIG-IP Container Ingress Services for Kubernetes</a>
-提供 <a href="https://support.f5.com/csp/article/K86859508">支持和维护</a></li>
-<li><a href="https://gloo.solo.io">Gloo</a> 是基于
-<a href="https://www.envoyproxy.io">Envoy</a> 的开源 Ingress 控制器
-提供了来自 <a href="https://www.solo.io">solo.io</a> 企业支持的 API 网络功能</li>
-<li><a href="https://haproxy-ingress.github.io">HAProxy Ingress</a> 用于 HAProxy 调度可定制的社区驱动的 Ingress 控制器</li>
-<li><a href="https://www.haproxy.com/">HAProxy Technologies</a> 为
-<a href="https://github.com/haproxytech/kubernetes-ingress">HAProxy Ingress Controller for Kubernetes</a>
-提供支持和维护。 详见
-<a href="https://www.haproxy.com/documentation/hapee/1-9r1/traffic-management/kubernetes-ingress-controller/">官方文档</a></li>
-<li>基于 <a href="https://istio.io/">Istio</a> 的
-<a href="https://istio.io/docs/tasks/traffic-management/ingress/">Control Ingress Traffic</a></li>
-<li><a href="https://konghq.com/">Kong</a> 为
-<a href="https://github.com/Kong/kubernetes-ingress-controller">Kong Ingress Controller for Kubernetes</a>
-提供
-<a href="https://discuss.konghq.com/c/kubernetes">社区</a>
-或
-<a href="https://konghq.com/kong-enterprise/">商业</a>的
-支持和维护
-<a href="https://www.nginx.com/products/nginx/kubernetes-ingress-controller">NGINX Ingress Controller for Kubernetes</a>.</li>
-<li><a href="https://www.nginx.com/">NGINX, Inc.</a> 为
-<a href="https://www.nginx.com/products/nginx/kubernetes-ingress-controller">NGINX Ingress Controller for Kubernetes</a>
-提供支持和维护</li>
-<li><a href="https://opensource.zalando.com/skipper/kubernetes/ingress-controller/">Skipper</a>
-为 Service 提供 HTTP 路由 和反向代理。还包含了类似 k8s Ingress 的使用场景，
-设计上可以作为自定义代理的库</li>
-<li><a href="https://github.com/containous/traefik">Traefik</a> 是个功能齐全的 Ingress 控制器
-(<a href="https://letsencrypt.org">Let&rsquo;s Encrypt</a>, secrets, http2, websocket)
-还有来自 <a href="https://containo.us/services">Containous</a> 的商业支持</li>
+<li>一个运行的 kubelet 可能使用证书来认证。</li>
+<li>一个用户可能使用使用令牌来认证</li>
+<li>管理员可能为每个用户提供认证证书</li>
 </ul>
+<p>通过 kubeconfig 文件，就可以组织你的集群，用户， 和命名空间。 你也可以通过定义上下文的方式实现
+快速在不同集群和命名空间之间切换。</p>
 <!--
-## Using multiple Ingress controllers
+## Context
 
-You may deploy [any number of ingress controllers](https://git.k8s.io/ingress-nginx/docs/user-guide/multiple-ingress.md#multiple-ingress-controllers)
-within a cluster. When you create an ingress, you should annotate each ingress with the appropriate
-[`ingress.class`](https://git.k8s.io/ingress-gce/docs/faq/README.md#how-do-i-run-multiple-ingress-controllers-in-the-same-cluster)
-to indicate which ingress controller should be used if more than one exists within your cluster.
+A *context* element in a kubeconfig file is used to group access parameters
+under a convenient name. Each context has three parameters: cluster, namespace, and user.
+By default, the `kubectl` command-line tool uses parameters from
+the *current context* to communicate with the cluster.
 
-If you do not define a class, your cloud provider may use a default ingress controller.
-
-Ideally, all ingress controllers should fulfill this specification, but the various ingress
-controllers operate slightly differently.
-
-<blockquote class="note">
-  <div><strong>说明：</strong> Make sure you review your ingress controller&rsquo;s documentation to understand the caveats of choosing it.</div>
-</blockquote>
-
+To choose the current context:
+```
+kubectl config use-context
+```
  -->
-<h2 id="using-multiple-ingress-controllers">Using multiple Ingress controllers</h2>
-<p>用户可以在集群中部署
-<a href="https://git.k8s.io/ingress-nginx/docs/user-guide/multiple-ingress.md#multiple-ingress-controllers">任意数量的 Ingress 控制器</a>
-如果集群中有多个 Ingress 控制器，在创建 Ingress 时需要为每个 Ingress 标注恰当的
-<a href="https://git.k8s.io/ingress-gce/docs/faq/README.md#how-do-i-run-multiple-ingress-controllers-in-the-same-cluster"><code>ingress.class</code></a>
-来指示使用哪个 Ingress 控制器。</p>
-<p>如果在 Ingress 中没有定义控制器类型，云提供商可能使用一个默认的 Ingress 控制器。</p>
-<p>理想情况下，所有的 Ingress 控制器都应当满足这个规范，但是很多 Ingress 控制器动作方式都有点不同。</p>
-<blockquote class="note">
-  <div><strong>说明：</strong> 一定要仔细阅读你选择的 Ingress 控制器的文档，确保理解了相关注意事项。</div>
-</blockquote>
+<h2 id="context">上下文</h2>
+<p>在一个 kubeconfig 文件中的一个 <em>上下文</em> 元素以一个方便的名称的方式来组织访问参数。每个上下文
+有三个参数: 集群，命名空间，和用户。 默认情况下， <code>kubectl</code> 命令行工具使用来自 <em>当前上下文</em>
+中的参数来与集群通信。</p>
+<p>要选择当前上下文,使用下面的命令:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl config use-context
+</code></pre></div><!--
+## The KUBECONFIG environment variable
 
-<h2 id="相关资料">相关资料</h2>
+The `KUBECONFIG` environment variable holds a list of kubeconfig files.
+For Linux and Mac, the list is colon-delimited. For Windows, the list
+is semicolon-delimited. The `KUBECONFIG` environment variable is not
+required. If the `KUBECONFIG` environment variable doesn't exist,
+`kubectl` uses the default kubeconfig file, `$HOME/.kube/config`.
+
+If the `KUBECONFIG` environment variable does exist, `kubectl` uses
+an effective configuration that is the result of merging the files
+listed in the `KUBECONFIG` environment variable.
+ -->
+<h2 id="the-kubeconfig-environment-variable"><code>KUBECONFIG</code> 环境变量</h2>
+<p><code>KUBECONFIG</code> 环境变量中包含的是一个 kubeconfig 文件的列表。 对于 Linux 和 Mac，列表是用
+冒号(<code>:</code>)分隔。 对于 Windows， 列表分隔符是分号(<code>;</code>).  <code>KUBECONFIG</code> 环境变量不是必要的。
+如果 <code>KUBECONFIG</code> 环境变量不存在， <code>kubectl</code> 会使用默认的 kubeconfig 文件 <code>$HOME/.kube/config</code></p>
+<p>如果 <code>KUBECONFIG</code> 环境变量是存在的，<code>kubectl</code> 会使用一个由 <code>KUBECONFIG</code> 环境变量列举的
+文件合并结果作为有效配置。</p>
+<!--
+## Merging kubeconfig files
+
+To see your configuration, enter this command:
+
+```shell
+kubectl config view
+```
+
+As described previously, the output might be from a single kubeconfig file,
+or it might be the result of merging several kubeconfig files.
+
+Here are the rules that `kubectl` uses when it merges kubeconfig files:
+
+1. If the `--kubeconfig` flag is set, use only the specified file. Do not merge.
+   Only one instance of this flag is allowed.
+
+   Otherwise, if the `KUBECONFIG` environment variable is set, use it as a
+   list of files that should be merged.
+   Merge the files listed in the `KUBECONFIG` environment variable
+   according to these rules:
+
+   * Ignore empty filenames.
+   * Produce errors for files with content that cannot be deserialized.
+   * The first file to set a particular value or map key wins.
+   * Never change the value or map key.
+     Example: Preserve the context of the first file to set `current-context`.
+     Example: If two files specify a `red-user`, use only values from the first file's `red-user`.
+     Even if the second file has non-conflicting entries under `red-user`, discard them.
+
+   For an example of setting the `KUBECONFIG` environment variable, see
+   [Setting the KUBECONFIG environment variable](/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#set-the-kubeconfig-environment-variable).
+
+   Otherwise, use the default kubeconfig file, `$HOME/.kube/config`, with no merging.
+
+1. Determine the context to use based on the first hit in this chain:
+
+    1. Use the `--context` command-line flag if it exists.
+    1. Use the `current-context` from the merged kubeconfig files.
+
+   An empty context is allowed at this point.
+
+1. Determine the cluster and user. At this point, there might or might not be a context.
+   Determine the cluster and user based on the first hit in this chain,
+   which is run twice: once for user and once for cluster:
+
+   1. Use a command-line flag if it exists: `--user` or `--cluster`.
+   1. If the context is non-empty, take the user or cluster from the context.
+
+   The user and cluster can be empty at this point.
+
+1. Determine the actual cluster information to use. At this point, there might or
+   might not be cluster information.
+   Build each piece of the cluster information based on this chain; the first hit wins:
+
+   1. Use command line flags if they exist: `--server`, `--certificate-authority`, `--insecure-skip-tls-verify`.
+   1. If any cluster information attributes exist from the merged kubeconfig files, use them.
+   1. If there is no server location, fail.
+
+1. Determine the actual user information to use. Build user information using the same
+   rules as cluster information, except allow only one authentication
+   technique per user:
+
+   1. Use command line flags if they exist: `--client-certificate`, `--client-key`, `--username`, `--password`, `--token`.
+   1. Use the `user` fields from the merged kubeconfig files.
+   1. If there are two conflicting techniques, fail.
+
+1. For any information still missing, use default values and potentially
+   prompt for authentication information.
+ -->
+<h2 id="merging-kubeconfig-files">合并 <code>kubeconfig</code> 文件</h2>
+<p>要看现在的配置，输入下面的命令:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl config view
+</code></pre></div><p>就如之间所描述的， 输出结果可能来自单个 kubeconfig 文件，也可能是几个 kubeconfig 文件合并的
+结果。</p>
+<p>以下为 <code>kubectl</code> 在合并 kubeconfig 文件使用的规则:</p>
+<ol>
+<li>
+<p>如果设置 <code>--kubeconfig</code> 标志，就只使用这个指定的文件。不合并配置文件。这个标志只允许有一个实例。</p>
+<p>否则，如果设置了 <code>KUBECONFIG</code> 环境变量，就会使用其中列举文件合并的结果。 合并 <code>KUBECONFIG</code>
+环境变量中列举的文件合并会依照如下规则:</p>
 <ul>
-<li>概念 <a href="/k8sDocs/docs/concepts/services-networking/ingress/">Ingress</a>.</li>
-<li>实践 <a href="/k8sDocs/tasks/access-application-cluster/ingress-minikube">使用 NGINX 控制器在 Minikube 上设置 Ingress</a>.</li>
+<li>忽略空文件名。</li>
+<li>文件内容不能被反序列化则会生成错误</li>
+<li>排在前面的文件中的键(以及其值)会作为最终结果中的键值</li>
+<li>永远不修改值或字典键
+示例: 保留第一个设置 <code>current-context</code> 文件中的上下文。
+示例: 如果有两个文件配置了 <code>red-user</code>, 使用排在前面的那个文件 <code>red-user</code> 的值。
+即便第二个文件 <code>red-user</code> 的实体与第一个不冲突，也会把它们整体都丢弃了</li>
+</ul>
+<p>这里有一个 <code>KUBECONFIG</code> 环境变量的示例，详见
+<a href="/k8sDocs/docs/tasks/access-application-cluster/configure-access-multiple-clusters/#set-the-kubeconfig-environment-variable">设置 <code>KUBECONFIG</code> 环境变量</a>.</p>
+<p>再没有就使用默认的 <code>kubeconfig</code> 文件，<code>$HOME/.kube/config</code>， 没得其它合并。</p>
+</li>
+<li>
+<p>基于这个链的第一个命中来决定上下文:</p>
+<ol>
+<li>如果有则使用 <code>--context</code> 命令行标志</li>
+<li>使用合并 <code>kubeconfig</code> 文件中的 <code>current-context</code></li>
+</ol>
+<p>在这个点允许空的上下文</p>
+</li>
+<li>
+<p>确定集群和用户，在这个点上，可能有也可能没有上下文。 基于下面这个链中的第一个命中的集群和用户，
+这个会被运行两次: 一次用于用户和一次用于集群</p>
+<ol>
+<li>如果有命令标志则使用该标志: <code>--user</code> 或 <code>--cluster</code>.</li>
+<li>如果上下文不是空的，则使用这个上下文中的用户或集群</li>
+</ol>
+<p>在这一级用户和集群可以是空的</p>
+</li>
+<li>
+<p>决定实际使用的集群信息， 在这一级， 可能有也可能没有集群信息。 会依据下面这个链中的片段来构建集群信息；
+第一个命中会作为最终结果:</p>
+<ol>
+<li>即便存在，也使用的命令标志: <code>--server</code>, <code>--certificate-authority</code>, <code>--insecure-skip-tls-verify</code>.</li>
+<li>如果合并后的 kubeconfig 文件中有任意集群信息的属性存在，这使用它们。</li>
+<li>如果其中没有服务地址信息，则会失败</li>
+</ol>
+</li>
+<li>
+<p>决定实际使用的用户信息。 构建用户信息使用与集群信息相同的规则，只是限制一个用户只能有一个认证机制:</p>
+<ol>
+<li>如果存在则使用的标记: <code>--client-certificate</code>, <code>--client-key</code>, <code>--username</code>, <code>--password</code>, <code>--token</code>.</li>
+<li>使用合并后的 kubeconfig 文件中的 <code>user</code> 字段。</li>
+<li>如果有两种冲突的认证机制，则会失败</li>
+</ol>
+</li>
+<li>
+<p>对于到这一步还缺失的信息，使用默认值和潜在的输入提示认证信息。</p>
+</li>
+</ol>
+<!--
+
+## File references
+
+File and path references in a kubeconfig file are relative to the location of the kubeconfig file.
+File references on the command line are relative to the current working directory.
+In `$HOME/.kube/config`, relative paths are stored relatively, and absolute paths
+are stored absolutely.
+ -->
+<h2 id="file-references">文件引用</h2>
+<p>文件和 kubeconfig 文件中的路径引用是相同对 kubeconfig 文件的路径的。 命令行的文件引用是
+相对于目前的工作目录的。 在 <code>$HOME/.kube/config</code> 中, 相对路径以相路径式存储，绝对路径以绝对路径存储。</p>
+<h2 id="相关资料">相关资料</h2>
+<!--
+* [Configure Access to Multiple Clusters](/docs/tasks/access-application-cluster/configure-access-multiple-clusters/)
+* [`kubectl config`](/docs/reference/generated/kubectl/kubectl-commands#config)
+-->
+<ul>
+<li><a href="/k8sDocs/docs/tasks/access-application-cluster/configure-access-multiple-clusters/">配置多集群访问</a></li>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#config"><code>kubectl config</code></a></li>
 </ul>
 
 
@@ -1030,9 +1106,9 @@ controllers operate slightly differently.
 
 
 
-<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/services-networking/ingress-controllers.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/services-networking/ingress-controllers.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=Ingress%20%e6%8e%a7%e5%88%b6%e5%99%a8" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/configuration/organize-cluster-access-kubeconfig.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/configuration/organize-cluster-access-kubeconfig.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=%e4%bd%bf%e7%94%a8%20kubeconfig%20%e6%96%87%e4%bb%b6%e7%bb%84%e7%bb%87%e9%9b%86%e7%be%a4%e8%ae%bf%e9%97%ae" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
 
 </div>
 
@@ -1043,8 +1119,11 @@ controllers operate slightly differently.
 
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#其它的控制器">其它的控制器</a></li>
-    <li><a href="#using-multiple-ingress-controllers">Using multiple Ingress controllers</a></li>
+    <li><a href="#supporting-multiple-clusters-users-and-authentication-mechanisms">支持多集群，用户，认证机制</a></li>
+    <li><a href="#context">上下文</a></li>
+    <li><a href="#the-kubeconfig-environment-variable"><code>KUBECONFIG</code> 环境变量</a></li>
+    <li><a href="#merging-kubeconfig-files">合并 <code>kubeconfig</code> 文件</a></li>
+    <li><a href="#file-references">文件引用</a></li>
     <li><a href="#相关资料">相关资料</a></li>
   </ul>
 </nav>
