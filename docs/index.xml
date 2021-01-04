@@ -19622,6 +19622,435 @@ controllers operate slightly differently.
     </item>
     
     <item>
+      <title>Docs: Pod Priority and Preemption</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-priority-preemption/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-priority-preemption/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- davidopp
+- wojtek-t
+title: Pod Priority and Preemption
+content_type: concept
+weight: 70
+---
+ --&gt;
+&lt;!-- overview --&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.14 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;!--
+[Pods](/docs/concepts/workloads/pods/) can have _priority_. Priority indicates the
+importance of a Pod relative to other Pods. If a Pod cannot be scheduled, the
+scheduler tries to preempt (evict) lower priority Pods to make scheduling of the
+pending Pod possible.
+ --&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/pods/&#34;&gt;Pod&lt;/a&gt; 是可以有 &lt;em&gt;优先级的&lt;/em&gt;。 优先级表示一个 Pod
+与其它 Pod 之间的相对重要程度。 如果一个 Pod 不能被调度， 调度器会尝试挤占(驱逐)一些(个)低优先
+级的 Pod， 让这个等待的 Pod 有可能正常调度。&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;blockquote class=&#34;warning&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;警告：&lt;/strong&gt; &lt;!--
+In a cluster where not all users are trusted, a malicious user could create Pods
+at the highest possible priorities, causing other Pods to be evicted/not get
+scheduled.
+An administrator can use ResourceQuota to prevent users from creating pods at
+high priorities.
+
+See [limit Priority Class consumption by default](/docs/concepts/policy/resource-quotas/#limit-priority-class-consumption-by-default)
+for details.
+ --&gt;
+&lt;p&gt;当在一个并不是所有用户都可信的集群中，一个恶意用户可能创建拥有最高可能优先级的 Pod，导致其它的
+Pod 被驱逐或无法调度。 管理员可以使用资源配额(ResourceQuota)来防止用户创建高优先级的 Pod.&lt;/p&gt;
+&lt;p&gt;详见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/policy/resource-quotas/#limit-priority-class-consumption-by-default&#34;&gt;对默认使用的 Priority Class进行限制&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;!--
+## How to use priority and preemption
+
+To use priority and preemption:
+
+1.  Add one or more [PriorityClasses](#priorityclass).
+
+1.  Create Pods with[`priorityClassName`](#pod-priority) set to one of the added
+    PriorityClasses. Of course you do not need to create the Pods directly;
+    normally you would add `priorityClassName` to the Pod template of a
+    collection object like a Deployment.
+
+Keep reading for more information about these steps.
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Kubernetes already ships with two PriorityClasses:
+&lt;code&gt;system-cluster-critical&lt;/code&gt; and &lt;code&gt;system-node-critical&lt;/code&gt;.
+These are common classes and are used to &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/&#34;&gt;ensure that critical components are always scheduled first&lt;/a&gt;.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+ --&gt;
+&lt;h2 id=&#34;how-to-use-priority-and-preemption&#34;&gt;怎么使用优先级和挤占&lt;/h2&gt;
+&lt;p&gt;要使用优先级和挤占:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;添加一个或多个 &lt;a href=&#34;#priorityclass&#34;&gt;PriorityClasses&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在创建 Pod 时通过 &lt;a href=&#34;#pod-priority&#34;&gt;&lt;code&gt;priorityClassName&lt;/code&gt;&lt;/a&gt; 为它设置一个上一步创建的
+PriorityClasses。 当然不需要直接创建 Pod； 通常是将 &lt;code&gt;priorityClassName&lt;/code&gt; 添加到像
+Deployment 这一类对象的 Pod 模板中。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;下面的章节会更多地介绍这些步骤。&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; k8s 已经自带了两个 PriorityClasses: &lt;code&gt;system-cluster-critical&lt;/code&gt; 和 &lt;code&gt;system-node-critical&lt;/code&gt;.
+这些是通用类别，被用于
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/&#34;&gt;确保关键组件始终先调度&lt;/a&gt;.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;!--
+## PriorityClass
+
+A PriorityClass is a non-namespaced object that defines a mapping from a
+priority class name to the integer value of the priority. The name is specified
+in the `name` field of the PriorityClass object&#39;s metadata. The value is
+specified in the required `value` field. The higher the value, the higher the
+priority.
+The name of a PriorityClass object must be a valid
+[DNS subdomain name](/docs/concepts/overview/working-with-objects/names#dns-subdomain-names),
+and it cannot be prefixed with `system-`.
+
+A PriorityClass object can have any 32-bit integer value smaller than or equal
+to 1 billion. Larger numbers are reserved for critical system Pods that should
+not normally be preempted or evicted. A cluster admin should create one
+PriorityClass object for each such mapping that they want.
+
+PriorityClass also has two optional fields: `globalDefault` and `description`.
+The `globalDefault` field indicates that the value of this PriorityClass should
+be used for Pods without a `priorityClassName`. Only one PriorityClass with
+`globalDefault` set to true can exist in the system. If there is no
+PriorityClass with `globalDefault` set, the priority of Pods with no
+`priorityClassName` is zero.
+
+The `description` field is an arbitrary string. It is meant to tell users of the
+cluster when they should use this PriorityClass.
+ --&gt;
+&lt;h2 id=&#34;priorityclass&#34;&gt;PriorityClass&lt;/h2&gt;
+&lt;p&gt;PriorityClass 是一个无命名空间字段的对象，它定义了一个优先级类别名称与一个整数值的优先级的映射
+关系。 名称定义在 PriorityClass 对象元数据的 &lt;code&gt;name&lt;/code&gt; 字段中。 值则定义在对象的必要字段 &lt;code&gt;value&lt;/code&gt;
+中。 这个值越大表示优先级越高。&lt;/p&gt;
+&lt;p&gt;PriorityClass 对象可以将任意小于 10 亿的 32 位整数作为其值。 更大的数字则被保留作为系统关键
+Pod 使用，这些 Pod 通常不应该被挤掉或驱逐。&lt;/p&gt;
+&lt;p&gt;PriorityClass 还有两个可选字段: &lt;code&gt;globalDefault&lt;/code&gt; 和 &lt;code&gt;description&lt;/code&gt;. &lt;code&gt;globalDefault&lt;/code&gt;
+字段表示这个 PriorityClass 的值会用作那些没有 &lt;code&gt;priorityClassName&lt;/code&gt; Pod 的优先级。 系统中
+只能存在一个 &lt;code&gt;globalDefault&lt;/code&gt; 设置为 true 的 PriorityClass。 如果集群中没有
+&lt;code&gt;globalDefault&lt;/code&gt; 设置为 true 的 PriorityClass。 则那些没有 &lt;code&gt;priorityClassName&lt;/code&gt; 的 Pod
+的优先级值为 0&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;description&lt;/code&gt; 可以是任意字符串。但通常用来告诉集群用户，啥时候应该用这个 PriorityClass.&lt;/p&gt;
+&lt;!--
+### Notes about PodPriority and existing clusters
+
+-   If you upgrade an existing cluster without this feature, the priority
+    of your existing Pods is effectively zero.
+
+-   Addition of a PriorityClass with `globalDefault` set to `true` does not
+    change the priorities of existing Pods. The value of such a PriorityClass is
+    used only for Pods created after the PriorityClass is added.
+
+-   If you delete a PriorityClass, existing Pods that use the name of the
+    deleted PriorityClass remain unchanged, but you cannot create more Pods that
+    use the name of the deleted PriorityClass.
+ --&gt;
+&lt;h3 id=&#34;notes-about-podpriority-and-existing-clusters&#34;&gt;Pod 优先级和已有集群需要注意的一些地方&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;If you upgrade an existing cluster without this feature, the priority
+of your existing Pods is effectively zero.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Addition of a PriorityClass with &lt;code&gt;globalDefault&lt;/code&gt; set to &lt;code&gt;true&lt;/code&gt; does not
+change the priorities of existing Pods. The value of such a PriorityClass is
+used only for Pods created after the PriorityClass is added.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If you delete a PriorityClass, existing Pods that use the name of the
+deleted PriorityClass remain unchanged, but you cannot create more Pods that
+use the name of the deleted PriorityClass.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果从一个没有该特性的集群升级，集群中现在的 Pod 的优先级会被设置为 0&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;添加一个 &lt;code&gt;globalDefault&lt;/code&gt; 设置为 &lt;code&gt;true&lt;/code&gt; 的 PriorityClass， 不会改变已有 Pod 的优先级。
+这个 PriorityClass 的优先级值只会被应用到在它之后创建的 Pod 上。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果删除了一个 PriorityClass， 已有的在使用这个 PriorityClass 的 Pod 不会发生变化，
+但新创建 Pod 时就不能再使用这个 PriorityClass 了。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+### Example PriorityClass
+
+```yaml
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: high-priority
+value: 1000000
+globalDefault: false
+description: &#34;This priority class should be used for XYZ service pods only.&#34;
+```
+ --&gt;
+&lt;h3 id=&#34;Example-PriorityClass&#34;&gt;&lt;code&gt;PriorityClass&lt;/code&gt; 示例&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;scheduling.k8s.io/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PriorityClass&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;high-priority&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;value&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1000000&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;globalDefault&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;description&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;This priority class should be used for XYZ service pods only.&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;non-preempting-priority-class&#34;&gt;Non-preempting PriorityClass&lt;/h2&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.19 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;Pods with &lt;code&gt;PreemptionPolicy: Never&lt;/code&gt; will be placed in the scheduling queue
+ahead of lower-priority pods,
+but they cannot preempt other pods.
+A non-preempting pod waiting to be scheduled will stay in the scheduling queue,
+until sufficient resources are free,
+and it can be scheduled.
+Non-preempting pods,
+like other pods,
+are subject to scheduler back-off.
+This means that if the scheduler tries these pods and they cannot be scheduled,
+they will be retried with lower frequency,
+allowing other pods with lower priority to be scheduled before them.&lt;/p&gt;
+&lt;p&gt;Non-preempting pods may still be preempted by other,
+high-priority pods.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;PreemptionPolicy&lt;/code&gt; defaults to &lt;code&gt;PreemptLowerPriority&lt;/code&gt;,
+which will allow pods of that PriorityClass to preempt lower-priority pods
+(as is existing default behavior).
+If &lt;code&gt;PreemptionPolicy&lt;/code&gt; is set to &lt;code&gt;Never&lt;/code&gt;,
+pods in that PriorityClass will be non-preempting.&lt;/p&gt;
+&lt;p&gt;An example use case is for data science workloads.
+A user may submit a job that they want to be prioritized above other workloads,
+but do not wish to discard existing work by preempting running pods.
+The high priority job with &lt;code&gt;PreemptionPolicy: Never&lt;/code&gt; will be scheduled
+ahead of other queued pods,
+as soon as sufficient cluster resources &amp;ldquo;naturally&amp;rdquo; become free.&lt;/p&gt;
+&lt;h3 id=&#34;example-non-preempting-priorityclass&#34;&gt;Example Non-preempting PriorityClass&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;scheduling.k8s.io/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PriorityClass&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;high-priority-nonpreempting&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;value&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1000000&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;preemptionPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Never&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;globalDefault&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;description&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;This priority class will not cause other pods to be preempted.&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;pod-priority&#34;&gt;Pod priority&lt;/h2&gt;
+&lt;p&gt;After you have one or more PriorityClasses, you can create Pods that specify one
+of those PriorityClass names in their specifications. The priority admission
+controller uses the &lt;code&gt;priorityClassName&lt;/code&gt; field and populates the integer value of
+the priority. If the priority class is not found, the Pod is rejected.&lt;/p&gt;
+&lt;p&gt;The following YAML is an example of a Pod configuration that uses the
+PriorityClass created in the preceding example. The priority admission
+controller checks the specification and resolves the priority of the Pod to
+1000000.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;env&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;imagePullPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;IfNotPresent&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;priorityClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;high-priority&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;effect-of-pod-priority-on-scheduling-order&#34;&gt;Effect of Pod priority on scheduling order&lt;/h3&gt;
+&lt;p&gt;When Pod priority is enabled, the scheduler orders pending Pods by
+their priority and a pending Pod is placed ahead of other pending Pods
+with lower priority in the scheduling queue. As a result, the higher
+priority Pod may be scheduled sooner than Pods with lower priority if
+its scheduling requirements are met. If such Pod cannot be scheduled,
+scheduler will continue and tries to schedule other lower priority Pods.&lt;/p&gt;
+&lt;h2 id=&#34;preemption&#34;&gt;Preemption&lt;/h2&gt;
+&lt;p&gt;When Pods are created, they go to a queue and wait to be scheduled. The
+scheduler picks a Pod from the queue and tries to schedule it on a Node. If no
+Node is found that satisfies all the specified requirements of the Pod,
+preemption logic is triggered for the pending Pod. Let&amp;rsquo;s call the pending Pod P.
+Preemption logic tries to find a Node where removal of one or more Pods with
+lower priority than P would enable P to be scheduled on that Node. If such a
+Node is found, one or more lower priority Pods get evicted from the Node. After
+the Pods are gone, P can be scheduled on the Node.&lt;/p&gt;
+&lt;h3 id=&#34;user-exposed-information&#34;&gt;User exposed information&lt;/h3&gt;
+&lt;p&gt;When Pod P preempts one or more Pods on Node N, &lt;code&gt;nominatedNodeName&lt;/code&gt; field of Pod
+P&amp;rsquo;s status is set to the name of Node N. This field helps scheduler track
+resources reserved for Pod P and also gives users information about preemptions
+in their clusters.&lt;/p&gt;
+&lt;p&gt;Please note that Pod P is not necessarily scheduled to the &amp;ldquo;nominated Node&amp;rdquo;.
+After victim Pods are preempted, they get their graceful termination period. If
+another node becomes available while scheduler is waiting for the victim Pods to
+terminate, scheduler will use the other node to schedule Pod P. As a result
+&lt;code&gt;nominatedNodeName&lt;/code&gt; and &lt;code&gt;nodeName&lt;/code&gt; of Pod spec are not always the same. Also, if
+scheduler preempts Pods on Node N, but then a higher priority Pod than Pod P
+arrives, scheduler may give Node N to the new higher priority Pod. In such a
+case, scheduler clears &lt;code&gt;nominatedNodeName&lt;/code&gt; of Pod P. By doing this, scheduler
+makes Pod P eligible to preempt Pods on another Node.&lt;/p&gt;
+&lt;h3 id=&#34;limitations-of-preemption&#34;&gt;Limitations of preemption&lt;/h3&gt;
+&lt;h4 id=&#34;graceful-termination-of-preemption-victims&#34;&gt;Graceful termination of preemption victims&lt;/h4&gt;
+&lt;p&gt;When Pods are preempted, the victims get their
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination&#34;&gt;graceful termination period&lt;/a&gt;.
+They have that much time to finish their work and exit. If they don&amp;rsquo;t, they are
+killed. This graceful termination period creates a time gap between the point
+that the scheduler preempts Pods and the time when the pending Pod (P) can be
+scheduled on the Node (N). In the meantime, the scheduler keeps scheduling other
+pending Pods. As victims exit or get terminated, the scheduler tries to schedule
+Pods in the pending queue. Therefore, there is usually a time gap between the
+point that scheduler preempts victims and the time that Pod P is scheduled. In
+order to minimize this gap, one can set graceful termination period of lower
+priority Pods to zero or a small number.&lt;/p&gt;
+&lt;h4 id=&#34;poddisruptionbudget-is-supported-but-not-guaranteed&#34;&gt;PodDisruptionBudget is supported, but not guaranteed&lt;/h4&gt;
+&lt;p&gt;A &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/disruptions/&#34;&gt;PodDisruptionBudget&lt;/a&gt; (PDB)
+allows application owners to limit the number of Pods of a replicated application
+that are down simultaneously from voluntary disruptions. Kubernetes supports
+PDB when preempting Pods, but respecting PDB is best effort. The scheduler tries
+to find victims whose PDB are not violated by preemption, but if no such victims
+are found, preemption will still happen, and lower priority Pods will be removed
+despite their PDBs being violated.&lt;/p&gt;
+&lt;h4 id=&#34;inter-pod-affinity-on-lower-priority-pods&#34;&gt;Inter-Pod affinity on lower-priority Pods&lt;/h4&gt;
+&lt;p&gt;A Node is considered for preemption only when the answer to this question is
+yes: &amp;ldquo;If all the Pods with lower priority than the pending Pod are removed from
+the Node, can the pending Pod be scheduled on the Node?&amp;rdquo;&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Preemption does not necessarily remove all lower-priority
+Pods. If the pending Pod can be scheduled by removing fewer than all
+lower-priority Pods, then only a portion of the lower-priority Pods are removed.
+Even so, the answer to the preceding question must be yes. If the answer is no,
+the Node is not considered for preemption.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If a pending Pod has inter-pod affinity to one or more of the lower-priority
+Pods on the Node, the inter-Pod affinity rule cannot be satisfied in the absence
+of those lower-priority Pods. In this case, the scheduler does not preempt any
+Pods on the Node. Instead, it looks for another Node. The scheduler might find a
+suitable Node or it might not. There is no guarantee that the pending Pod can be
+scheduled.&lt;/p&gt;
+&lt;p&gt;Our recommended solution for this problem is to create inter-Pod affinity only
+towards equal or higher priority Pods.&lt;/p&gt;
+&lt;h4 id=&#34;cross-node-preemption&#34;&gt;Cross node preemption&lt;/h4&gt;
+&lt;p&gt;Suppose a Node N is being considered for preemption so that a pending Pod P can
+be scheduled on N. P might become feasible on N only if a Pod on another Node is
+preempted. Here&amp;rsquo;s an example:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Pod P is being considered for Node N.&lt;/li&gt;
+&lt;li&gt;Pod Q is running on another Node in the same Zone as Node N.&lt;/li&gt;
+&lt;li&gt;Pod P has Zone-wide anti-affinity with Pod Q (&lt;code&gt;topologyKey: topology.kubernetes.io/zone&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;There are no other cases of anti-affinity between Pod P and other Pods in
+the Zone.&lt;/li&gt;
+&lt;li&gt;In order to schedule Pod P on Node N, Pod Q can be preempted, but scheduler
+does not perform cross-node preemption. So, Pod P will be deemed
+unschedulable on Node N.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If Pod Q were removed from its Node, the Pod anti-affinity violation would be
+gone, and Pod P could possibly be scheduled on Node N.&lt;/p&gt;
+&lt;p&gt;We may consider adding cross Node preemption in future versions if there is
+enough demand and if we find an algorithm with reasonable performance.&lt;/p&gt;
+&lt;h2 id=&#34;troubleshooting&#34;&gt;Troubleshooting&lt;/h2&gt;
+&lt;p&gt;Pod priority and pre-emption can have unwanted side effects. Here are some
+examples of potential problems and ways to deal with them.&lt;/p&gt;
+&lt;h3 id=&#34;pods-are-preempted-unnecessarily&#34;&gt;Pods are preempted unnecessarily&lt;/h3&gt;
+&lt;p&gt;Preemption removes existing Pods from a cluster under resource pressure to make
+room for higher priority pending Pods. If you give high priorities to
+certain Pods by mistake, these unintentionally high priority Pods may cause
+preemption in your cluster. Pod priority is specified by setting the
+&lt;code&gt;priorityClassName&lt;/code&gt; field in the Pod&amp;rsquo;s specification. The integer value for
+priority is then resolved and populated to the &lt;code&gt;priority&lt;/code&gt; field of &lt;code&gt;podSpec&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;To address the problem, you can change the &lt;code&gt;priorityClassName&lt;/code&gt; for those Pods
+to use lower priority classes, or leave that field empty. An empty
+&lt;code&gt;priorityClassName&lt;/code&gt; is resolved to zero by default.&lt;/p&gt;
+&lt;p&gt;When a Pod is preempted, there will be events recorded for the preempted Pod.
+Preemption should happen only when a cluster does not have enough resources for
+a Pod. In such cases, preemption happens only when the priority of the pending
+Pod (preemptor) is higher than the victim Pods. Preemption must not happen when
+there is no pending Pod, or when the pending Pods have equal or lower priority
+than the victims. If preemption happens in such scenarios, please file an issue.&lt;/p&gt;
+&lt;h3 id=&#34;pods-are-preempted-but-the-preemptor-is-not-scheduled&#34;&gt;Pods are preempted, but the preemptor is not scheduled&lt;/h3&gt;
+&lt;p&gt;When pods are preempted, they receive their requested graceful termination
+period, which is by default 30 seconds. If the victim Pods do not terminate within
+this period, they are forcibly terminated. Once all the victims go away, the
+preemptor Pod can be scheduled.&lt;/p&gt;
+&lt;p&gt;While the preemptor Pod is waiting for the victims to go away, a higher priority
+Pod may be created that fits on the same Node. In this case, the scheduler will
+schedule the higher priority Pod instead of the preemptor.&lt;/p&gt;
+&lt;p&gt;This is expected behavior: the Pod with the higher priority should take the place
+of a Pod with a lower priority.&lt;/p&gt;
+&lt;h3 id=&#34;higher-priority-pods-are-preempted-before-lower-priority-pods&#34;&gt;Higher priority Pods are preempted before lower priority pods&lt;/h3&gt;
+&lt;p&gt;The scheduler tries to find nodes that can run a pending Pod. If no node is
+found, the scheduler tries to remove Pods with lower priority from an arbitrary
+node in order to make room for the pending pod.
+If a node with low priority Pods is not feasible to run the pending Pod, the scheduler
+may choose another node with higher priority Pods (compared to the Pods on the
+other node) for preemption. The victims must still have lower priority than the
+preemptor Pod.&lt;/p&gt;
+&lt;p&gt;When there are multiple nodes available for preemption, the scheduler tries to
+choose the node with a set of Pods with lowest priority. However, if such Pods
+have PodDisruptionBudget that would be violated if they are preempted then the
+scheduler may choose another node with higher priority Pods.&lt;/p&gt;
+&lt;p&gt;When multiple nodes exist for preemption and none of the above scenarios apply,
+the scheduler chooses a node with the lowest priority.&lt;/p&gt;
+&lt;h2 id=&#34;interactions-of-pod-priority-and-qos&#34;&gt;Interactions between Pod priority and quality of service&lt;/h2&gt;
+&lt;p&gt;Pod priority and &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-qos-class&#39; target=&#39;_blank&#39;&gt;QoS class&lt;span class=&#39;tooltip-text&#39;&gt;QoS Class (Quality of Service Class) provides a way for Kubernetes to classify pods within the cluster into several classes and make decisions about scheduling and eviction.&lt;/span&gt;
+&lt;/a&gt;
+are two orthogonal features with few interactions and no default restrictions on
+setting the priority of a Pod based on its QoS classes. The scheduler&amp;rsquo;s
+preemption logic does not consider QoS when choosing preemption targets.
+Preemption considers Pod priority and attempts to choose a set of targets with
+the lowest priority. Higher-priority Pods are considered for preemption only if
+the removal of the lowest priority Pods is not sufficient to allow the scheduler
+to schedule the preemptor Pod, or if the lowest priority Pods are protected by
+&lt;code&gt;PodDisruptionBudget&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The only component that considers both QoS and Pod priority is
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/out-of-resource/&#34;&gt;kubelet out-of-resource eviction&lt;/a&gt;.
+The kubelet ranks Pods for eviction first by whether or not their usage of the
+starved resource exceeds requests, then by Priority, and then by the consumption
+of the starved compute resource relative to the Pods&#39; scheduling requests.
+See
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/out-of-resource/#evicting-end-user-pods&#34;&gt;evicting end-user pods&lt;/a&gt;
+for more details.&lt;/p&gt;
+&lt;p&gt;kubelet out-of-resource eviction does not evict Pods when their
+usage does not exceed their requests. If a Pod with lower priority is not
+exceeding its requests, it won&amp;rsquo;t be evicted. Another Pod with higher priority
+that exceeds its requests may be evicted.&lt;/p&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Read about using ResourceQuotas in connection with PriorityClasses: &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/resource-quotas/#limit-priority-class-consumption-by-default&#34;&gt;limit Priority Class consumption by default&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: 卷动态供应</title>
       <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/dynamic-provisioning/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -27008,2170 +27437,6 @@ Ephemeral Containers:
 例如：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl attach -it example-pod -c debugger
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: Deployment</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/deployment/</link>
-      <pubDate>Fri, 14 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/deployment/</guid>
-      <description>
-        
-        
-        &lt;!--
----
-reviewers:
-- janetkuo
-title: Deployments
-feature:
-  title: Automated rollouts and rollbacks
-  description: &gt;
-    Kubernetes progressively rolls out changes to your application or its configuration, while monitoring application health to ensure it doesn&#39;t kill all your instances at the same time. If something goes wrong, Kubernetes will rollback the change for you. Take advantage of a growing ecosystem of deployment solutions.
-
-content_type: concept
-weight: 10
----
- --&gt;
-&lt;!-- overview --&gt;
-&lt;!--
-A _Deployment_ provides declarative updates for &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/pods/&#39; target=&#39;_blank&#39;&gt;Pods&lt;span class=&#39;tooltip-text&#39;&gt;Pod 表示集群中运行的一组容器的集合&lt;/span&gt;
-&lt;/a&gt;
-&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/controllers/replicaset/&#39; target=&#39;_blank&#39;&gt;ReplicaSets&lt;span class=&#39;tooltip-text&#39;&gt;ReplicaSet 保证在任意时间点上某个 Pod 有指定数量副本在运行&lt;/span&gt;
-&lt;/a&gt;.
-
-You describe a _desired state_ in a Deployment, and the Deployment &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/2-concepts/01-architecture/02-controller/&#39; target=&#39;_blank&#39;&gt;控制器&lt;span class=&#39;tooltip-text&#39;&gt;一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移&lt;/span&gt;
-&lt;/a&gt; changes the actual state to the desired state at a controlled rate. You can define Deployments to create new ReplicaSets, or to remove existing Deployments and adopt all their resources with new Deployments.
-
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Do not manage ReplicaSets owned by a Deployment. Consider opening an issue in the main Kubernetes repository if your use case is not covered below.&lt;/div&gt;
-&lt;/blockquote&gt;
-
- --&gt;
-&lt;p&gt;&lt;em&gt;Deployment&lt;/em&gt; 为 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/controllers/replicaset/&#39; target=&#39;_blank&#39;&gt;ReplicaSets&lt;span class=&#39;tooltip-text&#39;&gt;ReplicaSet 保证在任意时间点上某个 Pod 有指定数量副本在运行&lt;/span&gt;
-&lt;/a&gt; 管理的 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/pods/&#39; target=&#39;_blank&#39;&gt;Pods&lt;span class=&#39;tooltip-text&#39;&gt;Pod 表示集群中运行的一组容器的集合&lt;/span&gt;
-&lt;/a&gt;
-提供了声明式的更新。&lt;/p&gt;
-&lt;p&gt;用户在 Deployment 中描述了一个 &lt;em&gt;期望状态&lt;/em&gt;， 然后这个 Deployment &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/2-concepts/01-architecture/02-controller/&#39; target=&#39;_blank&#39;&gt;控制器&lt;span class=&#39;tooltip-text&#39;&gt;一个控制回路，负责通过 apiserver 监控集群的共享状态，并尝试通过变更(某些对象)的方式实现集群从当前状态向期望状态迁移&lt;/span&gt;
-&lt;/a&gt;
-以控制器的方式变更实际状态为期望状态。 用户可以定义 Deployment 来创建一个新的 &lt;code&gt;ReplicaSet&lt;/code&gt;，
-或者删除一个已经存在的 Deployment， 再用一个新的 Deployment 来接管它的所以资源。&lt;/p&gt;
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 不要管属于 &lt;code&gt;Deployment&lt;/code&gt; 的 &lt;code&gt;ReplicaSet&lt;/code&gt;。 如果以下提到的应用场景都没办法满足你的需求请考虑到 k8s 主仓库提一个问题单&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;!-- body --&gt;
-&lt;!--
-## Use Case
-
-The following are typical use cases for Deployments:
-
-* [Create a Deployment to rollout a ReplicaSet](#creating-a-deployment). The ReplicaSet creates Pods in the background. Check the status of the rollout to see if it succeeds or not.
-* [Declare the new state of the Pods](#updating-a-deployment) by updating the PodTemplateSpec of the Deployment. A new ReplicaSet is created and the Deployment manages moving the Pods from the old ReplicaSet to the new one at a controlled rate. Each new ReplicaSet updates the revision of the Deployment.
-* [Rollback to an earlier Deployment revision](#rolling-back-a-deployment) if the current state of the Deployment is not stable. Each rollback updates the revision of the Deployment.
-* [Scale up the Deployment to facilitate more load](#scaling-a-deployment).
-* [Pause the Deployment](#pausing-and-resuming-a-deployment) to apply multiple fixes to its PodTemplateSpec and then resume it to start a new rollout.
-* [Use the status of the Deployment](#deployment-status) as an indicator that a rollout has stuck.
-* [Clean up older ReplicaSets](#clean-up-policy) that you don&#39;t need anymore.
- --&gt;
-&lt;h2 id=&#34;应用场景&#34;&gt;应用场景&lt;/h2&gt;
-&lt;p&gt;以下为 &lt;code&gt;Deployment&lt;/code&gt; 常见应用场景:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#creating-a-deployment&#34;&gt;使用 Deployment 来管理 ReplicaSet&lt;/a&gt;. ReplicaSet 会在后台创建 Pod， 查看它发布的这些发布是否成功&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#updating-a-deployment&#34;&gt;声明 Pod 的新状态&lt;/a&gt; 通过更新 Deployment 的 Pod 模板定义(PodTemplateSpec). 创建一个新的 ReplicaSet 并以一个受控的频率将 Pod 从旧的 ReplicaSet 移到新的 ReplicaSet。每创建一个新的 ReplicaSet 都会更新一次 Deployment 的版本号&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#rolling-back-a-deployment&#34;&gt;Deployment 回滚到之前一个版本&lt;/a&gt;， 如果 Deployment 当前部署的应用状态不稳定，每次回滚也会更新 Deployment 版本&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#scaling-a-deployment&#34;&gt;让 Deployment 扩容以承载更多的负载&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#pausing-and-resuming-a-deployment&#34;&gt;暂停 Deployment&lt;/a&gt; 后一次修改 PodTemplateSpec 的多个地方，然后恢复这个 Deployment 让它开始一个新的发布&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#deployment-status&#34;&gt;通过 Deployment 的状态&lt;/a&gt; 来标示一个发布应用的状态&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#clean-up-policy&#34;&gt;清除不需要的 ReplicaSet&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;!--
-## Creating a Deployment
-
-The following is an example of a Deployment. It creates a ReplicaSet to bring up three `nginx` Pods:
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;table class=&#34;includecode&#34; id=&#34;controllersnginx-deploymentyaml&#34;&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;
-                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/controllers/nginx-deployment.yaml&#34; download=&#34;controllers/nginx-deployment.yaml&#34;&gt;
-                    &lt;code&gt;controllers/nginx-deployment.yaml&lt;/code&gt;
-                &lt;/a&gt;
-                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;controllersnginx-deploymentyaml&#39;)&#34; title=&#34;Copy controllers/nginx-deployment.yaml to clipboard&#34;&gt;
-            &lt;/th&gt;
-        &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody&gt;
-        &lt;tr&gt;
-            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deployment&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx-deployment&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;replicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-        &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
-      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx:1.14.2&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:
-        - &lt;span style=&#34;color:#f92672&#34;&gt;containerPort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;80&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/tbody&gt;
-&lt;/table&gt;
-
-
-
-In this example:
-
-* A Deployment named `nginx-deployment` is created, indicated by the `.metadata.name` field.
-* The Deployment creates three replicated Pods, indicated by the `.spec.replicas` field.
-* The `.spec.selector` field defines how the Deployment finds which Pods to manage.
-  In this case, you simply select a label that is defined in the Pod template (`app: nginx`).
-  However, more sophisticated selection rules are possible,
-  as long as the Pod template itself satisfies the rule.
-
-  &lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; The &lt;code&gt;.spec.selector.matchLabels&lt;/code&gt; field is a map of {key,value} pairs.
-A single {key,value} in the &lt;code&gt;matchLabels&lt;/code&gt; map is equivalent to an element of &lt;code&gt;matchExpressions&lt;/code&gt;,
-whose key field is &amp;ldquo;key&amp;rdquo; the operator is &amp;ldquo;In&amp;rdquo;, and the values array contains only &amp;ldquo;value&amp;rdquo;.
-All of the requirements, from both &lt;code&gt;matchLabels&lt;/code&gt; and &lt;code&gt;matchExpressions&lt;/code&gt;, must be satisfied in order to match.&lt;/div&gt;
-&lt;/blockquote&gt;
-
-
-* The `template` field contains the following sub-fields:
-  * The Pods are labeled `app: nginx`using the `.metadata.labels` field.
-  * The Pod template&#39;s specification, or `.template.spec` field, indicates that
-  the Pods run one container, `nginx`, which runs the `nginx`
-  [Docker Hub](https://hub.docker.com/) image at version 1.14.2.
-  * Create one container and name it `nginx` using the `.spec.template.spec.containers[0].name` field.
-
-Before you begin, make sure your Kubernetes cluster is up and running.
-Follow the steps given below to create the above Deployment:
-
-
-1. Create the Deployment by running the following command:
-
-   ```shell
-   kubectl apply -f https://k8s.io/examples/controllers/nginx-deployment.yaml
-   ```
-
-  &lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; You can specify the &lt;code&gt;--record&lt;/code&gt; flag to write the command executed in the resource annotation &lt;code&gt;kubernetes.io/change-cause&lt;/code&gt;.
-The recorded change is useful for future introspection. For example, to see the commands executed in each Deployment revision.&lt;/div&gt;
-&lt;/blockquote&gt;
-
-
-
-2. Run `kubectl get deployments` to check if the Deployment was created.
-
-   If the Deployment is still being created, the output is similar to the following:
-   ```shell
-   NAME               READY   UP-TO-DATE   AVAILABLE   AGE
-   nginx-deployment   0/3     0            0           1s
-   ```
-   When you inspect the Deployments in your cluster, the following fields are displayed:
-   * `NAME` lists the names of the Deployments in the namespace.
-   * `READY` displays how many replicas of the application are available to your users. It follows the pattern ready/desired.
-   * `UP-TO-DATE` displays the number of replicas that have been updated to achieve the desired state.
-   * `AVAILABLE` displays how many replicas of the application are available to your users.
-   * `AGE` displays the amount of time that the application has been running.
-
-   Notice how the number of desired replicas is 3 according to `.spec.replicas` field.
-
-3. To see the Deployment rollout status, run `kubectl rollout status deployment.v1.apps/nginx-deployment`.
-
-   The output is similar to:
-   ```shell
-   Waiting for rollout to finish: 2 out of 3 new replicas have been updated...
-   deployment.apps/nginx-deployment successfully rolled out
-   ```
-
-4. Run the `kubectl get deployments` again a few seconds later.
-   The output is similar to this:
-   ```shell
-   NAME               READY   UP-TO-DATE   AVAILABLE   AGE
-   nginx-deployment   3/3     3            3           18s
-   ```
-   Notice that the Deployment has created all three replicas, and all replicas are up-to-date (they contain the latest Pod template) and available.
-
-5. To see the ReplicaSet (`rs`) created by the Deployment, run `kubectl get rs`. The output is similar to this:
-   ```shell
-   NAME                          DESIRED   CURRENT   READY   AGE
-   nginx-deployment-75675f5897   3         3         3       18s
-   ```
-   ReplicaSet output shows the following fields:
-
-   * `NAME` lists the names of the ReplicaSets in the namespace.
-   * `DESIRED` displays the desired number of _replicas_ of the application, which you define when you create the Deployment. This is the _desired state_.
-   * `CURRENT` displays how many replicas are currently running.
-   * `READY` displays how many replicas of the application are available to your users.
-   * `AGE` displays the amount of time that the application has been running.
-
-   Notice that the name of the ReplicaSet is always formatted as `[DEPLOYMENT-NAME]-[RANDOM-STRING]`.
-   The random string is randomly generated and uses the `pod-template-hash` as a seed.
-
-6. To see the labels automatically generated for each Pod, run `kubectl get pods --show-labels`.
-   The output is similar to:
-   ```shell
-   NAME                                READY     STATUS    RESTARTS   AGE       LABELS
-   nginx-deployment-75675f5897-7ci7o   1/1       Running   0          18s       app=nginx,pod-template-hash=3123191453
-   nginx-deployment-75675f5897-kzszj   1/1       Running   0          18s       app=nginx,pod-template-hash=3123191453
-   nginx-deployment-75675f5897-qqcnn   1/1       Running   0          18s       app=nginx,pod-template-hash=3123191453
-   ```
-   The created ReplicaSet ensures that there are three `nginx` Pods.
-
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;p&gt;You must specify an appropriate selector and Pod template labels in a Deployment
-(in this case, &lt;code&gt;app: nginx&lt;/code&gt;).&lt;/p&gt;
-&lt;p&gt;Do not overlap labels or selectors with other controllers (including other Deployments and StatefulSets).
-Kubernetes doesn&amp;rsquo;t stop you from overlapping, and if multiple controllers have overlapping selectors those controllers might conflict and behave unexpectedly.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/blockquote&gt;
-
- --&gt;
-&lt;h2 id=&#34;创建一个-deployment&#34;&gt;创建一个 Deployment&lt;/h2&gt;
-&lt;p&gt;以下为一个 Deployment 的示例。创建一个 ReplicaSet 来启动三个 &lt;code&gt;nginx&lt;/code&gt; 的 Pod：&lt;/p&gt;
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;table class=&#34;includecode&#34; id=&#34;controllersnginx-deploymentyaml&#34;&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;
-                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/controllers/nginx-deployment.yaml&#34; download=&#34;controllers/nginx-deployment.yaml&#34;&gt;
-                    &lt;code&gt;controllers/nginx-deployment.yaml&lt;/code&gt;
-                &lt;/a&gt;
-                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;controllersnginx-deploymentyaml&#39;)&#34; title=&#34;Copy controllers/nginx-deployment.yaml to clipboard&#34;&gt;
-            &lt;/th&gt;
-        &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody&gt;
-        &lt;tr&gt;
-            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deployment&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx-deployment&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;replicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-        &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
-      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx:1.14.2&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:
-        - &lt;span style=&#34;color:#f92672&#34;&gt;containerPort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;80&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/tbody&gt;
-&lt;/table&gt;
-
-
-&lt;p&gt;在这个示例中:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;创建了一个叫 &lt;code&gt;nginx-deployment&lt;/code&gt; Deployment， 这个名字定义在 &lt;code&gt;.metadata.name&lt;/code&gt; 字段&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;这个 Deployment 会创建三个 Pod 为副本， 由 &lt;code&gt;.spec.replicas&lt;/code&gt; 字段定义&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;.spec.selector&lt;/code&gt; 字段定义 Deployment 怎么去找需要它管理的 Pod. 在本例中，只是定义在 Pod 模板中的
-标签(&lt;code&gt;app: nginx&lt;/code&gt;), 更复杂的选择规则也是支持的，只要 Pod 模板满足这些规则
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;code&gt;.spec.selector.matchLabels&lt;/code&gt; 是一个键值对 ({key,value}) 字典。
-&lt;code&gt;matchLabels&lt;/code&gt; 中的一个键值对相当于 &lt;code&gt;matchExpressions&lt;/code&gt; 中的一个元素
-这个元素的键就是值对的键，操作符为 &lt;code&gt;In&lt;/code&gt;， 值为包含该值的数组。
-需要同时满足 &lt;code&gt;matchLabels&lt;/code&gt; 和 &lt;code&gt;matchExpressions&lt;/code&gt; 中的条件，才是符合该选择器的目标&lt;/div&gt;
-&lt;/blockquote&gt;
-&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;template&lt;/code&gt; 字段又包含以下子字段:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;.metadata.labels&lt;/code&gt; 字段中的 &lt;code&gt;app: nginx&lt;/code&gt; 是 Pod 的标签&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;.template.spec&lt;/code&gt; 字段为 Pod 的模板定义， 表示这个 Pod 运行一个容器， 应用程序为 &lt;code&gt;nginx&lt;/code&gt;&lt;br&gt;
-运行的是 &lt;a href=&#34;https://hub.docker.com/&#34;&gt;Docker Hub&lt;/a&gt; 上面的 &lt;code&gt;1.14.2&lt;/code&gt; 版本的 nginx 镜像&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;.spec.template.spec.containers[0].name&lt;/code&gt; 字段表示，创建的第一个也只有一个容器，它的名字为 &lt;code&gt;nginx&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;在开始之前，需要保证 k8s 集群已经启动并运行。&lt;/p&gt;
-&lt;p&gt;以下为创建这个 Deployment 的具体步骤:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;通过以下命令创建该 Deployment：&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl apply -f nginx-deployment.yaml
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 用户可以通过在命令中添加 &lt;code&gt;--record&lt;/code&gt; 来把执行的命令写入到资源的 &lt;code&gt;kubernetes.io/change-cause&lt;/code&gt; 注解 中。
-这个变更记录对于将来的回溯是很有用的。比如，查看 Deployment 每一个版本执行了什么命令&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;ol start=&#34;2&#34;&gt;
-&lt;li&gt;运行 &lt;code&gt;kubectl get deployments&lt;/code&gt; 命令，查看 Deployment 是否已经创建&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;如果 Deployment 还在创建中，则输出结果如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME               READY   UP-TO-DATE   AVAILABLE   AGE
-nginx-deployment   0/3     0            0           1s
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;其中每个字段的说明如下:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;NAME&lt;/code&gt; 显示 Deployment 的名称&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;READY&lt;/code&gt; 展示应用的副本可用的数量， 格式为 就绪数/期望数&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;UP-TO-DATE&lt;/code&gt; 展示已经被更新达到预期状态的副本的数量&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;AVAILABLE&lt;/code&gt; 展示已经能为用户提供服务的副本数量&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;AGE&lt;/code&gt; 应用运行的时长&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;可以看到，根据 &lt;code&gt;.spec.replicas&lt;/code&gt; 字段， 期望的副本数量是 &lt;code&gt;3&lt;/code&gt;&lt;/p&gt;
-&lt;ol start=&#34;3&#34;&gt;
-&lt;li&gt;要查看 Deployment 发布状态，可以通过命令 &lt;code&gt;kubectl rollout status deployment.v1.apps/nginx-deployment&lt;/code&gt;
-输出类似如下:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;&lt;code&gt;Waiting for rollout to finish: 2 out of 3 new replicas have been updated...
-deployment.apps/nginx-deployment successfully rolled out
-&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;4&#34;&gt;
-&lt;li&gt;等几秒再执行命令 &lt;code&gt;kubectl get deployments&lt;/code&gt;
-输出类似如下:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;&lt;code&gt;NAME               READY   UP-TO-DATE   AVAILABLE   AGE
-nginx-deployment   3/3     3            3           18s
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;这时可以看到 Deployment 已经创建全部的三个副本， 所有副本的达成更新(是通过最新的 Pod 模板创建的)并且可用的&lt;/p&gt;
-&lt;ol start=&#34;5&#34;&gt;
-&lt;li&gt;通过命令 &lt;code&gt;kubectl get rs&lt;/code&gt; 查看由 Deployment 创建的 ReplicaSet (&lt;code&gt;rs&lt;/code&gt;)
-输出类似如下:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;&lt;code&gt;NAME                          DESIRED   CURRENT   READY   AGE
-nginx-deployment-75675f5897   3         3         3       18s
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;字段说明如下：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;NAME&lt;/code&gt; ReplicaSet 的名称&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;DESIRED&lt;/code&gt; 应用的 &lt;em&gt;期望&lt;/em&gt; 副本数，创建 Deployment 时指定。 这是期望状态&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;CURRENT&lt;/code&gt; 展示当前正在运行的副本数&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;READY&lt;/code&gt; 展示当前可以提供服务的副本数&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;AGE&lt;/code&gt; 展示应用的运行时长&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;可以看到 ReplicaSet 的名称格式总是为 &lt;code&gt;[DEPLOYMENT-NAME]-[RANDOM-STRING]&lt;/code&gt;
-为个随机字符串是以 &lt;code&gt;pod-template-hash&lt;/code&gt; 为种子生成的&lt;/p&gt;
-&lt;ol start=&#34;6&#34;&gt;
-&lt;li&gt;要查看每个 Pod 自动创建的标签，可能执行命令 &lt;code&gt;kubectl get pods --show-labels&lt;/code&gt;:
-输出类似如下:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;&lt;code&gt;NAME                                READY     STATUS    RESTARTS   AGE       LABELS
-nginx-deployment-75675f5897-7ci7o   1/1       Running   0          18s       app=nginx,pod-template-hash=3123191453
-nginx-deployment-75675f5897-kzszj   1/1       Running   0          18s       app=nginx,pod-template-hash=3123191453
-nginx-deployment-75675f5897-qqcnn   1/1       Running   0          18s       app=nginx,pod-template-hash=3123191453
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;ReplicaSet 会确保有三个 &lt;code&gt;nginx&lt;/code&gt; Pod&lt;/p&gt;
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 用户应该在 Deployment 中定义恰当的选择器和 Pod 模板标签(本例为 &lt;code&gt;app: nginx&lt;/code&gt;)
-一定不要与其它的控制器(包括其它的 Deployment 和 StatefulSet)使用一样的标签或选择器&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;!--
-### Pod-template-hash label
-
-&lt;blockquote class=&#34;caution&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; Do not change this label.&lt;/div&gt;
-&lt;/blockquote&gt;
-
-
-The `pod-template-hash` label is added by the Deployment controller to every ReplicaSet that a Deployment creates or adopts.
-
-This label ensures that child ReplicaSets of a Deployment do not overlap. It is generated by hashing the `PodTemplate` of the ReplicaSet and using the resulting hash as the label value that is added to the ReplicaSet selector, Pod template labels,
-and in any existing Pods that the ReplicaSet might have.
- --&gt;
-&lt;h3 id=&#34;标签-pod-template-hash&#34;&gt;标签 &lt;code&gt;pod-template-hash&lt;/code&gt;&lt;/h3&gt;
-&lt;blockquote class=&#34;caution&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 这个标签一定不要改&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;code&gt;pod-template-hash&lt;/code&gt; 是由 Deployment 的控制器添加到每个由 Deployment 创建或收编的 ReplicaSet 的。
-这个标签确保 Deployment 所属的 ReplicaSet 的标签不会重叠。 这个标签的值是对 ReplicaSet 的 &lt;code&gt;PodTemplate&lt;/code&gt; 进行哈希的结果，
-并将这个标签添加到 ReplicaSet 的选择器和 Pod 模板的标签中，然后也会添加到已经由 ReplicaSet 管理或将来收编的所以 Pod 中。&lt;/p&gt;
-&lt;!--
-## Updating a Deployment
-
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; A Deployment&amp;rsquo;s rollout is triggered if and only if the Deployment&amp;rsquo;s Pod template (that is, &lt;code&gt;.spec.template&lt;/code&gt;)
-is changed, for example if the labels or container images of the template are updated. Other updates, such as scaling the Deployment, do not trigger a rollout.&lt;/div&gt;
-&lt;/blockquote&gt;
-
-
-Follow the steps given below to update your Deployment:
-
-1. Let&#39;s update the nginx Pods to use the `nginx:1.16.1` image instead of the `nginx:1.14.2` image.
-
-    ```shell
-    kubectl --record deployment.apps/nginx-deployment set image deployment.v1.apps/nginx-deployment nginx=nginx:1.16.1
-    ```
-    or simply use the following command:
-
-    ```shell
-    kubectl set image deployment/nginx-deployment nginx=nginx:1.16.1 --record
-    ```
-
-    The output is similar to this:
-    ```
-    deployment.apps/nginx-deployment image updated
-    ```
-
-    Alternatively, you can `edit` the Deployment and change `.spec.template.spec.containers[0].image` from `nginx:1.14.2` to `nginx:1.16.1`:
-
-    ```shell
-    kubectl edit deployment.v1.apps/nginx-deployment
-    ```
-
-    The output is similar to this:
-    ```
-    deployment.apps/nginx-deployment edited
-    ```
-
-2. To see the rollout status, run:
-
-    ```shell
-    kubectl rollout status deployment.v1.apps/nginx-deployment
-    ```
-
-    The output is similar to this:
-    ```
-    Waiting for rollout to finish: 2 out of 3 new replicas have been updated...
-    ```
-    or
-    ```
-    deployment.apps/nginx-deployment successfully rolled out
-    ```
-
-Get more details on your updated Deployment:
-
-* After the rollout succeeds, you can view the Deployment by running `kubectl get deployments`.
-    The output is similar to this:
-    ```
-    NAME               READY   UP-TO-DATE   AVAILABLE   AGE
-    nginx-deployment   3/3     3            3           36s
-    ```
-
-* Run `kubectl get rs` to see that the Deployment updated the Pods by creating a new ReplicaSet and scaling it
-up to 3 replicas, as well as scaling down the old ReplicaSet to 0 replicas.
-
-    ```shell
-    kubectl get rs
-    ```
-
-    The output is similar to this:
-    ```
-    NAME                          DESIRED   CURRENT   READY   AGE
-    nginx-deployment-1564180365   3         3         3       6s
-    nginx-deployment-2035384211   0         0         0       36s
-    ```
-
-* Running `get pods` should now show only the new Pods:
-
-    ```shell
-    kubectl get pods
-    ```
-
-    The output is similar to this:
-    ```
-    NAME                                READY     STATUS    RESTARTS   AGE
-    nginx-deployment-1564180365-khku8   1/1       Running   0          14s
-    nginx-deployment-1564180365-nacti   1/1       Running   0          14s
-    nginx-deployment-1564180365-z9gth   1/1       Running   0          14s
-    ```
-
-    Next time you want to update these Pods, you only need to update the Deployment&#39;s Pod template again.
-
-    Deployment ensures that only a certain number of Pods are down while they are being updated. By default,
-    it ensures that at least 75% of the desired number of Pods are up (25% max unavailable).
-
-    Deployment also ensures that only a certain number of Pods are created above the desired number of Pods.
-    By default, it ensures that at most 125% of the desired number of Pods are up (25% max surge).
-
-    For example, if you look at the above Deployment closely, you will see that it first created a new Pod,
-    then deleted some old Pods, and created new ones. It does not kill old Pods until a sufficient number of
-    new Pods have come up, and does not create new Pods until a sufficient number of old Pods have been killed.
-    It makes sure that at least 2 Pods are available and that at max 4 Pods in total are available.
-
-* Get details of your Deployment:
-  ```shell
-  kubectl describe deployments
-  ```
-  The output is similar to this:
-  ```
-  Name:                   nginx-deployment
-  Namespace:              default
-  CreationTimestamp:      Thu, 30 Nov 2017 10:56:25 +0000
-  Labels:                 app=nginx
-  Annotations:            deployment.kubernetes.io/revision=2
-  Selector:               app=nginx
-  Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable
-  StrategyType:           RollingUpdate
-  MinReadySeconds:        0
-  RollingUpdateStrategy:  25% max unavailable, 25% max surge
-  Pod Template:
-    Labels:  app=nginx
-     Containers:
-      nginx:
-        Image:        nginx:1.16.1
-        Port:         80/TCP
-        Environment:  &lt;none&gt;
-        Mounts:       &lt;none&gt;
-      Volumes:        &lt;none&gt;
-    Conditions:
-      Type           Status  Reason
-      ----           ------  ------
-      Available      True    MinimumReplicasAvailable
-      Progressing    True    NewReplicaSetAvailable
-    OldReplicaSets:  &lt;none&gt;
-    NewReplicaSet:   nginx-deployment-1564180365 (3/3 replicas created)
-    Events:
-      Type    Reason             Age   From                   Message
-      ----    ------             ----  ----                   -------
-      Normal  ScalingReplicaSet  2m    deployment-controller  Scaled up replica set nginx-deployment-2035384211 to 3
-      Normal  ScalingReplicaSet  24s   deployment-controller  Scaled up replica set nginx-deployment-1564180365 to 1
-      Normal  ScalingReplicaSet  22s   deployment-controller  Scaled down replica set nginx-deployment-2035384211 to 2
-      Normal  ScalingReplicaSet  22s   deployment-controller  Scaled up replica set nginx-deployment-1564180365 to 2
-      Normal  ScalingReplicaSet  19s   deployment-controller  Scaled down replica set nginx-deployment-2035384211 to 1
-      Normal  ScalingReplicaSet  19s   deployment-controller  Scaled up replica set nginx-deployment-1564180365 to 3
-      Normal  ScalingReplicaSet  14s   deployment-controller  Scaled down replica set nginx-deployment-2035384211 to 0
-    ```
-    Here you see that when you first created the Deployment, it created a ReplicaSet (nginx-deployment-2035384211)
-    and scaled it up to 3 replicas directly. When you updated the Deployment, it created a new ReplicaSet
-    (nginx-deployment-1564180365) and scaled it up to 1 and then scaled down the old ReplicaSet to 2, so that at
-    least 2 Pods were available and at most 4 Pods were created at all times. It then continued scaling up and down
-    the new and the old ReplicaSet, with the same rolling update strategy. Finally, you&#39;ll have 3 available replicas
-    in the new ReplicaSet, and the old ReplicaSet is scaled down to 0.
- --&gt;
-&lt;h2 id=&#34;更新-deployment&#34;&gt;更新 Deployment&lt;/h2&gt;
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Deployment 有且仅有在对 Deployment Pod 模板(也就是 &lt;code&gt;.spec.template&lt;/code&gt;)发生变更后触发发布，
-例如，如果模板标签或容器被更新。 其它如扩充 Deployment 副本数不会触发发布。&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;以下步骤更新 Deployment：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;将 Pod 使用的 &lt;code&gt;nginx&lt;/code&gt; 镜像版本从 &lt;code&gt;nginx:1.14.2&lt;/code&gt; 升到 &lt;code&gt;nginx:1.16.1&lt;/code&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl --record deployment.apps/nginx-deployment set image deployment.v1.apps/nginx-deployment nginx&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;nginx:1.16.1
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;或者简单使用如下命令:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl set image deployment/nginx-deployment nginx&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;nginx:1.16.1 --record
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployment.apps/nginx-deployment image updated
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;另外还有一个方式，就是修改 Deployment 中 &lt;code&gt;.spec.template.spec.containers[0].image&lt;/code&gt; 的值将其从原来的 &lt;code&gt;nginx:1.14.2&lt;/code&gt; 改成 &lt;code&gt;nginx:1.16.1&lt;/code&gt;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl edit deployment.v1.apps/nginx-deployment
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployment.apps/nginx-deployment edited
-&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;2&#34;&gt;
-&lt;li&gt;查看发布状态，执行如下命令:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl rollout status deployment.v1.apps/nginx-deployment
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Waiting for rollout to finish: 2 out of 3 new replicas have been updated...
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;或&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployment.apps/nginx-deployment successfully rolled out
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;查看更新后 Deployment 的更多细节:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;当发布执行完成后，查看 Deployment 执行命令  &lt;code&gt;kubectl get deployments&lt;/code&gt;：
-输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME               READY   UP-TO-DATE   AVAILABLE   AGE
-nginx-deployment   3/3     3            3           36s
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;执行 &lt;code&gt;kubectl get rs&lt;/code&gt; 命令可以看到 Deployment 是通过创建一个新的 ReplicaSet 并将其副本数扩充到 3
-同时将旧的 ReplicaSet 的副本数收缩至 0&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get rs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME                          DESIRED   CURRENT   READY   AGE
-nginx-deployment-1564180365   3         3         3       6s
-nginx-deployment-2035384211   0         0         0       36s
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;这时再执行命令 &lt;code&gt;get pods&lt;/code&gt;， 应该就只会看到新创建的 Pod:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get pods
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME                                READY     STATUS    RESTARTS   AGE
-nginx-deployment-1564180365-khku8   1/1       Running   0          14s
-nginx-deployment-1564180365-nacti   1/1       Running   0          14s
-nginx-deployment-1564180365-z9gth   1/1       Running   0          14s
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;当用户下次想更新这些 Pod 时， 只需要再次更新 Deployment 的 Pod 模板即可。&lt;/p&gt;
-&lt;p&gt;Deployment 会确保在更新过程中挂掉的 Pod 数不会大于指定的值。 默认情况下，会保证至少有期望数量 75% 数量的 Pod 是正常运行的(最多只有 25% 是不可用的)&lt;/p&gt;
-&lt;p&gt;Deployment 还会保证多于期望数量的 Pod 数不会大于指定的值。 默认情况下同时正常运行的 Pod 数不会大于期望数量的 125%(上限为 25%)&lt;/p&gt;
-&lt;p&gt;如果仔细观察上面的例子。 就会发现更新过程中，首先会创建一个新的 Pod， 然后删除一些旧的，再创建新的。
-在新创建并就绪的 Pod 的数量没有达到特定数量之前不会干掉旧的 Pod， 同时在没干掉特定数量旧的 Pod 之前不会创建新的 Pod。
-这个过程中会保证在少的时候至少有 2 个 Pod 可用，在多的时候至多有 4 个 Pod 可用。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;继续来看 Deployment 的更多细节：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl describe deployments
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Name:                   nginx-deployment
-Namespace:              default
-CreationTimestamp:      Thu, 30 Nov 2017 10:56:25 +0000
-Labels:                 app=nginx
-Annotations:            deployment.kubernetes.io/revision=2
-Selector:               app=nginx
-Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable
-StrategyType:           RollingUpdate
-MinReadySeconds:        0
-RollingUpdateStrategy:  25% max unavailable, 25% max surge
-Pod Template:
-  Labels:  app=nginx
-   Containers:
-    nginx:
-      Image:        nginx:1.16.1
-      Port:         80/TCP
-      Environment:  &amp;lt;none&amp;gt;
-      Mounts:       &amp;lt;none&amp;gt;
-    Volumes:        &amp;lt;none&amp;gt;
-  Conditions:
-    Type           Status  Reason
-    ----           ------  ------
-    Available      True    MinimumReplicasAvailable
-    Progressing    True    NewReplicaSetAvailable
-  OldReplicaSets:  &amp;lt;none&amp;gt;
-  NewReplicaSet:   nginx-deployment-1564180365 (3/3 replicas created)
-  Events:
-    Type    Reason             Age   From                   Message
-    ----    ------             ----  ----                   -------
-    Normal  ScalingReplicaSet  2m    deployment-controller  Scaled up replica set nginx-deployment-2035384211 to 3
-    Normal  ScalingReplicaSet  24s   deployment-controller  Scaled up replica set nginx-deployment-1564180365 to 1
-    Normal  ScalingReplicaSet  22s   deployment-controller  Scaled down replica set nginx-deployment-2035384211 to 2
-    Normal  ScalingReplicaSet  22s   deployment-controller  Scaled up replica set nginx-deployment-1564180365 to 2
-    Normal  ScalingReplicaSet  19s   deployment-controller  Scaled down replica set nginx-deployment-2035384211 to 1
-    Normal  ScalingReplicaSet  19s   deployment-controller  Scaled up replica set nginx-deployment-1564180365 to 3
-    Normal  ScalingReplicaSet  14s   deployment-controller  Scaled down replica set nginx-deployment-2035384211 to 0
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;这里可以看到， 在第一次创建 Deployment 的时候， 创建了一个 ReplicaSet (nginx-deployment-2035384211) 并直接将副本数扩充到 3.
-当 更新 Deployment 的时候， 又创建了一个新的 ReplicaSet (nginx-deployment-1564180365) 并将副本数扩充到 1 ， 紧接着将旧的 ReplicaSet
-的副本数收缩至 2， 因此至始终少有 2 Pod 可用， 至多有 4 个 Pod 可用。 接下来继续使用相同的滚动更新策略扩充新的，收缩旧的 ReplicaSet。到最后就变成新的
-ReplicaSet 有 3 个副本可用， 旧的  ReplicaSet 副本数收缩为 0 。&lt;/p&gt;
-&lt;!--
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;rollover-aka-multiple-updates-in-flight&#34;&gt;Rollover (aka multiple updates in-flight)&lt;/h3&gt;
-&lt;p&gt;Each time a new Deployment is observed by the Deployment controller, a ReplicaSet is created to bring up
-the desired Pods. If the Deployment is updated, the existing ReplicaSet that controls Pods whose labels
-match &lt;code&gt;.spec.selector&lt;/code&gt; but whose template does not match &lt;code&gt;.spec.template&lt;/code&gt; are scaled down. Eventually, the new
-ReplicaSet is scaled to &lt;code&gt;.spec.replicas&lt;/code&gt; and all old ReplicaSets is scaled to 0.&lt;/p&gt;
-&lt;p&gt;If you update a Deployment while an existing rollout is in progress, the Deployment creates a new ReplicaSet
-as per the update and start scaling that up, and rolls over the ReplicaSet that it was scaling up previously
-&amp;ndash; it will add it to its list of old ReplicaSets and start scaling it down.&lt;/p&gt;
-&lt;p&gt;For example, suppose you create a Deployment to create 5 replicas of &lt;code&gt;nginx:1.14.2&lt;/code&gt;,
-but then update the Deployment to create 5 replicas of &lt;code&gt;nginx:1.16.1&lt;/code&gt;, when only 3
-replicas of &lt;code&gt;nginx:1.14.2&lt;/code&gt; had been created. In that case, the Deployment immediately starts
-killing the 3 &lt;code&gt;nginx:1.14.2&lt;/code&gt; Pods that it had created, and starts creating
-&lt;code&gt;nginx:1.16.1&lt;/code&gt; Pods. It does not wait for the 5 replicas of &lt;code&gt;nginx:1.14.2&lt;/code&gt; to be created
-before changing course.
-&amp;ndash;&amp;gt;&lt;/p&gt;
-&lt;h3 id=&#34;rollover-aka-multiple-updates-in-flight-没想到比较恰当的&#34;&gt;Rollover (aka multiple updates in-flight) 没想到比较恰当的&lt;/h3&gt;
-&lt;p&gt;每次 Deployment 控制器发现新创建了一个 Deployment， 就会创建一个新的 ReplicaSet 来创建期望数量的 Pod.
-如 Deployment 被更新后， 对于之前存在的 ReplicaSet， 它控制的 Pod 的标签能够匹配 &lt;code&gt;.spec.selector&lt;/code&gt; 但是模板不能匹配 &lt;code&gt;.spec.template&lt;/code&gt;，副本数量就会被收缩。
-最后， 新创建的 ReplicaSet 的副本数扩充到 &lt;code&gt;.spec.replicas&lt;/code&gt; 配置的数量。 所以旧的 ReplicaSet 副本收缩为 0。&lt;/p&gt;
-&lt;p&gt;如果在前一个发布还在进行时又更新的 Deployment， Deployment 会为被次更新创建一个对应的 ReplicaSet，就开始扩容。
-前一个正在扩容的 ReplicaSet 就会被跳过。 它会添加到旧 ReplicaSet 的列表，然后开始收缩容量。&lt;/p&gt;
-&lt;p&gt;例如， 假设创建一个包含 5 个 &lt;code&gt;nginx:1.14.2&lt;/code&gt;  副本的 Deployment 这时将 Deployment 改为包含 &lt;code&gt;nginx:1.16.1&lt;/code&gt; 副本， 此时只创建了 3 个 &lt;code&gt;nginx:1.14.2&lt;/code&gt; 副本。
-在这种情况下， Deployment 会马上开始干掉 已经被创建的 3 个 &lt;code&gt;nginx:1.14.2&lt;/code&gt; Pod， 并开始创建 &lt;code&gt;nginx:1.16.1&lt;/code&gt; Pod。 并不会等 5 个 &lt;code&gt;nginx:1.14.2&lt;/code&gt; 创建完成后才应用变更引发的任务&lt;/p&gt;
-&lt;!--
-### Label selector updates
-
-It is generally discouraged to make label selector updates and it is suggested to plan your selectors up front.
-In any case, if you need to perform a label selector update, exercise great caution and make sure you have grasped
-all of the implications.
-
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; In API version &lt;code&gt;apps/v1&lt;/code&gt;, a Deployment&amp;rsquo;s label selector is immutable after it gets created.&lt;/div&gt;
-&lt;/blockquote&gt;
-
-
-* Selector additions require the Pod template labels in the Deployment spec to be updated with the new label too,
-otherwise a validation error is returned. This change is a non-overlapping one, meaning that the new selector does
-not select ReplicaSets and Pods created with the old selector, resulting in orphaning all old ReplicaSets and
-creating a new ReplicaSet.
-* Selector updates changes the existing value in a selector key -- result in the same behavior as additions.
-* Selector removals removes an existing key from the Deployment selector -- do not require any changes in the
-Pod template labels. Existing ReplicaSets are not orphaned, and a new ReplicaSet is not created, but note that the
-removed label still exists in any existing Pods and ReplicaSets.
- --&gt;
-&lt;h3 id=&#34;标签选择器的更新&#34;&gt;标签选择器的更新&lt;/h3&gt;
-&lt;p&gt;通常不建议在标签选择器上做修改，而是预先就想好标签选择器。 在任何你想要修改标签器的情况下，一定要小心小心再小心， 确保已经理清楚所有的头绪。&lt;/p&gt;
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 对于版本为 &lt;code&gt;apps/v1&lt;/code&gt; API， Deployment 在创建后不可变更。&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;标签选择器添加条目必须要 Deployment 的 Pod 模板的标签也要添加该条目， 否则会返回一个校验错误。 也不能让这个变更与原来的不重叠，不重叠的意思是新的选择器
-不能匹配到旧的选择创建的 ReplicaSet 主 Pod， 导致旧的 ReplicaSet 脱钩 然后创建新的ReplicaSet&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;标签选择器更新的是其中的已经存在的一个键的值， 与添加条目的行为一至。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;标签选择器更新的删除一个存在的键， 不会对 Pod 模板做任何修改。 存在的 ReplicaSet 不会脱钩， 也不会创建新的 ReplicaSet， 但要注意删除的标签键，依然存在于这些
-ReplicaSet 和 Pod 中&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;!--
-## Rolling Back a Deployment
-
-Sometimes, you may want to rollback a Deployment; for example, when the Deployment is not stable, such as crash looping.
-By default, all of the Deployment&#39;s rollout history is kept in the system so that you can rollback anytime you want
-(you can change that by modifying revision history limit).
-
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; A Deployment&amp;rsquo;s revision is created when a Deployment&amp;rsquo;s rollout is triggered. This means that the
-new revision is created if and only if the Deployment&amp;rsquo;s Pod template (&lt;code&gt;.spec.template&lt;/code&gt;) is changed,
-for example if you update the labels or container images of the template. Other updates, such as scaling the Deployment,
-do not create a Deployment revision, so that you can facilitate simultaneous manual- or auto-scaling.
-This means that when you roll back to an earlier revision, only the Deployment&amp;rsquo;s Pod template part is
-rolled back.&lt;/div&gt;
-&lt;/blockquote&gt;
-
-
-* Suppose that you made a typo while updating the Deployment, by putting the image name as `nginx:1.161` instead of `nginx:1.16.1`:
-
-    ```shell
-    kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.161 --record=true
-    ```
-
-    The output is similar to this:
-    ```
-    deployment.apps/nginx-deployment image updated
-    ```
-
-* The rollout gets stuck. You can verify it by checking the rollout status:
-
-    ```shell
-    kubectl rollout status deployment.v1.apps/nginx-deployment
-    ```
-
-    The output is similar to this:
-    ```
-    Waiting for rollout to finish: 1 out of 3 new replicas have been updated...
-    ```
-
-* Press Ctrl-C to stop the above rollout status watch. For more information on stuck rollouts,
-[read more here](#deployment-status).
-
-* You see that the number of old replicas (`nginx-deployment-1564180365` and `nginx-deployment-2035384211`) is 2, and new replicas (nginx-deployment-3066724191) is 1.
-
-    ```shell
-    kubectl get rs
-    ```
-
-    The output is similar to this:
-    ```
-    NAME                          DESIRED   CURRENT   READY   AGE
-    nginx-deployment-1564180365   3         3         3       25s
-    nginx-deployment-2035384211   0         0         0       36s
-    nginx-deployment-3066724191   1         1         0       6s
-    ```
-
-* Looking at the Pods created, you see that 1 Pod created by new ReplicaSet is stuck in an image pull loop.
-
-    ```shell
-    kubectl get pods
-    ```
-
-    The output is similar to this:
-    ```
-    NAME                                READY     STATUS             RESTARTS   AGE
-    nginx-deployment-1564180365-70iae   1/1       Running            0          25s
-    nginx-deployment-1564180365-jbqqo   1/1       Running            0          25s
-    nginx-deployment-1564180365-hysrc   1/1       Running            0          25s
-    nginx-deployment-3066724191-08mng   0/1       ImagePullBackOff   0          6s
-    ```
-
-    &lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; The Deployment controller stops the bad rollout automatically, and stops scaling up the new ReplicaSet. This depends on the rollingUpdate parameters (&lt;code&gt;maxUnavailable&lt;/code&gt; specifically) that you have specified. Kubernetes by default sets the value to 25%.&lt;/div&gt;
-&lt;/blockquote&gt;
-
-
-* Get the description of the Deployment:
-    ```shell
-    kubectl describe deployment
-    ```
-
-    The output is similar to this:
-    ```
-    Name:           nginx-deployment
-    Namespace:      default
-    CreationTimestamp:  Tue, 15 Mar 2016 14:48:04 -0700
-    Labels:         app=nginx
-    Selector:       app=nginx
-    Replicas:       3 desired | 1 updated | 4 total | 3 available | 1 unavailable
-    StrategyType:       RollingUpdate
-    MinReadySeconds:    0
-    RollingUpdateStrategy:  25% max unavailable, 25% max surge
-    Pod Template:
-      Labels:  app=nginx
-      Containers:
-       nginx:
-        Image:        nginx:1.161
-        Port:         80/TCP
-        Host Port:    0/TCP
-        Environment:  &lt;none&gt;
-        Mounts:       &lt;none&gt;
-      Volumes:        &lt;none&gt;
-    Conditions:
-      Type           Status  Reason
-      ----           ------  ------
-      Available      True    MinimumReplicasAvailable
-      Progressing    True    ReplicaSetUpdated
-    OldReplicaSets:     nginx-deployment-1564180365 (3/3 replicas created)
-    NewReplicaSet:      nginx-deployment-3066724191 (1/1 replicas created)
-    Events:
-      FirstSeen LastSeen    Count   From                    SubObjectPath   Type        Reason              Message
-      --------- --------    -----   ----                    -------------   --------    ------              -------
-      1m        1m          1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled up replica set nginx-deployment-2035384211 to 3
-      22s       22s         1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled up replica set nginx-deployment-1564180365 to 1
-      22s       22s         1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled down replica set nginx-deployment-2035384211 to 2
-      22s       22s         1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled up replica set nginx-deployment-1564180365 to 2
-      21s       21s         1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled down replica set nginx-deployment-2035384211 to 1
-      21s       21s         1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled up replica set nginx-deployment-1564180365 to 3
-      13s       13s         1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled down replica set nginx-deployment-2035384211 to 0
-      13s       13s         1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled up replica set nginx-deployment-3066724191 to 1
-    ```
-
-  To fix this, you need to rollback to a previous revision of Deployment that is stable.
- --&gt;
-&lt;h2 id=&#34;deployment-回滚示例&#34;&gt;Deployment 回滚示例&lt;/h2&gt;
-&lt;p&gt;有时候会需要对 Deployment 进行回滚，例如当一个 Deployment 进入像无限崩溃等不稳定情况时。
-默认情况下系统会保存 Deployment 所有的发布历史以便用户通过回滚到之前的任意版本(用户可以修改限制保留历史数)&lt;/p&gt;
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Deployment 版本在 Deployment 发布(rollout)时触发。 也就是说一个新的版本在且仅在 Deployment 的 Pod 模板 (&lt;code&gt;.spec.template&lt;/code&gt;) 发生变更，
-如更新了模板中的标签或容器的镜像。 其它的如扩充 Deployment 副本数是不会创建版本的，这样在手动或自动伸缩容量时不会引起版本的增加。
-也就是说当用户回滚到一个之前的版本时，只有 Deployment 的 Pod 模板部署回到了这个版本的状态。&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;假设在将 Deployment 的镜像名改为 &lt;code&gt;nginx:1.16.1&lt;/code&gt; 时，手抖写成了 &lt;code&gt;nginx:1.161&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl set image deployment.v1.apps/nginx-deployment nginx&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;nginx:1.161 --record&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;true
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployment.apps/nginx-deployment image updated
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;这时这个发布就卡住了， 可以通过以下命令查看发布状态&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl rollout status deployment.v1.apps/nginx-deployment
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Waiting for rollout to finish: 1 out of 3 new replicas have been updated...
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;Ctrl-C&lt;/code&gt; 退出发布状态监控， 要查看卡住的 Deployment, 见&lt;a href=&#34;#deployment-status&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;这时候可以看到旧的副本数 (&lt;code&gt;nginx-deployment-1564180365&lt;/code&gt; 和 &lt;code&gt;nginx-deployment-2035384211&lt;/code&gt;) 是 2, 新的副本数 (&lt;code&gt;nginx-deployment-3066724191&lt;/code&gt;) 是 1.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get rs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME                          DESIRED   CURRENT   READY   AGE
-nginx-deployment-1564180365   3         3         3       25s
-nginx-deployment-2035384211   0         0         0       36s
-nginx-deployment-3066724191   1         1         0       6s
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;再来看创建的 Pod， 这时候看到由新的  ReplicaSet 因为拉取镜像出问题卡在那了&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get pods
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME                                READY     STATUS             RESTARTS   AGE
-nginx-deployment-1564180365-70iae   1/1       Running            0          25s
-nginx-deployment-1564180365-jbqqo   1/1       Running            0          25s
-nginx-deployment-1564180365-hysrc   1/1       Running            0          25s
-nginx-deployment-3066724191-08mng   0/1       ImagePullBackOff   0          6s
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Deployment 控制器会自动停止错误的发布， 也会停止扩充新 ReplicaSet 的副本数。 这个行为信赖于配置的更新参数 (也就是&lt;code&gt;maxUnavailable&lt;/code&gt;)，
-k8s 中默认设置为&lt;/div&gt;
-&lt;/blockquote&gt;
-25%。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;查看 Deployment 的描述信息&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl describe deployment
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Name:           nginx-deployment
-Namespace:      default
-CreationTimestamp:  Tue, 15 Mar 2016 14:48:04 -0700
-Labels:         app=nginx
-Selector:       app=nginx
-Replicas:       3 desired | 1 updated | 4 total | 3 available | 1 unavailable
-StrategyType:       RollingUpdate
-MinReadySeconds:    0
-RollingUpdateStrategy:  25% max unavailable, 25% max surge
-Pod Template:
-  Labels:  app=nginx
-  Containers:
-   nginx:
-    Image:        nginx:1.161
-    Port:         80/TCP
-    Host Port:    0/TCP
-    Environment:  &amp;lt;none&amp;gt;
-    Mounts:       &amp;lt;none&amp;gt;
-  Volumes:        &amp;lt;none&amp;gt;
-Conditions:
-  Type           Status  Reason
-  ----           ------  ------
-  Available      True    MinimumReplicasAvailable
-  Progressing    True    ReplicaSetUpdated
-OldReplicaSets:     nginx-deployment-1564180365 (3/3 replicas created)
-NewReplicaSet:      nginx-deployment-3066724191 (1/1 replicas created)
-Events:
-  FirstSeen LastSeen    Count   From                    SubObjectPath   Type        Reason              Message
-  --------- --------    -----   ----                    -------------   --------    ------              -------
-  1m        1m          1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled up replica set nginx-deployment-2035384211 to 3
-  22s       22s         1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled up replica set nginx-deployment-1564180365 to 1
-  22s       22s         1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled down replica set nginx-deployment-2035384211 to 2
-  22s       22s         1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled up replica set nginx-deployment-1564180365 to 2
-  21s       21s         1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled down replica set nginx-deployment-2035384211 to 1
-  21s       21s         1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled up replica set nginx-deployment-1564180365 to 3
-  13s       13s         1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled down replica set nginx-deployment-2035384211 to 0
-  13s       13s         1       {deployment-controller }                Normal      ScalingReplicaSet   Scaled up replica set nginx-deployment-3066724191 to 1
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;而要修复这个问题，就需要将 Deployment 回滚到上一个稳定版本&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;!--
-### Checking Rollout History of a Deployment
-
-Follow the steps given below to check the rollout history:
-
-1. First, check the revisions of this Deployment:
-    ```shell
-    kubectl rollout history deployment.v1.apps/nginx-deployment
-    ```
-    The output is similar to this:
-    ```
-    deployments &#34;nginx-deployment&#34;
-    REVISION    CHANGE-CAUSE
-    1           kubectl apply --filename=https://k8s.io/examples/controllers/nginx-deployment.yaml --record=true
-    2           kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.16.1 --record=true
-    3           kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.161 --record=true
-    ```
-
-    `CHANGE-CAUSE` is copied from the Deployment annotation `kubernetes.io/change-cause` to its revisions upon creation. You can specify the`CHANGE-CAUSE` message by:
-
-    * Annotating the Deployment with `kubectl annotate deployment.v1.apps/nginx-deployment kubernetes.io/change-cause=&#34;image updated to 1.16.1&#34;`
-    * Append the `--record` flag to save the `kubectl` command that is making changes to the resource.
-    * Manually editing the manifest of the resource.
-
-2. To see the details of each revision, run:
-    ```shell
-    kubectl rollout history deployment.v1.apps/nginx-deployment --revision=2
-    ```
-
-    The output is similar to this:
-    ```
-    deployments &#34;nginx-deployment&#34; revision 2
-      Labels:       app=nginx
-              pod-template-hash=1159050644
-      Annotations:  kubernetes.io/change-cause=kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.16.1 --record=true
-      Containers:
-       nginx:
-        Image:      nginx:1.16.1
-        Port:       80/TCP
-         QoS Tier:
-            cpu:      BestEffort
-            memory:   BestEffort
-        Environment Variables:      &lt;none&gt;
-      No volumes.
-    ```
- --&gt;
-&lt;h3 id=&#34;查看-deployment-的历史版本&#34;&gt;查看 Deployment 的历史版本&lt;/h3&gt;
-&lt;p&gt;以下步骤可以查看布历史:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;第一步， 查看 Deployment 历史版本列表:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl rollout history deployment.v1.apps/nginx-deployment
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployments &amp;quot;nginx-deployment&amp;quot;
-REVISION    CHANGE-CAUSE
-1           kubectl apply --filename=https://k8s.io/examples/controllers/nginx-deployment.yaml --record=true
-2           kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.16.1 --record=true
-3           kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.161 --record=true
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;CHANGE-CAUSE&lt;/code&gt; 是从 Deployment 中 &lt;code&gt;kubernetes.io/change-cause&lt;/code&gt; 注解中记录的信息。 可能通过以下方式指定 &lt;code&gt;CHANGE-CAUSE&lt;/code&gt; 中的消息&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;在 Deployment 上打注解 &lt;code&gt;kubectl annotate deployment.v1.apps/nginx-deployment kubernetes.io/change-cause=&amp;quot;image updated to 1.16.1&amp;quot;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;在修改该资源的 &lt;code&gt;kubectl&lt;/code&gt; 命令中添加 &lt;code&gt;--record&lt;/code&gt; 标志&lt;/li&gt;
-&lt;li&gt;人工修改资源配置文件&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;要查看每个版本的详细信息，执行如下命令:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl rollout history deployment.v1.apps/nginx-deployment --revision&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployments &amp;quot;nginx-deployment&amp;quot; revision 2
-  Labels:       app=nginx
-          pod-template-hash=1159050644
-  Annotations:  kubernetes.io/change-cause=kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.16.1 --record=true
-  Containers:
-   nginx:
-    Image:      nginx:1.16.1
-    Port:       80/TCP
-     QoS Tier:
-        cpu:      BestEffort
-        memory:   BestEffort
-    Environment Variables:      &amp;lt;none&amp;gt;
-  No volumes.
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;!--
-### Rolling Back to a Previous Revision
-Follow the steps given below to rollback the Deployment from the current version to the previous version, which is version 2.
-
-1. Now you&#39;ve decided to undo the current rollout and rollback to the previous revision:
-    ```shell
-    kubectl rollout undo deployment.v1.apps/nginx-deployment
-    ```
-
-    The output is similar to this:
-    ```
-    deployment.apps/nginx-deployment rolled back
-    ```
-    Alternatively, you can rollback to a specific revision by specifying it with `--to-revision`:
-
-    ```shell
-    kubectl rollout undo deployment.v1.apps/nginx-deployment --to-revision=2
-    ```
-
-    The output is similar to this:
-    ```
-    deployment.apps/nginx-deployment rolled back
-    ```
-
-    For more details about rollout related commands, read [`kubectl rollout`](/docs/reference/generated/kubectl/kubectl-commands#rollout).
-
-    The Deployment is now rolled back to a previous stable revision. As you can see, a `DeploymentRollback` event
-    for rolling back to revision 2 is generated from Deployment controller.
-
-2. Check if the rollback was successful and the Deployment is running as expected, run:
-    ```shell
-    kubectl get deployment nginx-deployment
-    ```
-
-    The output is similar to this:
-    ```
-    NAME               READY   UP-TO-DATE   AVAILABLE   AGE
-    nginx-deployment   3/3     3            3           30m
-    ```
-3. Get the description of the Deployment:
-    ```shell
-    kubectl describe deployment nginx-deployment
-    ```
-    The output is similar to this:
-    ```
-    Name:                   nginx-deployment
-    Namespace:              default
-    CreationTimestamp:      Sun, 02 Sep 2018 18:17:55 -0500
-    Labels:                 app=nginx
-    Annotations:            deployment.kubernetes.io/revision=4
-                            kubernetes.io/change-cause=kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.16.1 --record=true
-    Selector:               app=nginx
-    Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable
-    StrategyType:           RollingUpdate
-    MinReadySeconds:        0
-    RollingUpdateStrategy:  25% max unavailable, 25% max surge
-    Pod Template:
-      Labels:  app=nginx
-      Containers:
-       nginx:
-        Image:        nginx:1.16.1
-        Port:         80/TCP
-        Host Port:    0/TCP
-        Environment:  &lt;none&gt;
-        Mounts:       &lt;none&gt;
-      Volumes:        &lt;none&gt;
-    Conditions:
-      Type           Status  Reason
-      ----           ------  ------
-      Available      True    MinimumReplicasAvailable
-      Progressing    True    NewReplicaSetAvailable
-    OldReplicaSets:  &lt;none&gt;
-    NewReplicaSet:   nginx-deployment-c4747d96c (3/3 replicas created)
-    Events:
-      Type    Reason              Age   From                   Message
-      ----    ------              ----  ----                   -------
-      Normal  ScalingReplicaSet   12m   deployment-controller  Scaled up replica set nginx-deployment-75675f5897 to 3
-      Normal  ScalingReplicaSet   11m   deployment-controller  Scaled up replica set nginx-deployment-c4747d96c to 1
-      Normal  ScalingReplicaSet   11m   deployment-controller  Scaled down replica set nginx-deployment-75675f5897 to 2
-      Normal  ScalingReplicaSet   11m   deployment-controller  Scaled up replica set nginx-deployment-c4747d96c to 2
-      Normal  ScalingReplicaSet   11m   deployment-controller  Scaled down replica set nginx-deployment-75675f5897 to 1
-      Normal  ScalingReplicaSet   11m   deployment-controller  Scaled up replica set nginx-deployment-c4747d96c to 3
-      Normal  ScalingReplicaSet   11m   deployment-controller  Scaled down replica set nginx-deployment-75675f5897 to 0
-      Normal  ScalingReplicaSet   11m   deployment-controller  Scaled up replica set nginx-deployment-595696685f to 1
-      Normal  DeploymentRollback  15s   deployment-controller  Rolled back deployment &#34;nginx-deployment&#34; to revision 2
-      Normal  ScalingReplicaSet   15s   deployment-controller  Scaled down replica set nginx-deployment-595696685f to 0
-    ```
-
- --&gt;
-&lt;h3 id=&#34;回滚到之前一个版本&#34;&gt;回滚到之前一个版本&lt;/h3&gt;
-&lt;p&gt;以下步骤给出把 Deployment 版本从当前版本回滚到之前的版本， 这里是编号为2的版本&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;将当前版本回滚到之前一个版本:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl rollout undo deployment.v1.apps/nginx-deployment
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployment.apps/nginx-deployment rolled back
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;另外还有一个方式， 可以通过 &lt;code&gt;--to-revision&lt;/code&gt; 参数指定回滚到指定版本:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl rollout undo deployment.v1.apps/nginx-deployment --to-revision&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployment.apps/nginx-deployment rolled back
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;更多发布相关的命令，见&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#rollout&#34;&gt;&lt;code&gt;kubectl rollout&lt;/code&gt;&lt;/a&gt;.
-这时 Deployment 就已经回滚到之前的稳定版本。如你所见， 一个用来将 Deployment 回滚到版本 2 的 &lt;code&gt;DeploymentRollback&lt;/code&gt; 事件由 Deployment 控制器创建&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;检查回滚是否成功， Deployment 是否达到预期， 执行发中下命令:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get deployment nginx-deployment
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME               READY   UP-TO-DATE   AVAILABLE   AGE
-nginx-deployment   3/3     3            3           30m
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;查看 Deployment 描述信息:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl describe deployment nginx-deployment
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Name:                   nginx-deployment
-Namespace:              default
-CreationTimestamp:      Sun, 02 Sep 2018 18:17:55 -0500
-Labels:                 app=nginx
-Annotations:            deployment.kubernetes.io/revision=4
-                        kubernetes.io/change-cause=kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.16.1 --record=true
-Selector:               app=nginx
-Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable
-StrategyType:           RollingUpdate
-MinReadySeconds:        0
-RollingUpdateStrategy:  25% max unavailable, 25% max surge
-Pod Template:
-  Labels:  app=nginx
-  Containers:
-   nginx:
-    Image:        nginx:1.16.1
-    Port:         80/TCP
-    Host Port:    0/TCP
-    Environment:  &amp;lt;none&amp;gt;
-    Mounts:       &amp;lt;none&amp;gt;
-  Volumes:        &amp;lt;none&amp;gt;
-Conditions:
-  Type           Status  Reason
-  ----           ------  ------
-  Available      True    MinimumReplicasAvailable
-  Progressing    True    NewReplicaSetAvailable
-OldReplicaSets:  &amp;lt;none&amp;gt;
-NewReplicaSet:   nginx-deployment-c4747d96c (3/3 replicas created)
-Events:
-  Type    Reason              Age   From                   Message
-  ----    ------              ----  ----                   -------
-  Normal  ScalingReplicaSet   12m   deployment-controller  Scaled up replica set nginx-deployment-75675f5897 to 3
-  Normal  ScalingReplicaSet   11m   deployment-controller  Scaled up replica set nginx-deployment-c4747d96c to 1
-  Normal  ScalingReplicaSet   11m   deployment-controller  Scaled down replica set nginx-deployment-75675f5897 to 2
-  Normal  ScalingReplicaSet   11m   deployment-controller  Scaled up replica set nginx-deployment-c4747d96c to 2
-  Normal  ScalingReplicaSet   11m   deployment-controller  Scaled down replica set nginx-deployment-75675f5897 to 1
-  Normal  ScalingReplicaSet   11m   deployment-controller  Scaled up replica set nginx-deployment-c4747d96c to 3
-  Normal  ScalingReplicaSet   11m   deployment-controller  Scaled down replica set nginx-deployment-75675f5897 to 0
-  Normal  ScalingReplicaSet   11m   deployment-controller  Scaled up replica set nginx-deployment-595696685f to 1
-  Normal  DeploymentRollback  15s   deployment-controller  Rolled back deployment &amp;quot;nginx-deployment&amp;quot; to revision 2
-  Normal  ScalingReplicaSet   15s   deployment-controller  Scaled down replica set nginx-deployment-595696685f to 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;!--
-## Scaling a Deployment
-
-You can scale a Deployment by using the following command:
-
-```shell
-kubectl scale deployment.v1.apps/nginx-deployment --replicas=10
-```
-The output is similar to this:
-```
-deployment.apps/nginx-deployment scaled
-```
-
-Assuming [horizontal Pod autoscaling](/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/) is enabled
-in your cluster, you can setup an autoscaler for your Deployment and choose the minimum and maximum number of
-Pods you want to run based on the CPU utilization of your existing Pods.
-
-```shell
-kubectl autoscale deployment.v1.apps/nginx-deployment --min=10 --max=15 --cpu-percent=80
-```
-The output is similar to this:
-```
-deployment.apps/nginx-deployment scaled
-```
- --&gt;
-&lt;h2 id=&#34;deployment-副本数管理&#34;&gt;Deployment 副本数管理&lt;/h2&gt;
-&lt;p&gt;可以通过以下命令修改 Deployment 副本数:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl scale deployment.v1.apps/nginx-deployment --replicas&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployment.apps/nginx-deployment scaled
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;假设集群启用了 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/run-application/horizontal-pod-autoscale-walkthrough/&#34;&gt;Pod 水平扩展&lt;/a&gt;， 用户可以为 Deployment 设置
-一个自动扩展器，可以根据 Pod 的 CPU 使用率选择 Pod 数量的下限和上限。&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl autoscale deployment.v1.apps/nginx-deployment --min&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt; --max&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt; --cpu-percent&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;80&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployment.apps/nginx-deployment scaled
-&lt;/code&gt;&lt;/pre&gt;&lt;!--
-### Proportional scaling
-
-RollingUpdate Deployments support running multiple versions of an application at the same time. When you
-or an autoscaler scales a RollingUpdate Deployment that is in the middle of a rollout (either in progress
-or paused), the Deployment controller balances the additional replicas in the existing active
-ReplicaSets (ReplicaSets with Pods) in order to mitigate risk. This is called *proportional scaling*.
-
-For example, you are running a Deployment with 10 replicas, [maxSurge](#max-surge)=3, and [maxUnavailable](#max-unavailable)=2.
-
-* Ensure that the 10 replicas in your Deployment are running.
-  ```shell
-  kubectl get deploy
-  ```
-  The output is similar to this:
-
-  ```
-  NAME                 DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-  nginx-deployment     10        10        10           10          50s
-  ```
-
-* You update to a new image which happens to be unresolvable from inside the cluster.
-    ```shell
-    kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:sometag
-    ```
-
-    The output is similar to this:
-    ```
-    deployment.apps/nginx-deployment image updated
-    ```
-
-* The image update starts a new rollout with ReplicaSet nginx-deployment-1989198191, but it&#39;s blocked due to the
-`maxUnavailable` requirement that you mentioned above. Check out the rollout status:
-    ```shell
-    kubectl get rs
-    ```
-      The output is similar to this:
-    ```
-    NAME                          DESIRED   CURRENT   READY     AGE
-    nginx-deployment-1989198191   5         5         0         9s
-    nginx-deployment-618515232    8         8         8         1m
-    ```
-
-* Then a new scaling request for the Deployment comes along. The autoscaler increments the Deployment replicas
-to 15. The Deployment controller needs to decide where to add these new 5 replicas. If you weren&#39;t using
-proportional scaling, all 5 of them would be added in the new ReplicaSet. With proportional scaling, you
-spread the additional replicas across all ReplicaSets. Bigger proportions go to the ReplicaSets with the
-most replicas and lower proportions go to ReplicaSets with less replicas. Any leftovers are added to the
-ReplicaSet with the most replicas. ReplicaSets with zero replicas are not scaled up.
-
-In our example above, 3 replicas are added to the old ReplicaSet and 2 replicas are added to the
-new ReplicaSet. The rollout process should eventually move all replicas to the new ReplicaSet, assuming
-the new replicas become healthy. To confirm this, run:
-
-```shell
-kubectl get deploy
-```
-
-The output is similar to this:
-```
-NAME                 DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-nginx-deployment     15        18        7            8           7m
-```
-The rollout status confirms how the replicas were added to each ReplicaSet.
-```shell
-kubectl get rs
-```
-
-The output is similar to this:
-```
-NAME                          DESIRED   CURRENT   READY     AGE
-nginx-deployment-1989198191   7         7         0         7m
-nginx-deployment-618515232    11        11        11        7m
-```
- --&gt;
-&lt;h3 id=&#34;同比例扩容&#34;&gt;同比例扩容&lt;/h3&gt;
-&lt;p&gt;更新策略为 RollingUpdate 的 Deployment 支持一个应用同时运行多个版本。 当用户或自动容量管量器在发布过程中(正在进行或暂停)进行容量伸缩，
-Deployment 控制器会新增的副本按已经存在的活跃 ReplicaSet (包含 Pod 的 ReplicaSet)中副本数的比例分散到各个ReplicaSet中与以降低风险。
-这就被称为 &lt;em&gt;同比例扩容&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;例如， 用户运行一个有 10 个副本的 Deployment， 它的 &lt;a href=&#34;#max-surge&#34;&gt;maxSurge&lt;/a&gt;=3, &lt;a href=&#34;#max-unavailable&#34;&gt;maxUnavailable&lt;/a&gt;=2.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;确保 Deployment 的 10 个副本正常运行&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get deploy
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME                 DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-nginx-deployment     10        10        10           10          50s
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;更新了一个集群中不可用的镜像&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl set image deployment.v1.apps/nginx-deployment nginx&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;nginx:sometag
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployment.apps/nginx-deployment image updated
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;更新镜像创建， 开始创建 ReplicaSet &lt;code&gt;nginx-deployment-1989198191&lt;/code&gt;， 但因为上面提到的 &lt;code&gt;maxUnavailable&lt;/code&gt;， 所以会阻塞，通过以下命令查看发布状态：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get rs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME                          DESIRED   CURRENT   READY     AGE
-nginx-deployment-1989198191   5         5         0         9s
-nginx-deployment-618515232    8         8         8         1m
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;这时候 Deployment 又来了一个扩容请求。 自动伸缩管理器将 Deployment 的副本数加到 15.
-Deployment 控制器需要决定这增加的5个副本应该加到哪里。 根据 proportional scaling ， 会将新增的副本分散到所有的 ReplicaSet。
-副本占比多的 ReplicaSet 新增的副本也多，副本占比少的新增副本就少。 余数再分给副本最多的 ReplicaSet。 副本数为 0 ReplicaSet 的则不会扩容。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;在上面的例子中， 3 个副本被添加到旧的 ReplicaSet 中， 两个副本被添加到新的 ReplicaSet。 发布的继续推进最终会将所有的副本都移到新的 ReplicaSet
-保证所以新的副本都是正常的。 执行以下命令验证:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get deploy
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME                 DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-nginx-deployment     15        18        7            8           7m
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;发布状态也确认了副本是怎么加到每个 ReplicaSet 上的&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get rs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME                          DESIRED   CURRENT   READY     AGE
-nginx-deployment-1989198191   7         7         0         7m
-nginx-deployment-618515232    11        11        11        7m
-&lt;/code&gt;&lt;/pre&gt;&lt;!--
-## Pausing and Resuming a Deployment
-
-You can pause a Deployment before triggering one or more updates and then resume it. This allows you to
-apply multiple fixes in between pausing and resuming without triggering unnecessary rollouts.
-
-* For example, with a Deployment that was just created:
-  Get the Deployment details:
-  ```shell
-  kubectl get deploy
-  ```
-  The output is similar to this:
-  ```
-  NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-  nginx     3         3         3            3           1m
-  ```
-  Get the rollout status:
-  ```shell
-  kubectl get rs
-  ```
-  The output is similar to this:
-  ```
-  NAME               DESIRED   CURRENT   READY     AGE
-  nginx-2142116321   3         3         3         1m
-  ```
-
-* Pause by running the following command:
-    ```shell
-    kubectl rollout pause deployment.v1.apps/nginx-deployment
-    ```
-
-    The output is similar to this:
-    ```
-    deployment.apps/nginx-deployment paused
-    ```
-
-* Then update the image of the Deployment:
-    ```shell
-    kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.16.1
-    ```
-
-    The output is similar to this:
-    ```
-    deployment.apps/nginx-deployment image updated
-    ```
-
-* Notice that no new rollout started:
-    ```shell
-    kubectl rollout history deployment.v1.apps/nginx-deployment
-    ```
-
-    The output is similar to this:
-    ```
-    deployments &#34;nginx&#34;
-    REVISION  CHANGE-CAUSE
-    1   &lt;none&gt;
-    ```
-* Get the rollout status to ensure that the Deployment is updates successfully:
-    ```shell
-    kubectl get rs
-    ```
-
-    The output is similar to this:
-    ```
-    NAME               DESIRED   CURRENT   READY     AGE
-    nginx-2142116321   3         3         3         2m
-    ```
-
-* You can make as many updates as you wish, for example, update the resources that will be used:
-    ```shell
-    kubectl set resources deployment.v1.apps/nginx-deployment -c=nginx --limits=cpu=200m,memory=512Mi
-    ```
-
-    The output is similar to this:
-    ```
-    deployment.apps/nginx-deployment resource requirements updated
-    ```
-
-    The initial state of the Deployment prior to pausing it will continue its function, but new updates to
-    the Deployment will not have any effect as long as the Deployment is paused.
-
-* Eventually, resume the Deployment and observe a new ReplicaSet coming up with all the new updates:
-    ```shell
-    kubectl rollout resume deployment.v1.apps/nginx-deployment
-    ```
-
-    The output is similar to this:
-    ```
-    deployment.apps/nginx-deployment resumed
-    ```
-* Watch the status of the rollout until it&#39;s done.
-    ```shell
-    kubectl get rs -w
-    ```
-
-    The output is similar to this:
-    ```
-    NAME               DESIRED   CURRENT   READY     AGE
-    nginx-2142116321   2         2         2         2m
-    nginx-3926361531   2         2         0         6s
-    nginx-3926361531   2         2         1         18s
-    nginx-2142116321   1         2         2         2m
-    nginx-2142116321   1         2         2         2m
-    nginx-3926361531   3         2         1         18s
-    nginx-3926361531   3         2         1         18s
-    nginx-2142116321   1         1         1         2m
-    nginx-3926361531   3         3         1         18s
-    nginx-3926361531   3         3         2         19s
-    nginx-2142116321   0         1         1         2m
-    nginx-2142116321   0         1         1         2m
-    nginx-2142116321   0         0         0         2m
-    nginx-3926361531   3         3         3         20s
-    ```
-* Get the status of the latest rollout:
-    ```shell
-    kubectl get rs
-    ```
-
-    The output is similar to this:
-    ```
-    NAME               DESIRED   CURRENT   READY     AGE
-    nginx-2142116321   0         0         0         2m
-    nginx-3926361531   3         3         3         28s
-    ```
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; You cannot rollback a paused Deployment until you resume it.&lt;/div&gt;
-&lt;/blockquote&gt;
-
- --&gt;
-&lt;h2 id=&#34;deployment-的暂停与恢复&#34;&gt;Deployment 的暂停与恢复&lt;/h2&gt;
-&lt;p&gt;用户可以一个或多个更新触发之前暂停 Deployment 然后再恢复它。 通过这种方式用户可以在暂停后进行多次修改然后恢复，这样在多次
-修改的过程中就不会触发不必要的发布。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;例如以下为一个刚创建的 Deployment:
-查看 Deployment 信息:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get deploy
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-nginx     3         3         3            3           1m
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;查看发布状态:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get rs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME               DESIRED   CURRENT   READY     AGE
-nginx-2142116321   3         3         3         1m
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;执行以下命令暂停 Deployment:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl rollout pause deployment.v1.apps/nginx-deployment
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployment.apps/nginx-deployment paused
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;这时先修改 Deployment 的镜像:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl set image deployment.v1.apps/nginx-deployment nginx&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;nginx:1.16.1
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployment.apps/nginx-deployment image updated
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;可以看到现在没有触发新的发布:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl rollout history deployment.v1.apps/nginx-deployment
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployments &amp;quot;nginx&amp;quot;
-REVISION  CHANGE-CAUSE
-1   &amp;lt;none&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;查看发布状态，确保 Deployment 的更新的成功的：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get rs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME               DESIRED   CURRENT   READY     AGE
-nginx-2142116321   3         3         3         2m
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;这时候用户就可以进行任意多次修改，例如，以下为修改资源占用:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl set resources deployment.v1.apps/nginx-deployment -c&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;nginx --limits&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;cpu&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;200m,memory&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;512Mi
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployment.apps/nginx-deployment resource requirements updated
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Deployment 会继续以暂停之前的状态提供功能， 但在恢复的在的所有修改都不会生效&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;最后，恢复 Deployment 观察新建的 ReplicaSet 会包含暂停过程中的所以的更新&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl rollout resume deployment.v1.apps/nginx-deployment
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployment.apps/nginx-deployment resumed
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;Watch the status of the rollout until it&amp;rsquo;s done.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;观察发布状态直至任务完成&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get rs -w
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME               DESIRED   CURRENT   READY     AGE
-nginx-2142116321   2         2         2         2m
-nginx-3926361531   2         2         0         6s
-nginx-3926361531   2         2         1         18s
-nginx-2142116321   1         2         2         2m
-nginx-2142116321   1         2         2         2m
-nginx-3926361531   3         2         1         18s
-nginx-3926361531   3         2         1         18s
-nginx-2142116321   1         1         1         2m
-nginx-3926361531   3         3         1         18s
-nginx-3926361531   3         3         2         19s
-nginx-2142116321   0         1         1         2m
-nginx-2142116321   0         1         1         2m
-nginx-2142116321   0         0         0         2m
-nginx-3926361531   3         3         3         20s
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;查看最终的发布状态:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get rs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME               DESIRED   CURRENT   READY     AGE
-nginx-2142116321   0         0         0         2m
-nginx-3926361531   3         3         3         28s
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Deployment 在暂停后直至恢复，中间不能回滚&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;!--
-## Deployment status
-
-A Deployment enters various states during its lifecycle. It can be [progressing](#progressing-deployment) while
-rolling out a new ReplicaSet, it can be [complete](#complete-deployment), or it can [fail to progress](#failed-deployment).
- --&gt;
-&lt;h2 id=&#34;deployment-status&#34;&gt;Deployment 的状态&lt;/h2&gt;
-&lt;p&gt;一个 Deployment 在整个生命周期中会进入许多种状态。更新到一个新的 ReplicaSet 时， 状态可以是 &lt;a href=&#34;#progressing-deployment&#34;&gt;进行中&lt;/a&gt;
-也可能是 &lt;a href=&#34;#complete-deployment&#34;&gt;完成&lt;/a&gt;，还可以是 &lt;a href=&#34;#failed-deployment&#34;&gt;失败&lt;/a&gt;&lt;/p&gt;
-&lt;!--
-### Progressing Deployment
-
-Kubernetes marks a Deployment as _progressing_ when one of the following tasks is performed:
-
-* The Deployment creates a new ReplicaSet.
-* The Deployment is scaling up its newest ReplicaSet.
-* The Deployment is scaling down its older ReplicaSet(s).
-* New Pods become ready or available (ready for at least [MinReadySeconds](#min-ready-seconds)).
- --&gt;
-&lt;h3 id=&#34;progressing-deployment&#34;&gt;Deployment 进行中&lt;/h3&gt;
-&lt;p&gt;当 Deployment 在进行以下任一任务时，标记为 &lt;em&gt;进行中&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Deployment 创建一个新的 ReplicaSet&lt;/li&gt;
-&lt;li&gt;Deployment 在对最新的 ReplicaSet 扩容&lt;/li&gt;
-&lt;li&gt;Deployment 在对旧的 ReplicaSet 缩减容量&lt;/li&gt;
-&lt;li&gt;新创建的 Pod 正在进入就绪或可用状态(就绪最小时间&lt;a href=&#34;#min-ready-seconds&#34;&gt;MinReadySeconds&lt;/a&gt;)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;complete-deployment&#34;&gt;Complete Deployment&lt;/h3&gt;
-&lt;p&gt;Kubernetes marks a Deployment as &lt;em&gt;complete&lt;/em&gt; when it has the following characteristics:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;All of the replicas associated with the Deployment have been updated to the latest version you&amp;rsquo;ve specified, meaning any
-updates you&amp;rsquo;ve requested have been completed.&lt;/li&gt;
-&lt;li&gt;All of the replicas associated with the Deployment are available.&lt;/li&gt;
-&lt;li&gt;No old replicas for the Deployment are running.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;You can check if a Deployment has completed by using &lt;code&gt;kubectl rollout status&lt;/code&gt;. If the rollout completed
-successfully, &lt;code&gt;kubectl rollout status&lt;/code&gt; returns a zero exit code.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl rollout status deployment.v1.apps/nginx-deployment
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The output is similar to this:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Waiting for rollout to finish: 2 of 3 updated replicas are available...
-deployment.apps/nginx-deployment successfully rolled out
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;and the exit status from &lt;code&gt;kubectl rollout&lt;/code&gt; is 0 (success):&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;echo $?
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre&gt;&lt;code&gt;0
-&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;deployment-完成&#34;&gt;Deployment 完成&lt;/h3&gt;
-&lt;p&gt;当 Deployment 拥有以下特征时被 k8s 标记为 完成&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;所有与 Deployment 关联的副本都已经使用了最新的配置，也就是说所以的更新请求都已经完成。&lt;/li&gt;
-&lt;li&gt;所有与 Deployment 关联的副本都已经可用&lt;/li&gt;
-&lt;li&gt;Deployment 没有旧的副本在运行&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;用户可以通过命令 &lt;code&gt;kubectl rollout status&lt;/code&gt; 检测 Deployment 是否完成。 如果发布已经完成，
-&lt;code&gt;kubectl rollout status&lt;/code&gt; 命令的退出码为 0&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl rollout status deployment.v1.apps/nginx-deployment
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Waiting for rollout to finish: 2 of 3 updated replicas are available...
-deployment.apps/nginx-deployment successfully rolled out
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;kubectl rollout&lt;/code&gt; 的退出码为 0 (成功):&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;echo $?
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre&gt;&lt;code&gt;0
-&lt;/code&gt;&lt;/pre&gt;&lt;!--
-### Failed Deployment
-
-Your Deployment may get stuck trying to deploy its newest ReplicaSet without ever completing. This can occur
-due to some of the following factors:
-
-* Insufficient quota
-* Readiness probe failures
-* Image pull errors
-* Insufficient permissions
-* Limit ranges
-* Application runtime misconfiguration
-
-One way you can detect this condition is to specify a deadline parameter in your Deployment spec:
-([`.spec.progressDeadlineSeconds`](#progress-deadline-seconds)). `.spec.progressDeadlineSeconds` denotes the
-number of seconds the Deployment controller waits before indicating (in the Deployment status) that the
-Deployment progress has stalled.
-
-The following `kubectl` command sets the spec with `progressDeadlineSeconds` to make the controller report
-lack of progress for a Deployment after 10 minutes:
-
-```shell
-kubectl patch deployment.v1.apps/nginx-deployment -p &#39;{&#34;spec&#34;:{&#34;progressDeadlineSeconds&#34;:600}}&#39;
-```
-The output is similar to this:
-```
-deployment.apps/nginx-deployment patched
-```
-Once the deadline has been exceeded, the Deployment controller adds a DeploymentCondition with the following
-attributes to the Deployment&#39;s `.status.conditions`:
-
-* Type=Progressing
-* Status=False
-* Reason=ProgressDeadlineExceeded
-
-See the [Kubernetes API conventions](https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties) for more information on status conditions.
-
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Kubernetes takes no action on a stalled Deployment other than to report a status condition with
-&lt;code&gt;Reason=ProgressDeadlineExceeded&lt;/code&gt;. Higher level orchestrators can take advantage of it and act accordingly, for
-example, rollback the Deployment to its previous version.&lt;/div&gt;
-&lt;/blockquote&gt;
-
-
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; If you pause a Deployment, Kubernetes does not check progress against your specified deadline.
-You can safely pause a Deployment in the middle of a rollout and resume without triggering
-the condition for exceeding the deadline.&lt;/div&gt;
-&lt;/blockquote&gt;
-
-
-You may experience transient errors with your Deployments, either due to a low timeout that you have set or
-due to any other kind of error that can be treated as transient. For example, let&#39;s suppose you have
-insufficient quota. If you describe the Deployment you will notice the following section:
-
-```shell
-kubectl describe deployment nginx-deployment
-```
-The output is similar to this:
-```
-&lt;...&gt;
-Conditions:
-  Type            Status  Reason
-  ----            ------  ------
-  Available       True    MinimumReplicasAvailable
-  Progressing     True    ReplicaSetUpdated
-  ReplicaFailure  True    FailedCreate
-&lt;...&gt;
-```
-
-If you run `kubectl get deployment nginx-deployment -o yaml`, the Deployment status is similar to this:
-
-```
-status:
-  availableReplicas: 2
-  conditions:
-  - lastTransitionTime: 2016-10-04T12:25:39Z
-    lastUpdateTime: 2016-10-04T12:25:39Z
-    message: Replica set &#34;nginx-deployment-4262182780&#34; is progressing.
-    reason: ReplicaSetUpdated
-    status: &#34;True&#34;
-    type: Progressing
-  - lastTransitionTime: 2016-10-04T12:25:42Z
-    lastUpdateTime: 2016-10-04T12:25:42Z
-    message: Deployment has minimum availability.
-    reason: MinimumReplicasAvailable
-    status: &#34;True&#34;
-    type: Available
-  - lastTransitionTime: 2016-10-04T12:25:39Z
-    lastUpdateTime: 2016-10-04T12:25:39Z
-    message: &#39;Error creating: pods &#34;nginx-deployment-4262182780-&#34; is forbidden: exceeded quota:
-      object-counts, requested: pods=1, used: pods=3, limited: pods=2&#39;
-    reason: FailedCreate
-    status: &#34;True&#34;
-    type: ReplicaFailure
-  observedGeneration: 3
-  replicas: 2
-  unavailableReplicas: 2
-```
-
-Eventually, once the Deployment progress deadline is exceeded, Kubernetes updates the status and the
-reason for the Progressing condition:
-
-```
-Conditions:
-  Type            Status  Reason
-  ----            ------  ------
-  Available       True    MinimumReplicasAvailable
-  Progressing     False   ProgressDeadlineExceeded
-  ReplicaFailure  True    FailedCreate
-```
-
-You can address an issue of insufficient quota by scaling down your Deployment, by scaling down other
-controllers you may be running, or by increasing quota in your namespace. If you satisfy the quota
-conditions and the Deployment controller then completes the Deployment rollout, you&#39;ll see the
-Deployment&#39;s status update with a successful condition (`Status=True` and `Reason=NewReplicaSetAvailable`).
-
-```
-Conditions:
-  Type          Status  Reason
-  ----          ------  ------
-  Available     True    MinimumReplicasAvailable
-  Progressing   True    NewReplicaSetAvailable
-```
-
-`Type=Available` with `Status=True` means that your Deployment has minimum availability. Minimum availability is dictated
-by the parameters specified in the deployment strategy. `Type=Progressing` with `Status=True` means that your Deployment
-is either in the middle of a rollout and it is progressing or that it has successfully completed its progress and the minimum
-required new replicas are available (see the Reason of the condition for the particulars - in our case
-`Reason=NewReplicaSetAvailable` means that the Deployment is complete).
-
-You can check if a Deployment has failed to progress by using `kubectl rollout status`. `kubectl rollout status`
-returns a non-zero exit code if the Deployment has exceeded the progression deadline.
-
-```shell
-kubectl rollout status deployment.v1.apps/nginx-deployment
-```
-The output is similar to this:
-```
-Waiting for rollout to finish: 2 out of 3 new replicas have been updated...
-error: deployment &#34;nginx&#34; exceeded its progress deadline
-```
-and the exit status from `kubectl rollout` is 1 (indicating an error):
-```shell
-echo $?
-```
-```
-1
-```
- --&gt;
-&lt;h3 id=&#34;deployment-失败&#34;&gt;Deployment 失败&lt;/h3&gt;
-&lt;p&gt;Deployment 可能在尝试部署最新的 ReplicaSet 的时候被卡住然后再也完不成。造成这种情况的因素可能有:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;配额不足&lt;/li&gt;
-&lt;li&gt;就绪探针检测结果为失败&lt;/li&gt;
-&lt;li&gt;镜像拉取出错&lt;/li&gt;
-&lt;li&gt;权限不足&lt;/li&gt;
-&lt;li&gt;应用运行环境配置错误&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;检测到这种情况的一种方法为在 Deployment 的配置中加入一个死线参数: (&lt;a href=&#34;#progress-deadline-seconds&#34;&gt;&lt;code&gt;.spec.progressDeadlineSeconds&lt;/code&gt;&lt;/a&gt;).
-&lt;code&gt;.spec.progressDeadlineSeconds&lt;/code&gt; 表示 Deployment 控制器在(Deployment 状态上)显示 Deployment 停止之前等待的时间(单位秒)
-以下 &lt;code&gt;kubectl&lt;/code&gt; 添加/修改 &lt;code&gt;progressDeadlineSeconds&lt;/code&gt;， 让控制器在 10 分钟还在进行中的发布标记为失败&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl patch deployment.v1.apps/nginx-deployment -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{&amp;#34;spec&amp;#34;:{&amp;#34;progressDeadlineSeconds&amp;#34;:600}}&amp;#39;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;deployment.apps/nginx-deployment patched
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;当超过设定时限后， Deployment 控制器会向 Deployment 添加一个拥有如下属性的 DeploymentCondition 到 &lt;code&gt;.status.conditions&lt;/code&gt; 。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Type=Progressing&lt;/li&gt;
-&lt;li&gt;Status=False&lt;/li&gt;
-&lt;li&gt;Reason=ProgressDeadlineExceeded&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;更新关于状态条件的信息见 &lt;a href=&#34;https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties&#34;&gt;Kubernetes API conventions&lt;/a&gt;
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 对于停止的 Deployment k8s 除了添加一个 &lt;code&gt;Reason=ProgressDeadlineExceeded&lt;/code&gt; 条件之前不会做任何其它操作。
-层级更高的编排者会根据这个条件进行相应的操作，例如，将 Deployment 回滚到前一个稳定版本&lt;/div&gt;
-&lt;/blockquote&gt;
-&lt;/p&gt;
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 如果 Deployment 被暂停，则 k8s 不会受该时限影响。 用户可以发布乾中安全的暂停并恢复 Deployment 而不需要担心触发这个
-时限条件。&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;用户可能会遇到 Deployment 短时的错误，可能是因为用户设置一个较低的超时时间或其它任意可以被认作瞬时错误的。
-例如， 假设配额不足。 这时时候获取 Deployment 描述信息：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl describe deployment nginx-deployment
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;&amp;lt;...&amp;gt;
-Conditions:
-  Type            Status  Reason
-  ----            ------  ------
-  Available       True    MinimumReplicasAvailable
-  Progressing     True    ReplicaSetUpdated
-  ReplicaFailure  True    FailedCreate
-&amp;lt;...&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;执行命令 &lt;code&gt;kubectl get deployment nginx-deployment -o yaml&lt;/code&gt;, Deployment 状态类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;status:
-  availableReplicas: 2
-  conditions:
-  - lastTransitionTime: 2016-10-04T12:25:39Z
-    lastUpdateTime: 2016-10-04T12:25:39Z
-    message: Replica set &amp;quot;nginx-deployment-4262182780&amp;quot; is progressing.
-    reason: ReplicaSetUpdated
-    status: &amp;quot;True&amp;quot;
-    type: Progressing
-  - lastTransitionTime: 2016-10-04T12:25:42Z
-    lastUpdateTime: 2016-10-04T12:25:42Z
-    message: Deployment has minimum availability.
-    reason: MinimumReplicasAvailable
-    status: &amp;quot;True&amp;quot;
-    type: Available
-  - lastTransitionTime: 2016-10-04T12:25:39Z
-    lastUpdateTime: 2016-10-04T12:25:39Z
-    message: &#39;Error creating: pods &amp;quot;nginx-deployment-4262182780-&amp;quot; is forbidden: exceeded quota:
-      object-counts, requested: pods=1, used: pods=3, limited: pods=2&#39;
-    reason: FailedCreate
-    status: &amp;quot;True&amp;quot;
-    type: ReplicaFailure
-  observedGeneration: 3
-  replicas: 2
-  unavailableReplicas: 2
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;最终， 当超出 Deployment 的处理时限时， k8s 更新状态和添加处理条件的原因&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Conditions:
-  Type            Status  Reason
-  ----            ------  ------
-  Available       True    MinimumReplicasAvailable
-  Progressing     False   ProgressDeadlineExceeded
-  ReplicaFailure  True    FailedCreate
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;在遇到配额不足的情况，用户可以通过缩减 Deployment 副本数来解决， 也可以缩减用户其它控制器的副本数，还可以增加用户命名空间的配额。
-如果达到配额条件， Deployment 这时候就会过成 Deployment 的发布， 这时候就会看到 Deployment 状态被更新为一个成功条件
-(&lt;code&gt;Status=True&lt;/code&gt; 和 &lt;code&gt;Reason=NewReplicaSetAvailable&lt;/code&gt;)&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Conditions:
-  Type          Status  Reason
-  ----          ------  ------
-  Available     True    MinimumReplicasAvailable
-  Progressing   True    NewReplicaSetAvailable
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;当 &lt;code&gt;Type=Available&lt;/code&gt; 的 &lt;code&gt;Status=True&lt;/code&gt; 时意味着 Deployment 达到了最小可用状。 最小可用状态受 deployment 策略中的参数控制。
-&lt;code&gt;Type=Progressing&lt;/code&gt; 的 &lt;code&gt;Status=True&lt;/code&gt; 意味着 Deployment 的发布还在进行或已经处理成功完成，最小需求的副本数已经可用(见具体条件的原因 - 就本例来说
-&lt;code&gt;Reason=NewReplicaSetAvailable&lt;/code&gt; 表示 Deployment 已经完成)&lt;/p&gt;
-&lt;p&gt;用户可以通过执行命令 &lt;code&gt;kubectl rollout status&lt;/code&gt; 来检测 Deployment 是处理失败。如果 Deployment 已经超出处理时限
-&lt;code&gt;kubectl rollout status&lt;/code&gt; 返回码非 0&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl rollout status deployment.v1.apps/nginx-deployment
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Waiting for rollout to finish: 2 out of 3 new replicas have been updated...
-error: deployment &amp;quot;nginx&amp;quot; exceeded its progress deadline
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;kubectl rollout&lt;/code&gt; 返回码为 1 (表示出错):&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;echo $?
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre&gt;&lt;code&gt;1
-&lt;/code&gt;&lt;/pre&gt;&lt;!--
-### Operating on a failed deployment
-
-All actions that apply to a complete Deployment also apply to a failed Deployment. You can scale it up/down, roll back
-to a previous revision, or even pause it if you need to apply multiple tweaks in the Deployment Pod template.
- --&gt;
-&lt;h3 id=&#34;在失败状态的-deployment-上可以执行的操作&#34;&gt;在失败状态的 Deployment 上可以执行的操作&lt;/h3&gt;
-&lt;p&gt;所有在完成的 Deployment 上可以执行的操作都可以在失败的 Deployment 执行. 用户可以扩充/缩减容量, 回滚到之前的一个版本, 甚至如果用户需要
-多次修改 Deployment 的 Pod 模板可以将其暂停.&lt;/p&gt;
-&lt;!--
-## Clean up Policy
-
-You can set `.spec.revisionHistoryLimit` field in a Deployment to specify how many old ReplicaSets for
-this Deployment you want to retain. The rest will be garbage-collected in the background. By default,
-it is 10.
-
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Explicitly setting this field to 0, will result in cleaning up all the history of your Deployment
-thus that Deployment will not be able to roll back.&lt;/div&gt;
-&lt;/blockquote&gt;
-
- --&gt;
-&lt;h2 id=&#34;清理策略&#34;&gt;清理策略&lt;/h2&gt;
-&lt;p&gt;用户可以通过设置 Deployment 中的 &lt;code&gt;.spec.revisionHistoryLimit&lt;/code&gt; 字段, 指定保留多少份旧的 ReplicaSets 的记录.
-超出的部分会被后台垃圾回收. 默认是 10&lt;/p&gt;
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 如果将该字段设置为 0, 则会导致所以的历史都会被删除, Deployment 不能被回滚.&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;!--
-## Canary Deployment
-
-If you want to roll out releases to a subset of users or servers using the Deployment, you
-can create multiple Deployments, one for each release, following the canary pattern described in
-[managing resources](/docs/concepts/cluster-administration/manage-deployment/#canary-deployments).
- --&gt;
-&lt;h2 id=&#34;金丝雀-deployment&#34;&gt;金丝雀 Deployment&lt;/h2&gt;
-&lt;p&gt;如查用户想让一部分用户或服务使用这个 Deployment 发布的版本, 可以创建多个 Deployment, 每一个发布一个版本,
-依据&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/cluster-administration/manage-deployment/#canary-deployments&#34;&gt;资源管理&lt;/a&gt;中描述的金丝雀规则。&lt;/p&gt;
-&lt;!--
-## Writing a Deployment Spec
-
-As with all other Kubernetes configs, a Deployment needs `.apiVersion`, `.kind`, and `.metadata` fields.
-For general information about working with config files, see
-[deploying applications](/docs/tasks/run-application/run-stateless-application-deployment/),
-configuring containers, and [using kubectl to manage resources](/docs/concepts/overview/working-with-objects/object-management/) documents.
-The name of a Deployment object must be a valid
-[DNS subdomain name](/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
-
-A Deployment also needs a [`.spec` section](https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status).
- --&gt;
-&lt;h2 id=&#34;编写-deployment-spec&#34;&gt;编写 Deployment Spec&lt;/h2&gt;
-&lt;p&gt;As with all other Kubernetes configs, a Deployment needs &lt;code&gt;.apiVersion&lt;/code&gt;, &lt;code&gt;.kind&lt;/code&gt;, and &lt;code&gt;.metadata&lt;/code&gt; fields.
-For general information about working with config files, see
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/run-application/run-stateless-application-deployment/&#34;&gt;deploying applications&lt;/a&gt;,
-configuring containers, and &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/object-management/&#34;&gt;using kubectl to manage resources&lt;/a&gt; documents.
-The name of a Deployment object must be a valid
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS subdomain name&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;A Deployment also needs a &lt;a href=&#34;https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status&#34;&gt;&lt;code&gt;.spec&lt;/code&gt; section&lt;/a&gt;.
-与所以其它的 k8s 配置一样，Deployment 必须要有  &lt;code&gt;.apiVersion&lt;/code&gt;, &lt;code&gt;.kind&lt;/code&gt;, &lt;code&gt;.metadata&lt;/code&gt; 字段。
-配置文件的通用信息见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/run-application/run-stateless-application-deployment/&#34;&gt;部署应用&lt;/a&gt;,
-配置容器， &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/object-management/&#34;&gt;使用 kubect 管理资源&lt;/a&gt;.
-Deployment 对象的名称必须是一个有效的 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Deployment 还需要有一个 &lt;a href=&#34;https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status&#34;&gt;&lt;code&gt;.spec&lt;/code&gt; 定义区&lt;/a&gt;.&lt;/p&gt;
-&lt;!--
-### Pod Template
-
-The `.spec.template` and `.spec.selector` are the only required field of the `.spec`.
-
-The `.spec.template` is a [Pod template](/docs/concepts/workloads/pods/#pod-templates). It has exactly the same schema as a &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/pods/&#39; target=&#39;_blank&#39;&gt;Pod&lt;span class=&#39;tooltip-text&#39;&gt;Pod 表示集群中运行的一组容器的集合&lt;/span&gt;
-&lt;/a&gt;, except it is nested and does not have an `apiVersion` or `kind`.
-
-In addition to required fields for a Pod, a Pod template in a Deployment must specify appropriate
-labels and an appropriate restart policy. For labels, make sure not to overlap with other controllers. See [selector](#selector)).
-
-Only a [`.spec.template.spec.restartPolicy`](/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy) equal to `Always` is
-allowed, which is the default if not specified.
- --&gt;
-&lt;h3 id=&#34;pod-模板&#34;&gt;Pod 模板&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;.spec&lt;/code&gt; 的必要字段仅有 &lt;code&gt;.spec.template&lt;/code&gt; 和 &lt;code&gt;.spec.selector&lt;/code&gt;两个。&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;.spec.template&lt;/code&gt; 字段就是一个 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/pods/#pod-templates&#34;&gt;Pod 模板&lt;/a&gt;对象。定义规范与 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/pods/&#39; target=&#39;_blank&#39;&gt;Pod&lt;span class=&#39;tooltip-text&#39;&gt;Pod 表示集群中运行的一组容器的集合&lt;/span&gt;
-&lt;/a&gt;
-完全一样， 除了因为它嵌套的 Deployment 中所以没 &lt;code&gt;apiVersion&lt;/code&gt; 或 &lt;code&gt;kind&lt;/code&gt; 字段。&lt;/p&gt;
-&lt;p&gt;相对裸 Pod 所以需要的字段， Deployment 中的 Pod 模板需要指定适当的标签和重启策略。 对于标签定义，需要注意不要与其它的控制器重叠了。 见 &lt;a href=&#34;#selector&#34;&gt;selector&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy&#34;&gt;&lt;code&gt;.spec.template.spec.restartPolicy&lt;/code&gt;&lt;/a&gt; 的值只能是 &lt;code&gt;Always&lt;/code&gt;， 这也是默认值。&lt;/p&gt;
-&lt;!--
-### Replicas
-
-`.spec.replicas` is an optional field that specifies the number of desired Pods. It defaults to 1.
- --&gt;
-&lt;h3 id=&#34;副本数&#34;&gt;副本数&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;.spec.replicas&lt;/code&gt; 是一个可选字段，表示期望的 Pod 的数量。 默认为 1&lt;/p&gt;
-&lt;!--
-### Selector
-
-`.spec.selector` is a required field that specifies a [label selector](/docs/concepts/overview/working-with-objects/labels/)
-for the Pods targeted by this Deployment.
-
-`.spec.selector` must match `.spec.template.metadata.labels`, or it will be rejected by the API.
-
-In API version `apps/v1`, `.spec.selector` and `.metadata.labels` do not default to `.spec.template.metadata.labels` if not set. So they must be set explicitly. Also note that `.spec.selector` is immutable after creation of the Deployment in `apps/v1`.
-
-A Deployment may terminate Pods whose labels match the selector if their template is different
-from `.spec.template` or if the total number of such Pods exceeds `.spec.replicas`. It brings up new
-Pods with `.spec.template` if the number of Pods is less than the desired number.
-
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; You should not create other Pods whose labels match this selector, either directly, by creating
-another Deployment, or by creating another controller such as a ReplicaSet or a ReplicationController. If you
-do so, the first Deployment thinks that it created these other Pods. Kubernetes does not stop you from doing this.&lt;/div&gt;
-&lt;/blockquote&gt;
-
-
-If you have multiple controllers that have overlapping selectors, the controllers will fight with each
-other and won&#39;t behave correctly.
- --&gt;
-&lt;h3 id=&#34;选择器&#34;&gt;选择器&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;.spec.selector&lt;/code&gt; 是一个必要字段，用于定义 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/labels/&#34;&gt;标签选择器&lt;/a&gt;, 标签选择器用于选择 Deployment 下属的 Pod&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;.spec.selector&lt;/code&gt; 必须与 &lt;code&gt;.spec.template.metadata.labels&lt;/code&gt;配置, 否则 API 会拒绝.&lt;/p&gt;
-&lt;p&gt;API 版本 &lt;code&gt;apps/v1&lt;/code&gt; 中， &lt;code&gt;.spec.selector&lt;/code&gt; 和 &lt;code&gt;.metadata.labels&lt;/code&gt; 如果没有设置不会默认设置为 &lt;code&gt;.spec.template.metadata.labels&lt;/code&gt;。 所以这两个字段必须要显示的设置。&lt;/p&gt;
-&lt;p&gt;Deployment 终结标签匹配选择器，但模板与  &lt;code&gt;.spec.template&lt;/code&gt; 不同的 Pod。
-如果标签选择器匹配的 Pod 数量大于 &lt;code&gt;.spec.replicas&lt;/code&gt; 的数量，则会终结多于的 Pod。
-如果标签选择器匹配的 Pod 数量小于 &lt;code&gt;.spec.replicas&lt;/code&gt; 的数量， 会使用&lt;code&gt;.spec.template&lt;/code&gt;创建新的 Pod， 使总数与期望数相同。&lt;/p&gt;
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 用户需要注意不能创建标签匹配该选择的的 Pod， 不管理是直接创建还是通过 Deployment 创建，或者通过其它的如 ReplicaSet 或 ReplicationController
-控制器来创建。 如果这样做了，第一个 Deployment 这些 Pod 也是它创建的。k8s 不会阻止用户这样做&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;如果有多个控制器使用了一样的选择器，这些选择器就会打架，然后不能正常工作。&lt;/p&gt;
-&lt;!--
-### Strategy
-
-`.spec.strategy` specifies the strategy used to replace old Pods by new ones.
-`.spec.strategy.type` can be &#34;Recreate&#34; or &#34;RollingUpdate&#34;. &#34;RollingUpdate&#34; is
-the default value.
- --&gt;
-&lt;h3 id=&#34;策略&#34;&gt;策略&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;.spec.strategy&lt;/code&gt; 指定新 Pod 代替旧 Pod 使用的策略
-&lt;code&gt;.spec.strategy.type&lt;/code&gt; 的值可以是 &lt;code&gt;Recreate&lt;/code&gt; 或 &lt;code&gt;RollingUpdate&lt;/code&gt;。 默认为 &lt;code&gt;RollingUpdate&lt;/code&gt;&lt;/p&gt;
-&lt;!--
-#### Recreate Deployment
-
-All existing Pods are killed before new ones are created when `.spec.strategy.type==Recreate`.
-
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; This will only guarantee Pod termination previous to creation for upgrades. If you upgrade a Deployment, all Pods
-of the old revision will be terminated immediately. Successful removal is awaited before any Pod of the new
-revision is created. If you manually delete a Pod, the lifecycle is controlled by the ReplicaSet and the
-replacement will be created immediately (even if the old Pod is still in a Terminating state). If you need an
-&amp;ldquo;at most&amp;rdquo; guarantee for your Pods, you should consider using a
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/statefulset/&#34;&gt;StatefulSet&lt;/a&gt;.&lt;/div&gt;
-&lt;/blockquote&gt;
-
- --&gt;
-&lt;h4 id=&#34;deployment-重建策略&#34;&gt;Deployment 重建策略&lt;/h4&gt;
-&lt;p&gt;当设置 &lt;code&gt;.spec.strategy.type==Recreate&lt;/code&gt; 时，会先将所以旧的 Pod 删除再创建新的&lt;/p&gt;
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 这个策略只能保证终止旧 Pod 的操作在创建新 Pod 的操作之前。 如果用户更新的一个 Deployment， 所以旧的 Pod 就会马上被标记为终止产状。
-成功删除则要等到有任意一个新版本的 Pod 创建成功之后。 如果在这之前，用户手动删除了一个 Pod， 这时它的生命周期还受 ReplicaSet 控制，
-所以会立马又创建一个旧的(尽管旧的 Pod 依然处于终止中的状态)。 如果用户需要 “最大的” 保证， 则建议考虑使用
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/statefulset/&#34;&gt;StatefulSet&lt;/a&gt;&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;!--
-#### Rolling Update Deployment
-
-The Deployment updates Pods in a rolling update
-fashion when `.spec.strategy.type==RollingUpdate`. You can specify `maxUnavailable` and `maxSurge` to control
-the rolling update process.
- --&gt;
-&lt;h4 id=&#34;rolling-update-deployment&#34;&gt;Deployment 滚动更新策略&lt;/h4&gt;
-&lt;p&gt;当 &lt;code&gt;.spec.strategy.type==RollingUpdate&lt;/code&gt; 时 Deployment 以滚动方式更新 Pod。
-用户可以通过 &lt;code&gt;maxUnavailable&lt;/code&gt; 和 &lt;code&gt;maxSurge&lt;/code&gt; 来控制更新进程&lt;/p&gt;
-&lt;!--
-##### Max Unavailable
-
-`.spec.strategy.rollingUpdate.maxUnavailable` is an optional field that specifies the maximum number
-of Pods that can be unavailable during the update process. The value can be an absolute number (for example, 5)
-or a percentage of desired Pods (for example, 10%). The absolute number is calculated from percentage by
-rounding down. The value cannot be 0 if `.spec.strategy.rollingUpdate.maxSurge` is 0. The default value is 25%.
-
-For example, when this value is set to 30%, the old ReplicaSet can be scaled down to 70% of desired
-Pods immediately when the rolling update starts. Once new Pods are ready, old ReplicaSet can be scaled
-down further, followed by scaling up the new ReplicaSet, ensuring that the total number of Pods available
-at all times during the update is at least 70% of the desired Pods.
- --&gt;
-&lt;h5 id=&#34;最大不可用数&#34;&gt;最大不可用数&lt;/h5&gt;
-&lt;p&gt;&lt;code&gt;.spec.strategy.rollingUpdate.maxUnavailable&lt;/code&gt; 是一个可选字段， 用于设置在更新过程最大不可用 Pod 的数量。 字段值可以是一个数字(如， 5)
-也可以是期望副本数的百分比(如，10%)。 数字为百分比向下取整。 如果 &lt;code&gt;.spec.strategy.rollingUpdate.maxSurge&lt;/code&gt; 的值是 0 则该字段值不能是 0.
-默认值为 &lt;code&gt;25%&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;例如， 当这个值设置为 30%, 旧的 ReplicaSet 在滚动更新开始时就能缩减容量是期望数量的 70%， 旧的 ReplicaSet 会在 新的 ReplicaSet 扩容后
-相应的收缩自己的容量，以确保在整个更新过程中可用的 Pod 数不低于期望数量的 70%。&lt;/p&gt;
-&lt;!--
-##### Max Surge
-
-`.spec.strategy.rollingUpdate.maxSurge` is an optional field that specifies the maximum number of Pods
-that can be created over the desired number of Pods. The value can be an absolute number (for example, 5) or a
-percentage of desired Pods (for example, 10%). The value cannot be 0 if `MaxUnavailable` is 0. The absolute number
-is calculated from the percentage by rounding up. The default value is 25%.
-
-For example, when this value is set to 30%, the new ReplicaSet can be scaled up immediately when the
-rolling update starts, such that the total number of old and new Pods does not exceed 130% of desired
-Pods. Once old Pods have been killed, the new ReplicaSet can be scaled up further, ensuring that the
-total number of Pods running at any time during the update is at most 130% of desired Pods.
- --&gt;
-&lt;h5 id=&#34;最大可超预期数&#34;&gt;最大可超预期数&lt;/h5&gt;
-&lt;p&gt;&lt;code&gt;.spec.strategy.rollingUpdate.maxSurge&lt;/code&gt; 是一个可选字段， 用于设置在更新过程最大可超过期望数的数量。 这个值可以是一个数量(如， 5)
-也可以是期望副本数的百分比(如，10%)。如果 &lt;code&gt;MaxUnavailable&lt;/code&gt; 值为 0， 则该字段值不能是 0. 数字为百分比向上取整。默认值为 25%。&lt;/p&gt;
-&lt;p&gt;例如， 当这个值设置为 30%, 新的 ReplicaSet 会在滚动更新开始后马上扩容。 只要新旧 Pod 总数不超过期望数量的 130%。
-当旧的 Pod 被干掉， 新的 ReplicaSet 就能继续扩容， 只要始终确保总的 Pod 不超过期望数量的 130%。&lt;/p&gt;
-&lt;!--
-### Progress Deadline Seconds
-
-`.spec.progressDeadlineSeconds` is an optional field that specifies the number of seconds you want
-to wait for your Deployment to progress before the system reports back that the Deployment has
-[failed progressing](#failed-deployment) - surfaced as a condition with `Type=Progressing`, `Status=False`.
-and `Reason=ProgressDeadlineExceeded` in the status of the resource. The Deployment controller will keep
-retrying the Deployment. This defaults to 600. In the future, once automatic rollback will be implemented, the Deployment
-controller will roll back a Deployment as soon as it observes such a condition.
-
-If specified, this field needs to be greater than `.spec.minReadySeconds`.
- --&gt;
-&lt;h3 id=&#34;更新处理时限&#34;&gt;更新处理时限&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;.spec.progressDeadlineSeconds&lt;/code&gt; 是一个可选字段， 用于设置 Deployment 进行更新处理的时限(单位秒)， 如果超过这个时限
-这次更新还没有完成则系统就会报告 Deployment &lt;a href=&#34;#failed-deployment&#34;&gt;处理失败&lt;/a&gt;，报告为向状态资源添加一个包含以下字段的条件
-&lt;code&gt;Type=Progressing&lt;/code&gt;, &lt;code&gt;Status=False&lt;/code&gt;, &lt;code&gt;Reason=ProgressDeadlineExceeded&lt;/code&gt;. Deployment 控制器会持续重试这个 Deployment.
-这个字段默认值为 600. 在将来，当自动回滚实现以后，当发现这个超时条件就会自动回滚这个 Deployment。&lt;/p&gt;
-&lt;p&gt;如果为设置该字段，该字段的值需要大于 &lt;code&gt;.spec.minReadySeconds&lt;/code&gt;&lt;/p&gt;
-&lt;!--
-### Min Ready Seconds
-
-`.spec.minReadySeconds` is an optional field that specifies the minimum number of seconds for which a newly
-created Pod should be ready without any of its containers crashing, for it to be considered available.
-This defaults to 0 (the Pod will be considered available as soon as it is ready). To learn more about when
-a Pod is considered ready, see [Container Probes](/docs/concepts/workloads/pods/pod-lifecycle/#container-probes).
- --&gt;
-&lt;h3 id=&#34;最小就绪时间&#34;&gt;最小就绪时间&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;.spec.minReadySeconds&lt;/code&gt; 是一个可选字段， 用于设置一个新创建的 Pod 在没有任何容器崩掉的情况下达成就绪到被认为可用的最小时限(单位秒)
-默认是 0 (Pod 在就绪后就认为可用)。 了解更多关于 Pod 被认为就绪的信息，见&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#container-probes&#34;&gt;容器探针&lt;/a&gt;.&lt;/p&gt;
-&lt;!--
-### Revision History Limit
-
-A Deployment&#39;s revision history is stored in the ReplicaSets it controls.
-
-`.spec.revisionHistoryLimit` is an optional field that specifies the number of old ReplicaSets to retain
-to allow rollback. These old ReplicaSets consume resources in `etcd` and crowd the output of `kubectl get rs`. The configuration of each Deployment revision is stored in its ReplicaSets; therefore, once an old ReplicaSet is deleted, you lose the ability to rollback to that revision of Deployment. By default, 10 old ReplicaSets will be kept, however its ideal value depends on the frequency and stability of new Deployments.
-
-More specifically, setting this field to zero means that all old ReplicaSets with 0 replicas will be cleaned up.
-In this case, a new Deployment rollout cannot be undone, since its revision history is cleaned up.
- --&gt;
-&lt;h3 id=&#34;历史版本记录限制&#34;&gt;历史版本记录限制&lt;/h3&gt;
-&lt;p&gt;Deployment 的版本历史存在受它控制的 ReplicaSet 中。&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;.spec.revisionHistoryLimit&lt;/code&gt; 是一个可选字段。 用户设置允许回滚而保留的旧的 ReplicaSet 的数量。
-这个旧的 ReplicaSet 会被存储在 &lt;code&gt;etcd&lt;/code&gt; 中， 可以通过命令 &lt;code&gt;kubectl get rs&lt;/code&gt; 查看。 Deployment 每个版本的配置被保存在它的 ReplicaSet 中，
-因此，当一个旧的 ReplicaSet 被删除，就会的会回滚到该版本的能力。 默认会保留 10 个旧的 ReplicaSet， 但是合理的值基于新发 Deployment 的频次和稳定性。&lt;/p&gt;
-&lt;p&gt;更准确的说， 如果把该字段值设置为0， 意味着所以副本数为 0 的旧 ReplicaSet 都会被删除， 在这种情况下， 新的 Deployment 就没办法回滚了，因为历史版本都清空了。&lt;/p&gt;
-&lt;!--
-### Paused
-
-`.spec.paused` is an optional boolean field for pausing and resuming a Deployment. The only difference between
-a paused Deployment and one that is not paused, is that any changes into the PodTemplateSpec of the paused
-Deployment will not trigger new rollouts as long as it is paused. A Deployment is not paused by default when
-it is created.
- --&gt;
-&lt;h3 id=&#34;暂停&#34;&gt;暂停&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;.spec.paused&lt;/code&gt; 是一个可选布尔字段，用于暂停和恢复 Deployment。 Deployment 有没有暂停的区别是对 PodTemplateSpec 变更， 暂停的 Deployment
-在被恢复之前不会触发更新。 Deployment 创建时默认没有暂停。&lt;/p&gt;
-
       </description>
     </item>
     

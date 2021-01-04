@@ -4479,5 +4479,434 @@ are stored absolutely.
       </description>
     </item>
     
+    <item>
+      <title>Docs: Pod Priority and Preemption</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-priority-preemption/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-priority-preemption/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- davidopp
+- wojtek-t
+title: Pod Priority and Preemption
+content_type: concept
+weight: 70
+---
+ --&gt;
+&lt;!-- overview --&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.14 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;!--
+[Pods](/docs/concepts/workloads/pods/) can have _priority_. Priority indicates the
+importance of a Pod relative to other Pods. If a Pod cannot be scheduled, the
+scheduler tries to preempt (evict) lower priority Pods to make scheduling of the
+pending Pod possible.
+ --&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/pods/&#34;&gt;Pod&lt;/a&gt; 是可以有 &lt;em&gt;优先级的&lt;/em&gt;。 优先级表示一个 Pod
+与其它 Pod 之间的相对重要程度。 如果一个 Pod 不能被调度， 调度器会尝试挤占(驱逐)一些(个)低优先
+级的 Pod， 让这个等待的 Pod 有可能正常调度。&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;blockquote class=&#34;warning&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;警告：&lt;/strong&gt; &lt;!--
+In a cluster where not all users are trusted, a malicious user could create Pods
+at the highest possible priorities, causing other Pods to be evicted/not get
+scheduled.
+An administrator can use ResourceQuota to prevent users from creating pods at
+high priorities.
+
+See [limit Priority Class consumption by default](/docs/concepts/policy/resource-quotas/#limit-priority-class-consumption-by-default)
+for details.
+ --&gt;
+&lt;p&gt;当在一个并不是所有用户都可信的集群中，一个恶意用户可能创建拥有最高可能优先级的 Pod，导致其它的
+Pod 被驱逐或无法调度。 管理员可以使用资源配额(ResourceQuota)来防止用户创建高优先级的 Pod.&lt;/p&gt;
+&lt;p&gt;详见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/policy/resource-quotas/#limit-priority-class-consumption-by-default&#34;&gt;对默认使用的 Priority Class进行限制&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;!--
+## How to use priority and preemption
+
+To use priority and preemption:
+
+1.  Add one or more [PriorityClasses](#priorityclass).
+
+1.  Create Pods with[`priorityClassName`](#pod-priority) set to one of the added
+    PriorityClasses. Of course you do not need to create the Pods directly;
+    normally you would add `priorityClassName` to the Pod template of a
+    collection object like a Deployment.
+
+Keep reading for more information about these steps.
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Kubernetes already ships with two PriorityClasses:
+&lt;code&gt;system-cluster-critical&lt;/code&gt; and &lt;code&gt;system-node-critical&lt;/code&gt;.
+These are common classes and are used to &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/&#34;&gt;ensure that critical components are always scheduled first&lt;/a&gt;.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+ --&gt;
+&lt;h2 id=&#34;how-to-use-priority-and-preemption&#34;&gt;怎么使用优先级和挤占&lt;/h2&gt;
+&lt;p&gt;要使用优先级和挤占:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;添加一个或多个 &lt;a href=&#34;#priorityclass&#34;&gt;PriorityClasses&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在创建 Pod 时通过 &lt;a href=&#34;#pod-priority&#34;&gt;&lt;code&gt;priorityClassName&lt;/code&gt;&lt;/a&gt; 为它设置一个上一步创建的
+PriorityClasses。 当然不需要直接创建 Pod； 通常是将 &lt;code&gt;priorityClassName&lt;/code&gt; 添加到像
+Deployment 这一类对象的 Pod 模板中。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;下面的章节会更多地介绍这些步骤。&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; k8s 已经自带了两个 PriorityClasses: &lt;code&gt;system-cluster-critical&lt;/code&gt; 和 &lt;code&gt;system-node-critical&lt;/code&gt;.
+这些是通用类别，被用于
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/&#34;&gt;确保关键组件始终先调度&lt;/a&gt;.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;!--
+## PriorityClass
+
+A PriorityClass is a non-namespaced object that defines a mapping from a
+priority class name to the integer value of the priority. The name is specified
+in the `name` field of the PriorityClass object&#39;s metadata. The value is
+specified in the required `value` field. The higher the value, the higher the
+priority.
+The name of a PriorityClass object must be a valid
+[DNS subdomain name](/docs/concepts/overview/working-with-objects/names#dns-subdomain-names),
+and it cannot be prefixed with `system-`.
+
+A PriorityClass object can have any 32-bit integer value smaller than or equal
+to 1 billion. Larger numbers are reserved for critical system Pods that should
+not normally be preempted or evicted. A cluster admin should create one
+PriorityClass object for each such mapping that they want.
+
+PriorityClass also has two optional fields: `globalDefault` and `description`.
+The `globalDefault` field indicates that the value of this PriorityClass should
+be used for Pods without a `priorityClassName`. Only one PriorityClass with
+`globalDefault` set to true can exist in the system. If there is no
+PriorityClass with `globalDefault` set, the priority of Pods with no
+`priorityClassName` is zero.
+
+The `description` field is an arbitrary string. It is meant to tell users of the
+cluster when they should use this PriorityClass.
+ --&gt;
+&lt;h2 id=&#34;priorityclass&#34;&gt;PriorityClass&lt;/h2&gt;
+&lt;p&gt;PriorityClass 是一个无命名空间字段的对象，它定义了一个优先级类别名称与一个整数值的优先级的映射
+关系。 名称定义在 PriorityClass 对象元数据的 &lt;code&gt;name&lt;/code&gt; 字段中。 值则定义在对象的必要字段 &lt;code&gt;value&lt;/code&gt;
+中。 这个值越大表示优先级越高。&lt;/p&gt;
+&lt;p&gt;PriorityClass 对象可以将任意小于 10 亿的 32 位整数作为其值。 更大的数字则被保留作为系统关键
+Pod 使用，这些 Pod 通常不应该被挤掉或驱逐。&lt;/p&gt;
+&lt;p&gt;PriorityClass 还有两个可选字段: &lt;code&gt;globalDefault&lt;/code&gt; 和 &lt;code&gt;description&lt;/code&gt;. &lt;code&gt;globalDefault&lt;/code&gt;
+字段表示这个 PriorityClass 的值会用作那些没有 &lt;code&gt;priorityClassName&lt;/code&gt; Pod 的优先级。 系统中
+只能存在一个 &lt;code&gt;globalDefault&lt;/code&gt; 设置为 true 的 PriorityClass。 如果集群中没有
+&lt;code&gt;globalDefault&lt;/code&gt; 设置为 true 的 PriorityClass。 则那些没有 &lt;code&gt;priorityClassName&lt;/code&gt; 的 Pod
+的优先级值为 0&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;description&lt;/code&gt; 可以是任意字符串。但通常用来告诉集群用户，啥时候应该用这个 PriorityClass.&lt;/p&gt;
+&lt;!--
+### Notes about PodPriority and existing clusters
+
+-   If you upgrade an existing cluster without this feature, the priority
+    of your existing Pods is effectively zero.
+
+-   Addition of a PriorityClass with `globalDefault` set to `true` does not
+    change the priorities of existing Pods. The value of such a PriorityClass is
+    used only for Pods created after the PriorityClass is added.
+
+-   If you delete a PriorityClass, existing Pods that use the name of the
+    deleted PriorityClass remain unchanged, but you cannot create more Pods that
+    use the name of the deleted PriorityClass.
+ --&gt;
+&lt;h3 id=&#34;notes-about-podpriority-and-existing-clusters&#34;&gt;Pod 优先级和已有集群需要注意的一些地方&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;If you upgrade an existing cluster without this feature, the priority
+of your existing Pods is effectively zero.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Addition of a PriorityClass with &lt;code&gt;globalDefault&lt;/code&gt; set to &lt;code&gt;true&lt;/code&gt; does not
+change the priorities of existing Pods. The value of such a PriorityClass is
+used only for Pods created after the PriorityClass is added.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If you delete a PriorityClass, existing Pods that use the name of the
+deleted PriorityClass remain unchanged, but you cannot create more Pods that
+use the name of the deleted PriorityClass.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果从一个没有该特性的集群升级，集群中现在的 Pod 的优先级会被设置为 0&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;添加一个 &lt;code&gt;globalDefault&lt;/code&gt; 设置为 &lt;code&gt;true&lt;/code&gt; 的 PriorityClass， 不会改变已有 Pod 的优先级。
+这个 PriorityClass 的优先级值只会被应用到在它之后创建的 Pod 上。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果删除了一个 PriorityClass， 已有的在使用这个 PriorityClass 的 Pod 不会发生变化，
+但新创建 Pod 时就不能再使用这个 PriorityClass 了。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+### Example PriorityClass
+
+```yaml
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: high-priority
+value: 1000000
+globalDefault: false
+description: &#34;This priority class should be used for XYZ service pods only.&#34;
+```
+ --&gt;
+&lt;h3 id=&#34;Example-PriorityClass&#34;&gt;&lt;code&gt;PriorityClass&lt;/code&gt; 示例&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;scheduling.k8s.io/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PriorityClass&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;high-priority&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;value&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1000000&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;globalDefault&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;description&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;This priority class should be used for XYZ service pods only.&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;non-preempting-priority-class&#34;&gt;Non-preempting PriorityClass&lt;/h2&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.19 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;Pods with &lt;code&gt;PreemptionPolicy: Never&lt;/code&gt; will be placed in the scheduling queue
+ahead of lower-priority pods,
+but they cannot preempt other pods.
+A non-preempting pod waiting to be scheduled will stay in the scheduling queue,
+until sufficient resources are free,
+and it can be scheduled.
+Non-preempting pods,
+like other pods,
+are subject to scheduler back-off.
+This means that if the scheduler tries these pods and they cannot be scheduled,
+they will be retried with lower frequency,
+allowing other pods with lower priority to be scheduled before them.&lt;/p&gt;
+&lt;p&gt;Non-preempting pods may still be preempted by other,
+high-priority pods.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;PreemptionPolicy&lt;/code&gt; defaults to &lt;code&gt;PreemptLowerPriority&lt;/code&gt;,
+which will allow pods of that PriorityClass to preempt lower-priority pods
+(as is existing default behavior).
+If &lt;code&gt;PreemptionPolicy&lt;/code&gt; is set to &lt;code&gt;Never&lt;/code&gt;,
+pods in that PriorityClass will be non-preempting.&lt;/p&gt;
+&lt;p&gt;An example use case is for data science workloads.
+A user may submit a job that they want to be prioritized above other workloads,
+but do not wish to discard existing work by preempting running pods.
+The high priority job with &lt;code&gt;PreemptionPolicy: Never&lt;/code&gt; will be scheduled
+ahead of other queued pods,
+as soon as sufficient cluster resources &amp;ldquo;naturally&amp;rdquo; become free.&lt;/p&gt;
+&lt;h3 id=&#34;example-non-preempting-priorityclass&#34;&gt;Example Non-preempting PriorityClass&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;scheduling.k8s.io/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PriorityClass&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;high-priority-nonpreempting&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;value&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1000000&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;preemptionPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Never&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;globalDefault&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;description&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;This priority class will not cause other pods to be preempted.&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;pod-priority&#34;&gt;Pod priority&lt;/h2&gt;
+&lt;p&gt;After you have one or more PriorityClasses, you can create Pods that specify one
+of those PriorityClass names in their specifications. The priority admission
+controller uses the &lt;code&gt;priorityClassName&lt;/code&gt; field and populates the integer value of
+the priority. If the priority class is not found, the Pod is rejected.&lt;/p&gt;
+&lt;p&gt;The following YAML is an example of a Pod configuration that uses the
+PriorityClass created in the preceding example. The priority admission
+controller checks the specification and resolves the priority of the Pod to
+1000000.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;env&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;imagePullPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;IfNotPresent&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;priorityClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;high-priority&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;effect-of-pod-priority-on-scheduling-order&#34;&gt;Effect of Pod priority on scheduling order&lt;/h3&gt;
+&lt;p&gt;When Pod priority is enabled, the scheduler orders pending Pods by
+their priority and a pending Pod is placed ahead of other pending Pods
+with lower priority in the scheduling queue. As a result, the higher
+priority Pod may be scheduled sooner than Pods with lower priority if
+its scheduling requirements are met. If such Pod cannot be scheduled,
+scheduler will continue and tries to schedule other lower priority Pods.&lt;/p&gt;
+&lt;h2 id=&#34;preemption&#34;&gt;Preemption&lt;/h2&gt;
+&lt;p&gt;When Pods are created, they go to a queue and wait to be scheduled. The
+scheduler picks a Pod from the queue and tries to schedule it on a Node. If no
+Node is found that satisfies all the specified requirements of the Pod,
+preemption logic is triggered for the pending Pod. Let&amp;rsquo;s call the pending Pod P.
+Preemption logic tries to find a Node where removal of one or more Pods with
+lower priority than P would enable P to be scheduled on that Node. If such a
+Node is found, one or more lower priority Pods get evicted from the Node. After
+the Pods are gone, P can be scheduled on the Node.&lt;/p&gt;
+&lt;h3 id=&#34;user-exposed-information&#34;&gt;User exposed information&lt;/h3&gt;
+&lt;p&gt;When Pod P preempts one or more Pods on Node N, &lt;code&gt;nominatedNodeName&lt;/code&gt; field of Pod
+P&amp;rsquo;s status is set to the name of Node N. This field helps scheduler track
+resources reserved for Pod P and also gives users information about preemptions
+in their clusters.&lt;/p&gt;
+&lt;p&gt;Please note that Pod P is not necessarily scheduled to the &amp;ldquo;nominated Node&amp;rdquo;.
+After victim Pods are preempted, they get their graceful termination period. If
+another node becomes available while scheduler is waiting for the victim Pods to
+terminate, scheduler will use the other node to schedule Pod P. As a result
+&lt;code&gt;nominatedNodeName&lt;/code&gt; and &lt;code&gt;nodeName&lt;/code&gt; of Pod spec are not always the same. Also, if
+scheduler preempts Pods on Node N, but then a higher priority Pod than Pod P
+arrives, scheduler may give Node N to the new higher priority Pod. In such a
+case, scheduler clears &lt;code&gt;nominatedNodeName&lt;/code&gt; of Pod P. By doing this, scheduler
+makes Pod P eligible to preempt Pods on another Node.&lt;/p&gt;
+&lt;h3 id=&#34;limitations-of-preemption&#34;&gt;Limitations of preemption&lt;/h3&gt;
+&lt;h4 id=&#34;graceful-termination-of-preemption-victims&#34;&gt;Graceful termination of preemption victims&lt;/h4&gt;
+&lt;p&gt;When Pods are preempted, the victims get their
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination&#34;&gt;graceful termination period&lt;/a&gt;.
+They have that much time to finish their work and exit. If they don&amp;rsquo;t, they are
+killed. This graceful termination period creates a time gap between the point
+that the scheduler preempts Pods and the time when the pending Pod (P) can be
+scheduled on the Node (N). In the meantime, the scheduler keeps scheduling other
+pending Pods. As victims exit or get terminated, the scheduler tries to schedule
+Pods in the pending queue. Therefore, there is usually a time gap between the
+point that scheduler preempts victims and the time that Pod P is scheduled. In
+order to minimize this gap, one can set graceful termination period of lower
+priority Pods to zero or a small number.&lt;/p&gt;
+&lt;h4 id=&#34;poddisruptionbudget-is-supported-but-not-guaranteed&#34;&gt;PodDisruptionBudget is supported, but not guaranteed&lt;/h4&gt;
+&lt;p&gt;A &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/disruptions/&#34;&gt;PodDisruptionBudget&lt;/a&gt; (PDB)
+allows application owners to limit the number of Pods of a replicated application
+that are down simultaneously from voluntary disruptions. Kubernetes supports
+PDB when preempting Pods, but respecting PDB is best effort. The scheduler tries
+to find victims whose PDB are not violated by preemption, but if no such victims
+are found, preemption will still happen, and lower priority Pods will be removed
+despite their PDBs being violated.&lt;/p&gt;
+&lt;h4 id=&#34;inter-pod-affinity-on-lower-priority-pods&#34;&gt;Inter-Pod affinity on lower-priority Pods&lt;/h4&gt;
+&lt;p&gt;A Node is considered for preemption only when the answer to this question is
+yes: &amp;ldquo;If all the Pods with lower priority than the pending Pod are removed from
+the Node, can the pending Pod be scheduled on the Node?&amp;rdquo;&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Preemption does not necessarily remove all lower-priority
+Pods. If the pending Pod can be scheduled by removing fewer than all
+lower-priority Pods, then only a portion of the lower-priority Pods are removed.
+Even so, the answer to the preceding question must be yes. If the answer is no,
+the Node is not considered for preemption.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If a pending Pod has inter-pod affinity to one or more of the lower-priority
+Pods on the Node, the inter-Pod affinity rule cannot be satisfied in the absence
+of those lower-priority Pods. In this case, the scheduler does not preempt any
+Pods on the Node. Instead, it looks for another Node. The scheduler might find a
+suitable Node or it might not. There is no guarantee that the pending Pod can be
+scheduled.&lt;/p&gt;
+&lt;p&gt;Our recommended solution for this problem is to create inter-Pod affinity only
+towards equal or higher priority Pods.&lt;/p&gt;
+&lt;h4 id=&#34;cross-node-preemption&#34;&gt;Cross node preemption&lt;/h4&gt;
+&lt;p&gt;Suppose a Node N is being considered for preemption so that a pending Pod P can
+be scheduled on N. P might become feasible on N only if a Pod on another Node is
+preempted. Here&amp;rsquo;s an example:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Pod P is being considered for Node N.&lt;/li&gt;
+&lt;li&gt;Pod Q is running on another Node in the same Zone as Node N.&lt;/li&gt;
+&lt;li&gt;Pod P has Zone-wide anti-affinity with Pod Q (&lt;code&gt;topologyKey: topology.kubernetes.io/zone&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;There are no other cases of anti-affinity between Pod P and other Pods in
+the Zone.&lt;/li&gt;
+&lt;li&gt;In order to schedule Pod P on Node N, Pod Q can be preempted, but scheduler
+does not perform cross-node preemption. So, Pod P will be deemed
+unschedulable on Node N.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If Pod Q were removed from its Node, the Pod anti-affinity violation would be
+gone, and Pod P could possibly be scheduled on Node N.&lt;/p&gt;
+&lt;p&gt;We may consider adding cross Node preemption in future versions if there is
+enough demand and if we find an algorithm with reasonable performance.&lt;/p&gt;
+&lt;h2 id=&#34;troubleshooting&#34;&gt;Troubleshooting&lt;/h2&gt;
+&lt;p&gt;Pod priority and pre-emption can have unwanted side effects. Here are some
+examples of potential problems and ways to deal with them.&lt;/p&gt;
+&lt;h3 id=&#34;pods-are-preempted-unnecessarily&#34;&gt;Pods are preempted unnecessarily&lt;/h3&gt;
+&lt;p&gt;Preemption removes existing Pods from a cluster under resource pressure to make
+room for higher priority pending Pods. If you give high priorities to
+certain Pods by mistake, these unintentionally high priority Pods may cause
+preemption in your cluster. Pod priority is specified by setting the
+&lt;code&gt;priorityClassName&lt;/code&gt; field in the Pod&amp;rsquo;s specification. The integer value for
+priority is then resolved and populated to the &lt;code&gt;priority&lt;/code&gt; field of &lt;code&gt;podSpec&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;To address the problem, you can change the &lt;code&gt;priorityClassName&lt;/code&gt; for those Pods
+to use lower priority classes, or leave that field empty. An empty
+&lt;code&gt;priorityClassName&lt;/code&gt; is resolved to zero by default.&lt;/p&gt;
+&lt;p&gt;When a Pod is preempted, there will be events recorded for the preempted Pod.
+Preemption should happen only when a cluster does not have enough resources for
+a Pod. In such cases, preemption happens only when the priority of the pending
+Pod (preemptor) is higher than the victim Pods. Preemption must not happen when
+there is no pending Pod, or when the pending Pods have equal or lower priority
+than the victims. If preemption happens in such scenarios, please file an issue.&lt;/p&gt;
+&lt;h3 id=&#34;pods-are-preempted-but-the-preemptor-is-not-scheduled&#34;&gt;Pods are preempted, but the preemptor is not scheduled&lt;/h3&gt;
+&lt;p&gt;When pods are preempted, they receive their requested graceful termination
+period, which is by default 30 seconds. If the victim Pods do not terminate within
+this period, they are forcibly terminated. Once all the victims go away, the
+preemptor Pod can be scheduled.&lt;/p&gt;
+&lt;p&gt;While the preemptor Pod is waiting for the victims to go away, a higher priority
+Pod may be created that fits on the same Node. In this case, the scheduler will
+schedule the higher priority Pod instead of the preemptor.&lt;/p&gt;
+&lt;p&gt;This is expected behavior: the Pod with the higher priority should take the place
+of a Pod with a lower priority.&lt;/p&gt;
+&lt;h3 id=&#34;higher-priority-pods-are-preempted-before-lower-priority-pods&#34;&gt;Higher priority Pods are preempted before lower priority pods&lt;/h3&gt;
+&lt;p&gt;The scheduler tries to find nodes that can run a pending Pod. If no node is
+found, the scheduler tries to remove Pods with lower priority from an arbitrary
+node in order to make room for the pending pod.
+If a node with low priority Pods is not feasible to run the pending Pod, the scheduler
+may choose another node with higher priority Pods (compared to the Pods on the
+other node) for preemption. The victims must still have lower priority than the
+preemptor Pod.&lt;/p&gt;
+&lt;p&gt;When there are multiple nodes available for preemption, the scheduler tries to
+choose the node with a set of Pods with lowest priority. However, if such Pods
+have PodDisruptionBudget that would be violated if they are preempted then the
+scheduler may choose another node with higher priority Pods.&lt;/p&gt;
+&lt;p&gt;When multiple nodes exist for preemption and none of the above scenarios apply,
+the scheduler chooses a node with the lowest priority.&lt;/p&gt;
+&lt;h2 id=&#34;interactions-of-pod-priority-and-qos&#34;&gt;Interactions between Pod priority and quality of service&lt;/h2&gt;
+&lt;p&gt;Pod priority and &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-qos-class&#39; target=&#39;_blank&#39;&gt;QoS class&lt;span class=&#39;tooltip-text&#39;&gt;QoS Class (Quality of Service Class) provides a way for Kubernetes to classify pods within the cluster into several classes and make decisions about scheduling and eviction.&lt;/span&gt;
+&lt;/a&gt;
+are two orthogonal features with few interactions and no default restrictions on
+setting the priority of a Pod based on its QoS classes. The scheduler&amp;rsquo;s
+preemption logic does not consider QoS when choosing preemption targets.
+Preemption considers Pod priority and attempts to choose a set of targets with
+the lowest priority. Higher-priority Pods are considered for preemption only if
+the removal of the lowest priority Pods is not sufficient to allow the scheduler
+to schedule the preemptor Pod, or if the lowest priority Pods are protected by
+&lt;code&gt;PodDisruptionBudget&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The only component that considers both QoS and Pod priority is
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/out-of-resource/&#34;&gt;kubelet out-of-resource eviction&lt;/a&gt;.
+The kubelet ranks Pods for eviction first by whether or not their usage of the
+starved resource exceeds requests, then by Priority, and then by the consumption
+of the starved compute resource relative to the Pods&#39; scheduling requests.
+See
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/out-of-resource/#evicting-end-user-pods&#34;&gt;evicting end-user pods&lt;/a&gt;
+for more details.&lt;/p&gt;
+&lt;p&gt;kubelet out-of-resource eviction does not evict Pods when their
+usage does not exceed their requests. If a Pod with lower priority is not
+exceeding its requests, it won&amp;rsquo;t be evicted. Another Pod with higher priority
+that exceeds its requests may be evicted.&lt;/p&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Read about using ResourceQuotas in connection with PriorityClasses: &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/resource-quotas/#limit-priority-class-consumption-by-default&#34;&gt;limit Priority Class consumption by default&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
   </channel>
 </rss>
