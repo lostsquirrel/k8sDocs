@@ -20,11 +20,11 @@
 <meta property="og:description" content="功能特性状态: Kubernetes v1.14 [stable] Pod 是可以有 优先级的。 优先级表示一个 Pod 与其它 Pod 之间的相对重要程度。 如果一个 Pod 不能被调度， 调度器会尝试抢占(驱逐)一些(个)" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-priority-preemption/" />
-<meta property="article:modified_time" content="2021-01-07T16:43:04+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2021-01-08T17:47:52+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="Pod 优先级与抢占">
 <meta itemprop="description" content="功能特性状态: Kubernetes v1.14 [stable] Pod 是可以有 优先级的。 优先级表示一个 Pod 与其它 Pod 之间的相对重要程度。 如果一个 Pod 不能被调度， 调度器会尝试抢占(驱逐)一些(个)">
-<meta itemprop="dateModified" content="2021-01-07T16:43:04+08:00" />
-<meta itemprop="wordCount" content="4888">
+<meta itemprop="dateModified" content="2021-01-08T17:47:52+08:00" />
+<meta itemprop="wordCount" content="4908">
 
 
 
@@ -772,6 +772,35 @@
 
       
       
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/security/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">安全</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptssecurity">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptssecurityoverview" href="/k8sDocs/docs/concepts/security/overview/">云原生安全概述</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
     </li>
   </ul>
 </ul>
@@ -1389,7 +1418,7 @@ Pod 有 PodDisruptionBudget 并且，如果它们被抢占会违反其 PDB， �
 <p>当存在多个节点可以抢占而又没有以上提到的情况时， 调度器会选择 Pod 优先级最低的那个节点。</p>
 <h2 id="interactions-of-pod-priority-and-qos">Pod 优先级与服务质量之间的相互关系</h2>
 <p>Pod 优先级和
-<a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-qos-class' target='_blank'>QoS Class<span class='tooltip-text'>QoS Class (Quality of Service Class) provides a way for Kubernetes to classify pods within the cluster into several classes and make decisions about scheduling and eviction.</span>
+<a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-qos-class' target='_blank'>QoS 类别<span class='tooltip-text'>QoS 类别 (服务质量类别)提供了对集群中的 Pod 分为几种不同类型的方式，并用于调度和驱逐决策。</span>
 </a>
 是两个交互和关系都比较少的两个特性， 在设置 Pod 优先级级时是否基于其 QoS 类别是没有默认限制的。
 调度器在进行抢占逻辑时选择抢占目标时不会考虑 QoS。 抢占逻辑只会考虑 Pod 优先级并且尝试选择优先级
@@ -1415,7 +1444,7 @@ kubelet 排列驱逐列表时，第一是他们使用的紧缺资源是否超出
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-01-07 16:43:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/9c700c4791766e39f064f98cb936d3be851aba87">publish pod priority preemption (9c700c4)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-01-08 17:47:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/c1ee05d8318064775f409185484fb2077aab4db2">publish secrity overview (c1ee05d)</a>
 </div>
             
           </main>

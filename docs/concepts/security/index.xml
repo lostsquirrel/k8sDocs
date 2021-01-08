@@ -1,0 +1,562 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubernetes – 安全</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/</link>
+    <description>Recent content in 安全 on Kubernetes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: 云原生安全概述</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/overview/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/overview/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- zparnold
+title: Overview of Cloud Native Security
+content_type: concept
+weight: 10
+---
+ --&gt;
+&lt;!-- overview --&gt;
+&lt;!--
+This overview defines a model for thinking about Kubernetes security in the context of Cloud Native security.
+ --&gt;
+&lt;p&gt;本文定义了一个模式用于思考在云原生安全语境下的 k8s 安全&lt;/p&gt;
+&lt;blockquote class=&#34;warning&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;警告：&lt;/strong&gt; &lt;!--
+This container security model provides suggestions, not proven information security policies.
+ --&gt;
+&lt;p&gt;这个容器安全模型只提供建议，并不提供安全策略信息。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;!-- body --&gt;
+&lt;!--
+## The 4C&#39;s of Cloud Native security
+
+You can think about security in layers. The 4C&#39;s of Cloud Native security are Cloud,
+Clusters, Containers, and Code.
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; This layered approach augments the &lt;a href=&#34;https://en.wikipedia.org/wiki/Defense_in_depth_(computing)&#34;&gt;defense in depth&lt;/a&gt;
+computing approach to security, which is widely regarded as a best practice for securing
+software systems.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+&lt;figure&gt;
+    &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/images/docs/4c.png&#34;/&gt; &lt;figcaption&gt;
+            &lt;h4&gt;The 4C&amp;#39;s of Cloud Native Security&lt;/h4&gt;
+        &lt;/figcaption&gt;
+&lt;/figure&gt;
+
+
+Each layer of the Cloud Native security model builds upon the next outermost layer.
+The Code layer benefits from strong base (Cloud, Cluster, Container) security layers.
+You cannot safeguard against poor security standards in the base layers by addressing
+security at the Code level.
+ --&gt;
+&lt;h2 id=&#34;the-4cs-of-cloud-native-security&#34;&gt;云原生安全的 4C 概念&lt;/h2&gt;
+&lt;p&gt;可以将安全进行分层。 云原生安全的 4 个 C 就是云(Cloud), 集群(Clusters), 容器(Containers),
+和 代码(Code).&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 这种计算机安全通过分层的方式实现在
+&lt;a href=&#34;https://en.wikipedia.org/wiki/Defense_in_depth_(computing)&#34;&gt;纵深防御&lt;/a&gt;
+中有讨论，也是广泛认可作为软件系统安全的最佳实践。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;figure&gt;
+    &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/docs/4c.png&#34;/&gt; &lt;figcaption&gt;
+            &lt;h4&gt;云原生安全的 4C 概念&lt;/h4&gt;
+        &lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;云原生安全模型的每一层都是构建于其外层的。 代码(Code)层受益于 (Cloud, Cluster, Container)
+层的安全基础。 不能希望在基础层安全薄弱的情况下只通过代码层的安全策略就能提供良好的安全保障。&lt;/p&gt;
+&lt;!--
+## Cloud
+
+In many ways, the Cloud (or co-located servers, or the corporate datacenter) is the
+[trusted computing base](https://en.wikipedia.org/wiki/Trusted_computing_base)
+of a Kubernetes cluster. If the Cloud layer is vulnerable (or
+configured in a vulnerable way) then there is no guarantee that the components built
+on top of this base are secure. Each cloud provider makes security recommendations
+for running workloads securely in their environment.
+ --&gt;
+&lt;h2 id=&#34;cloud&#34;&gt;云环境&lt;/h2&gt;
+&lt;p&gt;在大多数情况下， 云环境(或同一个地方的服务器，或公司的数据中心) 在 k8s 集群中是
+&lt;a href=&#34;https://en.wikipedia.org/wiki/Trusted_computing_base&#34;&gt;受信任的计算基础&lt;/a&gt;。 如果在云
+环境层是不安全的(或者以一个不安全的方式配置的)，那么基于这个基础构建的组建也是没有安全保证的。
+每个云提供商都对在其环境上安全运行工作负载的安全建议&lt;/p&gt;
+&lt;!--
+### Cloud provider security
+
+If you are running a Kubernetes cluster on your own hardware or a different cloud provider,
+consult your documentation for security best practices.
+Here are links to some of the popular cloud providers&#39; security documentation:
+
+
+
+
+
+
+&lt;table&gt;&lt;caption style=&#34;display: none;&#34;&gt;Cloud provider security&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;IaaS Provider&lt;/th&gt;
+&lt;th&gt;Link&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Alibaba Cloud&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://www.alibabacloud.com/trust-center&#34;&gt;https://www.alibabacloud.com/trust-center&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Amazon Web Services&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://aws.amazon.com/security/&#34;&gt;https://aws.amazon.com/security/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Google Cloud Platform&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://cloud.google.com/security/&#34;&gt;https://cloud.google.com/security/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;IBM Cloud&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://www.ibm.com/cloud/security&#34;&gt;https://www.ibm.com/cloud/security&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Microsoft Azure&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/security/azure-security&#34;&gt;https://docs.microsoft.com/en-us/azure/security/azure-security&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;VMWare VSphere&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://www.vmware.com/security/hardening-guides.html&#34;&gt;https://www.vmware.com/security/hardening-guides.html&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+ --&gt;
+&lt;h3 id=&#34;Cloud-provider-security&#34;&gt;云提供商安全&lt;/h3&gt;
+&lt;p&gt;如果 k8s 集群运行在自己的硬件上或不同的云提供商，请查询相应文档获取最佳安全实践。
+下面是一些主流云提供商的安全文档的链接地址.&lt;/p&gt;
+
+
+
+
+
+&lt;table&gt;&lt;caption style=&#34;display: none;&#34;&gt;云提供商安全&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;IaaS 提供商&lt;/th&gt;
+&lt;th&gt;链接&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Alibaba Cloud&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://www.alibabacloud.com/trust-center&#34;&gt;https://www.alibabacloud.com/trust-center&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Amazon Web Services&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://aws.amazon.com/security/&#34;&gt;https://aws.amazon.com/security/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Google Cloud Platform&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://cloud.google.com/security/&#34;&gt;https://cloud.google.com/security/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;IBM Cloud&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://www.ibm.com/cloud/security&#34;&gt;https://www.ibm.com/cloud/security&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Microsoft Azure&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/azure/security/azure-security&#34;&gt;https://docs.microsoft.com/en-us/azure/security/azure-security&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;VMWare VSphere&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://www.vmware.com/security/hardening-guides.html&#34;&gt;https://www.vmware.com/security/hardening-guides.html&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;!--
+### Infrastructure security {#infrastructure-security}
+
+Suggestions for securing your infrastructure in a Kubernetes cluster:
+
+
+
+
+
+
+&lt;table&gt;&lt;caption style=&#34;display: none;&#34;&gt;Infrastructure security&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Area of Concern for Kubernetes Infrastructure&lt;/th&gt;
+&lt;th&gt;Recommendation&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Network access to API Server (Control plane)&lt;/td&gt;
+&lt;td&gt;All access to the Kubernetes control plane is not allowed publicly on the internet and is controlled by network access control lists restricted to the set of IP addresses needed to administer the cluster.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Network access to Nodes (nodes)&lt;/td&gt;
+&lt;td&gt;Nodes should be configured to &lt;em&gt;only&lt;/em&gt; accept connections (via network access control lists)from the control plane on the specified ports, and accept connections for services in Kubernetes of type NodePort and LoadBalancer. If possible, these nodes should not be exposed on the public internet entirely.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Kubernetes access to Cloud Provider API&lt;/td&gt;
+&lt;td&gt;Each cloud provider needs to grant a different set of permissions to the Kubernetes control plane and nodes. It is best to provide the cluster with cloud provider access that follows the &lt;a href=&#34;https://en.wikipedia.org/wiki/Principle_of_least_privilege&#34;&gt;principle of least privilege&lt;/a&gt; for the resources it needs to administer. The &lt;a href=&#34;https://github.com/kubernetes/kops/blob/master/docs/iam_roles.md#iam-roles&#34;&gt;Kops documentation&lt;/a&gt; provides information about IAM policies and roles.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Access to etcd&lt;/td&gt;
+&lt;td&gt;Access to etcd (the datastore of Kubernetes) should be limited to the control plane only. Depending on your configuration, you should attempt to use etcd over TLS. More information can be found in the &lt;a href=&#34;https://github.com/etcd-io/etcd/tree/master/Documentation&#34;&gt;etcd documentation&lt;/a&gt;.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;etcd Encryption&lt;/td&gt;
+&lt;td&gt;Wherever possible it&amp;rsquo;s a good practice to encrypt all drives at rest, but since etcd holds the state of the entire cluster (including Secrets) its disk should especially be encrypted at rest.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+ --&gt;
+&lt;!--
+### Infrastructure security {#infrastructure-security}
+
+Suggestions for securing your infrastructure in a Kubernetes cluster:
+
+
+
+
+
+
+&lt;table&gt;&lt;caption style=&#34;display: none;&#34;&gt;Infrastructure security&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Area of Concern for Kubernetes Infrastructure&lt;/th&gt;
+&lt;th&gt;Recommendation&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Network access to API Server (Control plane)&lt;/td&gt;
+&lt;td&gt;All access to the Kubernetes control plane is not allowed publicly on the internet and is controlled by network access control lists restricted to the set of IP addresses needed to administer the cluster.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Network access to Nodes (nodes)&lt;/td&gt;
+&lt;td&gt;Nodes should be configured to &lt;em&gt;only&lt;/em&gt; accept connections (via network access control lists)from the control plane on the specified ports, and accept connections for services in Kubernetes of type NodePort and LoadBalancer. If possible, these nodes should not be exposed on the public internet entirely.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Kubernetes access to Cloud Provider API&lt;/td&gt;
+&lt;td&gt;Each cloud provider needs to grant a different set of permissions to the Kubernetes control plane and nodes. It is best to provide the cluster with cloud provider access that follows the &lt;a href=&#34;https://en.wikipedia.org/wiki/Principle_of_least_privilege&#34;&gt;principle of least privilege&lt;/a&gt; for the resources it needs to administer. The &lt;a href=&#34;https://github.com/kubernetes/kops/blob/master/docs/iam_roles.md#iam-roles&#34;&gt;Kops documentation&lt;/a&gt; provides information about IAM policies and roles.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Access to etcd&lt;/td&gt;
+&lt;td&gt;Access to etcd (the datastore of Kubernetes) should be limited to the control plane only. Depending on your configuration, you should attempt to use etcd over TLS. More information can be found in the &lt;a href=&#34;https://github.com/etcd-io/etcd/tree/master/Documentation&#34;&gt;etcd documentation&lt;/a&gt;.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;etcd Encryption&lt;/td&gt;
+&lt;td&gt;Wherever possible it&amp;rsquo;s a good practice to encrypt all drives at rest, but since etcd holds the state of the entire cluster (including Secrets) its disk should especially be encrypted at rest.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+ --&gt;
+&lt;h3 id=&#34;infrastructure-security&#34;&gt;基础设施安全&lt;/h3&gt;
+&lt;p&gt;k8s 集群基础设计安全加固建议:&lt;/p&gt;
+
+
+
+
+
+&lt;table&gt;&lt;caption style=&#34;display: none;&#34;&gt;基础设施安全&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;k8s 基础设计关注领域&lt;/th&gt;
+&lt;th&gt;推荐&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;访问 API 服务 (控制中心) 的网络&lt;/td&gt;
+&lt;td&gt;k8s 控制中心是不允许任意来自公共互联网的访问，并且对控制中心的访问应该限制在那些需要管理集群的 IP 集合&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;访问节点 (nodes) 的网络&lt;/td&gt;
+&lt;td&gt;节点应该配置成 &lt;em&gt;只&lt;/em&gt; 允许来自控制中心访问指定端口的连接(通过网络访问控制列表)，和接收来自 k8s 中 NodePort 和 LoadBalancer 类型 Service 的连接。 如果可能，避免让所有的节点都暴露到互联网。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;k8s 对云提供商 API 的访问&lt;/td&gt;
+&lt;td&gt;每个云提供商需要给 k8s 控制中心和节点授予不同个权限集。 在授予集群云提供商访问权限时，依照&lt;a href=&#34;https://en.wikipedia.org/wiki/Principle_of_least_privilege&#34;&gt;最小权限原则&lt;/a&gt;，只给予其所需要管理的资源。 &lt;a href=&#34;https://github.com/kubernetes/kops/blob/master/docs/iam_roles.md#iam-roles&#34;&gt;Kops documentation&lt;/a&gt; 文档提供了关于 IAM 和角色的信息。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;访问 etcd&lt;/td&gt;
+&lt;td&gt;对 etcd (k8s 的数据源)应该限制到只给控制中心。 基于配置，应该使用配置有 TLS 的 etcd。 更多信息可以在 &lt;a href=&#34;https://github.com/etcd-io/etcd/tree/master/Documentation&#34;&gt;etcd 文档&lt;/a&gt;中找到.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;etcd 加密&lt;/td&gt;
+&lt;td&gt;如果可能，对所有驱动器在落盘时加密是一种好的实践，但因为 etcd 中存放了整个集群的状态(包括 Secret)它的数据最应该在落盘时加密。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;blockquote&gt;
+  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;!--
+## Cluster
+
+There are two areas of concern for securing Kubernetes:
+
+* Securing the cluster components that are configurable
+* Securing the applications which run in the cluster
+ --&gt;
+&lt;h2 id=&#34;cluster&#34;&gt;集群&lt;/h2&gt;
+&lt;p&gt;在对 k8s 安全加固时有两个值得关注的领域：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;安全加固那些可配置的集群组件&lt;/li&gt;
+&lt;li&gt;安全加固那些运行在集群中的应用&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+### Components of the Cluster {#cluster-components}
+
+If you want to protect your cluster from accidental or malicious access and adopt
+good information practices, read and follow the advice about
+[securing your cluster](/docs/tasks/administer-cluster/securing-a-cluster/).
+ --&gt;
+&lt;h3 id=&#34;cluster-components&#34;&gt;集群的组件&lt;/h3&gt;
+&lt;p&gt;如果希望保护集群免于偶然或恶意的访问和彩良好的信息实践，请阅读下面的建议
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/securing-a-cluster/&#34;&gt;集群安全加固&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+### Components in the cluster (your application) {#cluster-applications}
+
+Depending on the attack surface of your application, you may want to focus on specific
+aspects of security. For example: If you are running a service (Service A) that is critical
+in a chain of other resources and a separate workload (Service B) which is
+vulnerable to a resource exhaustion attack then the risk of compromising Service A
+is high if you do not limit the resources of Service B. The following table lists
+areas of security concerns and recommendations for securing workloads running in Kubernetes:
+
+Area of Concern for Workload Security | Recommendation |
+------------------------------ | --------------------- |
+RBAC Authorization (Access to the Kubernetes API) | https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+Authentication | https://kubernetes.io/docs/concepts/security/controlling-access/
+Application secrets management (and encrypting them in etcd at rest) | https://kubernetes.io/docs/concepts/configuration/secret/ &lt;br&gt; https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/
+Pod Security Policies | https://kubernetes.io/docs/concepts/policy/pod-security-policy/
+Quality of Service (and Cluster resource management) | https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/
+Network Policies | https://kubernetes.io/docs/concepts/services-networking/network-policies/
+TLS For Kubernetes Ingress | https://kubernetes.io/docs/concepts/services-networking/ingress/#tls
+ --&gt;
+&lt;h3 id=&#34;cluster-applications&#34;&gt;集群中的组件 (你的应用)&lt;/h3&gt;
+&lt;p&gt;基于应用的攻击面，可能希望专注于某个方面的安全。 例如: 如果运行了一个服务(Service A)它是与其它资源
+组成的链中的关键，另一个工作负载 (Service B), 这应用面对资源枯竭攻击是很脆弱的，如果不对 Service B
+进行资源限制则会让 Service A 被攻陷的风险变高。下面表格里面列举安全关注领域和加固集群中运行的工作
+负载安全的建议:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;工作负载安全关注领域&lt;/th&gt;
+&lt;th&gt;建议&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;RBAC 授权 (对 k8s API 的访问)&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/rbac/&#34;&gt;https://kubernetes.io/docs/reference/access-authn-authz/rbac/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;认证方式&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/security/controlling-access/&#34;&gt;https://kubernetes.io/docs/concepts/security/controlling-access/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;应用 Secret 管理 (和其在 etcd 落盘时加密)&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/configuration/secret/&#34;&gt;https://kubernetes.io/docs/concepts/configuration/secret/&lt;/a&gt; &lt;br&gt; &lt;a href=&#34;https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/&#34;&gt;https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Pod 安全策略&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/policy/pod-security-policy/&#34;&gt;https://kubernetes.io/docs/concepts/policy/pod-security-policy/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;服务资源 (和集群资源管理)&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/&#34;&gt;https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;网络策略&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/services-networking/network-policies/&#34;&gt;https://kubernetes.io/docs/concepts/services-networking/network-policies/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;为 k8s Ingress 添加 TLS&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/services-networking/ingress/#tls&#34;&gt;https://kubernetes.io/docs/concepts/services-networking/ingress/#tls&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;!--
+## Container
+
+Container security is outside the scope of this guide. Here are general recommendations and
+links to explore this topic:
+
+Area of Concern for Containers | Recommendation |
+------------------------------ | -------------- |
+Container Vulnerability Scanning and OS Dependency Security | As part of an image build step, you should scan your containers for known vulnerabilities.
+Image Signing and Enforcement | Sign container images to maintain a system of trust for the content of your containers.
+Disallow privileged users | When constructing containers, consult your documentation for how to create users inside of the containers that have the least level of operating system privilege necessary in order to carry out the goal of the container.
+ --&gt;
+&lt;h2 id=&#34;container&#34;&gt;容器&lt;/h2&gt;
+&lt;p&gt;容器安全不在本文的讨论范围。 下面是一些通用的建议和关于本话题的延伸阅读链接:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;容器安全关注领域&lt;/th&gt;
+&lt;th&gt;建议&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;容器漏洞扫描 和 操作系统信赖安全&lt;/td&gt;
+&lt;td&gt;作为一个镜像构建的步骤，应该对容器进行已知漏洞扫描。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;镜像签名和验签&lt;/td&gt;
+&lt;td&gt;容器镜像的签名可以维护系统对容器内存的信任&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;禁用特权用户&lt;/td&gt;
+&lt;td&gt;在构建容器时，查询文档关于怎么创建可以实现容器目标的最小操作系统权限的用户&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;!--
+## Code
+
+Application code is one of the primary attack surfaces over which you have the most control.
+While securing application code is outside of the Kubernetes security topic, here
+are recommendations to protect application code:
+ --&gt;
+&lt;h2 id=&#34;code&#34;&gt;代码&lt;/h2&gt;
+&lt;p&gt;应用代码是一个最受开发者控制的主要攻击面之一。 因为对应用代码的安全加固不在 k8s 安全话题之内，下面
+是一些保护应用代码的建议:&lt;/p&gt;
+&lt;!--
+### Code security
+
+
+
+
+
+
+&lt;table&gt;&lt;caption style=&#34;display: none;&#34;&gt;Code security&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Area of Concern for Code&lt;/th&gt;
+&lt;th&gt;Recommendation&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Access over TLS only&lt;/td&gt;
+&lt;td&gt;If your code needs to communicate by TCP, perform a TLS handshake with the client ahead of time. With the exception of a few cases, encrypt everything in transit. Going one step further, it&amp;rsquo;s a good idea to encrypt network traffic between services. This can be done through a process known as mutual or &lt;a href=&#34;https://en.wikipedia.org/wiki/Mutual_authentication&#34;&gt;mTLS&lt;/a&gt; which performs a two sided verification of communication between two certificate holding services.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Limiting port ranges of communication&lt;/td&gt;
+&lt;td&gt;This recommendation may be a bit self-explanatory, but wherever possible you should only expose the ports on your service that are absolutely essential for communication or metric gathering.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;3rd Party Dependency Security&lt;/td&gt;
+&lt;td&gt;It is a good practice to regularly scan your application&amp;rsquo;s third party libraries for known security vulnerabilities. Each programming language has a tool for performing this check automatically.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Static Code Analysis&lt;/td&gt;
+&lt;td&gt;Most languages provide a way for a snippet of code to be analyzed for any potentially unsafe coding practices. Whenever possible you should perform checks using automated tooling that can scan codebases for common security errors. Some of the tools can be found at: &lt;a href=&#34;https://owasp.org/www-community/Source_Code_Analysis_Tools&#34;&gt;https://owasp.org/www-community/Source_Code_Analysis_Tools&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Dynamic probing attacks&lt;/td&gt;
+&lt;td&gt;There are a few automated tools that you can run against your service to try some of the well known service attacks. These include SQL injection, CSRF, and XSS. One of the most popular dynamic analysis tools is the &lt;a href=&#34;https://owasp.org/www-project-zap/&#34;&gt;OWASP Zed Attack proxy&lt;/a&gt; tool.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+ --&gt;
+&lt;h3 id=&#34;code-security&#34;&gt;代码安全&lt;/h3&gt;
+
+
+
+
+
+&lt;table&gt;&lt;caption style=&#34;display: none;&#34;&gt;Code security&lt;/caption&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;代码安全关注领域&lt;/th&gt;
+&lt;th&gt;建议&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;只允许通过 TLS 访问&lt;/td&gt;
+&lt;td&gt;如果你的代码需要通过 TCP 通信，提前与客户端执行 TLS 握手。除了少数情况下，对所有传输内容加密。更进一步，对服务之间的网络流量加密也是一个好主意。这可以通过相互(mutual)过程或 &lt;a href=&#34;https://en.wikipedia.org/wiki/Mutual_authentication&#34;&gt;mTLS&lt;/a&gt; 也就是两个服务都包含证书，对通信进行双向加密和验证。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;限制通信端口范围&lt;/td&gt;
+&lt;td&gt;这个建议应该是不言自明的， 但无论啥时候都应该只暴露服务必不可少的通信或度量采集端口&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;第三方信赖安全&lt;/td&gt;
+&lt;td&gt;定期扫描应用的第三方信赖库是否有已知的安全漏洞是一个好的实践。 每种编辑语言都有自动执行这种检查的工具&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;静态代码分析&lt;/td&gt;
+&lt;td&gt;大多数语言都提供了对代码片断分析检查是否有潜在的不安全代码实践。 无论啥时候都应该使用自动化工作对&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;代码库执行这种检查，以提早发现常见的安全错误。 一些工具可以在这里找: &lt;a href=&#34;https://owasp.org/www-community/Source_Code_Analysis_Tools&#34;&gt;https://owasp.org/www-community/Source_Code_Analysis_Tools&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;动态探测攻击&lt;/td&gt;
+&lt;td&gt;有几种自动化工具可以用来对着服务运行，尝试一些流行的服务攻击。 包含 SQL 注入， CSRF, 和 XSS. 最流行的动态分析工具之一就是 &lt;a href=&#34;https://owasp.org/www-project-zap/&#34;&gt;OWASP Zed Attack proxy&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;p&gt;Learn about related Kubernetes security topics:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/pod-security-standards/&#34;&gt;Pod security standards&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/network-policies/&#34;&gt;Network policies for Pods&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/controlling-access&#34;&gt;Controlling Access to the Kubernetes API&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/securing-a-cluster/&#34;&gt;Securing your cluster&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/tls/managing-tls-in-a-cluster/&#34;&gt;Data encryption in transit&lt;/a&gt; for the control plane&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/encrypt-data/&#34;&gt;Data encryption at rest&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/secret/&#34;&gt;Secrets in Kubernetes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;更多关于 k8s 安全的主题:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/security/pod-security-standards/&#34;&gt;Pod 安全标准&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/network-policies/&#34;&gt;Pod 网络策略&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/security/controlling-access&#34;&gt;对 k8s API 的访问控制&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/securing-a-cluster/&#34;&gt;集群网络加固&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;对控制中心&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/tls/managing-tls-in-a-cluster/&#34;&gt;传输中的数据加密&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/encrypt-data/&#34;&gt;数据落盘加密&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/secret/&#34;&gt;k8s 中的 Secret&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

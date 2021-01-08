@@ -5027,7 +5027,7 @@ Pod 有 PodDisruptionBudget 并且，如果它们被抢占会违反其 PDB， �
 &lt;p&gt;当存在多个节点可以抢占而又没有以上提到的情况时， 调度器会选择 Pod 优先级最低的那个节点。&lt;/p&gt;
 &lt;h2 id=&#34;interactions-of-pod-priority-and-qos&#34;&gt;Pod 优先级与服务质量之间的相互关系&lt;/h2&gt;
 &lt;p&gt;Pod 优先级和
-&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-qos-class&#39; target=&#39;_blank&#39;&gt;QoS Class&lt;span class=&#39;tooltip-text&#39;&gt;QoS Class (Quality of Service Class) provides a way for Kubernetes to classify pods within the cluster into several classes and make decisions about scheduling and eviction.&lt;/span&gt;
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-qos-class&#39; target=&#39;_blank&#39;&gt;QoS 类别&lt;span class=&#39;tooltip-text&#39;&gt;QoS 类别 (服务质量类别)提供了对集群中的 Pod 分为几种不同类型的方式，并用于调度和驱逐决策。&lt;/span&gt;
 &lt;/a&gt;
 是两个交互和关系都比较少的两个特性， 在设置 Pod 优先级级时是否基于其 QoS 类别是没有默认限制的。
 调度器在进行抢占逻辑时选择抢占目标时不会考虑 QoS。 抢占逻辑只会考虑 Pod 优先级并且尝试选择优先级

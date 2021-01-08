@@ -1,0 +1,1525 @@
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.75.1" />
+
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
+<link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
+<link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="manifest" href="/k8sDocs/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/k8sDocs/images/kubernetes-192x192.png">
+
+<title>云原生安全概述 | Kubernetes</title><meta property="og:title" content="云原生安全概述" />
+<meta property="og:description" content="本文定义了一个模式用于思考在云原生安全语境下的 k8s 安全 警告： 这个容器安全模型只提供建议，并不提供安全策略信息。 说明： This layered approach augments the defense in depth computing approach to security, which" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/overview/" />
+<meta property="article:modified_time" content="2021-01-08T17:47:52+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="云原生安全概述">
+<meta itemprop="description" content="本文定义了一个模式用于思考在云原生安全语境下的 k8s 安全 警告： 这个容器安全模型只提供建议，并不提供安全策略信息。 说明： This layered approach augments the defense in depth computing approach to security, which">
+<meta itemprop="dateModified" content="2021-01-08T17:47:52+08:00" />
+<meta itemprop="wordCount" content="2785">
+
+
+
+<meta itemprop="keywords" content="" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="云原生安全概述"/>
+<meta name="twitter:description" content="本文定义了一个模式用于思考在云原生安全语境下的 k8s 安全 警告： 这个容器安全模型只提供建议，并不提供安全策略信息。 说明： This layered approach augments the defense in depth computing approach to security, which"/>
+
+
+
+
+
+<link rel="preload" href="/k8sDocs/scss/main.min.537757ec8e00d87ec206229d5725b6d05e078dd447818e448f0802685603e730.css" as="style">
+<link href="/k8sDocs/scss/main.min.537757ec8e00d87ec206229d5725b6d05e078dd447818e448f0802685603e730.css" rel="stylesheet" integrity="">
+
+
+<script src="/k8sDocs/js/jquery-3.3.1.min.js" ></script>
+
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "url": "https://kubernetes.io",
+    "logo": "https://kubernetes.io/images/favicon.png",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://lostsquirrel.github.io/k8sDocs/search/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+
+  }
+</script>
+<meta name="theme-color" content="#326ce5">
+
+
+
+
+<link rel="stylesheet" href=/k8sDocs/css/base_fonts.css>
+
+<link rel="stylesheet" href="/k8sDocs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/k8sDocs/css/callouts.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom.css">
+<link rel="stylesheet" href="/k8sDocs/css/custom-jekyll/tags.css">
+
+
+
+<meta name="description" content="本文定义了一个模式用于思考在云原生安全语境下的 k8s 安全 警告： 这个容器安全模型只提供建议，并不提供安全策略信息。 说明： This layered approach augments the defense in depth computing approach to security, which">
+<meta property="og:description" content="本文定义了一个模式用于思考在云原生安全语境下的 k8s 安全 警告： 这个容器安全模型只提供建议，并不提供安全策略信息。 说明： This layered approach augments the defense in depth computing approach to security, which">
+<meta name="twitter:description" content="本文定义了一个模式用于思考在云原生安全语境下的 k8s 安全 警告： 这个容器安全模型只提供建议，并不提供安全策略信息。 说明： This layered approach augments the defense in depth computing approach to security, which">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/overview/">
+<meta property="og:title" content="云原生安全概述">
+<meta name="twitter:title" content="云原生安全概述">
+<meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
+
+<meta name="twitter:image:alt" content="Kubernetes">
+
+<meta property="og:image" content="/k8sDocs/images/kubernetes-horizontal-color.png">
+
+<meta property="og:type" content="article">
+
+
+
+<script src="/k8sDocs/js/script.js"></script>
+
+
+    <title>云原生安全概述 | Kubernetes</title>
+  </head>
+  <body class="td-page td-documentation">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
+        <a class="navbar-brand" href="/k8sDocs/"></a>
+	<div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
+
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			
+			
+			<li class="nav-item mr-2 mb-lg-0">
+				
+				<a class="nav-link active" href="/k8sDocs/docs/" >Documentation</span></a>
+			</li>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		</ul>
+	</div>
+  
+
+</nav>
+
+      
+      <div class="header-filler"></div>
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-md-nowrap">
+          <div class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+
+
+
+
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  
+  <form class="td-sidebar__search d-flex align-items-center d-lg-none">
+    
+
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  
+  <nav class="collapse td-sidebar-nav" id="td-section-nav">
+    
+    
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Kubernetes Documentation</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocs">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">概念(Concepts)</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconcepts">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">概览</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverview">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview00-what-is-k8s" href="/k8sDocs/docs/concepts/overview/00-what-is-k8s/">k8s 是什么</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview01-components" href="/k8sDocs/docs/concepts/overview/01-components/">k8s 组件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverview02-k8s-api" href="/k8sDocs/docs/concepts/overview/02-k8s-api/">k8s API 说明</a>
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/overview/working-with-objects/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">k8s 对象管理</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsoverviewworking-with-objects">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects00-kubernetes-objects" href="/k8sDocs/docs/concepts/overview/working-with-objects/00-kubernetes-objects/">k8s 对象介绍</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectsnames" href="/k8sDocs/docs/concepts/overview/working-with-objects/names/">对象命令与ID</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects02-namespace" href="/k8sDocs/docs/concepts/overview/working-with-objects/02-namespace/">命名空间(Namespaces)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objectslabels" href="/k8sDocs/docs/concepts/overview/working-with-objects/labels/">标签和标签选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects04-annotation" href="/k8sDocs/docs/concepts/overview/working-with-objects/04-annotation/">注解 (Annotations)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects05-field-selectors" href="/k8sDocs/docs/concepts/overview/working-with-objects/05-field-selectors/">字段选择器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewworking-with-objects06-common-labels" href="/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/">标签设置指导</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/architecture/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">集群架构</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsarchitecture">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturenodes" href="/k8sDocs/docs/concepts/architecture/nodes/">节点</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontrol-plane-node-communication" href="/k8sDocs/docs/concepts/architecture/control-plane-node-communication/">控制中心与节点的通信</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecontroller" href="/k8sDocs/docs/concepts/architecture/controller/">控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecloud-controller" href="/k8sDocs/docs/concepts/architecture/cloud-controller/">Cloud Controller Manager</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/containers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">容器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptscontainers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers00-images" href="/k8sDocs/docs/concepts/containers/00-images/">镜像</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers01-container-environment" href="/k8sDocs/docs/concepts/containers/01-container-environment/">容器环境</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainers02-runtime-class" href="/k8sDocs/docs/concepts/containers/02-runtime-class/">Runtime Class</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptscontainerscontainer-lifecycle-hooks" href="/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/">容器生命周期钩子</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">工作负载(Workload)</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloads">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/pods/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Pod</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloadspods">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-lifecycle" href="/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/">Pod 生命周期</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsinit-containers" href="/k8sDocs/docs/concepts/workloads/pods/init-containers/">初始化容器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspod-topology-spread-constraints" href="/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑分布约束条件</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodspodpreset" href="/k8sDocs/docs/concepts/workloads/pods/podpreset/">Pod 预设信息</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsdisruptions" href="/k8sDocs/docs/concepts/workloads/pods/disruptions/">Disruptions</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadspodsephemeral-containers" href="/k8sDocs/docs/concepts/workloads/pods/ephemeral-containers/">临时容器</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/workloads/controllers/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">控制器</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsworkloadscontrollers">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdeployment" href="/k8sDocs/docs/concepts/workloads/controllers/deployment/">Deployment</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicaset" href="/k8sDocs/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersstatefulset" href="/k8sDocs/docs/concepts/workloads/controllers/statefulset/">StatefulSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersdaemonset" href="/k8sDocs/docs/concepts/workloads/controllers/daemonset/">DaemonSet</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersjob" href="/k8sDocs/docs/concepts/workloads/controllers/job/">Job</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersgarbage-collection" href="/k8sDocs/docs/concepts/workloads/controllers/garbage-collection/">垃圾回收</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersttlafterfinished" href="/k8sDocs/docs/concepts/workloads/controllers/ttlafterfinished/">用于已完成资源的 TTL 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollerscron-jobs" href="/k8sDocs/docs/concepts/workloads/controllers/cron-jobs/">CronJob</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsworkloadscontrollersreplicationcontroller" href="/k8sDocs/docs/concepts/workloads/controllers/replicationcontroller/">ReplicationController</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/services-networking/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Service, 负载均衡, 网络</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsservices-networking">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice" href="/k8sDocs/docs/concepts/services-networking/service/">Service</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingservice-topology" href="/k8sDocs/docs/concepts/services-networking/service-topology/">Service Topology</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdns-pod-service" href="/k8sDocs/docs/concepts/services-networking/dns-pod-service/">Service 和 Pod 的 DNS</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingconnect-applications-service" href="/k8sDocs/docs/concepts/services-networking/connect-applications-service/">通过 Service 连接应用</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingendpoint-slices" href="/k8sDocs/docs/concepts/services-networking/endpoint-slices/">EndpointSlice</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress" href="/k8sDocs/docs/concepts/services-networking/ingress/">Ingress</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingingress-controllers" href="/k8sDocs/docs/concepts/services-networking/ingress-controllers/">Ingress 控制器</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingnetwork-policies" href="/k8sDocs/docs/concepts/services-networking/network-policies/">网络策略</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingadd-entries-to-pod-etc-hosts-with-host-aliases" href="/k8sDocs/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingdual-stack" href="/k8sDocs/docs/concepts/services-networking/dual-stack/">IPv4/IPv6 双栈</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsstorage">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolumes" href="/k8sDocs/docs/concepts/storage/volumes/">卷(Volume)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragepersistent-volumes" href="/k8sDocs/docs/concepts/storage/persistent-volumes/">持久化卷(PV)</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshots" href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-pvc-datasource" href="/k8sDocs/docs/concepts/storage/volume-pvc-datasource/">CSI 卷克隆</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragestorage-classes" href="/k8sDocs/docs/concepts/storage/storage-classes/">StorageClass</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragevolume-snapshot-classes" href="/k8sDocs/docs/concepts/storage/volume-snapshot-classes/">VolumeSnapshotClass</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragedynamic-provisioning" href="/k8sDocs/docs/concepts/storage/dynamic-provisioning/">卷动态供应</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragestorage-capacity" href="/k8sDocs/docs/concepts/storage/storage-capacity/">存储容量</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstorageephemeral-volumes" href="/k8sDocs/docs/concepts/storage/ephemeral-volumes/">临时卷</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsstoragestorage-limits" href="/k8sDocs/docs/concepts/storage/storage-limits/">节点级别的卷限制</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/configuration/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">配置</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsconfiguration">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsconfigurationoverview" href="/k8sDocs/docs/concepts/configuration/overview/">配置最佳实践</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsconfigurationconfigmap" href="/k8sDocs/docs/concepts/configuration/configmap/">ConfigMap</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsconfigurationsecret" href="/k8sDocs/docs/concepts/configuration/secret/">Secret</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsconfigurationmanage-resources-containers" href="/k8sDocs/docs/concepts/configuration/manage-resources-containers/">管理容器资源</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsconfigurationorganize-cluster-access-kubeconfig" href="/k8sDocs/docs/concepts/configuration/organize-cluster-access-kubeconfig/">使用 kubeconfig 文件组织集群访问</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsconfigurationpod-priority-preemption" href="/k8sDocs/docs/concepts/configuration/pod-priority-preemption/">Pod 优先级与抢占</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/security/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">安全</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="k8sdocsdocsconceptssecurity">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptssecurityoverview" href="/k8sDocs/docs/concepts/security/overview/">云原生安全概述</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+  </nav>
+</div>
+
+
+
+
+          </div>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	<ol class="breadcrumb spb-1">
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/">概念(Concepts)</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/">安全</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/overview/">云原生安全概述</a>
+</li>
+
+	</ol>
+</nav	>
+
+            
+              
+            
+              
+    <div class="td-content">
+    
+<p>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/security/overview.md" id="editPageButton" target="_blank" data-proofer-ignore>
+    Edit This Page
+  </a>
+</p>
+
+  <h1>云原生安全概述</h1>
+  
+  
+
+<!--
+---
+reviewers:
+- zparnold
+title: Overview of Cloud Native Security
+content_type: concept
+weight: 10
+---
+ -->
+<!-- overview -->
+<!--
+This overview defines a model for thinking about Kubernetes security in the context of Cloud Native security.
+ -->
+<p>本文定义了一个模式用于思考在云原生安全语境下的 k8s 安全</p>
+<blockquote class="warning">
+  <div><strong>警告：</strong> <!--
+This container security model provides suggestions, not proven information security policies.
+ -->
+<p>这个容器安全模型只提供建议，并不提供安全策略信息。</div>
+</blockquote>
+
+<!-- body -->
+<!--
+## The 4C's of Cloud Native security
+
+You can think about security in layers. The 4C's of Cloud Native security are Cloud,
+Clusters, Containers, and Code.
+
+<blockquote class="note">
+  <div><strong>说明：</strong> This layered approach augments the <a href="https://en.wikipedia.org/wiki/Defense_in_depth_(computing)">defense in depth</a>
+computing approach to security, which is widely regarded as a best practice for securing
+software systems.</div>
+</blockquote>
+
+
+<figure>
+    <img src="/images/docs/4c.png"/> <figcaption>
+            <h4>The 4C&#39;s of Cloud Native Security</h4>
+        </figcaption>
+</figure>
+
+
+Each layer of the Cloud Native security model builds upon the next outermost layer.
+The Code layer benefits from strong base (Cloud, Cluster, Container) security layers.
+You cannot safeguard against poor security standards in the base layers by addressing
+security at the Code level.
+ -->
+<h2 id="the-4cs-of-cloud-native-security">云原生安全的 4C 概念</h2>
+<p>可以将安全进行分层。 云原生安全的 4 个 C 就是云(Cloud), 集群(Clusters), 容器(Containers),
+和 代码(Code).</p>
+<blockquote class="note">
+  <div><strong>说明：</strong> 这种计算机安全通过分层的方式实现在
+<a href="https://en.wikipedia.org/wiki/Defense_in_depth_(computing)">纵深防御</a>
+中有讨论，也是广泛认可作为软件系统安全的最佳实践。</div>
+</blockquote>
+
+<figure>
+    <img src="/k8sDocs/images/docs/4c.png"/> <figcaption>
+            <h4>云原生安全的 4C 概念</h4>
+        </figcaption>
+</figure>
+
+<p>云原生安全模型的每一层都是构建于其外层的。 代码(Code)层受益于 (Cloud, Cluster, Container)
+层的安全基础。 不能希望在基础层安全薄弱的情况下只通过代码层的安全策略就能提供良好的安全保障。</p>
+<!--
+## Cloud
+
+In many ways, the Cloud (or co-located servers, or the corporate datacenter) is the
+[trusted computing base](https://en.wikipedia.org/wiki/Trusted_computing_base)
+of a Kubernetes cluster. If the Cloud layer is vulnerable (or
+configured in a vulnerable way) then there is no guarantee that the components built
+on top of this base are secure. Each cloud provider makes security recommendations
+for running workloads securely in their environment.
+ -->
+<h2 id="cloud">云环境</h2>
+<p>在大多数情况下， 云环境(或同一个地方的服务器，或公司的数据中心) 在 k8s 集群中是
+<a href="https://en.wikipedia.org/wiki/Trusted_computing_base">受信任的计算基础</a>。 如果在云
+环境层是不安全的(或者以一个不安全的方式配置的)，那么基于这个基础构建的组建也是没有安全保证的。
+每个云提供商都对在其环境上安全运行工作负载的安全建议</p>
+<!--
+### Cloud provider security
+
+If you are running a Kubernetes cluster on your own hardware or a different cloud provider,
+consult your documentation for security best practices.
+Here are links to some of the popular cloud providers' security documentation:
+
+
+
+
+
+
+<table><caption style="display: none;">Cloud provider security</caption>
+<thead>
+<tr>
+<th>IaaS Provider</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Alibaba Cloud</td>
+<td><a href="https://www.alibabacloud.com/trust-center">https://www.alibabacloud.com/trust-center</a></td>
+</tr>
+<tr>
+<td>Amazon Web Services</td>
+<td><a href="https://aws.amazon.com/security/">https://aws.amazon.com/security/</a></td>
+</tr>
+<tr>
+<td>Google Cloud Platform</td>
+<td><a href="https://cloud.google.com/security/">https://cloud.google.com/security/</a></td>
+</tr>
+<tr>
+<td>IBM Cloud</td>
+<td><a href="https://www.ibm.com/cloud/security">https://www.ibm.com/cloud/security</a></td>
+</tr>
+<tr>
+<td>Microsoft Azure</td>
+<td><a href="https://docs.microsoft.com/en-us/azure/security/azure-security">https://docs.microsoft.com/en-us/azure/security/azure-security</a></td>
+</tr>
+<tr>
+<td>VMWare VSphere</td>
+<td><a href="https://www.vmware.com/security/hardening-guides.html">https://www.vmware.com/security/hardening-guides.html</a></td>
+</tr>
+</tbody>
+</table>
+
+ -->
+<h3 id="Cloud-provider-security">云提供商安全</h3>
+<p>如果 k8s 集群运行在自己的硬件上或不同的云提供商，请查询相应文档获取最佳安全实践。
+下面是一些主流云提供商的安全文档的链接地址.</p>
+
+
+
+
+
+<table><caption style="display: none;">云提供商安全</caption>
+<thead>
+<tr>
+<th>IaaS 提供商</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Alibaba Cloud</td>
+<td><a href="https://www.alibabacloud.com/trust-center">https://www.alibabacloud.com/trust-center</a></td>
+</tr>
+<tr>
+<td>Amazon Web Services</td>
+<td><a href="https://aws.amazon.com/security/">https://aws.amazon.com/security/</a></td>
+</tr>
+<tr>
+<td>Google Cloud Platform</td>
+<td><a href="https://cloud.google.com/security/">https://cloud.google.com/security/</a></td>
+</tr>
+<tr>
+<td>IBM Cloud</td>
+<td><a href="https://www.ibm.com/cloud/security">https://www.ibm.com/cloud/security</a></td>
+</tr>
+<tr>
+<td>Microsoft Azure</td>
+<td><a href="https://docs.microsoft.com/en-us/azure/security/azure-security">https://docs.microsoft.com/en-us/azure/security/azure-security</a></td>
+</tr>
+<tr>
+<td>VMWare VSphere</td>
+<td><a href="https://www.vmware.com/security/hardening-guides.html">https://www.vmware.com/security/hardening-guides.html</a></td>
+</tr>
+</tbody>
+</table>
+
+<!--
+### Infrastructure security {#infrastructure-security}
+
+Suggestions for securing your infrastructure in a Kubernetes cluster:
+
+
+
+
+
+
+<table><caption style="display: none;">Infrastructure security</caption>
+<thead>
+<tr>
+<th>Area of Concern for Kubernetes Infrastructure</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Network access to API Server (Control plane)</td>
+<td>All access to the Kubernetes control plane is not allowed publicly on the internet and is controlled by network access control lists restricted to the set of IP addresses needed to administer the cluster.</td>
+</tr>
+<tr>
+<td>Network access to Nodes (nodes)</td>
+<td>Nodes should be configured to <em>only</em> accept connections (via network access control lists)from the control plane on the specified ports, and accept connections for services in Kubernetes of type NodePort and LoadBalancer. If possible, these nodes should not be exposed on the public internet entirely.</td>
+</tr>
+<tr>
+<td>Kubernetes access to Cloud Provider API</td>
+<td>Each cloud provider needs to grant a different set of permissions to the Kubernetes control plane and nodes. It is best to provide the cluster with cloud provider access that follows the <a href="https://en.wikipedia.org/wiki/Principle_of_least_privilege">principle of least privilege</a> for the resources it needs to administer. The <a href="https://github.com/kubernetes/kops/blob/master/docs/iam_roles.md#iam-roles">Kops documentation</a> provides information about IAM policies and roles.</td>
+</tr>
+<tr>
+<td>Access to etcd</td>
+<td>Access to etcd (the datastore of Kubernetes) should be limited to the control plane only. Depending on your configuration, you should attempt to use etcd over TLS. More information can be found in the <a href="https://github.com/etcd-io/etcd/tree/master/Documentation">etcd documentation</a>.</td>
+</tr>
+<tr>
+<td>etcd Encryption</td>
+<td>Wherever possible it&rsquo;s a good practice to encrypt all drives at rest, but since etcd holds the state of the entire cluster (including Secrets) its disk should especially be encrypted at rest.</td>
+</tr>
+</tbody>
+</table>
+
+ -->
+<!--
+### Infrastructure security {#infrastructure-security}
+
+Suggestions for securing your infrastructure in a Kubernetes cluster:
+
+
+
+
+
+
+<table><caption style="display: none;">Infrastructure security</caption>
+<thead>
+<tr>
+<th>Area of Concern for Kubernetes Infrastructure</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Network access to API Server (Control plane)</td>
+<td>All access to the Kubernetes control plane is not allowed publicly on the internet and is controlled by network access control lists restricted to the set of IP addresses needed to administer the cluster.</td>
+</tr>
+<tr>
+<td>Network access to Nodes (nodes)</td>
+<td>Nodes should be configured to <em>only</em> accept connections (via network access control lists)from the control plane on the specified ports, and accept connections for services in Kubernetes of type NodePort and LoadBalancer. If possible, these nodes should not be exposed on the public internet entirely.</td>
+</tr>
+<tr>
+<td>Kubernetes access to Cloud Provider API</td>
+<td>Each cloud provider needs to grant a different set of permissions to the Kubernetes control plane and nodes. It is best to provide the cluster with cloud provider access that follows the <a href="https://en.wikipedia.org/wiki/Principle_of_least_privilege">principle of least privilege</a> for the resources it needs to administer. The <a href="https://github.com/kubernetes/kops/blob/master/docs/iam_roles.md#iam-roles">Kops documentation</a> provides information about IAM policies and roles.</td>
+</tr>
+<tr>
+<td>Access to etcd</td>
+<td>Access to etcd (the datastore of Kubernetes) should be limited to the control plane only. Depending on your configuration, you should attempt to use etcd over TLS. More information can be found in the <a href="https://github.com/etcd-io/etcd/tree/master/Documentation">etcd documentation</a>.</td>
+</tr>
+<tr>
+<td>etcd Encryption</td>
+<td>Wherever possible it&rsquo;s a good practice to encrypt all drives at rest, but since etcd holds the state of the entire cluster (including Secrets) its disk should especially be encrypted at rest.</td>
+</tr>
+</tbody>
+</table>
+
+ -->
+<h3 id="infrastructure-security">基础设施安全</h3>
+<p>k8s 集群基础设计安全加固建议:</p>
+
+
+
+
+
+<table><caption style="display: none;">基础设施安全</caption>
+<thead>
+<tr>
+<th>k8s 基础设计关注领域</th>
+<th>推荐</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>访问 API 服务 (控制中心) 的网络</td>
+<td>k8s 控制中心是不允许任意来自公共互联网的访问，并且对控制中心的访问应该限制在那些需要管理集群的 IP 集合</td>
+</tr>
+<tr>
+<td>访问节点 (nodes) 的网络</td>
+<td>节点应该配置成 <em>只</em> 允许来自控制中心访问指定端口的连接(通过网络访问控制列表)，和接收来自 k8s 中 NodePort 和 LoadBalancer 类型 Service 的连接。 如果可能，避免让所有的节点都暴露到互联网。</td>
+</tr>
+<tr>
+<td>k8s 对云提供商 API 的访问</td>
+<td>每个云提供商需要给 k8s 控制中心和节点授予不同个权限集。 在授予集群云提供商访问权限时，依照<a href="https://en.wikipedia.org/wiki/Principle_of_least_privilege">最小权限原则</a>，只给予其所需要管理的资源。 <a href="https://github.com/kubernetes/kops/blob/master/docs/iam_roles.md#iam-roles">Kops documentation</a> 文档提供了关于 IAM 和角色的信息。</td>
+</tr>
+<tr>
+<td>访问 etcd</td>
+<td>对 etcd (k8s 的数据源)应该限制到只给控制中心。 基于配置，应该使用配置有 TLS 的 etcd。 更多信息可以在 <a href="https://github.com/etcd-io/etcd/tree/master/Documentation">etcd 文档</a>中找到.</td>
+</tr>
+<tr>
+<td>etcd 加密</td>
+<td>如果可能，对所有驱动器在落盘时加密是一种好的实践，但因为 etcd 中存放了整个集群的状态(包括 Secret)它的数据最应该在落盘时加密。</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+  <div><strong>TODO: </strong>说得不太清楚，需要实践理解后再考虑怎么修改</div>
+</blockquote>
+
+<!--
+## Cluster
+
+There are two areas of concern for securing Kubernetes:
+
+* Securing the cluster components that are configurable
+* Securing the applications which run in the cluster
+ -->
+<h2 id="cluster">集群</h2>
+<p>在对 k8s 安全加固时有两个值得关注的领域：</p>
+<ul>
+<li>安全加固那些可配置的集群组件</li>
+<li>安全加固那些运行在集群中的应用</li>
+</ul>
+<!--
+### Components of the Cluster {#cluster-components}
+
+If you want to protect your cluster from accidental or malicious access and adopt
+good information practices, read and follow the advice about
+[securing your cluster](/docs/tasks/administer-cluster/securing-a-cluster/).
+ -->
+<h3 id="cluster-components">集群的组件</h3>
+<p>如果希望保护集群免于偶然或恶意的访问和彩良好的信息实践，请阅读下面的建议
+<a href="/k8sDocs/docs/tasks/administer-cluster/securing-a-cluster/">集群安全加固</a>.</p>
+<!--
+### Components in the cluster (your application) {#cluster-applications}
+
+Depending on the attack surface of your application, you may want to focus on specific
+aspects of security. For example: If you are running a service (Service A) that is critical
+in a chain of other resources and a separate workload (Service B) which is
+vulnerable to a resource exhaustion attack then the risk of compromising Service A
+is high if you do not limit the resources of Service B. The following table lists
+areas of security concerns and recommendations for securing workloads running in Kubernetes:
+
+Area of Concern for Workload Security | Recommendation |
+------------------------------ | --------------------- |
+RBAC Authorization (Access to the Kubernetes API) | https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+Authentication | https://kubernetes.io/docs/concepts/security/controlling-access/
+Application secrets management (and encrypting them in etcd at rest) | https://kubernetes.io/docs/concepts/configuration/secret/ <br> https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/
+Pod Security Policies | https://kubernetes.io/docs/concepts/policy/pod-security-policy/
+Quality of Service (and Cluster resource management) | https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/
+Network Policies | https://kubernetes.io/docs/concepts/services-networking/network-policies/
+TLS For Kubernetes Ingress | https://kubernetes.io/docs/concepts/services-networking/ingress/#tls
+ -->
+<h3 id="cluster-applications">集群中的组件 (你的应用)</h3>
+<p>基于应用的攻击面，可能希望专注于某个方面的安全。 例如: 如果运行了一个服务(Service A)它是与其它资源
+组成的链中的关键，另一个工作负载 (Service B), 这应用面对资源枯竭攻击是很脆弱的，如果不对 Service B
+进行资源限制则会让 Service A 被攻陷的风险变高。下面表格里面列举安全关注领域和加固集群中运行的工作
+负载安全的建议:</p>
+<table>
+<thead>
+<tr>
+<th>工作负载安全关注领域</th>
+<th>建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RBAC 授权 (对 k8s API 的访问)</td>
+<td><a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/">https://kubernetes.io/docs/reference/access-authn-authz/rbac/</a></td>
+</tr>
+<tr>
+<td>认证方式</td>
+<td><a href="https://kubernetes.io/docs/concepts/security/controlling-access/">https://kubernetes.io/docs/concepts/security/controlling-access/</a></td>
+</tr>
+<tr>
+<td>应用 Secret 管理 (和其在 etcd 落盘时加密)</td>
+<td><a href="https://kubernetes.io/docs/concepts/configuration/secret/">https://kubernetes.io/docs/concepts/configuration/secret/</a> <br> <a href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/">https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/</a></td>
+</tr>
+<tr>
+<td>Pod 安全策略</td>
+<td><a href="https://kubernetes.io/docs/concepts/policy/pod-security-policy/">https://kubernetes.io/docs/concepts/policy/pod-security-policy/</a></td>
+</tr>
+<tr>
+<td>服务资源 (和集群资源管理)</td>
+<td><a href="https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/">https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/</a></td>
+</tr>
+<tr>
+<td>网络策略</td>
+<td><a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">https://kubernetes.io/docs/concepts/services-networking/network-policies/</a></td>
+</tr>
+<tr>
+<td>为 k8s Ingress 添加 TLS</td>
+<td><a href="https://kubernetes.io/docs/concepts/services-networking/ingress/#tls">https://kubernetes.io/docs/concepts/services-networking/ingress/#tls</a></td>
+</tr>
+</tbody>
+</table>
+<!--
+## Container
+
+Container security is outside the scope of this guide. Here are general recommendations and
+links to explore this topic:
+
+Area of Concern for Containers | Recommendation |
+------------------------------ | -------------- |
+Container Vulnerability Scanning and OS Dependency Security | As part of an image build step, you should scan your containers for known vulnerabilities.
+Image Signing and Enforcement | Sign container images to maintain a system of trust for the content of your containers.
+Disallow privileged users | When constructing containers, consult your documentation for how to create users inside of the containers that have the least level of operating system privilege necessary in order to carry out the goal of the container.
+ -->
+<h2 id="container">容器</h2>
+<p>容器安全不在本文的讨论范围。 下面是一些通用的建议和关于本话题的延伸阅读链接:</p>
+<table>
+<thead>
+<tr>
+<th>容器安全关注领域</th>
+<th>建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>容器漏洞扫描 和 操作系统信赖安全</td>
+<td>作为一个镜像构建的步骤，应该对容器进行已知漏洞扫描。</td>
+</tr>
+<tr>
+<td>镜像签名和验签</td>
+<td>容器镜像的签名可以维护系统对容器内存的信任</td>
+</tr>
+<tr>
+<td>禁用特权用户</td>
+<td>在构建容器时，查询文档关于怎么创建可以实现容器目标的最小操作系统权限的用户</td>
+</tr>
+</tbody>
+</table>
+<!--
+## Code
+
+Application code is one of the primary attack surfaces over which you have the most control.
+While securing application code is outside of the Kubernetes security topic, here
+are recommendations to protect application code:
+ -->
+<h2 id="code">代码</h2>
+<p>应用代码是一个最受开发者控制的主要攻击面之一。 因为对应用代码的安全加固不在 k8s 安全话题之内，下面
+是一些保护应用代码的建议:</p>
+<!--
+### Code security
+
+
+
+
+
+
+<table><caption style="display: none;">Code security</caption>
+<thead>
+<tr>
+<th>Area of Concern for Code</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Access over TLS only</td>
+<td>If your code needs to communicate by TCP, perform a TLS handshake with the client ahead of time. With the exception of a few cases, encrypt everything in transit. Going one step further, it&rsquo;s a good idea to encrypt network traffic between services. This can be done through a process known as mutual or <a href="https://en.wikipedia.org/wiki/Mutual_authentication">mTLS</a> which performs a two sided verification of communication between two certificate holding services.</td>
+</tr>
+<tr>
+<td>Limiting port ranges of communication</td>
+<td>This recommendation may be a bit self-explanatory, but wherever possible you should only expose the ports on your service that are absolutely essential for communication or metric gathering.</td>
+</tr>
+<tr>
+<td>3rd Party Dependency Security</td>
+<td>It is a good practice to regularly scan your application&rsquo;s third party libraries for known security vulnerabilities. Each programming language has a tool for performing this check automatically.</td>
+</tr>
+<tr>
+<td>Static Code Analysis</td>
+<td>Most languages provide a way for a snippet of code to be analyzed for any potentially unsafe coding practices. Whenever possible you should perform checks using automated tooling that can scan codebases for common security errors. Some of the tools can be found at: <a href="https://owasp.org/www-community/Source_Code_Analysis_Tools">https://owasp.org/www-community/Source_Code_Analysis_Tools</a></td>
+</tr>
+<tr>
+<td>Dynamic probing attacks</td>
+<td>There are a few automated tools that you can run against your service to try some of the well known service attacks. These include SQL injection, CSRF, and XSS. One of the most popular dynamic analysis tools is the <a href="https://owasp.org/www-project-zap/">OWASP Zed Attack proxy</a> tool.</td>
+</tr>
+</tbody>
+</table>
+
+ -->
+<h3 id="code-security">代码安全</h3>
+
+
+
+
+
+<table><caption style="display: none;">Code security</caption>
+<thead>
+<tr>
+<th>代码安全关注领域</th>
+<th>建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>只允许通过 TLS 访问</td>
+<td>如果你的代码需要通过 TCP 通信，提前与客户端执行 TLS 握手。除了少数情况下，对所有传输内容加密。更进一步，对服务之间的网络流量加密也是一个好主意。这可以通过相互(mutual)过程或 <a href="https://en.wikipedia.org/wiki/Mutual_authentication">mTLS</a> 也就是两个服务都包含证书，对通信进行双向加密和验证。</td>
+</tr>
+<tr>
+<td>限制通信端口范围</td>
+<td>这个建议应该是不言自明的， 但无论啥时候都应该只暴露服务必不可少的通信或度量采集端口</td>
+</tr>
+<tr>
+<td>第三方信赖安全</td>
+<td>定期扫描应用的第三方信赖库是否有已知的安全漏洞是一个好的实践。 每种编辑语言都有自动执行这种检查的工具</td>
+</tr>
+<tr>
+<td>静态代码分析</td>
+<td>大多数语言都提供了对代码片断分析检查是否有潜在的不安全代码实践。 无论啥时候都应该使用自动化工作对</td>
+</tr>
+<tr>
+<td>代码库执行这种检查，以提早发现常见的安全错误。 一些工具可以在这里找: <a href="https://owasp.org/www-community/Source_Code_Analysis_Tools">https://owasp.org/www-community/Source_Code_Analysis_Tools</a></td>
+<td></td>
+</tr>
+<tr>
+<td>动态探测攻击</td>
+<td>有几种自动化工具可以用来对着服务运行，尝试一些流行的服务攻击。 包含 SQL 注入， CSRF, 和 XSS. 最流行的动态分析工具之一就是 <a href="https://owasp.org/www-project-zap/">OWASP Zed Attack proxy</a></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="相关资料">相关资料</h2>
+<p>Learn about related Kubernetes security topics:</p>
+<ul>
+<li><a href="/docs/concepts/security/pod-security-standards/">Pod security standards</a></li>
+<li><a href="/docs/concepts/services-networking/network-policies/">Network policies for Pods</a></li>
+<li><a href="/docs/concepts/security/controlling-access">Controlling Access to the Kubernetes API</a></li>
+<li><a href="/docs/tasks/administer-cluster/securing-a-cluster/">Securing your cluster</a></li>
+<li><a href="/docs/tasks/tls/managing-tls-in-a-cluster/">Data encryption in transit</a> for the control plane</li>
+<li><a href="/docs/tasks/administer-cluster/encrypt-data/">Data encryption at rest</a></li>
+<li><a href="/docs/concepts/configuration/secret/">Secrets in Kubernetes</a></li>
+</ul>
+<p>更多关于 k8s 安全的主题:</p>
+<ul>
+<li><a href="/k8sDocs/docs/concepts/security/pod-security-standards/">Pod 安全标准</a></li>
+<li><a href="/k8sDocs/docs/concepts/services-networking/network-policies/">Pod 网络策略</a></li>
+<li><a href="/k8sDocs/docs/concepts/security/controlling-access">对 k8s API 的访问控制</a></li>
+<li><a href="/k8sDocs/docs/tasks/administer-cluster/securing-a-cluster/">集群网络加固</a></li>
+<li>对控制中心<a href="/k8sDocs/docs/tasks/tls/managing-tls-in-a-cluster/">传输中的数据加密</a></li>
+<li><a href="/k8sDocs/docs/tasks/administer-cluster/encrypt-data/">数据落盘加密</a></li>
+<li><a href="/k8sDocs/docs/concepts/configuration/secret/">k8s 中的 Secret</a></li>
+</ul>
+
+
+
+            
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-01-08 17:47:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/c1ee05d8318064775f409185484fb2077aab4db2">publish secrity overview (c1ee05d)</a>
+</div>
+            
+          </main>
+          <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
+            
+
+
+
+
+
+
+<div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+
+
+
+
+
+
+
+
+
+
+
+<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/security/overview.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/security/overview.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=%e4%ba%91%e5%8e%9f%e7%94%9f%e5%ae%89%e5%85%a8%e6%a6%82%e8%bf%b0" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
+
+</div>
+
+
+
+
+
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#the-4cs-of-cloud-native-security">云原生安全的 4C 概念</a></li>
+    <li><a href="#cloud">云环境</a>
+      <ul>
+        <li><a href="#Cloud-provider-security">云提供商安全</a></li>
+        <li><a href="#infrastructure-security">基础设施安全</a></li>
+      </ul>
+    </li>
+    <li><a href="#cluster">集群</a>
+      <ul>
+        <li><a href="#cluster-components">集群的组件</a></li>
+        <li><a href="#cluster-applications">集群中的组件 (你的应用)</a></li>
+      </ul>
+    </li>
+    <li><a href="#container">容器</a></li>
+    <li><a href="#code">代码</a>
+      <ul>
+        <li><a href="#code-security">代码安全</a></li>
+      </ul>
+    </li>
+    <li><a href="#相关资料">相关资料</a></li>
+  </ul>
+</nav>
+
+
+
+          </div>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        
+        
+	
+		
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script src="/k8sDocs/js/main.min.446a2e681f8167f44314691b77368dd561bf0b67514487f3f0fd999316c6da4a.js" integrity="sha256-RGouaB&#43;BZ/RDFGkbdzaN1WG/C2dRRIfz8P2ZkxbG2ko=" crossorigin="anonymous"></script>
+
+
+
+
+  </body>
+</html>
