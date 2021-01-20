@@ -1127,5 +1127,223 @@ Pod 和 容器的运行时上配置。 安全上下文是在Pod 配置中作为 
       </description>
     </item>
     
+    <item>
+      <title>Docs: 对 k8s API 的访问控制</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/controlling-access/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/controlling-access/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- erictune
+- lavalamp
+title: Controlling Access to the Kubernetes API
+content_type: concept
+---
+ --&gt;
+&lt;!-- overview --&gt;
+&lt;!--
+This page provides an overview of controlling access to the Kubernetes API.
+ --&gt;
+&lt;p&gt;本文概述对 k8s API 的访问控制&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+Users access the [Kubernetes API](/docs/concepts/overview/kubernetes-api/) using `kubectl`,
+client libraries, or by making REST requests.  Both human users and
+[Kubernetes service accounts](/docs/tasks/configure-pod-container/configure-service-account/) can be
+authorized for API access.
+When a request reaches the API, it goes through several stages, illustrated in the
+following diagram:
+ --&gt;
+&lt;p&gt;用户可以使用 &lt;code&gt;kubectl&lt;/code&gt;, 客户端库，或发送 REST 请求来访问
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/kubernetes-api/&#34;&gt;Kubernetes API&lt;/a&gt;. 用户和
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/configure-pod-container/configure-service-account/&#34;&gt;k8s 服务账号&lt;/a&gt;
+都可以授权访问 API。 当一个请求到达 API 时，会经过几个阶段，如下图所示&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/docs/admin/access-control-overview.svg&#34; alt=&#34;k8s API 请求的处理步骤图&#34;&gt;&lt;/p&gt;
+&lt;!--
+## Transport security
+
+In a typical Kubernetes cluster, the API serves on port 443, protected by TLS.
+The API server presents a certificate. This certificate may be signed using
+a private certificate authority (CA), or based on a public key infrastructure linked
+to a generally recognized CA.
+
+If your cluster uses a private certificate authority, you need a copy of that CA
+certifcate configured into your `~/.kube/config` on the client, so that you can
+trust the connection and be confident it was not intercepted.
+
+Your client can present a TLS client certificate at this stage.
+ --&gt;
+&lt;h2 id=&#34;transport-security&#34;&gt;传输安全&lt;/h2&gt;
+&lt;p&gt;在一个典型的 k8s 集群中，API 使用 443 端口提供服务，由 TLS 保护。 API 服务提供一个证书。这个
+证书可能使用一个私人证书颁发机构(CA), 或基于一个与公认 CA 连接的公钥签发的。&lt;/p&gt;
+&lt;p&gt;如果集群使用了一个 私人证书颁发机构， 需要将 CA 证书拷贝到客户机的  &lt;code&gt;~/.kube/config&lt;/code&gt; 中，这样
+才能信任这个连接并相邻这个连接不会被拦截。&lt;/p&gt;
+&lt;p&gt;在这一步，客户端也可以提供一个 TLS 客户端证书。&lt;/p&gt;
+&lt;!--
+## Authentication
+
+Once TLS is established, the HTTP request moves to the Authentication step.
+This is shown as step **1** in the diagram.
+The cluster creation script or cluster admin configures the API server to run
+one or more Authenticator modules.
+Authenticators are described in more detail in
+[Authentication](/docs/reference/access-authn-authz/authentication/).
+
+The input to the authentication step is the entire HTTP request; however, it typically
+just examines the headers and/or client certificate.
+
+Authentication modules include client certificates, password, and plain tokens,
+bootstrap tokens, and JSON Web Tokens (used for service accounts).
+
+Multiple authentication modules can be specified, in which case each one is tried in sequence,
+until one of them succeeds.
+
+If the request cannot be authenticated, it is rejected with HTTP status code 401.
+Otherwise, the user is authenticated as a specific `username`, and the user name
+is available to subsequent steps to use in their decisions.  Some authenticators
+also provide the group memberships of the user, while other authenticators
+do not.
+
+While Kubernetes uses usernames for access control decisions and in request logging,
+it does not have a `User` object nor does it store usernames or other information about
+users in its API.
+ --&gt;
+&lt;h2 id=&#34;authentication&#34;&gt;认证&lt;/h2&gt;
+&lt;p&gt;当 TLS 建立后， HTTP 请求就进行到认证这一步。也就是前面图片中的步骤 &lt;strong&gt;1&lt;/strong&gt; 。
+集群创建脚本或集群管理会让 API 服务运行一个或多个认证器模块。更多关于认证器的信息见
+&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/authentication/&#34;&gt;Authentication&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;认证步骤的输入就整个 HTTP 请求； 但是，它通常只会检查头和/或 客户端证书。&lt;/p&gt;
+&lt;p&gt;认证模块包括和客户端证书，密码，和普通令牌， 引导令牌，JSON Web令牌(用于服务账号)。&lt;/p&gt;
+&lt;p&gt;可以指定多个认证模块，在这种情况下他们会按顺序逐个尝试直到有一个成功(也可能会者失败)&lt;/p&gt;
+&lt;p&gt;如果请求认证失败，则会使用 &lt;code&gt;401&lt;/code&gt; HTTP 状态码以示拒绝。 否则用户以指定 &lt;code&gt;username&lt;/code&gt; 来认证，这个
+用户名就会被用到接下来的步骤中的决策中。 有些认证器也会提供用户的组信息，有些认证器则不会。&lt;/p&gt;
+&lt;p&gt;当 k8s 在使用用户名作为访问控制决策和在请求日志中，是不会有一个 &lt;code&gt;User&lt;/code&gt; 对象，也不会在 API 存储用户名
+或其它关于用户的信息的。&lt;/p&gt;
+&lt;h2 id=&#34;authorization&#34;&gt;Authorization&lt;/h2&gt;
+&lt;p&gt;After the request is authenticated as coming from a specific user, the request must be authorized. This is shown as step &lt;strong&gt;2&lt;/strong&gt; in the diagram.&lt;/p&gt;
+&lt;p&gt;A request must include the username of the requester, the requested action, and the object affected by the action. The request is authorized if an existing policy declares that the user has permissions to complete the requested action.&lt;/p&gt;
+&lt;p&gt;For example, if Bob has the policy below, then he can read pods only in the namespace &lt;code&gt;projectCaribou&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;apiVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;abac.authorization.kubernetes.io/v1beta1&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;kind&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Policy&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;spec&amp;#34;&lt;/span&gt;: {
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;user&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;bob&amp;#34;&lt;/span&gt;,
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;namespace&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;projectCaribou&amp;#34;&lt;/span&gt;,
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;resource&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pods&amp;#34;&lt;/span&gt;,
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;readonly&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If Bob makes the following request, the request is authorized because he is allowed to read objects in the &lt;code&gt;projectCaribou&lt;/code&gt; namespace:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;apiVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;authorization.k8s.io/v1beta1&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;kind&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SubjectAccessReview&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;spec&amp;#34;&lt;/span&gt;: {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;resourceAttributes&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;namespace&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;projectCaribou&amp;#34;&lt;/span&gt;,
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;verb&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;get&amp;#34;&lt;/span&gt;,
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;group&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;unicorn.example.org&amp;#34;&lt;/span&gt;,
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;resource&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pods&amp;#34;&lt;/span&gt;
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If Bob makes a request to write (&lt;code&gt;create&lt;/code&gt; or &lt;code&gt;update&lt;/code&gt;) to the objects in the &lt;code&gt;projectCaribou&lt;/code&gt; namespace, his authorization is denied. If Bob makes a request to read (&lt;code&gt;get&lt;/code&gt;) objects in a different namespace such as &lt;code&gt;projectFish&lt;/code&gt;, then his authorization is denied.&lt;/p&gt;
+&lt;p&gt;Kubernetes authorization requires that you use common REST attributes to interact with existing organization-wide or cloud-provider-wide access control systems. It is important to use REST formatting because these control systems might interact with other APIs besides the Kubernetes API.&lt;/p&gt;
+&lt;p&gt;Kubernetes supports multiple authorization modules, such as ABAC mode, RBAC Mode, and Webhook mode. When an administrator creates a cluster, they configure the authorization modules that should be used in the API server. If more than one authorization modules are configured, Kubernetes checks each module, and if any module authorizes the request, then the request can proceed. If all of the modules deny the request, then the request is denied (HTTP status code 403).&lt;/p&gt;
+&lt;p&gt;To learn more about Kubernetes authorization, including details about creating policies using the supported authorization modules, see &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/authorization/&#34;&gt;Authorization&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;admission-control&#34;&gt;Admission control&lt;/h2&gt;
+&lt;p&gt;Admission Control modules are software modules that can modify or reject requests.
+In addition to the attributes available to Authorization modules, Admission
+Control modules can access the contents of the object that is being created or modified.&lt;/p&gt;
+&lt;p&gt;Admission controllers act on requests that create, modify, delete, or connect to (proxy) an object.
+Admission controllers do not act on requests that merely read objects.
+When multiple admission controllers are configured, they are called in order.&lt;/p&gt;
+&lt;p&gt;This is shown as step &lt;strong&gt;3&lt;/strong&gt; in the diagram.&lt;/p&gt;
+&lt;p&gt;Unlike Authentication and Authorization modules, if any admission controller module
+rejects, then the request is immediately rejected.&lt;/p&gt;
+&lt;p&gt;In addition to rejecting objects, admission controllers can also set complex defaults for
+fields.&lt;/p&gt;
+&lt;p&gt;The available Admission Control modules are described in &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/admission-controllers/&#34;&gt;Admission Controllers&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Once a request passes all admission controllers, it is validated using the validation routines
+for the corresponding API object, and then written to the object store (shown as step &lt;strong&gt;4&lt;/strong&gt;).&lt;/p&gt;
+&lt;h2 id=&#34;api-server-ports-and-ips&#34;&gt;API server ports and IPs&lt;/h2&gt;
+&lt;p&gt;The previous discussion applies to requests sent to the secure port of the API server
+(the typical case).  The API server can actually serve on 2 ports:&lt;/p&gt;
+&lt;p&gt;By default the Kubernetes API server serves HTTP on 2 ports:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;localhost&lt;/code&gt; port:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;is intended for testing and bootstrap, and for other components of the master node
+(scheduler, controller-manager) to talk to the API&lt;/li&gt;
+&lt;li&gt;no TLS&lt;/li&gt;
+&lt;li&gt;default is port 8080, change with &lt;code&gt;--insecure-port&lt;/code&gt; flag.&lt;/li&gt;
+&lt;li&gt;default IP is localhost, change with &lt;code&gt;--insecure-bind-address&lt;/code&gt; flag.&lt;/li&gt;
+&lt;li&gt;request &lt;strong&gt;bypasses&lt;/strong&gt; authentication and authorization modules.&lt;/li&gt;
+&lt;li&gt;request handled by admission control module(s).&lt;/li&gt;
+&lt;li&gt;protected by need to have host access&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;“Secure port”:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;use whenever possible&lt;/li&gt;
+&lt;li&gt;uses TLS.  Set cert with &lt;code&gt;--tls-cert-file&lt;/code&gt; and key with &lt;code&gt;--tls-private-key-file&lt;/code&gt; flag.&lt;/li&gt;
+&lt;li&gt;default is port 6443, change with &lt;code&gt;--secure-port&lt;/code&gt; flag.&lt;/li&gt;
+&lt;li&gt;default IP is first non-localhost network interface, change with &lt;code&gt;--bind-address&lt;/code&gt; flag.&lt;/li&gt;
+&lt;li&gt;request handled by authentication and authorization modules.&lt;/li&gt;
+&lt;li&gt;request handled by admission control module(s).&lt;/li&gt;
+&lt;li&gt;authentication and authorization modules run.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;p&gt;Read more documentation on authentication, authorization and API access control:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/authentication/&#34;&gt;Authenticating&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/bootstrap-tokens/&#34;&gt;Authenticating with Bootstrap Tokens&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/admission-controllers/&#34;&gt;Admission Controllers&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/extensible-admission-controllers/&#34;&gt;Dynamic Admission Control&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/authorization/&#34;&gt;Authorization&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/rbac/&#34;&gt;Role Based Access Control&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/abac/&#34;&gt;Attribute Based Access Control&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/node/&#34;&gt;Node Authorization&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/webhook/&#34;&gt;Webhook Authorization&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/certificate-signing-requests/&#34;&gt;Certificate Signing Requests&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;including &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/certificate-signing-requests/#approval-rejection&#34;&gt;CSR approval&lt;/a&gt;
+and &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/certificate-signing-requests/#signing&#34;&gt;certificate signing&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Service accounts
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/configure-pod-container/configure-service-account/&#34;&gt;Developer guide&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/service-accounts-admin/&#34;&gt;Administration&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You can learn about:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;how Pods can use
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/secret/#service-accounts-automatically-create-and-attach-secrets-with-api-credentials&#34;&gt;Secrets&lt;/a&gt;
+to obtain API credentials.&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
   </channel>
 </rss>

@@ -16,24 +16,22 @@
 <link rel="manifest" href="/k8sDocs/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/k8sDocs/images/kubernetes-192x192.png">
 
-<title>k8s API 说明 | Kubernetes</title><meta property="og:title" content="k8s API 说明" />
-<meta property="og:description" content="k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这" />
+<title>对 k8s API 的访问控制 | Kubernetes</title><meta property="og:title" content="对 k8s API 的访问控制" />
+<meta property="og:description" content="本文概述对 k8s API 的访问控制 用户可以使用 kubectl, 客户端库，或发送 REST 请求来访问 Kubernetes API. 用户和 k8s 服务账号 都可以授权访问 API。 当一个请求到达 API 时，会经过几个阶" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/02-k8s-api/" />
-<meta property="article:published_time" content="2020-06-29T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-01-20T17:01:35+08:00" /><meta property="og:site_name" content="Kubernetes" />
-<meta itemprop="name" content="k8s API 说明">
-<meta itemprop="description" content="k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这">
-<meta itemprop="datePublished" content="2020-06-29T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2021-01-20T17:01:35+08:00" />
-<meta itemprop="wordCount" content="1706">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/controlling-access/" />
+<meta property="article:modified_time" content="2021-01-20T17:58:45+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="对 k8s API 的访问控制">
+<meta itemprop="description" content="本文概述对 k8s API 的访问控制 用户可以使用 kubectl, 客户端库，或发送 REST 请求来访问 Kubernetes API. 用户和 k8s 服务账号 都可以授权访问 API。 当一个请求到达 API 时，会经过几个阶">
+<meta itemprop="dateModified" content="2021-01-20T17:58:45+08:00" />
+<meta itemprop="wordCount" content="1275">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="k8s API 说明"/>
-<meta name="twitter:description" content="k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这"/>
+<meta name="twitter:title" content="对 k8s API 的访问控制"/>
+<meta name="twitter:description" content="本文概述对 k8s API 的访问控制 用户可以使用 kubectl, 客户端库，或发送 REST 请求来访问 Kubernetes API. 用户和 k8s 服务账号 都可以授权访问 API。 当一个请求到达 API 时，会经过几个阶"/>
 
 
 
@@ -77,12 +75,12 @@
 
 
 
-<meta name="description" content="k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这">
-<meta property="og:description" content="k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这">
-<meta name="twitter:description" content="k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 api-server 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 api-server 通信 全部的API约定在这">
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/02-k8s-api/">
-<meta property="og:title" content="k8s API 说明">
-<meta name="twitter:title" content="k8s API 说明">
+<meta name="description" content="本文概述对 k8s API 的访问控制 用户可以使用 kubectl, 客户端库，或发送 REST 请求来访问 Kubernetes API. 用户和 k8s 服务账号 都可以授权访问 API。 当一个请求到达 API 时，会经过几个阶">
+<meta property="og:description" content="本文概述对 k8s API 的访问控制 用户可以使用 kubectl, 客户端库，或发送 REST 请求来访问 Kubernetes API. 用户和 k8s 服务账号 都可以授权访问 API。 当一个请求到达 API 时，会经过几个阶">
+<meta name="twitter:description" content="本文概述对 k8s API 的访问控制 用户可以使用 kubectl, 客户端库，或发送 REST 请求来访问 Kubernetes API. 用户和 k8s 服务账号 都可以授权访问 API。 当一个请求到达 API 时，会经过几个阶">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/controlling-access/">
+<meta property="og:title" content="对 k8s API 的访问控制">
+<meta name="twitter:title" content="对 k8s API 的访问控制">
 <meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
 
 <meta name="twitter:image:alt" content="Kubernetes">
@@ -96,7 +94,7 @@
 <script src="/k8sDocs/js/script.js"></script>
 
 
-    <title>k8s API 说明 | Kubernetes</title>
+    <title>对 k8s API 的访问控制 | Kubernetes</title>
   </head>
   <body class="td-page td-documentation">
     <header>
@@ -200,10 +198,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/overview/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">概览</a>
+    <a  href="/k8sDocs/docs/concepts/overview/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">概览</a>
   </li>
   <ul>
-    <li class="collapse show" id="k8sdocsdocsconceptsoverview">
+    <li class="collapse " id="k8sdocsdocsconceptsoverview">
       
       
       
@@ -222,7 +220,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsoverview02-k8s-api" href="/k8sDocs/docs/concepts/overview/02-k8s-api/">k8s API 说明</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsoverviewkubernetes-api" href="/k8sDocs/docs/concepts/overview/kubernetes-api/">k8s API 说明</a>
       
       
       
@@ -784,10 +782,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/security/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">安全</a>
+    <a  href="/k8sDocs/docs/concepts/security/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">安全</a>
   </li>
   <ul>
-    <li class="collapse " id="k8sdocsdocsconceptssecurity">
+    <li class="collapse show" id="k8sdocsdocsconceptssecurity">
       
       
       
@@ -801,6 +799,12 @@
       
       
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptssecuritypod-security-standards" href="/k8sDocs/docs/concepts/security/pod-security-standards/">Pod 安全标准</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptssecuritycontrolling-access" href="/k8sDocs/docs/concepts/security/controlling-access/">对 k8s API 的访问控制</a>
       
       
     </li>
@@ -858,14 +862,14 @@
 
 
 <li class="breadcrumb-item" >
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/">概览</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/">安全</a>
 </li>
 
 
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/02-k8s-api/">k8s API 说明</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/controlling-access/">对 k8s API 的访问控制</a>
 </li>
 
 	</ol>
@@ -878,139 +882,225 @@
     <div class="td-content">
     
 <p>
-  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/overview/02-k8s-api.md" id="editPageButton" target="_blank" data-proofer-ignore>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/security/controlling-access.md" id="editPageButton" target="_blank" data-proofer-ignore>
     Edit This Page
   </a>
 </p>
 
-  <h1>k8s API 说明</h1>
+  <h1>对 k8s API 的访问控制</h1>
   
   
 
-<p>k8s API 提供查询操作 k8s 对应状态的功能。 k8s 控制中心的核心是 <code>api-server</code> 及其提供的 HTTP API。包括用户，集群的其它组件，外部组件都是与 <code>api-server</code> 通信</p>
-<p>全部的API约定在<a href="https://git.k8s.io/community/contributors/devel/api-conventions.md">这里</a>
-API endpoints,资源类型，示例在<a href="https://kubernetes.io/docs/reference">这里</a>
-远程访问 API 的说明在<a href="https://kubernetes.io/docs/admin/accessing-the-api">这里</a>
-k8s API 是系统声明式配置的基础， 命令行工具 <code>[kubectl](https://kubernetes.io/docs/user-guide/kubectl/)</code> 可以用来进行对 API 对象的增删改查
-k8s 以API 资源的形式也存储了序列化状态(目前使用 <a href="https://coreos.com/docs/distributed-configuration/getting-started-with-etcd/">etcd</a>)
-k8s 自身也解耦成多个模块，通过 API 进行交互</p>
-<h2 id="api-的变化">API 的变化</h2>
-<p>任何成功的系统都应该快速响应新的应用场景或现有需求的变更。 因此 k8s 在设计 API 时就提供了持续改进与成长的方式。k8s 项目主旨是不打破对已有客户端的普空性。并将此兼容性保持一段时间，让其它项目有时间来进行适配.
-通常新的API 资源和新的API资源项，可以经常频繁增加， 移除资源或资源项则需要遵循 <a href="https://kubernetes.io/docs/reference/using-api/deprecation-policy/">API废弃策略</a> TODO</p>
-<p>关于怎么做兼容和怎么修改API,依照这个(<a href="https://git.k8s.io/community/contributors/devel/sig-architecture/api_changes.md#readme">https://git.k8s.io/community/contributors/devel/sig-architecture/api_changes.md#readme</a>)</p>
-<h2 id="openapi-规范">OpenAPI 规范</h2>
-<p>完整 API 规范明细见 <a href="https://www.openapis.org/">这里</a>
-k8s api-server 通过 <code>/openapi/v2</code> 提供 OpenAPI 规范， 用户可以通过以下请求头发送请求获取响应格式</p>
-<table>
-<thead>
-<tr>
-<th>请求头</th>
-<th>可选值</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Accept-Encoding</td>
-<td>gzip</td>
-<td>可选</td>
-</tr>
-<tr>
-<td>Accept</td>
-<td><a href="mailto:application/com.github.proto-openapi.spec.v2@v1.0">application/com.github.proto-openapi.spec.v2@v1.0</a>+protobuf</td>
-<td>mainly for intra-cluster use</td>
-</tr>
-<tr>
-<td>^</td>
-<td>application/json</td>
-<td>默认</td>
-</tr>
-<tr>
-<td>^</td>
-<td>响应 <code>application/json</code></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p>也可以是任务符合OpenAPI 规范的请求头
-k8s 还有一个基于基于 <code>Protobuf</code> 序列化的API，这套API 主要用于集群内通信。具体见对应模块 Go 源码文档，文档设计准则在<a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/protobuf.md">这里</a></p>
-<h2 id="api-版本">API 版本</h2>
-<p>为方便移除资源项或修改资源结构，k8s 同时存在多个版本的 API, 每个版本的 API 路径都不一样，比如 <code>/api/v1</code> <code>/apis/extensions/v1beta1</code>
-这样版本就通过区分就在API这一层完成，而不用到资源或资源荐，可以做到清晰明了,并提供一致的系统资源的行为。
-也可以实现对过期和实验性 API 的访问控制
-JSON和Protobuf序列化的定义结构变更策略与API定义资源结构的规则一致，具体如下:</p>
-<p>API 的版本和软件的版本只是间接相关的(和 Docker 类似)，详见<a href="https://git.k8s.io/community/contributors/design-proposals/release/versioning.md">k8s 版本发布</a>提议</p>
-<p>不同的 API 版本提供不同级别的稳定性和支持，关于每个级别详细描述的细则见<a href="https://git.k8s.io/community/contributors/devel/sig-architecture/api_changes.md#alpha-beta-and-stable-versions">这个文档</a>
-可以总结为如下几个:</p>
-<ul>
-<li>
-<p>Alpha 级别</p>
-<ul>
-<li>api URL名字中带有 alpha (e.g. v1alpha1)</li>
-<li>可能有不少bug,启用这个物引可能会引入bug. 默认关闭</li>
-<li>所支持的功能可能在没有任何通知的情况下被移除</li>
-<li>在未来的版本中可能会在没有通知的情况谱得与之前不兼容</li>
-<li>只推荐用于短期实验集群，因为有较高bug多，缺乏长期支持的风险</li>
-</ul>
-</li>
-<li>
-<p>Beta 级别</p>
-<ul>
-<li>api URL名字中带有 beta (e.g. v2beta3)</li>
-<li>代码是充分测试的，启用这个功能基本上是安全的，默认打开</li>
-<li>整体功能不会被删除，但细节可能会修改</li>
-<li>未来版本中可能会因资源的结构与资源项的含义出现不兼容情况，如果出现这种情况,官方会提供升级与该版本的迁移指导，可能需要删除，编辑或重建 API对象，在修改过程可能需要用户仔细思考需要的改动，此过程信赖些功能的应用可能会不可用</li>
-<li>只推荐 非关键商业 用户使用，因为在未来版本中可能存在潜在的不兼容变更，如果用户有几个可独立更新集群，也可以不受此限制</li>
-<li>强烈建议用户试用beta特性并给予反馈，因为一旦从beta 版本确认为稳定版，则特性将不可更改</li>
-</ul>
-</li>
-<li>
-<p>Stable</p>
-<ul>
-<li>api 版本名称模式为 <code>vX</code>， 其中<code>X</code>为整数</li>
-<li>稳定版功能会存在于稳定版的软件的很多个版本中</li>
-</ul>
-</li>
-</ul>
-<h2 id="api-分组">API 分组</h2>
-<p>为了方便API的扩展， k8s 实现了 API 分组的方式。 API 组在 REST 接口的Path 上的 apiVersion 字段
-<a href="https://git.k8s.io/community/contributors/design-proposals/api-machinery/api-group.md">设计提案之API分组</a>
-集群中一般有如下一些组:</p>
+<!--
+---
+reviewers:
+- erictune
+- lavalamp
+title: Controlling Access to the Kubernetes API
+content_type: concept
+---
+ -->
+<!-- overview -->
+<!--
+This page provides an overview of controlling access to the Kubernetes API.
+ -->
+<p>本文概述对 k8s API 的访问控制</p>
+<!-- body -->
+<!--
+Users access the [Kubernetes API](/docs/concepts/overview/kubernetes-api/) using `kubectl`,
+client libraries, or by making REST requests.  Both human users and
+[Kubernetes service accounts](/docs/tasks/configure-pod-container/configure-service-account/) can be
+authorized for API access.
+When a request reaches the API, it goes through several stages, illustrated in the
+following diagram:
+ -->
+<p>用户可以使用 <code>kubectl</code>, 客户端库，或发送 REST 请求来访问
+<a href="/k8sDocs/docs/concepts/overview/kubernetes-api/">Kubernetes API</a>. 用户和
+<a href="/k8sDocs/docs/tasks/configure-pod-container/configure-service-account/">k8s 服务账号</a>
+都可以授权访问 API。 当一个请求到达 API 时，会经过几个阶段，如下图所示</p>
+<p><img src="/k8sDocs/images/docs/admin/access-control-overview.svg" alt="k8s API 请求的处理步骤图"></p>
+<!--
+## Transport security
+
+In a typical Kubernetes cluster, the API serves on port 443, protected by TLS.
+The API server presents a certificate. This certificate may be signed using
+a private certificate authority (CA), or based on a public key infrastructure linked
+to a generally recognized CA.
+
+If your cluster uses a private certificate authority, you need a copy of that CA
+certifcate configured into your `~/.kube/config` on the client, so that you can
+trust the connection and be confident it was not intercepted.
+
+Your client can present a TLS client certificate at this stage.
+ -->
+<h2 id="transport-security">传输安全</h2>
+<p>在一个典型的 k8s 集群中，API 使用 443 端口提供服务，由 TLS 保护。 API 服务提供一个证书。这个
+证书可能使用一个私人证书颁发机构(CA), 或基于一个与公认 CA 连接的公钥签发的。</p>
+<p>如果集群使用了一个 私人证书颁发机构， 需要将 CA 证书拷贝到客户机的  <code>~/.kube/config</code> 中，这样
+才能信任这个连接并相邻这个连接不会被拦截。</p>
+<p>在这一步，客户端也可以提供一个 TLS 客户端证书。</p>
+<!--
+## Authentication
+
+Once TLS is established, the HTTP request moves to the Authentication step.
+This is shown as step **1** in the diagram.
+The cluster creation script or cluster admin configures the API server to run
+one or more Authenticator modules.
+Authenticators are described in more detail in
+[Authentication](/docs/reference/access-authn-authz/authentication/).
+
+The input to the authentication step is the entire HTTP request; however, it typically
+just examines the headers and/or client certificate.
+
+Authentication modules include client certificates, password, and plain tokens,
+bootstrap tokens, and JSON Web Tokens (used for service accounts).
+
+Multiple authentication modules can be specified, in which case each one is tried in sequence,
+until one of them succeeds.
+
+If the request cannot be authenticated, it is rejected with HTTP status code 401.
+Otherwise, the user is authenticated as a specific `username`, and the user name
+is available to subsequent steps to use in their decisions.  Some authenticators
+also provide the group memberships of the user, while other authenticators
+do not.
+
+While Kubernetes uses usernames for access control decisions and in request logging,
+it does not have a `User` object nor does it store usernames or other information about
+users in its API.
+ -->
+<h2 id="authentication">认证</h2>
+<p>当 TLS 建立后， HTTP 请求就进行到认证这一步。也就是前面图片中的步骤 <strong>1</strong> 。
+集群创建脚本或集群管理会让 API 服务运行一个或多个认证器模块。更多关于认证器的信息见
+<a href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/">Authentication</a>.</p>
+<p>认证步骤的输入就整个 HTTP 请求； 但是，它通常只会检查头和/或 客户端证书。</p>
+<p>认证模块包括和客户端证书，密码，和普通令牌， 引导令牌，JSON Web令牌(用于服务账号)。</p>
+<p>可以指定多个认证模块，在这种情况下他们会按顺序逐个尝试直到有一个成功(也可能会者失败)</p>
+<p>如果请求认证失败，则会使用 <code>401</code> HTTP 状态码以示拒绝。 否则用户以指定 <code>username</code> 来认证，这个
+用户名就会被用到接下来的步骤中的决策中。 有些认证器也会提供用户的组信息，有些认证器则不会。</p>
+<p>当 k8s 在使用用户名作为访问控制决策和在请求日志中，是不会有一个 <code>User</code> 对象，也不会在 API 存储用户名
+或其它关于用户的信息的。</p>
+<h2 id="authorization">Authorization</h2>
+<p>After the request is authenticated as coming from a specific user, the request must be authorized. This is shown as step <strong>2</strong> in the diagram.</p>
+<p>A request must include the username of the requester, the requested action, and the object affected by the action. The request is authorized if an existing policy declares that the user has permissions to complete the requested action.</p>
+<p>For example, if Bob has the policy below, then he can read pods only in the namespace <code>projectCaribou</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+    <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;abac.authorization.kubernetes.io/v1beta1&#34;</span>,
+    <span style="color:#f92672">&#34;kind&#34;</span>: <span style="color:#e6db74">&#34;Policy&#34;</span>,
+    <span style="color:#f92672">&#34;spec&#34;</span>: {
+        <span style="color:#f92672">&#34;user&#34;</span>: <span style="color:#e6db74">&#34;bob&#34;</span>,
+        <span style="color:#f92672">&#34;namespace&#34;</span>: <span style="color:#e6db74">&#34;projectCaribou&#34;</span>,
+        <span style="color:#f92672">&#34;resource&#34;</span>: <span style="color:#e6db74">&#34;pods&#34;</span>,
+        <span style="color:#f92672">&#34;readonly&#34;</span>: <span style="color:#66d9ef">true</span>
+    }
+}
+</code></pre></div><p>If Bob makes the following request, the request is authorized because he is allowed to read objects in the <code>projectCaribou</code> namespace:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;authorization.k8s.io/v1beta1&#34;</span>,
+  <span style="color:#f92672">&#34;kind&#34;</span>: <span style="color:#e6db74">&#34;SubjectAccessReview&#34;</span>,
+  <span style="color:#f92672">&#34;spec&#34;</span>: {
+    <span style="color:#f92672">&#34;resourceAttributes&#34;</span>: {
+      <span style="color:#f92672">&#34;namespace&#34;</span>: <span style="color:#e6db74">&#34;projectCaribou&#34;</span>,
+      <span style="color:#f92672">&#34;verb&#34;</span>: <span style="color:#e6db74">&#34;get&#34;</span>,
+      <span style="color:#f92672">&#34;group&#34;</span>: <span style="color:#e6db74">&#34;unicorn.example.org&#34;</span>,
+      <span style="color:#f92672">&#34;resource&#34;</span>: <span style="color:#e6db74">&#34;pods&#34;</span>
+    }
+  }
+}
+</code></pre></div><p>If Bob makes a request to write (<code>create</code> or <code>update</code>) to the objects in the <code>projectCaribou</code> namespace, his authorization is denied. If Bob makes a request to read (<code>get</code>) objects in a different namespace such as <code>projectFish</code>, then his authorization is denied.</p>
+<p>Kubernetes authorization requires that you use common REST attributes to interact with existing organization-wide or cloud-provider-wide access control systems. It is important to use REST formatting because these control systems might interact with other APIs besides the Kubernetes API.</p>
+<p>Kubernetes supports multiple authorization modules, such as ABAC mode, RBAC Mode, and Webhook mode. When an administrator creates a cluster, they configure the authorization modules that should be used in the API server. If more than one authorization modules are configured, Kubernetes checks each module, and if any module authorizes the request, then the request can proceed. If all of the modules deny the request, then the request is denied (HTTP status code 403).</p>
+<p>To learn more about Kubernetes authorization, including details about creating policies using the supported authorization modules, see <a href="/docs/reference/access-authn-authz/authorization/">Authorization</a>.</p>
+<h2 id="admission-control">Admission control</h2>
+<p>Admission Control modules are software modules that can modify or reject requests.
+In addition to the attributes available to Authorization modules, Admission
+Control modules can access the contents of the object that is being created or modified.</p>
+<p>Admission controllers act on requests that create, modify, delete, or connect to (proxy) an object.
+Admission controllers do not act on requests that merely read objects.
+When multiple admission controllers are configured, they are called in order.</p>
+<p>This is shown as step <strong>3</strong> in the diagram.</p>
+<p>Unlike Authentication and Authorization modules, if any admission controller module
+rejects, then the request is immediately rejected.</p>
+<p>In addition to rejecting objects, admission controllers can also set complex defaults for
+fields.</p>
+<p>The available Admission Control modules are described in <a href="/docs/reference/access-authn-authz/admission-controllers/">Admission Controllers</a>.</p>
+<p>Once a request passes all admission controllers, it is validated using the validation routines
+for the corresponding API object, and then written to the object store (shown as step <strong>4</strong>).</p>
+<h2 id="api-server-ports-and-ips">API server ports and IPs</h2>
+<p>The previous discussion applies to requests sent to the secure port of the API server
+(the typical case).  The API server can actually serve on 2 ports:</p>
+<p>By default the Kubernetes API server serves HTTP on 2 ports:</p>
 <ol>
-<li>核心组,也被称为经典组，REST 路径中为 <code>/api/v1</code> 对象定义 <code>apiVersion: v1</code></li>
-<li>其它组 REST 路径为 <code>/apis/$GROUP_NAME/$VERSION</code> 对象定义为 <code>apiVersion: $GROUP_NAME/$VERSION (e.g. apiVersion: batch/v1)</code> <a href="https://kubernetes.io/docs/reference/kubernetes-api/">API文档</a>是有完整的分级列表</li>
-</ol>
-<p>通过自定义资源可以通过以下两种方式扩展API:</p>
-<ol>
 <li>
-<p><a href="https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/">CustomResourceDefinition</a> 通过声明方式定义 api-server 怎么提供用户选择资源的API (TODO 这里描述不太清楚)</p>
+<p><code>localhost</code> port:</p>
+<ul>
+<li>is intended for testing and bootstrap, and for other components of the master node
+(scheduler, controller-manager) to talk to the API</li>
+<li>no TLS</li>
+<li>default is port 8080, change with <code>--insecure-port</code> flag.</li>
+<li>default IP is localhost, change with <code>--insecure-bind-address</code> flag.</li>
+<li>request <strong>bypasses</strong> authentication and authorization modules.</li>
+<li>request handled by admission control module(s).</li>
+<li>protected by need to have host access</li>
+</ul>
 </li>
 <li>
-<p>用户可能通过<a href="https://kubernetes.io/docs/tasks/extend-kubernetes/setup-extension-api-server/">实现自己的扩展api-server</a>, 并通过<a href="https://kubernetes.io/docs/tasks/extend-kubernetes/configure-aggregation-layer/">聚合</a>使客户端可以访问</p>
+<p>“Secure port”:</p>
+<ul>
+<li>use whenever possible</li>
+<li>uses TLS.  Set cert with <code>--tls-cert-file</code> and key with <code>--tls-private-key-file</code> flag.</li>
+<li>default is port 6443, change with <code>--secure-port</code> flag.</li>
+<li>default IP is first non-localhost network interface, change with <code>--bind-address</code> flag.</li>
+<li>request handled by authentication and authorization modules.</li>
+<li>request handled by admission control module(s).</li>
+<li>authentication and authorization modules run.</li>
+</ul>
 </li>
 </ol>
-<h2 id="api-分组开关">API 分组开关</h2>
-<p>一些资源和API默认是开启的，可能通过 api-server 命令行启动参数中使用 &ndash;runtime-config 进行开启或关闭
-关闭 &ndash;runtime-config=batch/v1=false
-开启 &ndash;runtime-config=batch/v2alpha1
-如果有多个分组进制设置，可能key=value并用逗号分隔
-注意： 开启或关闭分组或资源一需要重启 api-server 和 kube-controller-manager</p>
-<h2 id="开启-extensionsv1beta1-组的指定资源">开启 <code>extensions/v1beta1</code> 组的指定资源</h2>
-<p><code>extensions/v1beta1</code> 组默认启用资源的有 <code>DaemonSets</code>, <code>Deployments</code>, <code>StatefulSet</code>, <code>NetworkPolicies</code>, <code>PodSecurityPolicies</code>， <code>ReplicaSets</code></p>
-<p>例如要启用资源 <code>deployments</code> 和 <code>daemonsets</code>
-也是在 api-server 启动参数中使用 &ndash;runtime-config 进行开启或关闭
-<code>--runtime-config=extensions/v1beta1/deployments=false,extensions/v1beta1/ingress=false</code></p>
-<h2 id="持久化">持久化</h2>
-<p>k8s 将序列化的 API 资源对象保存在 etcd 中</p>
-<h2 id="引申阅读">引申阅读</h2>
-<p><a href="https://kubernetes.io/docs/reference/access-authn-authz/controlling-access/">API访问控制</a>
-<a href="https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#api-conventions">API约定</a>
-<a href="https://kubernetes.io/docs/reference/kubernetes-api/">API文档</a></p>
+<h2 id="相关资料">相关资料</h2>
+<p>Read more documentation on authentication, authorization and API access control:</p>
+<ul>
+<li><a href="/docs/reference/access-authn-authz/authentication/">Authenticating</a>
+<ul>
+<li><a href="/docs/reference/access-authn-authz/bootstrap-tokens/">Authenticating with Bootstrap Tokens</a></li>
+</ul>
+</li>
+<li><a href="/docs/reference/access-authn-authz/admission-controllers/">Admission Controllers</a>
+<ul>
+<li><a href="/docs/reference/access-authn-authz/extensible-admission-controllers/">Dynamic Admission Control</a></li>
+</ul>
+</li>
+<li><a href="/docs/reference/access-authn-authz/authorization/">Authorization</a>
+<ul>
+<li><a href="/docs/reference/access-authn-authz/rbac/">Role Based Access Control</a></li>
+<li><a href="/docs/reference/access-authn-authz/abac/">Attribute Based Access Control</a></li>
+<li><a href="/docs/reference/access-authn-authz/node/">Node Authorization</a></li>
+<li><a href="/docs/reference/access-authn-authz/webhook/">Webhook Authorization</a></li>
+</ul>
+</li>
+<li><a href="/docs/reference/access-authn-authz/certificate-signing-requests/">Certificate Signing Requests</a>
+<ul>
+<li>including <a href="/docs/reference/access-authn-authz/certificate-signing-requests/#approval-rejection">CSR approval</a>
+and <a href="/docs/reference/access-authn-authz/certificate-signing-requests/#signing">certificate signing</a></li>
+</ul>
+</li>
+<li>Service accounts
+<ul>
+<li><a href="/docs/tasks/configure-pod-container/configure-service-account/">Developer guide</a></li>
+<li><a href="/docs/reference/access-authn-authz/service-accounts-admin/">Administration</a></li>
+</ul>
+</li>
+</ul>
+<p>You can learn about:</p>
+<ul>
+<li>how Pods can use
+<a href="/docs/concepts/configuration/secret/#service-accounts-automatically-create-and-attach-secrets-with-api-credentials">Secrets</a>
+to obtain API credentials.</li>
+</ul>
 
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-01-20 17:01:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/bc9a8431e05001a6702632a62d05c775dee507ad">publish pod security standard (bc9a843)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-01-20 17:58:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/bf739eb39836f7b99c7d1b6ae9bbda7da763ddcc">[WIP]add controlling access (bf739eb)</a>
 </div>
             
           </main>
@@ -1034,9 +1124,9 @@ JSON和Protobuf序列化的定义结构变更策略与API定义资源结构的�
 
 
 
-<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/overview/02-k8s-api.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/overview/02-k8s-api.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=k8s%20API%20%e8%af%b4%e6%98%8e" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/security/controlling-access.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/security/controlling-access.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=%e5%af%b9%20k8s%20API%20%e7%9a%84%e8%ae%bf%e9%97%ae%e6%8e%a7%e5%88%b6" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
 
 </div>
 
@@ -1047,14 +1137,12 @@ JSON和Protobuf序列化的定义结构变更策略与API定义资源结构的�
 
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#api-的变化">API 的变化</a></li>
-    <li><a href="#openapi-规范">OpenAPI 规范</a></li>
-    <li><a href="#api-版本">API 版本</a></li>
-    <li><a href="#api-分组">API 分组</a></li>
-    <li><a href="#api-分组开关">API 分组开关</a></li>
-    <li><a href="#开启-extensionsv1beta1-组的指定资源">开启 <code>extensions/v1beta1</code> 组的指定资源</a></li>
-    <li><a href="#持久化">持久化</a></li>
-    <li><a href="#引申阅读">引申阅读</a></li>
+    <li><a href="#transport-security">传输安全</a></li>
+    <li><a href="#authentication">认证</a></li>
+    <li><a href="#authorization">Authorization</a></li>
+    <li><a href="#admission-control">Admission control</a></li>
+    <li><a href="#api-server-ports-and-ips">API server ports and IPs</a></li>
+    <li><a href="#相关资料">相关资料</a></li>
   </ul>
 </nav>
 

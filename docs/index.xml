@@ -24922,10 +24922,10 @@ Cluster DNS，是一个DNS服务，是对其它DNS服务的补充，为k8s 集�
     
     <item>
       <title>Docs: k8s API 说明</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/02-k8s-api/</link>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/kubernetes-api/</link>
       <pubDate>Wed, 24 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/02-k8s-api/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/kubernetes-api/</guid>
       <description>
         
         
