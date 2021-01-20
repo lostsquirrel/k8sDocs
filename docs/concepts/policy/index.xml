@@ -1,0 +1,727 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubernetes – 策略</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/</link>
+    <description>Recent content in 策略 on Kubernetes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 30 Jun 2020 00:00:00 +0000</lastBuildDate>
+    
+	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: Limit Ranges</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/limit-range/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/limit-range/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- nelvadas
+title: Limit Ranges
+content_type: concept
+weight: 10
+---
+ --&gt;
+&lt;!-- overview --&gt;
+&lt;p&gt;By default, containers run with unbounded &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/manage-resources-containers/&#34;&gt;compute resources&lt;/a&gt; on a Kubernetes cluster.
+With resource quotas, cluster administrators can restrict resource consumption and creation on a &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/namespaces&#39; target=&#39;_blank&#39;&gt;namespace&lt;span class=&#39;tooltip-text&#39;&gt;一个用于在同一个物理集群中支持多个虚拟集群的抽象概念&lt;/span&gt;
+&lt;/a&gt; basis.
+Within a namespace, a Pod or Container can consume as much CPU and memory as defined by the namespace&amp;rsquo;s resource quota. There is a concern that one Pod or Container could monopolize all available resources. A LimitRange is a policy to constrain resource allocations (to Pods or Containers) in a namespace.&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;p&gt;A &lt;em&gt;LimitRange&lt;/em&gt; provides constraints that can:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Enforce minimum and maximum compute resources usage per Pod or Container in a namespace.&lt;/li&gt;
+&lt;li&gt;Enforce minimum and maximum storage request per PersistentVolumeClaim in a namespace.&lt;/li&gt;
+&lt;li&gt;Enforce a ratio between request and limit for a resource in a namespace.&lt;/li&gt;
+&lt;li&gt;Set default request/limit for compute resources in a namespace and automatically inject them to Containers at runtime.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;enabling-limitrange&#34;&gt;Enabling LimitRange&lt;/h2&gt;
+&lt;p&gt;LimitRange support has been enabled by default since Kubernetes 1.10.&lt;/p&gt;
+&lt;p&gt;A LimitRange is enforced in a particular namespace when there is a
+LimitRange object in that namespace.&lt;/p&gt;
+&lt;p&gt;The name of a LimitRange object must be a valid
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS subdomain name&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;overview-of-limit-range&#34;&gt;Overview of Limit Range&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The administrator creates one LimitRange in one namespace.&lt;/li&gt;
+&lt;li&gt;Users create resources like Pods, Containers, and PersistentVolumeClaims in the namespace.&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;LimitRanger&lt;/code&gt; admission controller enforces defaults and limits for all Pods and Containers that do not set compute resource requirements and tracks usage to ensure it does not exceed resource minimum, maximum and ratio defined in any LimitRange present in the namespace.&lt;/li&gt;
+&lt;li&gt;If creating or updating a resource (Pod, Container, PersistentVolumeClaim) that violates a LimitRange constraint, the request to the API server will fail with an HTTP status code &lt;code&gt;403 FORBIDDEN&lt;/code&gt; and a message explaining the constraint that have been violated.&lt;/li&gt;
+&lt;li&gt;If a LimitRange is activated in a namespace for compute resources like &lt;code&gt;cpu&lt;/code&gt; and &lt;code&gt;memory&lt;/code&gt;, users must specify
+requests or limits for those values. Otherwise, the system may reject Pod creation.&lt;/li&gt;
+&lt;li&gt;LimitRange validations occurs only at Pod Admission stage, not on Running Pods.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Examples of policies that could be created using limit range are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In a 2 node cluster with a capacity of 8 GiB RAM and 16 cores, constrain Pods in a namespace to request 100m of CPU with a max limit of 500m for CPU and request 200Mi for Memory with a max limit of 600Mi for Memory.&lt;/li&gt;
+&lt;li&gt;Define default CPU limit and request to 150m and memory default request to 300Mi for Containers started with no cpu and memory requests in their specs.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In the case where the total limits of the namespace is less than the sum of the limits of the Pods/Containers,
+there may be contention for resources. In this case, the Containers or Pods will not be created.&lt;/p&gt;
+&lt;p&gt;Neither contention nor changes to a LimitRange will affect already created resources.&lt;/p&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;p&gt;Refer to the &lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/resource-management/admission_control_limit_range.md&#34;&gt;LimitRanger design document&lt;/a&gt; for more information.&lt;/p&gt;
+&lt;p&gt;For examples on using limits, see:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/manage-resources/cpu-constraint-namespace/&#34;&gt;how to configure minimum and maximum CPU constraints per namespace&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/manage-resources/memory-constraint-namespace/&#34;&gt;how to configure minimum and maximum Memory constraints per namespace&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/manage-resources/cpu-default-namespace/&#34;&gt;how to configure default CPU Requests and Limits per namespace&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/manage-resources/memory-default-namespace/&#34;&gt;how to configure default Memory Requests and Limits per namespace&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/limit-storage-consumption/#limitrange-to-limit-requests-for-storage&#34;&gt;how to configure minimum and maximum Storage consumption per namespace&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;a &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/&#34;&gt;detailed example on configuring quota per namespace&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Resource Quotas</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/resource-quotas/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/resource-quotas/</guid>
+      <description>
+        
+        
+        &lt;!-- overview --&gt;
+&lt;p&gt;When several users or teams share a cluster with a fixed number of nodes,
+there is a concern that one team could use more than its fair share of resources.&lt;/p&gt;
+&lt;p&gt;Resource quotas are a tool for administrators to address this concern.&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;p&gt;A resource quota, defined by a &lt;code&gt;ResourceQuota&lt;/code&gt; object, provides constraints that limit
+aggregate resource consumption per namespace.  It can limit the quantity of objects that can
+be created in a namespace by type, as well as the total amount of compute resources that may
+be consumed by resources in that namespace.&lt;/p&gt;
+&lt;p&gt;Resource quotas work like this:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Different teams work in different namespaces.  Currently this is voluntary, but
+support for making this mandatory via ACLs is planned.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The administrator creates one ResourceQuota for each namespace.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Users create resources (pods, services, etc.) in the namespace, and the quota system
+tracks usage to ensure it does not exceed hard resource limits defined in a ResourceQuota.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If creating or updating a resource violates a quota constraint, the request will fail with HTTP
+status code &lt;code&gt;403 FORBIDDEN&lt;/code&gt; with a message explaining the constraint that would have been violated.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;If quota is enabled in a namespace for compute resources like &lt;code&gt;cpu&lt;/code&gt; and &lt;code&gt;memory&lt;/code&gt;, users must specify
+requests or limits for those values; otherwise, the quota system may reject pod creation.  Hint: Use
+the &lt;code&gt;LimitRanger&lt;/code&gt; admission controller to force defaults for pods that make no compute resource requirements.&lt;/p&gt;
+&lt;p&gt;See the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/&#34;&gt;walkthrough&lt;/a&gt;
+for an example of how to avoid this problem.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The name of a ResourceQuota object must be a valid
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS subdomain name&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Examples of policies that could be created using namespaces and quotas are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In a cluster with a capacity of 32 GiB RAM, and 16 cores, let team A use 20 GiB and 10 cores,
+let B use 10GiB and 4 cores, and hold 2GiB and 2 cores in reserve for future allocation.&lt;/li&gt;
+&lt;li&gt;Limit the &amp;ldquo;testing&amp;rdquo; namespace to using 1 core and 1GiB RAM.  Let the &amp;ldquo;production&amp;rdquo; namespace
+use any amount.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In the case where the total capacity of the cluster is less than the sum of the quotas of the namespaces,
+there may be contention for resources.  This is handled on a first-come-first-served basis.&lt;/p&gt;
+&lt;p&gt;Neither contention nor changes to quota will affect already created resources.&lt;/p&gt;
+&lt;h2 id=&#34;enabling-resource-quota&#34;&gt;Enabling Resource Quota&lt;/h2&gt;
+&lt;p&gt;Resource Quota support is enabled by default for many Kubernetes distributions.  It is
+enabled when the API server &lt;code&gt;--enable-admission-plugins=&lt;/code&gt; flag has &lt;code&gt;ResourceQuota&lt;/code&gt; as
+one of its arguments.&lt;/p&gt;
+&lt;p&gt;A resource quota is enforced in a particular namespace when there is a
+ResourceQuota in that namespace.&lt;/p&gt;
+&lt;h2 id=&#34;compute-resource-quota&#34;&gt;Compute Resource Quota&lt;/h2&gt;
+&lt;p&gt;You can limit the total sum of &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/manage-resources-containers/&#34;&gt;compute resources&lt;/a&gt; that can be requested in a given namespace.&lt;/p&gt;
+&lt;p&gt;The following resource types are supported:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Resource Name&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;limits.cpu&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Across all pods in a non-terminal state, the sum of CPU limits cannot exceed this value.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;limits.memory&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Across all pods in a non-terminal state, the sum of memory limits cannot exceed this value.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;requests.cpu&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Across all pods in a non-terminal state, the sum of CPU requests cannot exceed this value.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;requests.memory&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Across all pods in a non-terminal state, the sum of memory requests cannot exceed this value.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;hugepages-&amp;lt;size&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Across all pods in a non-terminal state, the number of huge page requests of the specified size cannot exceed this value.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;cpu&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Same as &lt;code&gt;requests.cpu&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;memory&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Same as &lt;code&gt;requests.memory&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;resource-quota-for-extended-resources&#34;&gt;Resource Quota For Extended Resources&lt;/h3&gt;
+&lt;p&gt;In addition to the resources mentioned above, in release 1.10, quota support for
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/manage-resources-containers/#extended-resources&#34;&gt;extended resources&lt;/a&gt; is added.&lt;/p&gt;
+&lt;p&gt;As overcommit is not allowed for extended resources, it makes no sense to specify both &lt;code&gt;requests&lt;/code&gt;
+and &lt;code&gt;limits&lt;/code&gt; for the same extended resource in a quota. So for extended resources, only quota items
+with prefix &lt;code&gt;requests.&lt;/code&gt; is allowed for now.&lt;/p&gt;
+&lt;p&gt;Take the GPU resource as an example, if the resource name is &lt;code&gt;nvidia.com/gpu&lt;/code&gt;, and you want to
+limit the total number of GPUs requested in a namespace to 4, you can define a quota as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;requests.nvidia.com/gpu: 4&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;See &lt;a href=&#34;#viewing-and-setting-quotas&#34;&gt;Viewing and Setting Quotas&lt;/a&gt; for more detail information.&lt;/p&gt;
+&lt;h2 id=&#34;storage-resource-quota&#34;&gt;Storage Resource Quota&lt;/h2&gt;
+&lt;p&gt;You can limit the total sum of &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/&#34;&gt;storage resources&lt;/a&gt; that can be requested in a given namespace.&lt;/p&gt;
+&lt;p&gt;In addition, you can limit consumption of storage resources based on associated storage-class.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Resource Name&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;requests.storage&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Across all persistent volume claims, the sum of storage requests cannot exceed this value.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;persistentvolumeclaims&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The total number of &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims&#34;&gt;PersistentVolumeClaims&lt;/a&gt; that can exist in the namespace.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;&amp;lt;storage-class-name&amp;gt;.storageclass.storage.k8s.io/requests.storage&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Across all persistent volume claims associated with the &lt;code&gt;&amp;lt;storage-class-name&amp;gt;&lt;/code&gt;, the sum of storage requests cannot exceed this value.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;&amp;lt;storage-class-name&amp;gt;.storageclass.storage.k8s.io/persistentvolumeclaims&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Across all persistent volume claims associated with the storage-class-name, the total number of &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims&#34;&gt;persistent volume claims&lt;/a&gt; that can exist in the namespace.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;For example, if an operator wants to quota storage with &lt;code&gt;gold&lt;/code&gt; storage class separate from &lt;code&gt;bronze&lt;/code&gt; storage class, the operator can
+define a quota as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;gold.storageclass.storage.k8s.io/requests.storage: 500Gi&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;bronze.storageclass.storage.k8s.io/requests.storage: 100Gi&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In release 1.8, quota support for local ephemeral storage is added as an alpha feature:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Resource Name&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;requests.ephemeral-storage&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Across all pods in the namespace, the sum of local ephemeral storage requests cannot exceed this value.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;limits.ephemeral-storage&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Across all pods in the namespace, the sum of local ephemeral storage limits cannot exceed this value.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;ephemeral-storage&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Same as &lt;code&gt;requests.ephemeral-storage&lt;/code&gt;.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;object-count-quota&#34;&gt;Object Count Quota&lt;/h2&gt;
+&lt;p&gt;You can set quota for the total number of certain resources of all standard,
+namespaced resource types using the following syntax:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;count/&amp;lt;resource&amp;gt;.&amp;lt;group&amp;gt;&lt;/code&gt; for resources from non-core groups&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;count/&amp;lt;resource&amp;gt;&lt;/code&gt; for resources from the core group&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Here is an example set of resources users may want to put under object count quota:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;count/persistentvolumeclaims&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;count/services&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;count/secrets&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;count/configmaps&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;count/replicationcontrollers&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;count/deployments.apps&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;count/replicasets.apps&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;count/statefulsets.apps&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;count/jobs.batch&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;count/cronjobs.batch&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The same syntax can be used for custom resources.
+For example, to create a quota on a &lt;code&gt;widgets&lt;/code&gt; custom resource in the &lt;code&gt;example.com&lt;/code&gt; API group, use &lt;code&gt;count/widgets.example.com&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;When using &lt;code&gt;count/*&lt;/code&gt; resource quota, an object is charged against the quota if it exists in server storage.
+These types of quotas are useful to protect against exhaustion of storage resources.  For example, you may
+want to limit the number of Secrets in a server given their large size. Too many Secrets in a cluster can
+actually prevent servers and controllers from starting. You can set a quota for Jobs to protect against
+a poorly configured CronJob. CronJobs that create too many Jobs in a namespace can lead to a denial of service.&lt;/p&gt;
+&lt;p&gt;It is also possible to do generic object count quota on a limited set of resources.
+The following types are supported:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Resource Name&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;configmaps&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The total number of ConfigMaps that can exist in the namespace.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;persistentvolumeclaims&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The total number of &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims&#34;&gt;PersistentVolumeClaims&lt;/a&gt; that can exist in the namespace.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;pods&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The total number of Pods in a non-terminal state that can exist in the namespace.  A pod is in a terminal state if &lt;code&gt;.status.phase in (Failed, Succeeded)&lt;/code&gt; is true.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;replicationcontrollers&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The total number of ReplicationControllers that can exist in the namespace.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;resourcequotas&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The total number of ResourceQuotas that can exist in the namespace.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;services&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The total number of Services that can exist in the namespace.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;services.loadbalancers&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The total number of Services of type &lt;code&gt;LoadBalancer&lt;/code&gt; that can exist in the namespace.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;services.nodeports&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The total number of Services of type &lt;code&gt;NodePort&lt;/code&gt; that can exist in the namespace.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;secrets&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;The total number of Secrets that can exist in the namespace.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;For example, &lt;code&gt;pods&lt;/code&gt; quota counts and enforces a maximum on the number of &lt;code&gt;pods&lt;/code&gt;
+created in a single namespace that are not terminal. You might want to set a &lt;code&gt;pods&lt;/code&gt;
+quota on a namespace to avoid the case where a user creates many small pods and
+exhausts the cluster&amp;rsquo;s supply of Pod IPs.&lt;/p&gt;
+&lt;h2 id=&#34;quota-scopes&#34;&gt;Quota Scopes&lt;/h2&gt;
+&lt;p&gt;Each quota can have an associated set of &lt;code&gt;scopes&lt;/code&gt;. A quota will only measure usage for a resource if it matches
+the intersection of enumerated scopes.&lt;/p&gt;
+&lt;p&gt;When a scope is added to the quota, it limits the number of resources it supports to those that pertain to the scope.
+Resources specified on the quota outside of the allowed set results in a validation error.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Scope&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;Terminating&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Match pods where &lt;code&gt;.spec.activeDeadlineSeconds &amp;gt;= 0&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;NotTerminating&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Match pods where &lt;code&gt;.spec.activeDeadlineSeconds is nil&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;BestEffort&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Match pods that have best effort quality of service.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;NotBestEffort&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Match pods that do not have best effort quality of service.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;PriorityClass&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Match pods that references the specified &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-priority-preemption&#34;&gt;priority class&lt;/a&gt;.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The &lt;code&gt;BestEffort&lt;/code&gt; scope restricts a quota to tracking the following resource:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;pods&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The &lt;code&gt;Terminating&lt;/code&gt;, &lt;code&gt;NotTerminating&lt;/code&gt;, &lt;code&gt;NotBestEffort&lt;/code&gt; and &lt;code&gt;PriorityClass&lt;/code&gt;
+scopes restrict a quota to tracking the following resources:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;pods&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;cpu&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;memory&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;requests.cpu&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;requests.memory&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;limits.cpu&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;limits.memory&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Note that you cannot specify both the &lt;code&gt;Terminating&lt;/code&gt; and the &lt;code&gt;NotTerminating&lt;/code&gt;
+scopes in the same quota, and you cannot specify both the &lt;code&gt;BestEffort&lt;/code&gt; and
+&lt;code&gt;NotBestEffort&lt;/code&gt; scopes in the same quota either.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;scopeSelector&lt;/code&gt; supports the following values in the &lt;code&gt;operator&lt;/code&gt; field:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;In&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;NotIn&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Exists&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;DoesNotExist&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;When using one of the following values as the &lt;code&gt;scopeName&lt;/code&gt; when defining the
+&lt;code&gt;scopeSelector&lt;/code&gt;, the &lt;code&gt;operator&lt;/code&gt; must be &lt;code&gt;Exists&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Terminating&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;NotTerminating&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;BestEffort&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;NotBestEffort&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If the &lt;code&gt;operator&lt;/code&gt; is &lt;code&gt;In&lt;/code&gt; or &lt;code&gt;NotIn&lt;/code&gt;, the &lt;code&gt;values&lt;/code&gt; field must have at least
+one value. For example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;scopeSelector&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;scopeName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PriorityClass&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
+          - &lt;span style=&#34;color:#ae81ff&#34;&gt;middle&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If the &lt;code&gt;operator&lt;/code&gt; is &lt;code&gt;Exists&lt;/code&gt; or &lt;code&gt;DoesNotExist&lt;/code&gt;, the &lt;code&gt;values&lt;/code&gt; field must &lt;em&gt;NOT&lt;/em&gt; be
+specified.&lt;/p&gt;
+&lt;h3 id=&#34;resource-quota-per-priorityclass&#34;&gt;Resource Quota Per PriorityClass&lt;/h3&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.17 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;Pods can be created at a specific &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-priority-preemption/#pod-priority&#34;&gt;priority&lt;/a&gt;.
+You can control a pod&amp;rsquo;s consumption of system resources based on a pod&amp;rsquo;s priority, by using the &lt;code&gt;scopeSelector&lt;/code&gt;
+field in the quota spec.&lt;/p&gt;
+&lt;p&gt;A quota is matched and consumed only if &lt;code&gt;scopeSelector&lt;/code&gt; in the quota spec selects the pod.&lt;/p&gt;
+&lt;p&gt;When quota is scoped for priority class using &lt;code&gt;scopeSelector&lt;/code&gt; field, quota object is restricted to track only following resources:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;pods&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;cpu&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;memory&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ephemeral-storage&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;limits.cpu&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;limits.memory&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;limits.ephemeral-storage&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;requests.cpu&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;requests.memory&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;requests.ephemeral-storage&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This example creates a quota object and matches it with pods at specific priorities. The example
+works as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Pods in the cluster have one of the three priority classes, &amp;ldquo;low&amp;rdquo;, &amp;ldquo;medium&amp;rdquo;, &amp;ldquo;high&amp;rdquo;.&lt;/li&gt;
+&lt;li&gt;One quota object is created for each priority.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Save the following YAML to a file &lt;code&gt;quota.yml&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;List&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;items&lt;/span&gt;:
+- &lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ResourceQuota&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pods-high&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;hard&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;cpu&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1000&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;memory&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;200Gi&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;pods&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;10&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;scopeSelector&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;operator &lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;scopeName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PriorityClass&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;: [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;high&amp;#34;&lt;/span&gt;]
+- &lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ResourceQuota&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pods-medium&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;hard&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;cpu&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;10&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;memory&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;20Gi&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;pods&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;10&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;scopeSelector&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;operator &lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;scopeName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PriorityClass&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;: [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;medium&amp;#34;&lt;/span&gt;]
+- &lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ResourceQuota&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pods-low&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;hard&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;cpu&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;5&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;memory&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10Gi&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;pods&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;10&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;scopeSelector&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;operator &lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;scopeName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PriorityClass&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;: [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;low&amp;#34;&lt;/span&gt;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Apply the YAML using &lt;code&gt;kubectl create&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create -f ./quota.yml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre&gt;&lt;code&gt;resourcequota/pods-high created
+resourcequota/pods-medium created
+resourcequota/pods-low created
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Verify that &lt;code&gt;Used&lt;/code&gt; quota is &lt;code&gt;0&lt;/code&gt; using &lt;code&gt;kubectl describe quota&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl describe quota
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre&gt;&lt;code&gt;Name:       pods-high
+Namespace:  default
+Resource    Used  Hard
+--------    ----  ----
+cpu         0     1k
+memory      0     200Gi
+pods        0     10
+
+
+Name:       pods-low
+Namespace:  default
+Resource    Used  Hard
+--------    ----  ----
+cpu         0     5
+memory      0     10Gi
+pods        0     10
+
+
+Name:       pods-medium
+Namespace:  default
+Resource    Used  Hard
+--------    ----  ----
+cpu         0     10
+memory      0     20Gi
+pods        0     10
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Create a pod with priority &amp;ldquo;high&amp;rdquo;. Save the following YAML to a
+file &lt;code&gt;high-priority-pod.yml&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;high-priority&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;high-priority&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ubuntu&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;command&lt;/span&gt;: [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/bin/sh&amp;#34;&lt;/span&gt;]
+    &lt;span style=&#34;color:#f92672&#34;&gt;args&lt;/span&gt;: [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;-c&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;while true; do echo hello; sleep 10;done&amp;#34;&lt;/span&gt;]
+    &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;requests&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;memory&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;10Gi&amp;#34;&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;cpu&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;500m&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;limits&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;memory&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;10Gi&amp;#34;&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;cpu&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;500m&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;priorityClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;high&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Apply it with &lt;code&gt;kubectl create&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create -f ./high-priority-pod.yml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Verify that &amp;ldquo;Used&amp;rdquo; stats for &amp;ldquo;high&amp;rdquo; priority quota, &lt;code&gt;pods-high&lt;/code&gt;, has changed and that
+the other two quotas are unchanged.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl describe quota
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre&gt;&lt;code&gt;Name:       pods-high
+Namespace:  default
+Resource    Used  Hard
+--------    ----  ----
+cpu         500m  1k
+memory      10Gi  200Gi
+pods        1     10
+
+
+Name:       pods-low
+Namespace:  default
+Resource    Used  Hard
+--------    ----  ----
+cpu         0     5
+memory      0     10Gi
+pods        0     10
+
+
+Name:       pods-medium
+Namespace:  default
+Resource    Used  Hard
+--------    ----  ----
+cpu         0     10
+memory      0     20Gi
+pods        0     10
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;requests-vs-limits&#34;&gt;Requests compared to Limits&lt;/h2&gt;
+&lt;p&gt;When allocating compute resources, each container may specify a request and a limit value for either CPU or memory.
+The quota can be configured to quota either value.&lt;/p&gt;
+&lt;p&gt;If the quota has a value specified for &lt;code&gt;requests.cpu&lt;/code&gt; or &lt;code&gt;requests.memory&lt;/code&gt;, then it requires that every incoming
+container makes an explicit request for those resources.  If the quota has a value specified for &lt;code&gt;limits.cpu&lt;/code&gt; or &lt;code&gt;limits.memory&lt;/code&gt;,
+then it requires that every incoming container specifies an explicit limit for those resources.&lt;/p&gt;
+&lt;h2 id=&#34;viewing-and-setting-quotas&#34;&gt;Viewing and Setting Quotas&lt;/h2&gt;
+&lt;p&gt;Kubectl supports creating, updating, and viewing quotas:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create namespace myspace
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;cat &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt; compute-resources.yaml
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;apiVersion: v1
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;kind: ResourceQuota
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  name: compute-resources
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;spec:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  hard:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    requests.cpu: &amp;#34;1&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    requests.memory: 1Gi
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    limits.cpu: &amp;#34;2&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    limits.memory: 2Gi
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    requests.nvidia.com/gpu: 4
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create -f ./compute-resources.yaml --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;myspace
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;cat &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt; object-counts.yaml
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;apiVersion: v1
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;kind: ResourceQuota
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  name: object-counts
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;spec:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  hard:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    configmaps: &amp;#34;10&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    persistentvolumeclaims: &amp;#34;4&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    pods: &amp;#34;4&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    replicationcontrollers: &amp;#34;20&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    secrets: &amp;#34;10&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    services: &amp;#34;10&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    services.loadbalancers: &amp;#34;2&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create -f ./object-counts.yaml --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;myspace
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get quota --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;myspace
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre&gt;&lt;code&gt;NAME                    AGE
+compute-resources       30s
+object-counts           32s
+&lt;/code&gt;&lt;/pre&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl describe quota compute-resources --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;myspace
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre&gt;&lt;code&gt;Name:                    compute-resources
+Namespace:               myspace
+Resource                 Used  Hard
+--------                 ----  ----
+limits.cpu               0     2
+limits.memory            0     2Gi
+requests.cpu             0     1
+requests.memory          0     1Gi
+requests.nvidia.com/gpu  0     4
+&lt;/code&gt;&lt;/pre&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl describe quota object-counts --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;myspace
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre&gt;&lt;code&gt;Name:                   object-counts
+Namespace:              myspace
+Resource                Used    Hard
+--------                ----    ----
+configmaps              0       10
+persistentvolumeclaims  0       4
+pods                    0       4
+replicationcontrollers  0       20
+secrets                 1       10
+services                0       10
+services.loadbalancers  0       2
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Kubectl also supports object count quota for all standard namespaced resources
+using the syntax &lt;code&gt;count/&amp;lt;resource&amp;gt;.&amp;lt;group&amp;gt;&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create namespace myspace
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create quota test --hard&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;count/deployments.apps&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;2,count/replicasets.apps&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;4,count/pods&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;3,count/secrets&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt; --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;myspace
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create deployment nginx --image&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;nginx --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;myspace --replicas&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl describe quota --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;myspace
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre&gt;&lt;code&gt;Name:                         test
+Namespace:                    myspace
+Resource                      Used  Hard
+--------                      ----  ----
+count/deployments.apps        1     2
+count/pods                    2     3
+count/replicasets.apps        1     4
+count/secrets                 1     4
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;quota-and-cluster-capacity&#34;&gt;Quota and Cluster Capacity&lt;/h2&gt;
+&lt;p&gt;ResourceQuotas are independent of the cluster capacity. They are
+expressed in absolute units.  So, if you add nodes to your cluster, this does &lt;em&gt;not&lt;/em&gt;
+automatically give each namespace the ability to consume more resources.&lt;/p&gt;
+&lt;p&gt;Sometimes more complex policies may be desired, such as:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Proportionally divide total cluster resources among several teams.&lt;/li&gt;
+&lt;li&gt;Allow each tenant to grow resource usage as needed, but have a generous
+limit to prevent accidental resource exhaustion.&lt;/li&gt;
+&lt;li&gt;Detect demand from one namespace, add nodes, and increase quota.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Such policies could be implemented using &lt;code&gt;ResourceQuotas&lt;/code&gt; as building blocks, by
+writing a &amp;ldquo;controller&amp;rdquo; that watches the quota usage and adjusts the quota
+hard limits of each namespace according to other signals.&lt;/p&gt;
+&lt;p&gt;Note that resource quota divides up aggregate cluster resources, but it creates no
+restrictions around nodes: pods from several namespaces may run on the same node.&lt;/p&gt;
+&lt;h2 id=&#34;limit-priority-class-consumption-by-default&#34;&gt;Limit Priority Class consumption by default&lt;/h2&gt;
+&lt;p&gt;It may be desired that pods at a particular priority, eg. &amp;ldquo;cluster-services&amp;rdquo;,
+should be allowed in a namespace, if and only if, a matching quota object exists.&lt;/p&gt;
+&lt;p&gt;With this mechanism, operators are able to restrict usage of certain high
+priority classes to a limited number of namespaces and not every namespace
+will be able to consume these priority classes by default.&lt;/p&gt;
+&lt;p&gt;To enforce this, &lt;code&gt;kube-apiserver&lt;/code&gt; flag &lt;code&gt;--admission-control-config-file&lt;/code&gt; should be
+used to pass path to the following configuration file:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apiserver.config.k8s.io/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;AdmissionConfiguration&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;plugins&lt;/span&gt;:
+- &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ResourceQuota&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;configuration&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apiserver.config.k8s.io/v1&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ResourceQuotaConfiguration&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;limitedResources&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;resource&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pods&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;matchScopes&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;scopeName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PriorityClass&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;: [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;cluster-services&amp;#34;&lt;/span&gt;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now, &amp;ldquo;cluster-services&amp;rdquo; pods will be allowed in only those namespaces where a quota object with a matching &lt;code&gt;scopeSelector&lt;/code&gt; is present.
+For example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;scopeSelector&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;scopeName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PriorityClass&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;: [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;cluster-services&amp;#34;&lt;/span&gt;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;See &lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/resource-management/admission_control_resource_quota.md&#34;&gt;ResourceQuota design doc&lt;/a&gt; for more information.&lt;/li&gt;
+&lt;li&gt;See a &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/quota-api-object/&#34;&gt;detailed example for how to use resource quota&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Read &lt;a href=&#34;https://github.com/kubernetes/community/blob/master/contributors/design-proposals/scheduling/pod-priority-resourcequota.md&#34;&gt;Quota support for priority class design doc&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;See &lt;a href=&#34;https://github.com/kubernetes/kubernetes/pull/36765&#34;&gt;LimitedResources&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: </title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/pid-limiting/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/pid-limiting/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

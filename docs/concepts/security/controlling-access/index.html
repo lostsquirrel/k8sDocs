@@ -20,11 +20,11 @@
 <meta property="og:description" content="本文概述对 k8s API 的访问控制 用户可以使用 kubectl, 客户端库，或发送 REST 请求来访问 Kubernetes API. 用户和 k8s 服务账号 都可以授权访问 API。 当一个请求到达 API 时，会经过几个阶" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/controlling-access/" />
-<meta property="article:modified_time" content="2021-01-20T17:58:45+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2021-01-20T20:05:59+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="对 k8s API 的访问控制">
 <meta itemprop="description" content="本文概述对 k8s API 的访问控制 用户可以使用 kubectl, 客户端库，或发送 REST 请求来访问 Kubernetes API. 用户和 k8s 服务账号 都可以授权访问 API。 当一个请求到达 API 时，会经过几个阶">
-<meta itemprop="dateModified" content="2021-01-20T17:58:45+08:00" />
-<meta itemprop="wordCount" content="1275">
+<meta itemprop="dateModified" content="2021-01-20T20:05:59+08:00" />
+<meta itemprop="wordCount" content="1848">
 
 
 
@@ -813,6 +813,47 @@
 
       
       
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/policy/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">策略</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptspolicy">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptspolicylimit-range" href="/k8sDocs/docs/concepts/policy/limit-range/">Limit Ranges</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptspolicyresource-quotas" href="/k8sDocs/docs/concepts/policy/resource-quotas/">Resource Quotas</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptspolicypid-limiting" href="/k8sDocs/docs/concepts/policy/pid-limiting/"></a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
     </li>
   </ul>
 </ul>
@@ -979,10 +1020,56 @@ users in its API.
 用户名就会被用到接下来的步骤中的决策中。 有些认证器也会提供用户的组信息，有些认证器则不会。</p>
 <p>当 k8s 在使用用户名作为访问控制决策和在请求日志中，是不会有一个 <code>User</code> 对象，也不会在 API 存储用户名
 或其它关于用户的信息的。</p>
-<h2 id="authorization">Authorization</h2>
-<p>After the request is authenticated as coming from a specific user, the request must be authorized. This is shown as step <strong>2</strong> in the diagram.</p>
-<p>A request must include the username of the requester, the requested action, and the object affected by the action. The request is authorized if an existing policy declares that the user has permissions to complete the requested action.</p>
-<p>For example, if Bob has the policy below, then he can read pods only in the namespace <code>projectCaribou</code>:</p>
+<!--
+## Authorization
+
+After the request is authenticated as coming from a specific user, the request must be authorized. This is shown as step **2** in the diagram.
+
+A request must include the username of the requester, the requested action, and the object affected by the action. The request is authorized if an existing policy declares that the user has permissions to complete the requested action.
+
+For example, if Bob has the policy below, then he can read pods only in the namespace `projectCaribou`:
+
+```json
+{
+    "apiVersion": "abac.authorization.kubernetes.io/v1beta1",
+    "kind": "Policy",
+    "spec": {
+        "user": "bob",
+        "namespace": "projectCaribou",
+        "resource": "pods",
+        "readonly": true
+    }
+}
+```
+If Bob makes the following request, the request is authorized because he is allowed to read objects in the `projectCaribou` namespace:
+
+```json
+{
+  "apiVersion": "authorization.k8s.io/v1beta1",
+  "kind": "SubjectAccessReview",
+  "spec": {
+    "resourceAttributes": {
+      "namespace": "projectCaribou",
+      "verb": "get",
+      "group": "unicorn.example.org",
+      "resource": "pods"
+    }
+  }
+}
+```
+If Bob makes a request to write (`create` or `update`) to the objects in the `projectCaribou` namespace, his authorization is denied. If Bob makes a request to read (`get`) objects in a different namespace such as `projectFish`, then his authorization is denied.
+
+Kubernetes authorization requires that you use common REST attributes to interact with existing organization-wide or cloud-provider-wide access control systems. It is important to use REST formatting because these control systems might interact with other APIs besides the Kubernetes API.
+
+Kubernetes supports multiple authorization modules, such as ABAC mode, RBAC Mode, and Webhook mode. When an administrator creates a cluster, they configure the authorization modules that should be used in the API server. If more than one authorization modules are configured, Kubernetes checks each module, and if any module authorizes the request, then the request can proceed. If all of the modules deny the request, then the request is denied (HTTP status code 403).
+
+To learn more about Kubernetes authorization, including details about creating policies using the supported authorization modules, see [Authorization](/docs/reference/access-authn-authz/authorization/).
+ -->
+<h2 id="authorization">授权</h2>
+<p>当来自指定用户的请求认证后，这个请求必须要被授权。 这就是图片中的步骤 <strong>2</strong>。</p>
+<p>请求必须包含请求者的用户名，请求行为，和受行为影响的对象。 如果有存在的策略定义这个用户有完成这个
+请求行为的权限就表示请求被授权了。</p>
+<p>例如， 如果 Bob 拥有以下策略，则他只能读取命名空间 <code>projectCaribou</code> 中的 Pod :</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
     <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;abac.authorization.kubernetes.io/v1beta1&#34;</span>,
     <span style="color:#f92672">&#34;kind&#34;</span>: <span style="color:#e6db74">&#34;Policy&#34;</span>,
@@ -993,7 +1080,7 @@ users in its API.
         <span style="color:#f92672">&#34;readonly&#34;</span>: <span style="color:#66d9ef">true</span>
     }
 }
-</code></pre></div><p>If Bob makes the following request, the request is authorized because he is allowed to read objects in the <code>projectCaribou</code> namespace:</p>
+</code></pre></div><p>如果 Bob 发起以下请求，这个请求会被授权，因为他被允许读取 命名空间 <code>projectCaribou</code> 中的 Pod :</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
   <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;authorization.k8s.io/v1beta1&#34;</span>,
   <span style="color:#f92672">&#34;kind&#34;</span>: <span style="color:#e6db74">&#34;SubjectAccessReview&#34;</span>,
@@ -1006,101 +1093,184 @@ users in its API.
     }
   }
 }
-</code></pre></div><p>If Bob makes a request to write (<code>create</code> or <code>update</code>) to the objects in the <code>projectCaribou</code> namespace, his authorization is denied. If Bob makes a request to read (<code>get</code>) objects in a different namespace such as <code>projectFish</code>, then his authorization is denied.</p>
-<p>Kubernetes authorization requires that you use common REST attributes to interact with existing organization-wide or cloud-provider-wide access control systems. It is important to use REST formatting because these control systems might interact with other APIs besides the Kubernetes API.</p>
-<p>Kubernetes supports multiple authorization modules, such as ABAC mode, RBAC Mode, and Webhook mode. When an administrator creates a cluster, they configure the authorization modules that should be used in the API server. If more than one authorization modules are configured, Kubernetes checks each module, and if any module authorizes the request, then the request can proceed. If all of the modules deny the request, then the request is denied (HTTP status code 403).</p>
-<p>To learn more about Kubernetes authorization, including details about creating policies using the supported authorization modules, see <a href="/docs/reference/access-authn-authz/authorization/">Authorization</a>.</p>
-<h2 id="admission-control">Admission control</h2>
-<p>Admission Control modules are software modules that can modify or reject requests.
+</code></pre></div><p>如果 Bob 发起一个写请求(<code>create</code> 或 <code>update</code>)到命名空间 <code>projectCaribou</code> 中的对象，他的
+授权就会被拒绝的。 如果 Bob 发起一个读请求(<code>get</code>)到另个名称空间如 <code>projectFish</code> 中的对象，
+这时他的授权也会被拒绝。</p>
+<p>k8s 授权要求用户使用通用 REST 属性与存在的组织内或云提供商内的访问控制系统交互。使用 REST 格式
+很重要是因为这些控制系统可能与 k8s API 外的其它 API 进行交互。</p>
+<p>k8s 支持多种授权模块，如 ABAC 模式，RBAC 模式，和 Webhook 模式。 当管理员在创建集群时，他们
+每配置 API 服务中使用的授权模块。 如果配置了多个授权模块， k8s 会检查每个模块， 如果有任意一个
+模块对这个模块授权，则这个请求就能继续。 如果所有的请求都被拒绝，则这个请求就会被拒绝(HTTP 状态码 403)。</p>
+<p>要学习更多 k8s 授权， 包含使用支持的授权模块创建策略， 见
+<a href="https://kubernetes.io/docs/reference/access-authn-authz/authorization/">Authorization</a>.</p>
+<!--
+## Admission control
+
+Admission Control modules are software modules that can modify or reject requests.
 In addition to the attributes available to Authorization modules, Admission
-Control modules can access the contents of the object that is being created or modified.</p>
-<p>Admission controllers act on requests that create, modify, delete, or connect to (proxy) an object.
+Control modules can access the contents of the object that is being created or modified.
+
+Admission controllers act on requests that create, modify, delete, or connect to (proxy) an object.
 Admission controllers do not act on requests that merely read objects.
-When multiple admission controllers are configured, they are called in order.</p>
-<p>This is shown as step <strong>3</strong> in the diagram.</p>
-<p>Unlike Authentication and Authorization modules, if any admission controller module
-rejects, then the request is immediately rejected.</p>
-<p>In addition to rejecting objects, admission controllers can also set complex defaults for
-fields.</p>
-<p>The available Admission Control modules are described in <a href="/docs/reference/access-authn-authz/admission-controllers/">Admission Controllers</a>.</p>
-<p>Once a request passes all admission controllers, it is validated using the validation routines
-for the corresponding API object, and then written to the object store (shown as step <strong>4</strong>).</p>
-<h2 id="api-server-ports-and-ips">API server ports and IPs</h2>
+When multiple admission controllers are configured, they are called in order.
+
+This is shown as step **3** in the diagram.
+
+Unlike Authentication and Authorization modules, if any admission controller module
+rejects, then the request is immediately rejected.
+
+In addition to rejecting objects, admission controllers can also set complex defaults for
+fields.
+
+The available Admission Control modules are described in [Admission Controllers](/docs/reference/access-authn-authz/admission-controllers/).
+
+Once a request passes all admission controllers, it is validated using the validation routines
+for the corresponding API object, and then written to the object store (shown as step **4**).
+ -->
+<h2 id="admission-control">准入控制</h2>
+<p>准入控制模块是软件模块，它可以修改或拒绝请求。 相对于授权模块能够访问的属性， 准入控制模块可以
+访问请求创建或修改的对象的内容。</p>
+<p>准入控制器对对创建，修改，删除或连接(代理)的对象执行操作。 准入控制器不会对只读对象的请求执行操作。
+当配置了多个准入控制器时，他们会以顺序调用。</p>
+<p>这就是图片中的步骤 <strong>3</strong></p>
+<p>与认证与授权模块不同，如果有任意准入控制器模块拒绝，则这个请求立马就会被拒绝。</p>
+<p>在拒绝对象个，准入控制器也可以设置复杂的默认字段。</p>
+<p>可以使用的准入控制模块描述见
+<a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/">准入控制器</a>.</p>
+<p>当请求通过了所有准入控制器，会对对应的 API 对象使用验证程序来对其验证，然后将这个对象写入存储(如步骤 <strong>4</strong> 所示).</p>
+<blockquote>
+  <div><strong>TODO: </strong>说得不太清楚，需要实践理解后再考虑怎么修改</div>
+</blockquote>
+
+<!--
+## API server ports and IPs
+
+The previous discussion applies to requests sent to the secure port of the API server
+(the typical case).  The API server can actually serve on 2 ports:
+
+By default the Kubernetes API server serves HTTP on 2 ports:
+
+  1. `localhost` port:
+
+      - is intended for testing and bootstrap, and for other components of the master node
+        (scheduler, controller-manager) to talk to the API
+      - no TLS
+      - default is port 8080, change with `--insecure-port` flag.
+      - default IP is localhost, change with `--insecure-bind-address` flag.
+      - request **bypasses** authentication and authorization modules.
+      - request handled by admission control module(s).
+      - protected by need to have host access
+
+  2. “Secure port”:
+
+      - use whenever possible
+      - uses TLS.  Set cert with `--tls-cert-file` and key with `--tls-private-key-file` flag.
+      - default is port 6443, change with `--secure-port` flag.
+      - default IP is first non-localhost network interface, change with `--bind-address` flag.
+      - request handled by authentication and authorization modules.
+      - request handled by admission control module(s).
+      - authentication and authorization modules run.
+ -->
+<h2 id="api-server-ports-and-ips">API 服务的端口与 IP</h2>
 <p>The previous discussion applies to requests sent to the secure port of the API server
-(the typical case).  The API server can actually serve on 2 ports:</p>
-<p>By default the Kubernetes API server serves HTTP on 2 ports:</p>
+(the typical case).  The API server can actually serve on 2 ports:
+上面讨论中执行的请求是发送到 API 服务的安全端口的(典型场景). API 服务实际上是可以使用 2 个端口提供服务:</p>
+<p>By default the Kubernetes API server serves HTTP on 2 ports:
+默认情况下 k8s API 服务使用 2 个端口提供 HTTP 服务:</p>
 <ol>
-<li>
-<p><code>localhost</code> port:</p>
-<ul>
-<li>is intended for testing and bootstrap, and for other components of the master node
-(scheduler, controller-manager) to talk to the API</li>
-<li>no TLS</li>
-<li>default is port 8080, change with <code>--insecure-port</code> flag.</li>
-<li>default IP is localhost, change with <code>--insecure-bind-address</code> flag.</li>
-<li>request <strong>bypasses</strong> authentication and authorization modules.</li>
-<li>request handled by admission control module(s).</li>
-<li>protected by need to have host access</li>
-</ul>
-</li>
-<li>
-<p>“Secure port”:</p>
-<ul>
-<li>use whenever possible</li>
-<li>uses TLS.  Set cert with <code>--tls-cert-file</code> and key with <code>--tls-private-key-file</code> flag.</li>
-<li>default is port 6443, change with <code>--secure-port</code> flag.</li>
-<li>default IP is first non-localhost network interface, change with <code>--bind-address</code> flag.</li>
-<li>request handled by authentication and authorization modules.</li>
-<li>request handled by admission control module(s).</li>
-<li>authentication and authorization modules run.</li>
-</ul>
-</li>
+<li><code>localhost</code> 端口:</li>
 </ol>
+<ul>
+<li>主要用于测试和引导，也可以用于主节点上的其它模块(scheduler, controller-manager) 与 API 通信</li>
+<li>没有 TLS</li>
+<li>默认端口是 8080，使用 <code>--insecure-port</code> 标志修改</li>
+<li>默认 IP 是 <code>localhost</code>， 使用 <code>--insecure-bind-address</code> 标志修改</li>
+<li>请求 <strong>绕过</strong> 认证和授权模块。</li>
+<li>请求会被准入控制模块处理</li>
+<li>保护方式是需要主机访问</li>
+</ul>
+<ol start="2">
+<li>&ldquo;安全端口&rdquo;:</li>
+</ol>
+<ul>
+<li>尽量无论何时都使用</li>
+<li>使用 TLS 使用 <code>--tls-cert-file</code> 使用证书，使用 <code>--tls-private-key-file</code> 使用密钥</li>
+<li>默认端口是 6443， 使用 <code>--secure-port</code> 标志修改</li>
+<li>默认 IP 首先是一个非 localhost 网络接口， 使用 <code>--bind-address</code> 标志修改</li>
+<li>请求会被认证和授权模块处理</li>
+<li>请求会被准入控制模块处理</li>
+<li>认证和授权模块会运行</li>
+</ul>
 <h2 id="相关资料">相关资料</h2>
-<p>Read more documentation on authentication, authorization and API access control:</p>
+<!--
+
+Read more documentation on authentication, authorization and API access control:
+
+- [Authenticating](/docs/reference/access-authn-authz/authentication/)
+   - [Authenticating with Bootstrap Tokens](/docs/reference/access-authn-authz/bootstrap-tokens/)
+- [Admission Controllers](/docs/reference/access-authn-authz/admission-controllers/)
+   - [Dynamic Admission Control](/docs/reference/access-authn-authz/extensible-admission-controllers/)
+- [Authorization](/docs/reference/access-authn-authz/authorization/)
+   - [Role Based Access Control](/docs/reference/access-authn-authz/rbac/)
+   - [Attribute Based Access Control](/docs/reference/access-authn-authz/abac/)
+   - [Node Authorization](/docs/reference/access-authn-authz/node/)
+   - [Webhook Authorization](/docs/reference/access-authn-authz/webhook/)
+- [Certificate Signing Requests](/docs/reference/access-authn-authz/certificate-signing-requests/)
+   - including [CSR approval](/docs/reference/access-authn-authz/certificate-signing-requests/#approval-rejection)
+     and [certificate signing](/docs/reference/access-authn-authz/certificate-signing-requests/#signing)
+- Service accounts
+  - [Developer guide](/docs/tasks/configure-pod-container/configure-service-account/)
+  - [Administration](/docs/reference/access-authn-authz/service-accounts-admin/)
+
+You can learn about:
+- how Pods can use
+  [Secrets](/docs/concepts/configuration/secret/#service-accounts-automatically-create-and-attach-secrets-with-api-credentials)
+  to obtain API credentials.
+ -->
+<p>更多关于 认证，授权， API 准入控制的文档:</p>
 <ul>
-<li><a href="/docs/reference/access-authn-authz/authentication/">Authenticating</a>
+<li><a href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/">Authenticating</a>
 <ul>
-<li><a href="/docs/reference/access-authn-authz/bootstrap-tokens/">Authenticating with Bootstrap Tokens</a></li>
+<li><a href="https://kubernetes.io/docs/reference/access-authn-authz/bootstrap-tokens/">Authenticating with Bootstrap Tokens</a></li>
 </ul>
 </li>
-<li><a href="/docs/reference/access-authn-authz/admission-controllers/">Admission Controllers</a>
+<li><a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/">Admission Controllers</a>
 <ul>
-<li><a href="/docs/reference/access-authn-authz/extensible-admission-controllers/">Dynamic Admission Control</a></li>
+<li><a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/">Dynamic Admission Control</a></li>
 </ul>
 </li>
-<li><a href="/docs/reference/access-authn-authz/authorization/">Authorization</a>
+<li><a href="https://kubernetes.io/docs/reference/access-authn-authz/authorization/">Authorization</a>
 <ul>
-<li><a href="/docs/reference/access-authn-authz/rbac/">Role Based Access Control</a></li>
-<li><a href="/docs/reference/access-authn-authz/abac/">Attribute Based Access Control</a></li>
-<li><a href="/docs/reference/access-authn-authz/node/">Node Authorization</a></li>
-<li><a href="/docs/reference/access-authn-authz/webhook/">Webhook Authorization</a></li>
+<li><a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/">Role Based Access Control</a></li>
+<li><a href="https://kubernetes.io/docs/reference/access-authn-authz/abac/">Attribute Based Access Control</a></li>
+<li><a href="https://kubernetes.io/docs/reference/access-authn-authz/node/">Node Authorization</a></li>
+<li><a href="https://kubernetes.io/docs/reference/access-authn-authz/webhook/">Webhook Authorization</a></li>
 </ul>
 </li>
-<li><a href="/docs/reference/access-authn-authz/certificate-signing-requests/">Certificate Signing Requests</a>
+<li><a href="https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/">Certificate Signing Requests</a>
 <ul>
-<li>including <a href="/docs/reference/access-authn-authz/certificate-signing-requests/#approval-rejection">CSR approval</a>
-and <a href="/docs/reference/access-authn-authz/certificate-signing-requests/#signing">certificate signing</a></li>
+<li>including <a href="https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#approval-rejection">CSR approval</a>
+and <a href="https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#signing">certificate signing</a></li>
 </ul>
 </li>
-<li>Service accounts
+<li>服务账号
 <ul>
-<li><a href="/docs/tasks/configure-pod-container/configure-service-account/">Developer guide</a></li>
-<li><a href="/docs/reference/access-authn-authz/service-accounts-admin/">Administration</a></li>
+<li><a href="/k8sDocs/docs/tasks/configure-pod-container/configure-service-account/">开发者引导</a></li>
+<li><a href="https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/">Administration</a></li>
 </ul>
 </li>
 </ul>
-<p>You can learn about:</p>
+<p>还可以学习:</p>
 <ul>
-<li>how Pods can use
-<a href="/docs/concepts/configuration/secret/#service-accounts-automatically-create-and-attach-secrets-with-api-credentials">Secrets</a>
-to obtain API credentials.</li>
+<li>Pod 怎么使用
+<a href="/k8sDocs/docs/concepts/configuration/secret/#service-accounts-automatically-create-and-attach-secrets-with-api-credentials">Secret</a>
+获取 API 凭据</li>
 </ul>
 
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-01-20 17:58:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/bf739eb39836f7b99c7d1b6ae9bbda7da763ddcc">[WIP]add controlling access (bf739eb)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-01-20 20:05:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/0a6ca3159ef751a9506965eaeae9878b0bbd2b2b">publish controlling access (0a6ca31)</a>
 </div>
             
           </main>
@@ -1139,9 +1309,9 @@ to obtain API credentials.</li>
   <ul>
     <li><a href="#transport-security">传输安全</a></li>
     <li><a href="#authentication">认证</a></li>
-    <li><a href="#authorization">Authorization</a></li>
-    <li><a href="#admission-control">Admission control</a></li>
-    <li><a href="#api-server-ports-and-ips">API server ports and IPs</a></li>
+    <li><a href="#authorization">授权</a></li>
+    <li><a href="#admission-control">准入控制</a></li>
+    <li><a href="#api-server-ports-and-ips">API 服务的端口与 IP</a></li>
     <li><a href="#相关资料">相关资料</a></li>
   </ul>
 </nav>

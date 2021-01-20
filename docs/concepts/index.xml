@@ -153,5 +153,18 @@ Kubernetes networking addresses four concerns:
       </description>
     </item>
     
+    <item>
+      <title>Docs: 策略</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
   </channel>
 </rss>

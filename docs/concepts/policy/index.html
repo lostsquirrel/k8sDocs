@@ -11,29 +11,22 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
+<link rel="alternate" type="application/rss&#43;xml" href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/index.xml">
 <link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
 <link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
 <link rel="manifest" href="/k8sDocs/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/k8sDocs/images/kubernetes-192x192.png">
 
-<title>通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目 | Kubernetes</title><meta property="og:title" content="通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目" />
-<meta property="og:description" content="在 DNS 和其它方式都不可用时，想要向通过向 Pod 的 /etc/hosts 文件添加条目的方式来重写 Pod 级别的域名解析，可能通过 PodSpec 的 HostAliases 字段向该 Pod 的 /etc/hosts 添加自定义条目。 不建议直接" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/" />
-<meta property="article:published_time" content="2020-10-09T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-01-20T20:05:59+08:00" /><meta property="og:site_name" content="Kubernetes" />
-<meta itemprop="name" content="通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目">
-<meta itemprop="description" content="在 DNS 和其它方式都不可用时，想要向通过向 Pod 的 /etc/hosts 文件添加条目的方式来重写 Pod 级别的域名解析，可能通过 PodSpec 的 HostAliases 字段向该 Pod 的 /etc/hosts 添加自定义条目。 不建议直接">
-<meta itemprop="datePublished" content="2020-10-09T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2021-01-20T20:05:59+08:00" />
-<meta itemprop="wordCount" content="791">
-
-
-
-<meta itemprop="keywords" content="" />
+<title>策略 | Kubernetes</title><meta property="og:title" content="策略" />
+<meta property="og:description" content="生产级别的容器编排系统" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/" />
+<meta property="og:updated_time" content="2021-01-20T20:05:59+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="策略">
+<meta itemprop="description" content="生产级别的容器编排系统">
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目"/>
-<meta name="twitter:description" content="在 DNS 和其它方式都不可用时，想要向通过向 Pod 的 /etc/hosts 文件添加条目的方式来重写 Pod 级别的域名解析，可能通过 PodSpec 的 HostAliases 字段向该 Pod 的 /etc/hosts 添加自定义条目。 不建议直接"/>
+<meta name="twitter:title" content="策略"/>
+<meta name="twitter:description" content="生产级别的容器编排系统"/>
 
 
 
@@ -77,12 +70,12 @@
 
 
 
-<meta name="description" content="在 DNS 和其它方式都不可用时，想要向通过向 Pod 的 /etc/hosts 文件添加条目的方式来重写 Pod 级别的域名解析，可能通过 PodSpec 的 HostAliases 字段向该 Pod 的 /etc/hosts 添加自定义条目。 不建议直接">
-<meta property="og:description" content="在 DNS 和其它方式都不可用时，想要向通过向 Pod 的 /etc/hosts 文件添加条目的方式来重写 Pod 级别的域名解析，可能通过 PodSpec 的 HostAliases 字段向该 Pod 的 /etc/hosts 添加自定义条目。 不建议直接">
-<meta name="twitter:description" content="在 DNS 和其它方式都不可用时，想要向通过向 Pod 的 /etc/hosts 文件添加条目的方式来重写 Pod 级别的域名解析，可能通过 PodSpec 的 HostAliases 字段向该 Pod 的 /etc/hosts 添加自定义条目。 不建议直接">
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">
-<meta property="og:title" content="通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目">
-<meta name="twitter:title" content="通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目">
+<meta name="description" content="">
+<meta property="og:description" content="">
+<meta name="twitter:description" content="">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/">
+<meta property="og:title" content="策略">
+<meta name="twitter:title" content="策略">
 <meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
 
 <meta name="twitter:image:alt" content="Kubernetes">
@@ -96,9 +89,9 @@
 <script src="/k8sDocs/js/script.js"></script>
 
 
-    <title>通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目 | Kubernetes</title>
+    <title>策略 | Kubernetes</title>
   </head>
-  <body class="td-page td-documentation">
+  <body class="td-section td-documentation">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
@@ -559,10 +552,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/services-networking/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">Service, 负载均衡, 网络</a>
+    <a  href="/k8sDocs/docs/concepts/services-networking/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Service, 负载均衡, 网络</a>
   </li>
   <ul>
-    <li class="collapse show" id="k8sdocsdocsconceptsservices-networking">
+    <li class="collapse " id="k8sdocsdocsconceptsservices-networking">
       
       
       
@@ -617,7 +610,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsservices-networkingadd-entries-to-pod-etc-hosts-with-host-aliases" href="/k8sDocs/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsservices-networkingadd-entries-to-pod-etc-hosts-with-host-aliases" href="/k8sDocs/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a>
       
       
       
@@ -825,10 +818,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/policy/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">策略</a>
+    <a  href="/k8sDocs/docs/concepts/policy/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">策略</a>
   </li>
   <ul>
-    <li class="collapse " id="k8sdocsdocsconceptspolicy">
+    <li class="collapse show" id="k8sdocsdocsconceptspolicy">
       
       
       
@@ -887,9 +880,6 @@
 
 
 
-
-
-
 <li class="breadcrumb-item" >
 	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
 </li>
@@ -904,15 +894,8 @@
 
 
 
-<li class="breadcrumb-item" >
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/">Service, 负载均衡, 网络</a>
-</li>
-
-
-
-
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/">通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/">策略</a>
 </li>
 
 	</ol>
@@ -922,326 +905,207 @@
               
             
               
-    <div class="td-content">
+	<div class="td-content">
+		
+		
+			
+				
+			
+		
+		
+			<h1>策略</h1>
+			
+		
+		<div class="section-index">
     
-<p>
-  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases.md" id="editPageButton" target="_blank" data-proofer-ignore>
-    Edit This Page
-  </a>
-</p>
-
-  <h1>通过 HostAliases 向 Pod 的 /etc/hosts 文件中添加条目</h1>
-  
-  
-
-<!--
----
-reviewers:
-- rickypai
-- thockin
-title: Adding entries to Pod /etc/hosts with HostAliases
-content_type: concept
-weight: 60
-min-kubernetes-server-version: 1.7
---- -->
-<!-- overview -->
-<!--
-Adding entries to a Pod's `/etc/hosts` file provides Pod-level override of hostname resolution when DNS and other options are not applicable. You can add these custom entries with the HostAliases field in PodSpec.
-
-Modification not using HostAliases is not suggested because the file is managed by the kubelet and can be overwritten on during Pod creation/restart.
--->
-<p>在 DNS 和其它方式都不可用时，想要向通过向 Pod 的 <code>/etc/hosts</code> 文件添加条目的方式来重写 Pod
-级别的域名解析，可能通过 <code>PodSpec</code> 的 <code>HostAliases</code> 字段向该 Pod 的 <code>/etc/hosts</code> 添加自定义条目。</p>
-<p>不建议直接修改文件而不使用 <code>HostAliases</code>， 因为这个文件是受 kubelet 管理并且在 Pod 的重新创建
-或重启(能重启？)时会重写该文件，也就是直接修改文件在重建后会丢失。</p>
-<!-- body -->
-<!--
-## Default hosts file content
-
-Start an Nginx Pod which is assigned a Pod IP:
-
-```shell
-kubectl run nginx --image nginx
-```
-
-```
-pod/nginx created
-```
-
-Examine a Pod IP:
-
-```shell
-kubectl get pods --output=wide
-```
-
-```
-NAME     READY     STATUS    RESTARTS   AGE    IP           NODE
-nginx    1/1       Running   0          13s    10.200.0.4   worker0
-```
-
-The hosts file content would look like this:
-
-```shell
-kubectl exec nginx -- cat /etc/hosts
-```
-
-```
-# Kubernetes-managed hosts file.
-127.0.0.1	localhost
-::1	localhost ip6-localhost ip6-loopback
-fe00::0	ip6-localnet
-fe00::0	ip6-mcastprefix
-fe00::1	ip6-allnodes
-fe00::2	ip6-allrouters
-10.200.0.4	nginx
-```
-
-By default, the `hosts` file only includes IPv4 and IPv6 boilerplates like
-`localhost` and its own hostname.
- -->
-<h2 id="hosts-默认的内容">hosts 默认的内容</h2>
-<p>启动一个 Nginx 的 Pod，它会被分配一个 Pod IP:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl run nginx --image nginx
-</code></pre></div><pre><code>pod/nginx created
-</code></pre><p>检查 Pod IP:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get pods --output<span style="color:#f92672">=</span>wide
-</code></pre></div><pre><code>NAME     READY     STATUS    RESTARTS   AGE    IP           NODE
-nginx    1/1       Running   0          13s    10.200.0.4   worker0
-</code></pre><p>通过以下命令查看 hosts 文件内容</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl exec nginx -- cat /etc/hosts
-</code></pre></div><p>输出结果类似如下:</p>
-<pre><code># Kubernetes-managed hosts file.
-127.0.0.1	localhost
-::1	localhost ip6-localhost ip6-loopback
-fe00::0	ip6-localnet
-fe00::0	ip6-mcastprefix
-fe00::1	ip6-allnodes
-fe00::2	ip6-allrouters
-10.200.0.4	nginx
-</code></pre><p>默认情况下， <code>hosts</code> 文件只会包含 IPv4/IPv6 如 <code>localhost</code> 这样的模板条目和主机名条目</p>
-<!--
-## Adding additional entries with hostAliases
-
-In addition to the default boilerplate, you can add additional entries to the
-`hosts` file.
-For example: to resolve `foo.local`, `bar.local` to `127.0.0.1` and `foo.remote`,
-`bar.remote` to `10.1.2.3`, you can configure HostAliases for a Pod under
-`.spec.hostAliases`:
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table class="includecode" id="servicenetworkinghostaliases-podyaml">
-    <thead>
-        <tr>
-            <th>
-                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/hostaliases-pod.yaml" download="service/networking/hostaliases-pod.yaml">
-                    <code>service/networking/hostaliases-pod.yaml</code>
-                </a>
-                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkinghostaliases-podyaml')" title="Copy service/networking/hostaliases-pod.yaml to clipboard">
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
-<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
-<span style="color:#f92672">metadata</span>:
-  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">hostaliases-pod</span>
-<span style="color:#f92672">spec</span>:
-  <span style="color:#f92672">restartPolicy</span>: <span style="color:#ae81ff">Never</span>
-  <span style="color:#f92672">hostAliases</span>:
-  - <span style="color:#f92672">ip</span>: <span style="color:#e6db74">&#34;127.0.0.1&#34;</span>
-    <span style="color:#f92672">hostnames</span>:
-    - <span style="color:#e6db74">&#34;foo.local&#34;</span>
-    - <span style="color:#e6db74">&#34;bar.local&#34;</span>
-  - <span style="color:#f92672">ip</span>: <span style="color:#e6db74">&#34;10.1.2.3&#34;</span>
-    <span style="color:#f92672">hostnames</span>:
-    - <span style="color:#e6db74">&#34;foo.remote&#34;</span>
-    - <span style="color:#e6db74">&#34;bar.remote&#34;</span>
-  <span style="color:#f92672">containers</span>:
-  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cat-hosts</span>
-    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">busybox</span>
-    <span style="color:#f92672">command</span>:
-    - <span style="color:#ae81ff">cat</span>
-    <span style="color:#f92672">args</span>:
-    - <span style="color:#e6db74">&#34;/etc/hosts&#34;</span>
-</code></pre></div>  </td>
-        </tr>
-    </tbody>
-</table>
-
-
-
-You can start a Pod with that configuration by running:
-
-```shell
-kubectl apply -f https://k8s.io/examples/service/networking/hostaliases-pod.yaml
-```
-
-```
-pod/hostaliases-pod created
-```
-
-Examine a Pod's details to see its IPv4 address and its status:
-
-```shell
-kubectl get pod --output=wide
-```
-
-```
-NAME                           READY     STATUS      RESTARTS   AGE       IP              NODE
-hostaliases-pod                0/1       Completed   0          6s        10.200.0.5      worker0
-```
-
-The `hosts` file content looks like this:
-
-```shell
-kubectl logs hostaliases-pod
-```
-
-```
-# Kubernetes-managed hosts file.
-127.0.0.1	localhost
-::1	localhost ip6-localhost ip6-loopback
-fe00::0	ip6-localnet
-fe00::0	ip6-mcastprefix
-fe00::1	ip6-allnodes
-fe00::2	ip6-allrouters
-10.200.0.5	hostaliases-pod
-
-# Entries added by HostAliases.
-127.0.0.1	foo.local	bar.local
-10.1.2.3	foo.remote	bar.remote
-```
-
-with the additional entries specified at the bottom. -->
-<h2 id="通过-hostaliases-添加额外的条目">通过 hostAliases 添加额外的条目</h2>
-<p>除了模板条目，可以手动向 <code>hosts</code> 文件添加条目
-例如下面的示例中通过 Pod 的 <code>.spec.hostAliases</code> 字段实现配置：
-将 <code>foo.local</code>, <code>bar.local</code> 解析到 <code>127.0.0.1</code>，
-将 <code>foo.remote</code>, <code>bar.remote</code> 解析到 <code>10.1.2.3</code></p>
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table class="includecode" id="servicenetworkinghostaliases-podyaml">
-    <thead>
-        <tr>
-            <th>
-                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/service/networking/hostaliases-pod.yaml" download="service/networking/hostaliases-pod.yaml">
-                    <code>service/networking/hostaliases-pod.yaml</code>
-                </a>
-                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('servicenetworkinghostaliases-podyaml')" title="Copy service/networking/hostaliases-pod.yaml to clipboard">
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
-<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
-<span style="color:#f92672">metadata</span>:
-  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">hostaliases-pod</span>
-<span style="color:#f92672">spec</span>:
-  <span style="color:#f92672">restartPolicy</span>: <span style="color:#ae81ff">Never</span>
-  <span style="color:#f92672">hostAliases</span>:
-  - <span style="color:#f92672">ip</span>: <span style="color:#e6db74">&#34;127.0.0.1&#34;</span>
-    <span style="color:#f92672">hostnames</span>:
-    - <span style="color:#e6db74">&#34;foo.local&#34;</span>
-    - <span style="color:#e6db74">&#34;bar.local&#34;</span>
-  - <span style="color:#f92672">ip</span>: <span style="color:#e6db74">&#34;10.1.2.3&#34;</span>
-    <span style="color:#f92672">hostnames</span>:
-    - <span style="color:#e6db74">&#34;foo.remote&#34;</span>
-    - <span style="color:#e6db74">&#34;bar.remote&#34;</span>
-  <span style="color:#f92672">containers</span>:
-  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cat-hosts</span>
-    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">busybox</span>
-    <span style="color:#f92672">command</span>:
-    - <span style="color:#ae81ff">cat</span>
-    <span style="color:#f92672">args</span>:
-    - <span style="color:#e6db74">&#34;/etc/hosts&#34;</span>
-</code></pre></div>  </td>
-        </tr>
-    </tbody>
-</table>
-
-
-<p>用户可以通过以下命令，使用该配置启动一个 Pod:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl apply -f https://k8s.io/examples/service/networking/hostaliases-pod.yaml
-</code></pre></div><pre><code>pod/hostaliases-pod created
-</code></pre><p>通过以下命令查看 Pod 的信息，查看其 IPv4 地址及其状态:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get pod --output<span style="color:#f92672">=</span>wide
-</code></pre></div><pre><code>NAME                           READY     STATUS      RESTARTS   AGE       IP              NODE
-hostaliases-pod                0/1       Completed   0          6s        10.200.0.5      worker0
-</code></pre><p>通过以下命令查看 <code>hosts</code> 文件的内存:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl logs hostaliases-pod
-</code></pre></div><p>输出结果类似:</p>
-<pre><code># Kubernetes-managed hosts file.
-127.0.0.1	localhost
-::1	localhost ip6-localhost ip6-loopback
-fe00::0	ip6-localnet
-fe00::0	ip6-mcastprefix
-fe00::1	ip6-allnodes
-fe00::2	ip6-allrouters
-10.200.0.5	hostaliases-pod
-
-# Entries added by HostAliases.
-127.0.0.1	foo.local	bar.local
-10.1.2.3	foo.remote	bar.remote
-</code></pre><p>额外添加的条目的文件的底部。</p>
-<!--
-## Why does the kubelet manage the hosts file? {#why-does-kubelet-manage-the-hosts-file}
-
-The kubelet [manages](https://github.com/kubernetes/kubernetes/issues/14633) the
-`hosts` file for each container of the Pod to prevent Docker from
-[modifying](https://github.com/moby/moby/issues/17190) the file after the
-containers have already been started.
-
-<blockquote class="caution">
-  <div><strong>注意：</strong> <p>Avoid making manual changes to the hosts file inside a container.</p>
-<p>If you make manual changes to the hosts file,
-those changes are lost when the container exits.</p>
+    
+    
+    
+    <hr class="panel-line">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/k8sDocs/docs/concepts/policy/limit-range/">Limit Ranges</a>
+                    </h5>
+                    <p></p>
+                </div>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/k8sDocs/docs/concepts/policy/resource-quotas/">Resource Quotas</a>
+                    </h5>
+                    <p></p>
+                </div>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/k8sDocs/docs/concepts/policy/pid-limiting/"></a>
+                    </h5>
+                    <p></p>
+                </div>
+            
+        
+            
+        
+            
+        
+    
 </div>
-</blockquote>
 
- -->
-<h2 id="why-does-kubelet-manage-the-hosts-file">为啥要 kubelet 管理 hosts 文件?</h2>
-<p>使用 kubelet <a href="https://github.com/kubernetes/kubernetes/issues/14633">管理</a> the
-Pod 中每个容器的 <code>hosts</code> 文件，是防止 Docker 在容器启动后再
-<a href="https://github.com/moby/moby/issues/17190">修改</a> 该文件。</p>
-<blockquote class="caution">
-  <div><strong>注意：</strong> <p>避免手动修改容器中的 <code>hosts</code> 文件</p>
-<p>如果手动修改了 <code>hosts</code> 文件， 这些改动会在容器退出时丢失。</p>
-</div>
-</blockquote>
-
-
-
+	</div>
 
             
             <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-01-20 20:05:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/0a6ca3159ef751a9506965eaeae9878b0bbd2b2b">publish controlling access (0a6ca31)</a>
@@ -1268,9 +1132,9 @@ Pod 中每个容器的 <code>hosts</code> 文件，是防止 Docker 在容器启
 
 
 
-<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=%e9%80%9a%e8%bf%87%20HostAliases%20%e5%90%91%20Pod%20%e7%9a%84%20/etc/hosts%20%e6%96%87%e4%bb%b6%e4%b8%ad%e6%b7%bb%e5%8a%a0%e6%9d%a1%e7%9b%ae" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/policy/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/policy/_index.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=%e7%ad%96%e7%95%a5" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
 
 </div>
 
@@ -1278,14 +1142,6 @@ Pod 中每个容器的 <code>hosts</code> 文件，是防止 Docker 在容器启
 
 
 
-
-<nav id="TableOfContents">
-  <ul>
-    <li><a href="#hosts-默认的内容">hosts 默认的内容</a></li>
-    <li><a href="#通过-hostaliases-添加额外的条目">通过 hostAliases 添加额外的条目</a></li>
-    <li><a href="#why-does-kubelet-manage-the-hosts-file">为啥要 kubelet 管理 hosts 文件?</a></li>
-  </ul>
-</nav>
 
 
 
