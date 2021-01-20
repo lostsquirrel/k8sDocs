@@ -520,11 +520,7 @@ are recommendations to protect application code:
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;静态代码分析&lt;/td&gt;
-&lt;td&gt;大多数语言都提供了对代码片断分析检查是否有潜在的不安全代码实践。 无论啥时候都应该使用自动化工作对&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;代码库执行这种检查，以提早发现常见的安全错误。 一些工具可以在这里找: &lt;a href=&#34;https://owasp.org/www-community/Source_Code_Analysis_Tools&#34;&gt;https://owasp.org/www-community/Source_Code_Analysis_Tools&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;大多数语言都提供了对代码片断分析检查是否有潜在的不安全代码实践。 无论啥时候都应该使用自动化工作对代码库执行这种检查，以提早发现常见的安全错误。 一些工具可以在这里找: &lt;a href=&#34;https://owasp.org/www-community/Source_Code_Analysis_Tools&#34;&gt;https://owasp.org/www-community/Source_Code_Analysis_Tools&lt;/a&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;动态探测攻击&lt;/td&gt;
@@ -534,16 +530,17 @@ are recommendations to protect application code:
 &lt;/table&gt;
 
 &lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
-&lt;p&gt;Learn about related Kubernetes security topics:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/pod-security-standards/&#34;&gt;Pod security standards&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/network-policies/&#34;&gt;Network policies for Pods&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/controlling-access&#34;&gt;Controlling Access to the Kubernetes API&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/securing-a-cluster/&#34;&gt;Securing your cluster&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/tls/managing-tls-in-a-cluster/&#34;&gt;Data encryption in transit&lt;/a&gt; for the control plane&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/encrypt-data/&#34;&gt;Data encryption at rest&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/secret/&#34;&gt;Secrets in Kubernetes&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;!--
+Learn about related Kubernetes security topics:
+
+* [Pod security standards](/docs/concepts/security/pod-security-standards/)
+* [Network policies for Pods](/docs/concepts/services-networking/network-policies/)
+* [Controlling Access to the Kubernetes API](/docs/concepts/security/controlling-access)
+* [Securing your cluster](/docs/tasks/administer-cluster/securing-a-cluster/)
+* [Data encryption in transit](/docs/tasks/tls/managing-tls-in-a-cluster/) for the control plane
+* [Data encryption at rest](/docs/tasks/administer-cluster/encrypt-data/)
+* [Secrets in Kubernetes](/docs/concepts/configuration/secret/)
+ --&gt;
 &lt;p&gt;更多关于 k8s 安全的主题:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/security/pod-security-standards/&#34;&gt;Pod 安全标准&lt;/a&gt;&lt;/li&gt;
@@ -554,6 +551,578 @@ are recommendations to protect application code:
 &lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/encrypt-data/&#34;&gt;数据落盘加密&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/secret/&#34;&gt;k8s 中的 Secret&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Pod 安全标准</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/pod-security-standards/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/pod-security-standards/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- tallclair
+title: Pod Security Standards
+content_type: concept
+weight: 10
+---
+ --&gt;
+&lt;!-- overview --&gt;
+&lt;!--
+Security settings for Pods are typically applied by using [security
+contexts](/docs/tasks/configure-pod-container/security-context/). Security Contexts allow for the
+definition of privilege and access controls on a per-Pod basis.
+
+The enforcement and policy-based definition of cluster requirements of security contexts has
+previously been achieved using [Pod Security Policy](/docs/concepts/policy/pod-security-policy/). A
+_Pod Security Policy_ is a cluster-level resource that controls security sensitive aspects of the
+Pod specification.
+
+However, numerous means of policy enforcement have arisen that augment or replace the use of
+PodSecurityPolicy. The intent of this page is to detail recommended Pod security profiles, decoupled
+from any specific instantiation.
+ --&gt;
+&lt;p&gt;对于 Pod 的安全设置通常是使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/configure-pod-container/security-context/&#34;&gt;安全性上下文&lt;/a&gt;.
+安全性上下文允许对 Pod 级的权限定义和访问控制。&lt;/p&gt;
+&lt;p&gt;实施和基于策略定义的集群安全性上下文要求是通过使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/pod-security-policy/&#34;&gt;Pod 安全性策略&lt;/a&gt;
+实现的。 &lt;em&gt;Pod 安全性策略&lt;/em&gt; 是集群级别的资源，用来控制安全性敏感方面的 Pod 定义。&lt;/p&gt;
+&lt;p&gt;但是， 多种方式的执行策略会引发争论或替换 PodSecurityPolicy 的使用。 本文的目的是详细推荐
+安全策略方案， 与任意指定实例解耦。&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## Policy Types
+
+There is an immediate need for base policy definitions to broadly cover the security spectrum. These
+should range from highly restricted to highly flexible:
+
+- **_Privileged_** - Unrestricted policy, providing the widest possible level of permissions. This
+  policy allows for known privilege escalations.
+- **_Baseline/Default_** - Minimally restrictive policy while preventing known privilege
+  escalations. Allows the default (minimally specified) Pod configuration.
+- **_Restricted_** - Heavily restricted policy, following current Pod hardening best practices.
+ --&gt;
+&lt;h2 id=&#34;policy-types&#34;&gt;策略类别&lt;/h2&gt;
+&lt;p&gt;安全策略定义来大体上能覆盖安全相关问题。 下面这些从高限制到高灵活性的范围:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;em&gt;Privileged&lt;/em&gt;&lt;/strong&gt; - 不受限策略， 提供最大可能级别的权限。 这个策略允许所有已知权限升级。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;em&gt;Baseline/Default&lt;/em&gt;&lt;/strong&gt; - 在防止已知权限升级的情况下相对最小限制策略。 允许默认(最少配置)的 Pod 配置&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;em&gt;Restricted&lt;/em&gt;&lt;/strong&gt; - 严重限制策略， 依照目前 Pod 加固最佳实践&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+## Policies
+
+### Privileged
+
+The Privileged policy is purposely-open, and entirely unrestricted. This type of policy is typically
+aimed at system- and infrastructure-level workloads managed by privileged, trusted users.
+
+The privileged policy is defined by an absence of restrictions. For allow-by-default enforcement
+mechanisms (such as gatekeeper), the privileged profile may be an absence of applied constraints
+rather than an instantiated policy. In contrast, for a deny-by-default mechanism (such as Pod
+Security Policy) the privileged policy should enable all controls (disable all restrictions).
+ --&gt;
+&lt;h2 id=&#34;policies&#34;&gt;策略&lt;/h2&gt;
+&lt;h3 id=&#34;privileged&#34;&gt;特权&lt;/h3&gt;
+&lt;p&gt;特权策略是以开放为目的的，并且完全没有限制。这个策略类别通常是用于系统级和基础设施级别的工作负载，
+它们由特权，受信的用户管理。&lt;/p&gt;
+&lt;p&gt;特权策略的定义方式就是没有限制。 对于 默认允许执行机制(如守门人(&lt;code&gt;gatekeeper&lt;/code&gt;)), 特权方案是没有
+执行的约束条件而不是一个实际的策略。相反的，在一个 默认拒绝的机制中(如 Pod 安全策略)，特权策略
+就应该启用所有控制(关闭所有约束)。&lt;/p&gt;
+&lt;!--
+### Baseline/Default
+
+The Baseline/Default policy is aimed at ease of adoption for common containerized workloads while
+preventing known privilege escalations. This policy is targeted at application operators and
+developers of non-critical applications. The following listed controls should be
+enforced/disallowed:
+
+&lt;table&gt;
+	&lt;caption style=&#34;display:none&#34;&gt;Baseline policy specification&lt;/caption&gt;
+	&lt;tbody&gt;
+		&lt;tr&gt;
+			&lt;td&gt;&lt;strong&gt;Control&lt;/strong&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;strong&gt;Policy&lt;/strong&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Host Namespaces&lt;/td&gt;
+			&lt;td&gt;
+				Sharing the host namespaces must be disallowed.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.hostNetwork&lt;br&gt;
+				spec.hostPID&lt;br&gt;
+				spec.hostIPC&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; false&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Privileged Containers&lt;/td&gt;
+			&lt;td&gt;
+				Privileged Pods disable most security mechanisms and must be disallowed.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.privileged&lt;br&gt;
+				spec.initContainers[*].securityContext.privileged&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; false, undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Capabilities&lt;/td&gt;
+			&lt;td&gt;
+				Adding additional capabilities beyond the &lt;a href=&#34;https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities&#34;&gt;default set&lt;/a&gt; must be disallowed.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.capabilities.add&lt;br&gt;
+				spec.initContainers[*].securityContext.capabilities.add&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; empty (or restricted to a known list)&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;HostPath Volumes&lt;/td&gt;
+			&lt;td&gt;
+				HostPath volumes must be forbidden.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.volumes[*].hostPath&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Host Ports&lt;/td&gt;
+			&lt;td&gt;
+				HostPorts should be disallowed, or at minimum restricted to a known list.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].ports[*].hostPort&lt;br&gt;
+				spec.initContainers[*].ports[*].hostPort&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; 0, undefined (or restricted to a known list)&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;AppArmor &lt;em&gt;(optional)&lt;/em&gt;&lt;/td&gt;
+			&lt;td&gt;
+				On supported hosts, the &#39;runtime/default&#39; AppArmor profile is applied by default. The default policy should prevent overriding or disabling the policy, or restrict overrides to an allowed set of profiles.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				metadata.annotations[&#39;container.apparmor.security.beta.kubernetes.io/*&#39;]&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; &#39;runtime/default&#39;, undefined&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;SELinux &lt;em&gt;(optional)&lt;/em&gt;&lt;/td&gt;
+			&lt;td&gt;
+				Setting custom SELinux options should be disallowed.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.seLinuxOptions&lt;br&gt;
+				spec.containers[*].securityContext.seLinuxOptions&lt;br&gt;
+				spec.initContainers[*].securityContext.seLinuxOptions&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;/proc Mount Type&lt;/td&gt;
+			&lt;td&gt;
+				The default /proc masks are set up to reduce attack surface, and should be required.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.procMount&lt;br&gt;
+				spec.initContainers[*].securityContext.procMount&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; undefined/nil, &#39;Default&#39;&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Sysctls&lt;/td&gt;
+			&lt;td&gt;
+				Sysctls can disable security mechanisms or affect all containers on a host, and should be disallowed except for an allowed &#34;safe&#34; subset.
+				A sysctl is considered safe if it is namespaced in the container or the Pod, and it is isolated from other Pods or processes on the same Node.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.sysctls&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt;&lt;br&gt;
+				kernel.shm_rmid_forced&lt;br&gt;
+				net.ipv4.ip_local_port_range&lt;br&gt;
+				net.ipv4.tcp_syncookies&lt;br&gt;
+				net.ipv4.ping_group_range&lt;br&gt;
+				undefined/empty&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+ --&gt;
+&lt;h3 id=&#34;baseline&#34;&gt;基线/默认&lt;/h3&gt;
+&lt;p&gt;基线/默认策略的目的是在防止已知的特权升级情况下，让得普通的容器化工作负载来使用。 这个策略的目标
+用户是应用运维人员和非关键应用的开发者。 下面列举这这些控制应该受限/不被允许:&lt;/p&gt;
+&lt;table&gt;
+	&lt;caption style=&#34;display:none&#34;&gt;基线策略规范&lt;/caption&gt;
+	&lt;tbody&gt;
+		&lt;tr&gt;
+			&lt;td&gt;&lt;strong&gt;控制&lt;/strong&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;strong&gt;策略&lt;/strong&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;宿主机命令空间&lt;/td&gt;
+			&lt;td&gt;
+				Sharing the host namespaces must be disallowed.&lt;br&gt;
+        主机命名空间分离必须禁止。
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.hostNetwork&lt;br&gt;
+				spec.hostPID&lt;br&gt;
+				spec.hostIPC&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; false&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;特权容器&lt;/td&gt;
+			&lt;td&gt;
+        特权 Pod 禁用了多数安全机制，必须禁止。
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.privileged&lt;br&gt;
+				spec.initContainers[*].securityContext.privileged&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; false, undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Capabilities&lt;/td&gt;
+			&lt;td&gt;
+        [默认集](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities)
+        外的额外能力是不允许的
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.capabilities.add&lt;br&gt;
+				spec.initContainers[*].securityContext.capabilities.add&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; empty (or restricted to a known list)&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;HostPath 卷&lt;/td&gt;
+			&lt;td&gt;
+				HostPath 卷必须禁止&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.volumes[*].hostPath&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;宿主机端口&lt;/td&gt;
+			&lt;td&gt;
+				宿主机端口应该禁用, 或最少限制在一个已知列表.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].ports[*].hostPort&lt;br&gt;
+				spec.initContainers[*].ports[*].hostPort&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; 0, undefined (或限制在一个已知列表)&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;AppArmor &lt;em&gt;(可选)&lt;/em&gt;&lt;/td&gt;
+			&lt;td&gt;
+        在受支持的主机上，默认执行 &#39;runtime/default&#39; AppArmor 方案。 默认策略应该防止被覆盖或
+        禁用策略，或限制对允许方案集的覆盖.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				metadata.annotations[&#39;container.apparmor.security.beta.kubernetes.io/*&#39;]&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; &#39;runtime/default&#39;, undefined&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;SELinux &lt;em&gt;(可选)&lt;/em&gt;&lt;/td&gt;
+			&lt;td&gt;
+        不允许设置自定义SELinux选项.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.seLinuxOptions&lt;br&gt;
+				spec.containers[*].securityContext.seLinuxOptions&lt;br&gt;
+				spec.initContainers[*].securityContext.seLinuxOptions&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;/proc 挂载类别&lt;/td&gt;
+			&lt;td&gt;
+        默认的 /proc masks 被设置来减少攻击面， 是必要的.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.procMount&lt;br&gt;
+				spec.initContainers[*].securityContext.procMount&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; undefined/nil, &#39;Default&#39;&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Sysctls&lt;/td&gt;
+			&lt;td&gt;
+        Sysctls 可以禁用安全机制或影响主机上的所有容器，在允许的安全子集外都应该被禁止。
+        如果 sysctl 命名空间为容器内或 Pod 内被认为是安全的， 它会被与同一个节点上其它 Pod 或进程隔离.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.sysctls&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt;&lt;br&gt;
+				kernel.shm_rmid_forced&lt;br&gt;
+				net.ipv4.ip_local_port_range&lt;br&gt;
+				net.ipv4.tcp_syncookies&lt;br&gt;
+				net.ipv4.ping_group_range&lt;br&gt;
+				undefined/empty&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;!--
+### Restricted
+
+The Restricted policy is aimed at enforcing current Pod hardening best practices, at the expense of
+some compatibility. It is targeted at operators and developers of security-critical applications, as
+well as lower-trust users.The following listed controls should be enforced/disallowed:
+
+
+&lt;table&gt;
+	&lt;caption style=&#34;display:none&#34;&gt;Restricted policy specification&lt;/caption&gt;
+	&lt;tbody&gt;
+		&lt;tr&gt;
+			&lt;td&gt;&lt;strong&gt;Control&lt;/strong&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;strong&gt;Policy&lt;/strong&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan=&#34;2&#34;&gt;&lt;em&gt;Everything from the default profile.&lt;/em&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Volume Types&lt;/td&gt;
+			&lt;td&gt;
+				In addition to restricting HostPath volumes, the restricted profile limits usage of non-core volume types to those defined through PersistentVolumes.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.volumes[*].hostPath&lt;br&gt;
+				spec.volumes[*].gcePersistentDisk&lt;br&gt;
+				spec.volumes[*].awsElasticBlockStore&lt;br&gt;
+				spec.volumes[*].gitRepo&lt;br&gt;
+				spec.volumes[*].nfs&lt;br&gt;
+				spec.volumes[*].iscsi&lt;br&gt;
+				spec.volumes[*].glusterfs&lt;br&gt;
+				spec.volumes[*].rbd&lt;br&gt;
+				spec.volumes[*].flexVolume&lt;br&gt;
+				spec.volumes[*].cinder&lt;br&gt;
+				spec.volumes[*].cephFS&lt;br&gt;
+				spec.volumes[*].flocker&lt;br&gt;
+				spec.volumes[*].fc&lt;br&gt;
+				spec.volumes[*].azureFile&lt;br&gt;
+				spec.volumes[*].vsphereVolume&lt;br&gt;
+				spec.volumes[*].quobyte&lt;br&gt;
+				spec.volumes[*].azureDisk&lt;br&gt;
+				spec.volumes[*].portworxVolume&lt;br&gt;
+				spec.volumes[*].scaleIO&lt;br&gt;
+				spec.volumes[*].storageos&lt;br&gt;
+				spec.volumes[*].csi&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Privilege Escalation&lt;/td&gt;
+			&lt;td&gt;
+				Privilege escalation (such as via set-user-ID or set-group-ID file mode) should not be allowed.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.allowPrivilegeEscalation&lt;br&gt;
+				spec.initContainers[*].securityContext.allowPrivilegeEscalation&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; false&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Running as Non-root&lt;/td&gt;
+			&lt;td&gt;
+				Containers must be required to run as non-root users.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.runAsNonRoot&lt;br&gt;
+				spec.containers[*].securityContext.runAsNonRoot&lt;br&gt;
+				spec.initContainers[*].securityContext.runAsNonRoot&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; true&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Non-root groups &lt;em&gt;(optional)&lt;/em&gt;&lt;/td&gt;
+			&lt;td&gt;
+				Containers should be forbidden from running with a root primary or supplementary GID.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.runAsGroup&lt;br&gt;
+				spec.securityContext.supplementalGroups[*]&lt;br&gt;
+				spec.securityContext.fsGroup&lt;br&gt;
+				spec.containers[*].securityContext.runAsGroup&lt;br&gt;
+				spec.initContainers[*].securityContext.runAsGroup&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt;&lt;br&gt;
+				non-zero&lt;br&gt;
+				undefined / nil (except for `*.runAsGroup`)&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Seccomp&lt;/td&gt;
+			&lt;td&gt;
+				The RuntimeDefault seccomp profile must be required, or allow specific additional profiles.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.seccompProfile.type&lt;br&gt;
+				spec.containers[*].securityContext.seccompProfile&lt;br&gt;
+				spec.initContainers[*].securityContext.seccompProfile&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt;&lt;br&gt;
+				&#39;runtime/default&#39;&lt;br&gt;
+				undefined / nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+ --&gt;
+&lt;h3 id=&#34;restricted&#34;&gt;受限的&lt;/h3&gt;
+&lt;p&gt;受限策略旨在实施目前的 Pod 加固最佳实践，代价就是牺牲一些兼容性。目标用户为高安全性应用的运维和
+开发人员，也可以是低信任度的用户。 下面列举的控制项应该受限/不被允许:&lt;/p&gt;
+&lt;table&gt;
+	&lt;caption style=&#34;display:none&#34;&gt;受限策略规范&lt;/caption&gt;
+	&lt;tbody&gt;
+		&lt;tr&gt;
+			&lt;td&gt;&lt;strong&gt;Control&lt;/strong&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;strong&gt;Policy&lt;/strong&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan=&#34;2&#34;&gt;&lt;em&gt;所有都来自默认方案&lt;/em&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;卷类型&lt;/td&gt;
+			&lt;td&gt;
+        为了进一步限制 HostPath 卷， 受限方案在定义 PV 时限制了这些非核心卷类型的使用.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.volumes[*].hostPath&lt;br&gt;
+				spec.volumes[*].gcePersistentDisk&lt;br&gt;
+				spec.volumes[*].awsElasticBlockStore&lt;br&gt;
+				spec.volumes[*].gitRepo&lt;br&gt;
+				spec.volumes[*].nfs&lt;br&gt;
+				spec.volumes[*].iscsi&lt;br&gt;
+				spec.volumes[*].glusterfs&lt;br&gt;
+				spec.volumes[*].rbd&lt;br&gt;
+				spec.volumes[*].flexVolume&lt;br&gt;
+				spec.volumes[*].cinder&lt;br&gt;
+				spec.volumes[*].cephFS&lt;br&gt;
+				spec.volumes[*].flocker&lt;br&gt;
+				spec.volumes[*].fc&lt;br&gt;
+				spec.volumes[*].azureFile&lt;br&gt;
+				spec.volumes[*].vsphereVolume&lt;br&gt;
+				spec.volumes[*].quobyte&lt;br&gt;
+				spec.volumes[*].azureDisk&lt;br&gt;
+				spec.volumes[*].portworxVolume&lt;br&gt;
+				spec.volumes[*].scaleIO&lt;br&gt;
+				spec.volumes[*].storageos&lt;br&gt;
+				spec.volumes[*].csi&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;权限提升&lt;/td&gt;
+			&lt;td&gt;
+				权限提升 (如通过设置 set-user-ID 或 set-group-ID 文件模式) 应该被禁止.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.allowPrivilegeEscalation&lt;br&gt;
+				spec.initContainers[*].securityContext.allowPrivilegeEscalation&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; false&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;以 非root用户运行&lt;/td&gt;
+			&lt;td&gt;
+				要求容器必须以非 root 用户运行 .&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.runAsNonRoot&lt;br&gt;
+				spec.containers[*].securityContext.runAsNonRoot&lt;br&gt;
+				spec.initContainers[*].securityContext.runAsNonRoot&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; true&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;非root 组 &lt;em&gt;(可选)&lt;/em&gt;&lt;/td&gt;
+			&lt;td&gt;
+				容器应该避免以 root 主要或辅助的 GID 来运行 .&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.runAsGroup&lt;br&gt;
+				spec.securityContext.supplementalGroups[*]&lt;br&gt;
+				spec.securityContext.fsGroup&lt;br&gt;
+				spec.containers[*].securityContext.runAsGroup&lt;br&gt;
+				spec.initContainers[*].securityContext.runAsGroup&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt;&lt;br&gt;
+				non-zero&lt;br&gt;
+				undefined / nil (`*.runAsGroup` 除外)&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Seccomp&lt;/td&gt;
+			&lt;td&gt;
+				必须要使用 RuntimeDefault 安全计算模式(seccomp) 方案，或允许指定额外方案.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.seccompProfile.type&lt;br&gt;
+				spec.containers[*].securityContext.seccompProfile&lt;br&gt;
+				spec.initContainers[*].securityContext.seccompProfile&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt;&lt;br&gt;
+				&#39;runtime/default&#39;&lt;br&gt;
+				undefined / nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;!--
+## Policy Instantiation
+
+Decoupling policy definition from policy instantiation allows for a common understanding and
+consistent language of policies across clusters, independent of the underlying enforcement
+mechanism.
+
+As mechanisms mature, they will be defined below on a per-policy basis. The methods of enforcement
+of individual policies are not defined here.
+
+[**PodSecurityPolicy**](/docs/concepts/policy/pod-security-policy/)
+
+- [Privileged](https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/policy/privileged-psp.yaml)
+- [Baseline](https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/policy/baseline-psp.yaml)
+- [Restricted](https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/policy/restricted-psp.yaml)
+ --&gt;
+&lt;h2 id=&#34;policy-instantiation&#34;&gt;策略安装&lt;/h2&gt;
+&lt;p&gt;将策略定义从策略安装中解耦出来可以使用其成功一个共识和跨集群策略的统一语言，独立于底层的执行机制。&lt;/p&gt;
+&lt;p&gt;作为成熟机制， 它们会定义在单个策略基础之下。 每个策略的执行方法不是在这里定义的。
+&lt;blockquote&gt;
+  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/policy/pod-security-policy/&#34;&gt;&lt;strong&gt;PodSecurityPolicy&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/policy/privileged-psp.yaml&#34;&gt;Privileged&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/policy/baseline-psp.yaml&#34;&gt;Baseline&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/policy/restricted-psp.yaml&#34;&gt;Restricted&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+## FAQ
+
+### Why isn&#39;t there a profile between privileged and default?
+
+The three profiles defined here have a clear linear progression from most secure (restricted) to least
+secure (privileged), and cover a broad set of workloads. Privileges required above the baseline
+policy are typically very application specific, so we do not offer a standard profile in this
+niche. This is not to say that the privileged profile should always be used in this case, but that
+policies in this space need to be defined on a case-by-case basis.
+
+SIG Auth may reconsider this position in the future, should a clear need for other profiles arise.
+ --&gt;
+&lt;h2 id=&#34;faq&#34;&gt;FAQ&lt;/h2&gt;
+&lt;h3 id=&#34;why-isnt-there-a-profile-between-privileged-and-default&#34;&gt;为啥在 特权(privileged)和基线(default) 之间没有一个中间方案 &lt;/h3&gt;
+&lt;p&gt;这里定义的三个方案有一个明显的线性变化， 从最安全(受限)到最不安全(特权)，覆盖了广泛的工作负载集。
+在基线策略之上的权限需求通常是特别具体到应用的， 所以在这个层面我会不需要提供一个标准的方案。
+这也不是说特权方案就会始终用于这个应用场景，但是在这个地方用到的策略就需要单个场景级别地来定义。&lt;/p&gt;
+&lt;p&gt;如果有明确的其它方案的需求提出来，未来 SIG Auth 可以重新考虑加到这里。&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;whats-the-difference-between-a-security-policy-and-a-security-context&#34;&gt;安全策略与安全上下文之间的区别&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/configure-pod-container/security-context/&#34;&gt;安全上下文&lt;/a&gt; 是在
+Pod 和 容器的运行时上配置。 安全上下文是在Pod 配置中作为 Pod 和容器定义的一部分存在的，代表
+传递给容器运行时的参数。&lt;/p&gt;
+&lt;p&gt;安全策略是在安全上下文中执行指定设置的控制面板机制，连同安全上下文之外的其它参数。 从 2020 年 2 月
+形如，当前原生执行这些安全策略的方案就是
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/policy/pod-security-policy/&#34;&gt;Pod 安全策略&lt;/a&gt; - 一个在集群中
+以中心化方式在 Pod 上执行安全策略的机制。 其它执行安全策略的方式也已经在 k8s 生态中开发了，就
+如
+&lt;a href=&#34;https://github.com/open-policy-agent/gatekeeper&#34;&gt;OPA Gatekeeper&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;what-profiles-should-i-apply-to-my-windows-pods&#34;&gt;Windows Pod 应该执行哪个方案&lt;/h3&gt;
+&lt;p&gt;windows 在 k8s 中是有些限制且与基于 Linux 的标准工作负载有明显差异的。 特别是  Pod 的 SecurityContext
+字段在
+&lt;a href=&#34;https://kubernetes.io/docs/setup/production-environment/windows/intro-windows-in-kubernetes/#v1-podsecuritycontext&#34;&gt;Windows Pod 上是没有效果的&lt;/a&gt;. 因此，目前是没有标准的 Pod 安全方案存在的。&lt;/p&gt;
+&lt;h3 id=&#34;what-about-sandboxed-pods&#34;&gt;沙盒 Pod 是个啥情况&lt;/h3&gt;
+&lt;p&gt;目前没有一个标准的 API 可以控制一个 Pod 是否被认为是沙盒。沙盒 Pod 可能可以通过使用一个沙盒
+运行时(如 gVisor 或 Kata容器)来识别， 但没有对沙盒运行时有一个标准的定义。&lt;/p&gt;
+&lt;p&gt;对沙盒工作负载的保护需求可能与其它的不同。 例如，在工作负载从底层内核隔离后对特殊权限的限制需求就减少了。
+这使得工作负载在隔离的情况下提升指定的权限。&lt;/p&gt;
+&lt;p&gt;另外，对沙盒工作负载的保护调度信赖沙盒的实现方式。 例如，没有一个推荐策略可以推荐给所有的沙盒工作负载。&lt;/p&gt;
 
       </description>
     </item>

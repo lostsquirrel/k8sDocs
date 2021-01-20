@@ -6516,11 +6516,7 @@ are recommendations to protect application code:
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;静态代码分析&lt;/td&gt;
-&lt;td&gt;大多数语言都提供了对代码片断分析检查是否有潜在的不安全代码实践。 无论啥时候都应该使用自动化工作对&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;代码库执行这种检查，以提早发现常见的安全错误。 一些工具可以在这里找: &lt;a href=&#34;https://owasp.org/www-community/Source_Code_Analysis_Tools&#34;&gt;https://owasp.org/www-community/Source_Code_Analysis_Tools&lt;/a&gt;&lt;/td&gt;
-&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;大多数语言都提供了对代码片断分析检查是否有潜在的不安全代码实践。 无论啥时候都应该使用自动化工作对代码库执行这种检查，以提早发现常见的安全错误。 一些工具可以在这里找: &lt;a href=&#34;https://owasp.org/www-community/Source_Code_Analysis_Tools&#34;&gt;https://owasp.org/www-community/Source_Code_Analysis_Tools&lt;/a&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;动态探测攻击&lt;/td&gt;
@@ -6530,16 +6526,17 @@ are recommendations to protect application code:
 &lt;/table&gt;
 
 &lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
-&lt;p&gt;Learn about related Kubernetes security topics:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/pod-security-standards/&#34;&gt;Pod security standards&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/network-policies/&#34;&gt;Network policies for Pods&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/controlling-access&#34;&gt;Controlling Access to the Kubernetes API&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/securing-a-cluster/&#34;&gt;Securing your cluster&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/tls/managing-tls-in-a-cluster/&#34;&gt;Data encryption in transit&lt;/a&gt; for the control plane&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/encrypt-data/&#34;&gt;Data encryption at rest&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/secret/&#34;&gt;Secrets in Kubernetes&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;!--
+Learn about related Kubernetes security topics:
+
+* [Pod security standards](/docs/concepts/security/pod-security-standards/)
+* [Network policies for Pods](/docs/concepts/services-networking/network-policies/)
+* [Controlling Access to the Kubernetes API](/docs/concepts/security/controlling-access)
+* [Securing your cluster](/docs/tasks/administer-cluster/securing-a-cluster/)
+* [Data encryption in transit](/docs/tasks/tls/managing-tls-in-a-cluster/) for the control plane
+* [Data encryption at rest](/docs/tasks/administer-cluster/encrypt-data/)
+* [Secrets in Kubernetes](/docs/concepts/configuration/secret/)
+ --&gt;
 &lt;p&gt;更多关于 k8s 安全的主题:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/security/pod-security-standards/&#34;&gt;Pod 安全标准&lt;/a&gt;&lt;/li&gt;
@@ -7714,6 +7711,578 @@ to the deleted ConfigMap, it is recommended to recreate these pods.
 &lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/configure-pod-container/configure-pod-configmap/&#34;&gt;配置一个 Pod 使用 ConfigMap&lt;/a&gt;.&lt;/li&gt;
 &lt;li&gt;阅读 &lt;a href=&#34;https://12factor.net/&#34;&gt;The Twelve-Factor App&lt;/a&gt; 以便理解分离代码和配置的动机&lt;/li&gt;
 &lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Pod 安全标准</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/pod-security-standards/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/pod-security-standards/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- tallclair
+title: Pod Security Standards
+content_type: concept
+weight: 10
+---
+ --&gt;
+&lt;!-- overview --&gt;
+&lt;!--
+Security settings for Pods are typically applied by using [security
+contexts](/docs/tasks/configure-pod-container/security-context/). Security Contexts allow for the
+definition of privilege and access controls on a per-Pod basis.
+
+The enforcement and policy-based definition of cluster requirements of security contexts has
+previously been achieved using [Pod Security Policy](/docs/concepts/policy/pod-security-policy/). A
+_Pod Security Policy_ is a cluster-level resource that controls security sensitive aspects of the
+Pod specification.
+
+However, numerous means of policy enforcement have arisen that augment or replace the use of
+PodSecurityPolicy. The intent of this page is to detail recommended Pod security profiles, decoupled
+from any specific instantiation.
+ --&gt;
+&lt;p&gt;对于 Pod 的安全设置通常是使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/configure-pod-container/security-context/&#34;&gt;安全性上下文&lt;/a&gt;.
+安全性上下文允许对 Pod 级的权限定义和访问控制。&lt;/p&gt;
+&lt;p&gt;实施和基于策略定义的集群安全性上下文要求是通过使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/pod-security-policy/&#34;&gt;Pod 安全性策略&lt;/a&gt;
+实现的。 &lt;em&gt;Pod 安全性策略&lt;/em&gt; 是集群级别的资源，用来控制安全性敏感方面的 Pod 定义。&lt;/p&gt;
+&lt;p&gt;但是， 多种方式的执行策略会引发争论或替换 PodSecurityPolicy 的使用。 本文的目的是详细推荐
+安全策略方案， 与任意指定实例解耦。&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## Policy Types
+
+There is an immediate need for base policy definitions to broadly cover the security spectrum. These
+should range from highly restricted to highly flexible:
+
+- **_Privileged_** - Unrestricted policy, providing the widest possible level of permissions. This
+  policy allows for known privilege escalations.
+- **_Baseline/Default_** - Minimally restrictive policy while preventing known privilege
+  escalations. Allows the default (minimally specified) Pod configuration.
+- **_Restricted_** - Heavily restricted policy, following current Pod hardening best practices.
+ --&gt;
+&lt;h2 id=&#34;policy-types&#34;&gt;策略类别&lt;/h2&gt;
+&lt;p&gt;安全策略定义来大体上能覆盖安全相关问题。 下面这些从高限制到高灵活性的范围:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;em&gt;Privileged&lt;/em&gt;&lt;/strong&gt; - 不受限策略， 提供最大可能级别的权限。 这个策略允许所有已知权限升级。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;em&gt;Baseline/Default&lt;/em&gt;&lt;/strong&gt; - 在防止已知权限升级的情况下相对最小限制策略。 允许默认(最少配置)的 Pod 配置&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;em&gt;Restricted&lt;/em&gt;&lt;/strong&gt; - 严重限制策略， 依照目前 Pod 加固最佳实践&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+## Policies
+
+### Privileged
+
+The Privileged policy is purposely-open, and entirely unrestricted. This type of policy is typically
+aimed at system- and infrastructure-level workloads managed by privileged, trusted users.
+
+The privileged policy is defined by an absence of restrictions. For allow-by-default enforcement
+mechanisms (such as gatekeeper), the privileged profile may be an absence of applied constraints
+rather than an instantiated policy. In contrast, for a deny-by-default mechanism (such as Pod
+Security Policy) the privileged policy should enable all controls (disable all restrictions).
+ --&gt;
+&lt;h2 id=&#34;policies&#34;&gt;策略&lt;/h2&gt;
+&lt;h3 id=&#34;privileged&#34;&gt;特权&lt;/h3&gt;
+&lt;p&gt;特权策略是以开放为目的的，并且完全没有限制。这个策略类别通常是用于系统级和基础设施级别的工作负载，
+它们由特权，受信的用户管理。&lt;/p&gt;
+&lt;p&gt;特权策略的定义方式就是没有限制。 对于 默认允许执行机制(如守门人(&lt;code&gt;gatekeeper&lt;/code&gt;)), 特权方案是没有
+执行的约束条件而不是一个实际的策略。相反的，在一个 默认拒绝的机制中(如 Pod 安全策略)，特权策略
+就应该启用所有控制(关闭所有约束)。&lt;/p&gt;
+&lt;!--
+### Baseline/Default
+
+The Baseline/Default policy is aimed at ease of adoption for common containerized workloads while
+preventing known privilege escalations. This policy is targeted at application operators and
+developers of non-critical applications. The following listed controls should be
+enforced/disallowed:
+
+&lt;table&gt;
+	&lt;caption style=&#34;display:none&#34;&gt;Baseline policy specification&lt;/caption&gt;
+	&lt;tbody&gt;
+		&lt;tr&gt;
+			&lt;td&gt;&lt;strong&gt;Control&lt;/strong&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;strong&gt;Policy&lt;/strong&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Host Namespaces&lt;/td&gt;
+			&lt;td&gt;
+				Sharing the host namespaces must be disallowed.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.hostNetwork&lt;br&gt;
+				spec.hostPID&lt;br&gt;
+				spec.hostIPC&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; false&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Privileged Containers&lt;/td&gt;
+			&lt;td&gt;
+				Privileged Pods disable most security mechanisms and must be disallowed.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.privileged&lt;br&gt;
+				spec.initContainers[*].securityContext.privileged&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; false, undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Capabilities&lt;/td&gt;
+			&lt;td&gt;
+				Adding additional capabilities beyond the &lt;a href=&#34;https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities&#34;&gt;default set&lt;/a&gt; must be disallowed.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.capabilities.add&lt;br&gt;
+				spec.initContainers[*].securityContext.capabilities.add&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; empty (or restricted to a known list)&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;HostPath Volumes&lt;/td&gt;
+			&lt;td&gt;
+				HostPath volumes must be forbidden.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.volumes[*].hostPath&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Host Ports&lt;/td&gt;
+			&lt;td&gt;
+				HostPorts should be disallowed, or at minimum restricted to a known list.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].ports[*].hostPort&lt;br&gt;
+				spec.initContainers[*].ports[*].hostPort&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; 0, undefined (or restricted to a known list)&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;AppArmor &lt;em&gt;(optional)&lt;/em&gt;&lt;/td&gt;
+			&lt;td&gt;
+				On supported hosts, the &#39;runtime/default&#39; AppArmor profile is applied by default. The default policy should prevent overriding or disabling the policy, or restrict overrides to an allowed set of profiles.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				metadata.annotations[&#39;container.apparmor.security.beta.kubernetes.io/*&#39;]&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; &#39;runtime/default&#39;, undefined&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;SELinux &lt;em&gt;(optional)&lt;/em&gt;&lt;/td&gt;
+			&lt;td&gt;
+				Setting custom SELinux options should be disallowed.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.seLinuxOptions&lt;br&gt;
+				spec.containers[*].securityContext.seLinuxOptions&lt;br&gt;
+				spec.initContainers[*].securityContext.seLinuxOptions&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;/proc Mount Type&lt;/td&gt;
+			&lt;td&gt;
+				The default /proc masks are set up to reduce attack surface, and should be required.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.procMount&lt;br&gt;
+				spec.initContainers[*].securityContext.procMount&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; undefined/nil, &#39;Default&#39;&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Sysctls&lt;/td&gt;
+			&lt;td&gt;
+				Sysctls can disable security mechanisms or affect all containers on a host, and should be disallowed except for an allowed &#34;safe&#34; subset.
+				A sysctl is considered safe if it is namespaced in the container or the Pod, and it is isolated from other Pods or processes on the same Node.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.sysctls&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt;&lt;br&gt;
+				kernel.shm_rmid_forced&lt;br&gt;
+				net.ipv4.ip_local_port_range&lt;br&gt;
+				net.ipv4.tcp_syncookies&lt;br&gt;
+				net.ipv4.ping_group_range&lt;br&gt;
+				undefined/empty&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+ --&gt;
+&lt;h3 id=&#34;baseline&#34;&gt;基线/默认&lt;/h3&gt;
+&lt;p&gt;基线/默认策略的目的是在防止已知的特权升级情况下，让得普通的容器化工作负载来使用。 这个策略的目标
+用户是应用运维人员和非关键应用的开发者。 下面列举这这些控制应该受限/不被允许:&lt;/p&gt;
+&lt;table&gt;
+	&lt;caption style=&#34;display:none&#34;&gt;基线策略规范&lt;/caption&gt;
+	&lt;tbody&gt;
+		&lt;tr&gt;
+			&lt;td&gt;&lt;strong&gt;控制&lt;/strong&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;strong&gt;策略&lt;/strong&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;宿主机命令空间&lt;/td&gt;
+			&lt;td&gt;
+				Sharing the host namespaces must be disallowed.&lt;br&gt;
+        主机命名空间分离必须禁止。
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.hostNetwork&lt;br&gt;
+				spec.hostPID&lt;br&gt;
+				spec.hostIPC&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; false&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;特权容器&lt;/td&gt;
+			&lt;td&gt;
+        特权 Pod 禁用了多数安全机制，必须禁止。
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.privileged&lt;br&gt;
+				spec.initContainers[*].securityContext.privileged&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; false, undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Capabilities&lt;/td&gt;
+			&lt;td&gt;
+        [默认集](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities)
+        外的额外能力是不允许的
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.capabilities.add&lt;br&gt;
+				spec.initContainers[*].securityContext.capabilities.add&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; empty (or restricted to a known list)&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;HostPath 卷&lt;/td&gt;
+			&lt;td&gt;
+				HostPath 卷必须禁止&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.volumes[*].hostPath&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;宿主机端口&lt;/td&gt;
+			&lt;td&gt;
+				宿主机端口应该禁用, 或最少限制在一个已知列表.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].ports[*].hostPort&lt;br&gt;
+				spec.initContainers[*].ports[*].hostPort&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; 0, undefined (或限制在一个已知列表)&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;AppArmor &lt;em&gt;(可选)&lt;/em&gt;&lt;/td&gt;
+			&lt;td&gt;
+        在受支持的主机上，默认执行 &#39;runtime/default&#39; AppArmor 方案。 默认策略应该防止被覆盖或
+        禁用策略，或限制对允许方案集的覆盖.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				metadata.annotations[&#39;container.apparmor.security.beta.kubernetes.io/*&#39;]&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; &#39;runtime/default&#39;, undefined&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;SELinux &lt;em&gt;(可选)&lt;/em&gt;&lt;/td&gt;
+			&lt;td&gt;
+        不允许设置自定义SELinux选项.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.seLinuxOptions&lt;br&gt;
+				spec.containers[*].securityContext.seLinuxOptions&lt;br&gt;
+				spec.initContainers[*].securityContext.seLinuxOptions&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;/proc 挂载类别&lt;/td&gt;
+			&lt;td&gt;
+        默认的 /proc masks 被设置来减少攻击面， 是必要的.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.procMount&lt;br&gt;
+				spec.initContainers[*].securityContext.procMount&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; undefined/nil, &#39;Default&#39;&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Sysctls&lt;/td&gt;
+			&lt;td&gt;
+        Sysctls 可以禁用安全机制或影响主机上的所有容器，在允许的安全子集外都应该被禁止。
+        如果 sysctl 命名空间为容器内或 Pod 内被认为是安全的， 它会被与同一个节点上其它 Pod 或进程隔离.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.sysctls&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt;&lt;br&gt;
+				kernel.shm_rmid_forced&lt;br&gt;
+				net.ipv4.ip_local_port_range&lt;br&gt;
+				net.ipv4.tcp_syncookies&lt;br&gt;
+				net.ipv4.ping_group_range&lt;br&gt;
+				undefined/empty&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;!--
+### Restricted
+
+The Restricted policy is aimed at enforcing current Pod hardening best practices, at the expense of
+some compatibility. It is targeted at operators and developers of security-critical applications, as
+well as lower-trust users.The following listed controls should be enforced/disallowed:
+
+
+&lt;table&gt;
+	&lt;caption style=&#34;display:none&#34;&gt;Restricted policy specification&lt;/caption&gt;
+	&lt;tbody&gt;
+		&lt;tr&gt;
+			&lt;td&gt;&lt;strong&gt;Control&lt;/strong&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;strong&gt;Policy&lt;/strong&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan=&#34;2&#34;&gt;&lt;em&gt;Everything from the default profile.&lt;/em&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Volume Types&lt;/td&gt;
+			&lt;td&gt;
+				In addition to restricting HostPath volumes, the restricted profile limits usage of non-core volume types to those defined through PersistentVolumes.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.volumes[*].hostPath&lt;br&gt;
+				spec.volumes[*].gcePersistentDisk&lt;br&gt;
+				spec.volumes[*].awsElasticBlockStore&lt;br&gt;
+				spec.volumes[*].gitRepo&lt;br&gt;
+				spec.volumes[*].nfs&lt;br&gt;
+				spec.volumes[*].iscsi&lt;br&gt;
+				spec.volumes[*].glusterfs&lt;br&gt;
+				spec.volumes[*].rbd&lt;br&gt;
+				spec.volumes[*].flexVolume&lt;br&gt;
+				spec.volumes[*].cinder&lt;br&gt;
+				spec.volumes[*].cephFS&lt;br&gt;
+				spec.volumes[*].flocker&lt;br&gt;
+				spec.volumes[*].fc&lt;br&gt;
+				spec.volumes[*].azureFile&lt;br&gt;
+				spec.volumes[*].vsphereVolume&lt;br&gt;
+				spec.volumes[*].quobyte&lt;br&gt;
+				spec.volumes[*].azureDisk&lt;br&gt;
+				spec.volumes[*].portworxVolume&lt;br&gt;
+				spec.volumes[*].scaleIO&lt;br&gt;
+				spec.volumes[*].storageos&lt;br&gt;
+				spec.volumes[*].csi&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Privilege Escalation&lt;/td&gt;
+			&lt;td&gt;
+				Privilege escalation (such as via set-user-ID or set-group-ID file mode) should not be allowed.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.allowPrivilegeEscalation&lt;br&gt;
+				spec.initContainers[*].securityContext.allowPrivilegeEscalation&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; false&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Running as Non-root&lt;/td&gt;
+			&lt;td&gt;
+				Containers must be required to run as non-root users.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.runAsNonRoot&lt;br&gt;
+				spec.containers[*].securityContext.runAsNonRoot&lt;br&gt;
+				spec.initContainers[*].securityContext.runAsNonRoot&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt; true&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Non-root groups &lt;em&gt;(optional)&lt;/em&gt;&lt;/td&gt;
+			&lt;td&gt;
+				Containers should be forbidden from running with a root primary or supplementary GID.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.runAsGroup&lt;br&gt;
+				spec.securityContext.supplementalGroups[*]&lt;br&gt;
+				spec.securityContext.fsGroup&lt;br&gt;
+				spec.containers[*].securityContext.runAsGroup&lt;br&gt;
+				spec.initContainers[*].securityContext.runAsGroup&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt;&lt;br&gt;
+				non-zero&lt;br&gt;
+				undefined / nil (except for `*.runAsGroup`)&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Seccomp&lt;/td&gt;
+			&lt;td&gt;
+				The RuntimeDefault seccomp profile must be required, or allow specific additional profiles.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Restricted Fields:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.seccompProfile.type&lt;br&gt;
+				spec.containers[*].securityContext.seccompProfile&lt;br&gt;
+				spec.initContainers[*].securityContext.seccompProfile&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;Allowed Values:&lt;/b&gt;&lt;br&gt;
+				&#39;runtime/default&#39;&lt;br&gt;
+				undefined / nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+ --&gt;
+&lt;h3 id=&#34;restricted&#34;&gt;受限的&lt;/h3&gt;
+&lt;p&gt;受限策略旨在实施目前的 Pod 加固最佳实践，代价就是牺牲一些兼容性。目标用户为高安全性应用的运维和
+开发人员，也可以是低信任度的用户。 下面列举的控制项应该受限/不被允许:&lt;/p&gt;
+&lt;table&gt;
+	&lt;caption style=&#34;display:none&#34;&gt;受限策略规范&lt;/caption&gt;
+	&lt;tbody&gt;
+		&lt;tr&gt;
+			&lt;td&gt;&lt;strong&gt;Control&lt;/strong&gt;&lt;/td&gt;
+			&lt;td&gt;&lt;strong&gt;Policy&lt;/strong&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan=&#34;2&#34;&gt;&lt;em&gt;所有都来自默认方案&lt;/em&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;卷类型&lt;/td&gt;
+			&lt;td&gt;
+        为了进一步限制 HostPath 卷， 受限方案在定义 PV 时限制了这些非核心卷类型的使用.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.volumes[*].hostPath&lt;br&gt;
+				spec.volumes[*].gcePersistentDisk&lt;br&gt;
+				spec.volumes[*].awsElasticBlockStore&lt;br&gt;
+				spec.volumes[*].gitRepo&lt;br&gt;
+				spec.volumes[*].nfs&lt;br&gt;
+				spec.volumes[*].iscsi&lt;br&gt;
+				spec.volumes[*].glusterfs&lt;br&gt;
+				spec.volumes[*].rbd&lt;br&gt;
+				spec.volumes[*].flexVolume&lt;br&gt;
+				spec.volumes[*].cinder&lt;br&gt;
+				spec.volumes[*].cephFS&lt;br&gt;
+				spec.volumes[*].flocker&lt;br&gt;
+				spec.volumes[*].fc&lt;br&gt;
+				spec.volumes[*].azureFile&lt;br&gt;
+				spec.volumes[*].vsphereVolume&lt;br&gt;
+				spec.volumes[*].quobyte&lt;br&gt;
+				spec.volumes[*].azureDisk&lt;br&gt;
+				spec.volumes[*].portworxVolume&lt;br&gt;
+				spec.volumes[*].scaleIO&lt;br&gt;
+				spec.volumes[*].storageos&lt;br&gt;
+				spec.volumes[*].csi&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; undefined/nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;权限提升&lt;/td&gt;
+			&lt;td&gt;
+				权限提升 (如通过设置 set-user-ID 或 set-group-ID 文件模式) 应该被禁止.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.containers[*].securityContext.allowPrivilegeEscalation&lt;br&gt;
+				spec.initContainers[*].securityContext.allowPrivilegeEscalation&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; false&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;以 非root用户运行&lt;/td&gt;
+			&lt;td&gt;
+				要求容器必须以非 root 用户运行 .&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.runAsNonRoot&lt;br&gt;
+				spec.containers[*].securityContext.runAsNonRoot&lt;br&gt;
+				spec.initContainers[*].securityContext.runAsNonRoot&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt; true&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;非root 组 &lt;em&gt;(可选)&lt;/em&gt;&lt;/td&gt;
+			&lt;td&gt;
+				容器应该避免以 root 主要或辅助的 GID 来运行 .&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.runAsGroup&lt;br&gt;
+				spec.securityContext.supplementalGroups[*]&lt;br&gt;
+				spec.securityContext.fsGroup&lt;br&gt;
+				spec.containers[*].securityContext.runAsGroup&lt;br&gt;
+				spec.initContainers[*].securityContext.runAsGroup&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt;&lt;br&gt;
+				non-zero&lt;br&gt;
+				undefined / nil (`*.runAsGroup` 除外)&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Seccomp&lt;/td&gt;
+			&lt;td&gt;
+				必须要使用 RuntimeDefault 安全计算模式(seccomp) 方案，或允许指定额外方案.&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;受限字段:&lt;/b&gt;&lt;br&gt;
+				spec.securityContext.seccompProfile.type&lt;br&gt;
+				spec.containers[*].securityContext.seccompProfile&lt;br&gt;
+				spec.initContainers[*].securityContext.seccompProfile&lt;br&gt;
+				&lt;br&gt;&lt;b&gt;可用值:&lt;/b&gt;&lt;br&gt;
+				&#39;runtime/default&#39;&lt;br&gt;
+				undefined / nil&lt;br&gt;
+			&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;!--
+## Policy Instantiation
+
+Decoupling policy definition from policy instantiation allows for a common understanding and
+consistent language of policies across clusters, independent of the underlying enforcement
+mechanism.
+
+As mechanisms mature, they will be defined below on a per-policy basis. The methods of enforcement
+of individual policies are not defined here.
+
+[**PodSecurityPolicy**](/docs/concepts/policy/pod-security-policy/)
+
+- [Privileged](https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/policy/privileged-psp.yaml)
+- [Baseline](https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/policy/baseline-psp.yaml)
+- [Restricted](https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/policy/restricted-psp.yaml)
+ --&gt;
+&lt;h2 id=&#34;policy-instantiation&#34;&gt;策略安装&lt;/h2&gt;
+&lt;p&gt;将策略定义从策略安装中解耦出来可以使用其成功一个共识和跨集群策略的统一语言，独立于底层的执行机制。&lt;/p&gt;
+&lt;p&gt;作为成熟机制， 它们会定义在单个策略基础之下。 每个策略的执行方法不是在这里定义的。
+&lt;blockquote&gt;
+  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/policy/pod-security-policy/&#34;&gt;&lt;strong&gt;PodSecurityPolicy&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/policy/privileged-psp.yaml&#34;&gt;Privileged&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/policy/baseline-psp.yaml&#34;&gt;Baseline&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/policy/restricted-psp.yaml&#34;&gt;Restricted&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+## FAQ
+
+### Why isn&#39;t there a profile between privileged and default?
+
+The three profiles defined here have a clear linear progression from most secure (restricted) to least
+secure (privileged), and cover a broad set of workloads. Privileges required above the baseline
+policy are typically very application specific, so we do not offer a standard profile in this
+niche. This is not to say that the privileged profile should always be used in this case, but that
+policies in this space need to be defined on a case-by-case basis.
+
+SIG Auth may reconsider this position in the future, should a clear need for other profiles arise.
+ --&gt;
+&lt;h2 id=&#34;faq&#34;&gt;FAQ&lt;/h2&gt;
+&lt;h3 id=&#34;why-isnt-there-a-profile-between-privileged-and-default&#34;&gt;为啥在 特权(privileged)和基线(default) 之间没有一个中间方案 &lt;/h3&gt;
+&lt;p&gt;这里定义的三个方案有一个明显的线性变化， 从最安全(受限)到最不安全(特权)，覆盖了广泛的工作负载集。
+在基线策略之上的权限需求通常是特别具体到应用的， 所以在这个层面我会不需要提供一个标准的方案。
+这也不是说特权方案就会始终用于这个应用场景，但是在这个地方用到的策略就需要单个场景级别地来定义。&lt;/p&gt;
+&lt;p&gt;如果有明确的其它方案的需求提出来，未来 SIG Auth 可以重新考虑加到这里。&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;whats-the-difference-between-a-security-policy-and-a-security-context&#34;&gt;安全策略与安全上下文之间的区别&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/configure-pod-container/security-context/&#34;&gt;安全上下文&lt;/a&gt; 是在
+Pod 和 容器的运行时上配置。 安全上下文是在Pod 配置中作为 Pod 和容器定义的一部分存在的，代表
+传递给容器运行时的参数。&lt;/p&gt;
+&lt;p&gt;安全策略是在安全上下文中执行指定设置的控制面板机制，连同安全上下文之外的其它参数。 从 2020 年 2 月
+形如，当前原生执行这些安全策略的方案就是
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/policy/pod-security-policy/&#34;&gt;Pod 安全策略&lt;/a&gt; - 一个在集群中
+以中心化方式在 Pod 上执行安全策略的机制。 其它执行安全策略的方式也已经在 k8s 生态中开发了，就
+如
+&lt;a href=&#34;https://github.com/open-policy-agent/gatekeeper&#34;&gt;OPA Gatekeeper&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;what-profiles-should-i-apply-to-my-windows-pods&#34;&gt;Windows Pod 应该执行哪个方案&lt;/h3&gt;
+&lt;p&gt;windows 在 k8s 中是有些限制且与基于 Linux 的标准工作负载有明显差异的。 特别是  Pod 的 SecurityContext
+字段在
+&lt;a href=&#34;https://kubernetes.io/docs/setup/production-environment/windows/intro-windows-in-kubernetes/#v1-podsecuritycontext&#34;&gt;Windows Pod 上是没有效果的&lt;/a&gt;. 因此，目前是没有标准的 Pod 安全方案存在的。&lt;/p&gt;
+&lt;h3 id=&#34;what-about-sandboxed-pods&#34;&gt;沙盒 Pod 是个啥情况&lt;/h3&gt;
+&lt;p&gt;目前没有一个标准的 API 可以控制一个 Pod 是否被认为是沙盒。沙盒 Pod 可能可以通过使用一个沙盒
+运行时(如 gVisor 或 Kata容器)来识别， 但没有对沙盒运行时有一个标准的定义。&lt;/p&gt;
+&lt;p&gt;对沙盒工作负载的保护需求可能与其它的不同。 例如，在工作负载从底层内核隔离后对特殊权限的限制需求就减少了。
+这使得工作负载在隔离的情况下提升指定的权限。&lt;/p&gt;
+&lt;p&gt;另外，对沙盒工作负载的保护调度信赖沙盒的实现方式。 例如，没有一个推荐策略可以推荐给所有的沙盒工作负载。&lt;/p&gt;
 
       </description>
     </item>
@@ -27188,595 +27757,6 @@ For more information about the background, see the [design proposal for PodPrese
  --&gt;
 &lt;p&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/inject-data-application/podpreset/&#34;&gt;使用 PodPreset 向 Pod 注入数据&lt;/a&gt;
 更多背景信息， 见&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/service-catalog/pod-preset.md&#34;&gt;design proposal for PodPreset&lt;/a&gt;&lt;/p&gt;
-
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: Disruptions</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/disruptions/</link>
-      <pubDate>Wed, 29 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/pods/disruptions/</guid>
-      <description>
-        
-        
-        &lt;!--
----
-reviewers:
-- erictune
-- foxish
-- davidopp
-title: Disruptions
-content_type: concept
-weight: 60
----
- --&gt;
-&lt;!-- overview --&gt;
-&lt;!--
-This guide is for application owners who want to build
-highly available applications, and thus need to understand
-what types of disruptions can happen to Pods.
-
-It is also for cluster administrators who want to perform automated
-cluster actions, like upgrading and autoscaling clusters.
- --&gt;
-&lt;p&gt;本文主要给
-那些需要构建高可用应用的应用所属者，需要理解 Pod 可能遇到哪些类型的故障
-也适用于那些需要实现自动集群操作，如升级或集群自动扩容的集群管理员&lt;/p&gt;
-&lt;!-- body --&gt;
-&lt;!--
-## Voluntary and involuntary disruptions
-
-Pods do not disappear until someone (a person or a controller) destroys them, or
-there is an unavoidable hardware or system software error.
-
-We call these unavoidable cases *involuntary disruptions* to
-an application.  Examples are:
-
-- a hardware failure of the physical machine backing the node
-- cluster administrator deletes VM (instance) by mistake
-- cloud provider or hypervisor failure makes VM disappear
-- a kernel panic
-- the node disappears from the cluster due to cluster network partition
-- eviction of a pod due to the node being [out-of-resources](/docs/tasks/administer-cluster/out-of-resource/).
-
-Except for the out-of-resources condition, all these conditions
-should be familiar to most users; they are not specific
-to Kubernetes.
-
-We call other cases *voluntary disruptions*.  These include both
-actions initiated by the application owner and those initiated by a Cluster
-Administrator.  Typical application owner actions include:
-
-- deleting the deployment or other controller that manages the pod
-- updating a deployment&#39;s pod template causing a restart
-- directly deleting a pod (e.g. by accident)
-
-Cluster administrator actions include:
-
-- [Draining a node](/docs/tasks/administer-cluster/safely-drain-node/) for repair or upgrade.
-- Draining a node from a cluster to scale the cluster down (learn about
-[Cluster Autoscaling](/docs/tasks/administer-cluster/cluster-management/#cluster-autoscaler)
-).
-- Removing a pod from a node to permit something else to fit on that node.
-
-These actions might be taken directly by the cluster administrator, or by automation
-run by the cluster administrator, or by your cluster hosting provider.
-
-Ask your cluster administrator or consult your cloud provider or distribution documentation
-to determine if any sources of voluntary disruptions are enabled for your cluster.
-If none are enabled, you can skip creating Pod Disruption Budgets.
-
-&lt;blockquote class=&#34;caution&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; Not all voluntary disruptions are constrained by Pod Disruption Budgets. For example,
-deleting deployments or pods bypasses Pod Disruption Budgets.&lt;/div&gt;
-&lt;/blockquote&gt;
-
-
- --&gt;
-&lt;h2 id=&#34;计划内和计划外的故障&#34;&gt;计划内和计划外的故障&lt;/h2&gt;
-&lt;p&gt;Pod 只会在有人(真人或一个控制器)销毁时或有不可用的硬件或系统软件错误时才会消失。&lt;/p&gt;
-&lt;p&gt;我们把这类在应用上出现不可避免出现的情况称为 &lt;em&gt;计划外故障&lt;/em&gt;， 例如:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;节点所以的物理机出现硬件故障&lt;/li&gt;
-&lt;li&gt;集群管理误操作删除了虚拟机实例&lt;/li&gt;
-&lt;li&gt;云提供商或虚拟化软件故障导致虚拟机丢失&lt;/li&gt;
-&lt;li&gt;内核故障&lt;/li&gt;
-&lt;li&gt;因为网络分区导致节点与集群失联&lt;/li&gt;
-&lt;li&gt;因为节点&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/administer-cluster/out-of-resource/&#34;&gt;资源爆了&lt;/a&gt;导致 Pod 被驱逐&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;除了资源瀑掉的情况，其它的情况对大多数用户来说都是比较熟悉的， 并不是 k8s 独有的。&lt;/p&gt;
-&lt;p&gt;其它的情况就被称为 &lt;em&gt;计划内故障&lt;/em&gt;， 包括由应用所有者发起的行为和集群管理员发起的行为。 常见的应用所有者行为有:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;删除管理 Pod 的 Deployment 或其它控制器(controller)&lt;/li&gt;
-&lt;li&gt;更新 Pod 定义模板引起重启&lt;/li&gt;
-&lt;li&gt;直接删除 Pod (如，误删除)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;集群管理发起的行为有:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;因修复或升级 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/administer-cluster/safely-drain-node/&#34;&gt;节点清场&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;因收缩集群容量而 节点清场
-(更多见&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/administer-cluster/cluster-management/#cluster-autoscaler&#34;&gt;集群动态容量&lt;/a&gt;)&lt;/li&gt;
-&lt;li&gt;因要放入更适合该节点的其它东西而删除 Pod&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;询问系统管理或咨询云提供商或查看文档来确定集群是否开启了计划内故障&lt;/p&gt;
-&lt;blockquote class=&#34;caution&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; 不是所有的计划内故障都包含在 Pod 故障预算中。 例如， 删除 Deployment 或 Pod 绕过了 Pod 故障预算&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;!--  
-## Dealing with disruptions
-
-Here are some ways to mitigate involuntary disruptions:
-
-- Ensure your pod [requests the resources](/docs/tasks/configure-pod-container/assign-memory-resource) it needs.
-- Replicate your application if you need higher availability.  (Learn about running replicated
-  [stateless](/docs/tasks/run-application/run-stateless-application-deployment/)
-  and [stateful](/docs/tasks/run-application/run-replicated-stateful-application/) applications.)
-- For even higher availability when running replicated applications,
-  spread applications across racks (using
-  [anti-affinity](/docs/user-guide/node-selection/#inter-pod-affinity-and-anti-affinity-beta-feature))
-  or across zones (if using a
-  [multi-zone cluster](/docs/setup/multiple-zones).)
-
-The frequency of voluntary disruptions varies.  On a basic Kubernetes cluster, there are
-no voluntary disruptions at all.  However, your cluster administrator or hosting provider
-may run some additional services which cause voluntary disruptions. For example,
-rolling out node software updates can cause voluntary disruptions. Also, some implementations
-of cluster (node) autoscaling may cause voluntary disruptions to defragment and compact nodes.
-Your cluster administrator or hosting provider should have documented what level of voluntary
-disruptions, if any, to expect.
---&gt;
-&lt;h2 id=&#34;如何应对故障&#34;&gt;如何应对故障&lt;/h2&gt;
-&lt;p&gt;可以通过以下方式缓解计划外故障:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;保证 Pod &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/configure-pod-container/assign-memory-resource&#34;&gt;申请所需要的资源&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;如果需要高可以，部署多个应用副本。(更多关于如何运行
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/run-application/run-stateless-application-deployment/&#34;&gt;无状态&lt;/a&gt;
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/run-application/run-replicated-stateful-application/&#34;&gt;有状态&lt;/a&gt;
-应用
-)&lt;/li&gt;
-&lt;li&gt;如果多副本应用还需要更高的可用性， 让应用副本分布在不同的机架(
-通过 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/user-guide/node-selection/#inter-pod-affinity-and-anti-affinity-beta-feature&#34;&gt;anti-affinity&lt;/a&gt;
-) 或 不同的区域(
-如果使用 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/setup/multiple-zones&#34;&gt;多区域集群&lt;/a&gt;)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;!--
-## Pod disruption budgets
-
-
-
-
-
-
-&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
-&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.5 [beta]&lt;/code&gt;
-&lt;/div&gt;
-
-
-
-Kubernetes offers features to help you run highly available applications even when you
-introduce frequent voluntary disruptions.
-
-As an application owner, you can create a PodDisruptionBudget (PDB) for each application.
-A PDB limits the number of Pods of a replicated application that are down simultaneously from
-voluntary disruptions. For example, a quorum-based application would
-like to ensure that the number of replicas running is never brought below the
-number needed for a quorum. A web front end might want to
-ensure that the number of replicas serving load never falls below a certain
-percentage of the total.
-
-Cluster managers and hosting providers should use tools which
-respect PodDisruptionBudgets by calling the [Eviction API](/docs/tasks/administer-cluster/safely-drain-node/#the-eviction-api)
-instead of directly deleting pods or deployments.
-
-For example, the `kubectl drain` subcommand lets you mark a node as going out of
-service. When you run `kubectl drain`, the tool tries to evict all of the Pods on
-the Node you&#39;re taking out of service. The eviction request that `kubectl` submits on
-your behalf may be temporarily rejected, so the tool periodically retries all failed
-requests until all Pods on the target node are terminated, or until a configurable timeout
-is reached.
-
-A PDB specifies the number of replicas that an application can tolerate having, relative to how
-many it is intended to have.  For example, a Deployment which has a `.spec.replicas: 5` is
-supposed to have 5 pods at any given time.  If its PDB allows for there to be 4 at a time,
-then the Eviction API will allow voluntary disruption of one (but not two) pods at a time.
-
-The group of pods that comprise the application is specified using a label selector, the same
-as the one used by the application&#39;s controller (deployment, stateful-set, etc).
-
-The &#34;intended&#34; number of pods is computed from the `.spec.replicas` of the workload resource
-that is managing those pods. The control plane discovers the owning workload resource by
-examining the `.metadata.ownerReferences` of the Pod.
-
-PDBs cannot prevent [involuntary disruptions](#voluntary-and-involuntary-disruptions) from
-occurring, but they do count against the budget.
-
-Pods which are deleted or unavailable due to a rolling upgrade to an application do count
-against the disruption budget, but workload resources (such as Deployment and StatefulSet)
-are not limited by PDBs when doing rolling upgrades. Instead, the handling of failures
-during application updates is configured in the spec for the specific workload resource.
-
-When a pod is evicted using the eviction API, it is gracefully
-[terminated](/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination), honoring the
-`terminationGracePeriodSeconds` setting in its [PodSpec](/docs/reference/generated/kubernetes-api/v1.19/#podspec-v1-core).)
- --&gt;
-&lt;h2 id=&#34;pod-故障预算&#34;&gt;Pod 故障预算&lt;/h2&gt;
-
-
-
-
-
-&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
-&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.5 [beta]&lt;/code&gt;
-&lt;/div&gt;
-
-
-&lt;p&gt;k8s 提供了即便在频繁有计划内故障的情况下依然可以运行高可用应用的特性。&lt;/p&gt;
-&lt;p&gt;作为一个应用所有者，用户可以为每个应用创建一个 &lt;code&gt;PodDisruptionBudget&lt;/code&gt; (PDB)，
-PDB 会限制在计划内故障时应用副本的 Pod 同时挂掉的数量。例如，一个基于选举的应用，就必须要保证
-运行的副本数不能少于选举所需要的数量。 一个WEB前端可能需要保证提供服务的副本数量不能少于某个百分比&lt;/p&gt;
-&lt;p&gt;集群管理器和主机提供都应该使用工具来调用遵循 &lt;code&gt;PodDisruptionBudget&lt;/code&gt; 的
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/administer-cluster/safely-drain-node/#the-eviction-api&#34;&gt;Eviction API&lt;/a&gt;
-而不是直接删除 Pod 或 Deployment.&lt;/p&gt;
-&lt;p&gt;例如，&lt;code&gt;kubectl drain&lt;/code&gt; 命令将节点标签为即将停止服务。 当运行 &lt;code&gt;kubectl drain&lt;/code&gt; 后，
-工具将尝试将停止服务的节点上所有的 Pod 驱逐掉。 由 kubelet 发起的驱逐请求可能会临时被拒绝，
-所以工具会对失败的请求周期性重试直到节点上所有的 Pod 被终止或最终超时(超时时间可配置)。&lt;/p&gt;
-&lt;p&gt;PDB 指定一个应用可以接受的最少同时正常运行的副本数量。 例如，一个 Deployment 上定义为 &lt;code&gt;.spec.replicas: 5&lt;/code&gt;
-也就是任意时间都要有5个正常运行的副本。 如果它的 PDB 允许同时至少要有 4 个副本， 则 驱逐 API
-允许故同一时间内的计划内障数为一(不是二)&lt;/p&gt;
-&lt;p&gt;而应用是通过特定标签选择器匹配到的 Pod 组成的， 与应用的控制器(deployment, stateful-set,等)一样&lt;/p&gt;
-&lt;p&gt;Pod 的预期数量是通过管理这些 Pod 的工作负载资源上的 &lt;code&gt;.spec.replicas&lt;/code&gt; 计算等到的。
-控制中心通过 Pod 上的 &lt;code&gt;.metadata.ownerReferences&lt;/code&gt; 来查看它的拥有者。&lt;/p&gt;
-&lt;p&gt;PDB 不能阻止 &lt;a href=&#34;#voluntary-and-involuntary-disruptions&#34;&gt;计划内故障&lt;/a&gt;的发生，
-但可以让它发生在预算控制内。&lt;/p&gt;
-&lt;p&gt;由应用滚动更新造成的 Pod 删除或不可用是遵照故障预算的， 但工作负载(如 Deployment 和 StatefulSet)
-的滚动更新则不受 PDB 限制。 而是由工作负载中的配置来处理更新失败的。&lt;/p&gt;
-&lt;p&gt;当一个 Pod 因使用 驱逐 API而被驱逐， 会平滑地被 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination&#34;&gt;终止&lt;/a&gt;
-或  &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podspec-v1-core&#34;&gt;PodSpec&lt;/a&gt;.)
-中配置的 &lt;code&gt;terminationGracePeriodSeconds&lt;/code&gt; 后被杀死。&lt;/p&gt;
-&lt;blockquote&gt;
-  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;!--
-## PodDisruptionBudget example {#pdb-example}
-
-Consider a cluster with 3 nodes, `node-1` through `node-3`.
-The cluster is running several applications.  One of them has 3 replicas initially called
-`pod-a`, `pod-b`, and `pod-c`.  Another, unrelated pod without a PDB, called `pod-x`, is also shown.
-Initially, the pods are laid out as follows:
-
-|       node-1         |       node-2        |       node-3       |
-|:--------------------:|:-------------------:|:------------------:|
-| pod-a  *available*   | pod-b *available*   | pod-c *available*  |
-| pod-x  *available*   |                     |                    |
-
-All 3 pods are part of a deployment, and they collectively have a PDB which requires
-there be at least 2 of the 3 pods to be available at all times.
-
-For example, assume the cluster administrator wants to reboot into a new kernel version to fix a bug in the kernel.
-The cluster administrator first tries to drain `node-1` using the `kubectl drain` command.
-That tool tries to evict `pod-a` and `pod-x`.  This succeeds immediately.
-Both pods go into the `terminating` state at the same time.
-This puts the cluster in this state:
-
-|   node-1 *draining*  |       node-2        |       node-3       |
-|:--------------------:|:-------------------:|:------------------:|
-| pod-a  *terminating* | pod-b *available*   | pod-c *available*  |
-| pod-x  *terminating* |                     |                    |
-
-The deployment notices that one of the pods is terminating, so it creates a replacement
-called `pod-d`.  Since `node-1` is cordoned, it lands on another node.  Something has
-also created `pod-y` as a replacement for `pod-x`.
-
-(Note: for a StatefulSet, `pod-a`, which would be called something like `pod-0`, would need
-to terminate completely before its replacement, which is also called `pod-0` but has a
-different UID, could be created.  Otherwise, the example applies to a StatefulSet as well.)
-
-Now the cluster is in this state:
-
-|   node-1 *draining*  |       node-2        |       node-3       |
-|:--------------------:|:-------------------:|:------------------:|
-| pod-a  *terminating* | pod-b *available*   | pod-c *available*  |
-| pod-x  *terminating* | pod-d *starting*    | pod-y              |
-
-At some point, the pods terminate, and the cluster looks like this:
-
-|    node-1 *drained*  |       node-2        |       node-3       |
-|:--------------------:|:-------------------:|:------------------:|
-|                      | pod-b *available*   | pod-c *available*  |
-|                      | pod-d *starting*    | pod-y              |
-
-At this point, if an impatient cluster administrator tries to drain `node-2` or
-`node-3`, the drain command will block, because there are only 2 available
-pods for the deployment, and its PDB requires at least 2.  After some time passes, `pod-d` becomes available.
-
-The cluster state now looks like this:
-
-|    node-1 *drained*  |       node-2        |       node-3       |
-|:--------------------:|:-------------------:|:------------------:|
-|                      | pod-b *available*   | pod-c *available*  |
-|                      | pod-d *available*   | pod-y              |
-
-Now, the cluster administrator tries to drain `node-2`.
-The drain command will try to evict the two pods in some order, say
-`pod-b` first and then `pod-d`.  It will succeed at evicting `pod-b`.
-But, when it tries to evict `pod-d`, it will be refused because that would leave only
-one pod available for the deployment.
-
-The deployment creates a replacement for `pod-b` called `pod-e`.
-Because there are not enough resources in the cluster to schedule
-`pod-e` the drain will again block.  The cluster may end up in this
-state:
-
-|    node-1 *drained*  |       node-2        |       node-3       | *no node*          |
-|:--------------------:|:-------------------:|:------------------:|:------------------:|
-|                      | pod-b *terminating* | pod-c *available*  | pod-e *pending*    |
-|                      | pod-d *available*   | pod-y              |                    |
-
-At this point, the cluster administrator needs to
-add a node back to the cluster to proceed with the upgrade.
-
-You can see how Kubernetes varies the rate at which disruptions
-can happen, according to:
-
-- how many replicas an application needs
-- how long it takes to gracefully shutdown an instance
-- how long it takes a new instance to start up
-- the type of controller
-- the cluster&#39;s resource capacity
- --&gt;
-&lt;h2 id=&#34;poddisruptionbudget-使用示例&#34;&gt;PodDisruptionBudget 使用示例&lt;/h2&gt;
-&lt;p&gt;假设有一个三个节点的集群，节点名称依次为 &lt;code&gt;node-1&lt;/code&gt; 到 &lt;code&gt;node-3&lt;/code&gt;, 集群中运行了多个应用。
-其中一个应用包含三个副本， 初始叫 &lt;code&gt;pod-a&lt;/code&gt;, &lt;code&gt;pod-a&lt;/code&gt;, &lt;code&gt;pod-c&lt;/code&gt;. 还有一个不相关的 Pod 不包含 PDB
-叫 pod-x,初始分布如下:&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-1&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-2&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-3&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-a  &lt;em&gt;available&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-b &lt;em&gt;available&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-c &lt;em&gt;available&lt;/em&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-x  &lt;em&gt;available&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;三个Pod 都属于一个 Deployment, 且共同拥有一个PDB，要求3个中至少有2个 Pod 始终可用。&lt;/p&gt;
-&lt;p&gt;例如， 假设集群管理员想要更新内核版本以修复一个 bug, 所以需要重启。
-集群管理员第一步通过 &lt;code&gt;kubectl drain&lt;/code&gt; 命令 尝试对 node-1 清场。
-这时会尝试驱逐 &lt;code&gt;pod-a&lt;/code&gt; 和 &lt;code&gt;pod-x&lt;/code&gt;。 这步操作应该立即能成功。 两个 Pod 都会同时进入 &lt;code&gt;terminating&lt;/code&gt; 状态。
-集群状态变更为:&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-1 &lt;em&gt;draining&lt;/em&gt;&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-2&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-3&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-a  &lt;em&gt;terminating&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-b &lt;em&gt;available&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-c &lt;em&gt;available&lt;/em&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-x  &lt;em&gt;terminating&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;Deployment 发现它有一个 Pod 正在被终止， 所以它会创建一个替代 Pod 叫 &lt;code&gt;pod-d&lt;/code&gt;,
-因为 node-1 不可用， 所以会被调度到其它节点上。 其它某个控制器或工具也会创建一个 &lt;code&gt;pod-y&lt;/code&gt; 替代 &lt;code&gt;pod-x&lt;/code&gt;&lt;/p&gt;
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 对于一个 StatefulSet， pod-a 对应的名称应该是 pod-0, 且需要被替换的 Pod 完全终止后，才会创建替代的 Pod 仍叫 pod-0, 但 UID 不一样。
-如此这样，这个示例也对 StatefulSet 适用。&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;集群状态再次变更为:&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-1 &lt;em&gt;draining&lt;/em&gt;&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-2&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-3&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-a  &lt;em&gt;terminating&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-b &lt;em&gt;available&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-c &lt;em&gt;available&lt;/em&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-x  &lt;em&gt;terminating&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-d &lt;em&gt;starting&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-y&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;一段时间后， Pod 被终止，集群状态变更为:&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-1 &lt;em&gt;drained&lt;/em&gt;&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-2&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-3&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-b &lt;em&gt;available&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-c &lt;em&gt;available&lt;/em&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-d &lt;em&gt;starting&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-y&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;这时如果遇到一个急躁的集群管理尝试去对 &lt;code&gt;node-2&lt;/code&gt; 或 &lt;code&gt;node-3&lt;/code&gt; 进行清场， 则清场命令会被阻塞，
-因为 Deployment 只有两个可用的 Pod， 而 PDB 要求至少要两个。 一段时间之后， &lt;code&gt;pod-d&lt;/code&gt; 状态变更为可用&lt;/p&gt;
-&lt;p&gt;集群状态变更为:&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-1 &lt;em&gt;drained&lt;/em&gt;&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-2&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-3&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-b &lt;em&gt;available&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-c &lt;em&gt;available&lt;/em&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-d &lt;em&gt;available&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-y&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;此时，假设集群管理员清场的是 node-2. 清场命令会以某个顺序驱逐这两个 Pod， 假设先是 pod-b, 然后是 pod-d.
-对 pod-b 的驱逐会成功， 但是对 pod-d 的驱逐会被拒绝，因为如果 pod-d 被终止， Deployment 就只剩下一个可用 Pod。&lt;/p&gt;
-&lt;p&gt;Deployment 会创建一个叫 pod-e 来替代 pod-b. 因为集群中没有足够的资源来让 pod-e 被调度， 清场命令会再次被阻塞。
-最终集群的状态为成为这样:&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-1 &lt;em&gt;drained&lt;/em&gt;&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-2&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;node-3&lt;/th&gt;
-&lt;th style=&#34;text-align:center&#34;&gt;&lt;em&gt;no node&lt;/em&gt;&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-b &lt;em&gt;terminating&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-c &lt;em&gt;available&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-e &lt;em&gt;pending&lt;/em&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-d &lt;em&gt;available&lt;/em&gt;&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;pod-y&lt;/td&gt;
-&lt;td style=&#34;text-align:center&#34;&gt;&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;至些， 集群管理员需要把完成升级的节点加入到集群中。&lt;/p&gt;
-&lt;p&gt;k8s 可以接受的各种故障可能发生的频次，由如下因素决定:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;应用必须要多少个副本&lt;/li&gt;
-&lt;li&gt;一个实例平滑关闭所需要的时间&lt;/li&gt;
-&lt;li&gt;一个新实例启动需要多少时间&lt;/li&gt;
-&lt;li&gt;控制器的类型&lt;/li&gt;
-&lt;li&gt;集群资源的容量&lt;/li&gt;
-&lt;/ul&gt;
-&lt;!--
-## Separating Cluster Owner and Application Owner Roles
-
-Often, it is useful to think of the Cluster Manager
-and Application Owner as separate roles with limited knowledge
-of each other.   This separation of responsibilities
-may make sense in these scenarios:
-
-- when there are many application teams sharing a Kubernetes cluster, and
-  there is natural specialization of roles
-- when third-party tools or services are used to automate cluster management
-
-Pod Disruption Budgets support this separation of roles by providing an
-interface between the roles.
-
-If you do not have such a separation of responsibilities in your organization,
-you may not need to use Pod Disruption Budgets.
- --&gt;
-&lt;h2 id=&#34;集群管理员和应用管理员的角色划分&#34;&gt;集群管理员和应用管理员的角色划分&lt;/h2&gt;
-&lt;p&gt;通常，将集群管理员和应用管理当作不同的角色，是很有用的。
-对责任和区分在以下场景很有意义：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;当集群中有多个应用团队共同使用该集群， 只预置的角色。&lt;/li&gt;
-&lt;li&gt;当第三方工作或服务对集群进行自动化管理&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Pod 故障预算通过角色之间的接口来实现对角色区分的支持&lt;/p&gt;
-&lt;p&gt;如果用户组织中没有对责任区分的需求，则可能不震要使用 Pod 故障预算&lt;/p&gt;
-&lt;blockquote&gt;
-  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;!--
-## How to perform Disruptive Actions on your Cluster
-
-If you are a Cluster Administrator, and you need to perform a disruptive action on all
-the nodes in your cluster, such as a node or system software upgrade, here are some options:
-
-- Accept downtime during the upgrade.
-- Failover to another complete replica cluster.
-   -  No downtime, but may be costly both for the duplicated nodes
-     and for human effort to orchestrate the switchover.
-- Write disruption tolerant applications and use PDBs.
-   - No downtime.
-   - Minimal resource duplication.
-   - Allows more automation of cluster administration.
-   - Writing disruption-tolerant applications is tricky, but the work to tolerate voluntary
-     disruptions largely overlaps with work to support autoscaling and tolerating
-     involuntary disruptions.
- --&gt;
-&lt;h2 id=&#34;怎么在集群中执行干扰操作&#34;&gt;怎么在集群中执行干扰操作&lt;/h2&gt;
-&lt;p&gt;如果用户为集群管理员，需要对集群中的所有节点执行干扰操作, 使用对节点或系统软件升级， 以下为一些选项：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;可以接收升级期间停止服务&lt;/li&gt;
-&lt;li&gt;故障转移到另一个完整的副本集群
-&lt;ul&gt;
-&lt;li&gt;没有宕机时间， 但可能需要双倍的节点和运行人员来实现精细的切换&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;编写可忍受干扰的应用并使用 PDB。
-&lt;ul&gt;
-&lt;li&gt;没有宕机时间&lt;/li&gt;
-&lt;li&gt;最少资源重复&lt;/li&gt;
-&lt;li&gt;允许更多集群自动化管理&lt;/li&gt;
-&lt;li&gt;编写可忍受干扰的应用是相当难的。但实现对计划内故障的忍受，则能够很大程度上覆盖了支持自动伸缩容量和忍受计划外故障的工作内容&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;blockquote&gt;
-  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
-&lt;/blockquote&gt;
-
-&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
-&lt;!--
-* Follow steps to protect your application by [configuring a Pod Disruption Budget](/docs/tasks/run-application/configure-pdb/).
-
-* Learn more about [draining nodes](/docs/tasks/administer-cluster/safely-drain-node/)
-
-* Learn about [updating a deployment](/docs/concepts/workloads/controllers/deployment/#updating-a-deployment)
-  including steps to maintain its availability during the rollout.
- --&gt;
-&lt;ul&gt;
-&lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/run-application/configure-pdb/&#34;&gt;配置 PodDisruptionBudget&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/administer-cluster/safely-drain-node/&#34;&gt;节点清场&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;了解 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/deployment/#updating-a-deployment&#34;&gt;更新 Deployment&lt;/a&gt;
-包括在回滚时用哪些步骤保持其可用性&lt;/li&gt;
-&lt;/ul&gt;
 
       </description>
     </item>
