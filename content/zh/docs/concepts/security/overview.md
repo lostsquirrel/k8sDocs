@@ -302,8 +302,7 @@ Dynamic probing attacks | There are a few automated tools that you can run again
 只允许通过 TLS 访问 | 如果你的代码需要通过 TCP 通信，提前与客户端执行 TLS 握手。除了少数情况下，对所有传输内容加密。更进一步，对服务之间的网络流量加密也是一个好主意。这可以通过相互(mutual)过程或 [mTLS](https://en.wikipedia.org/wiki/Mutual_authentication) 也就是两个服务都包含证书，对通信进行双向加密和验证。 |
 限制通信端口范围 | 这个建议应该是不言自明的， 但无论啥时候都应该只暴露服务必不可少的通信或度量采集端口 |
 第三方信赖安全 | 定期扫描应用的第三方信赖库是否有已知的安全漏洞是一个好的实践。 每种编辑语言都有自动执行这种检查的工具 |
-静态代码分析 | 大多数语言都提供了对代码片断分析检查是否有潜在的不安全代码实践。 无论啥时候都应该使用自动化工作对
-代码库执行这种检查，以提早发现常见的安全错误。 一些工具可以在这里找: https://owasp.org/www-community/Source_Code_Analysis_Tools |
+静态代码分析 | 大多数语言都提供了对代码片断分析检查是否有潜在的不安全代码实践。 无论啥时候都应该使用自动化工作对代码库执行这种检查，以提早发现常见的安全错误。 一些工具可以在这里找: https://owasp.org/www-community/Source_Code_Analysis_Tools |
 动态探测攻击 | 有几种自动化工具可以用来对着服务运行，尝试一些流行的服务攻击。 包含 SQL 注入， CSRF, 和 XSS. 最流行的动态分析工具之一就是 [OWASP Zed Attack proxy](https://owasp.org/www-project-zap/)  |
 
 {{< /table >}}
@@ -312,7 +311,7 @@ Dynamic probing attacks | There are a few automated tools that you can run again
 
 
 ## {{% heading "whatsnext" %}}
-
+<!--
 Learn about related Kubernetes security topics:
 
 * [Pod security standards](/docs/concepts/security/pod-security-standards/)
@@ -322,7 +321,7 @@ Learn about related Kubernetes security topics:
 * [Data encryption in transit](/docs/tasks/tls/managing-tls-in-a-cluster/) for the control plane
 * [Data encryption at rest](/docs/tasks/administer-cluster/encrypt-data/)
 * [Secrets in Kubernetes](/docs/concepts/configuration/secret/)
-
+ -->
 更多关于 k8s 安全的主题:
 
 - [Pod 安全标准](/k8sDocs/docs/concepts/security/pod-security-standards/)
