@@ -152,7 +152,7 @@ For examples on using limits, see:
     </item>
     
     <item>
-      <title>Docs: Resource Quotas</title>
+      <title>Docs: 资源配额</title>
       <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/resource-quotas/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
@@ -160,177 +160,299 @@ For examples on using limits, see:
       <description>
         
         
-        &lt;!-- overview --&gt;
-&lt;p&gt;When several users or teams share a cluster with a fixed number of nodes,
-there is a concern that one team could use more than its fair share of resources.&lt;/p&gt;
-&lt;p&gt;Resource quotas are a tool for administrators to address this concern.&lt;/p&gt;
+        &lt;!--
+---
+reviewers:
+- derekwaynecarr
+title: Resource Quotas
+content_type: concept
+weight: 20
+---
+ --&gt;
+&lt;!-- overview --&gt;
+&lt;p&gt;当多个用户或小组共享一个固定数量节点的集群时，就可能要担心一个小组可能使用超出公开分离的资源。&lt;/p&gt;
+&lt;p&gt;资源配额就一个为管理员解决定个问题的工具。&lt;/p&gt;
 &lt;!-- body --&gt;
-&lt;p&gt;A resource quota, defined by a &lt;code&gt;ResourceQuota&lt;/code&gt; object, provides constraints that limit
-aggregate resource consumption per namespace.  It can limit the quantity of objects that can
-be created in a namespace by type, as well as the total amount of compute resources that may
-be consumed by resources in that namespace.&lt;/p&gt;
-&lt;p&gt;Resource quotas work like this:&lt;/p&gt;
+&lt;p&gt;一个资源配额，是由一个 &lt;code&gt;ResourceQuota&lt;/code&gt; 对象定义的，它提供了对每个命名空间可以使用的资源总和约束。
+它可以限制在一个命名空间中可以创建该类型的对象的数量，也可以限制命名空间中资源可以使用的计算资源的
+总数。&lt;/p&gt;
+&lt;p&gt;资源配额是这样工作的：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;不同的组在不同的命名空间干活。 目前这是自愿的，但计划支持通过 ACL 将它变成强制的。&lt;/li&gt;
+&lt;li&gt;管理为每个命名空间创建一个 &lt;code&gt;ResourceQuota&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;如果在创建或修改一个资源时违反一配额限制，则这个请求就会失败，HTTP 状态码为&lt;code&gt;403 FORBIDDEN&lt;/code&gt;
+错误信息中解释了违反了哪个限制&lt;/li&gt;
+&lt;li&gt;如果命名空间中启用了对像 &lt;code&gt;cpu&lt;/code&gt; 和 &lt;code&gt;memory&lt;/code&gt; 这些资源的配额， 用户必须设置 保底(&lt;code&gt;request&lt;/code&gt;)
+和 上限(&lt;code&gt;limit&lt;/code&gt;) 的值， 否则，配额系统可能会拒绝这些 Pod 的创建。提示: 使用 &lt;code&gt;LimitRanger&lt;/code&gt;
+准入控制器为那些没有设置计算资源要求的 Pod 强制添加默认的配置。
+怎么避免这个问题见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/&#34;&gt;示例&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;ResourceQuota 对象的名称必须是一个有效的
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;可以使用命名空间和配额创建的策略的示例:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
-&lt;p&gt;Different teams work in different namespaces.  Currently this is voluntary, but
-support for making this mandatory via ACLs is planned.&lt;/p&gt;
+&lt;p&gt;在一个拥有 32 GiB RAM, 和 16 核心容量的集群中，让 A 组使用 20 GiB and 10 核心,
+让 B 组使用 10 GiB and 4 核心, 保留 2GiB 和 2 核心将来分配。&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;The administrator creates one ResourceQuota for each namespace.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Users create resources (pods, services, etc.) in the namespace, and the quota system
-tracks usage to ensure it does not exceed hard resource limits defined in a ResourceQuota.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;If creating or updating a resource violates a quota constraint, the request will fail with HTTP
-status code &lt;code&gt;403 FORBIDDEN&lt;/code&gt; with a message explaining the constraint that would have been violated.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;If quota is enabled in a namespace for compute resources like &lt;code&gt;cpu&lt;/code&gt; and &lt;code&gt;memory&lt;/code&gt;, users must specify
-requests or limits for those values; otherwise, the quota system may reject pod creation.  Hint: Use
-the &lt;code&gt;LimitRanger&lt;/code&gt; admission controller to force defaults for pods that make no compute resource requirements.&lt;/p&gt;
-&lt;p&gt;See the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/&#34;&gt;walkthrough&lt;/a&gt;
-for an example of how to avoid this problem.&lt;/p&gt;
+&lt;p&gt;限制叫 &amp;ldquo;testing&amp;rdquo; 命名空间只能使用 1 核心和 1GiB RAM.  让叫 &amp;ldquo;production&amp;rdquo; 的命名空间可以使用任意数量。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;The name of a ResourceQuota object must be a valid
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS subdomain name&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Examples of policies that could be created using namespaces and quotas are:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;In a cluster with a capacity of 32 GiB RAM, and 16 cores, let team A use 20 GiB and 10 cores,
-let B use 10GiB and 4 cores, and hold 2GiB and 2 cores in reserve for future allocation.&lt;/li&gt;
-&lt;li&gt;Limit the &amp;ldquo;testing&amp;rdquo; namespace to using 1 core and 1GiB RAM.  Let the &amp;ldquo;production&amp;rdquo; namespace
-use any amount.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;In the case where the total capacity of the cluster is less than the sum of the quotas of the namespaces,
-there may be contention for resources.  This is handled on a first-come-first-served basis.&lt;/p&gt;
-&lt;p&gt;Neither contention nor changes to quota will affect already created resources.&lt;/p&gt;
-&lt;h2 id=&#34;enabling-resource-quota&#34;&gt;Enabling Resource Quota&lt;/h2&gt;
-&lt;p&gt;Resource Quota support is enabled by default for many Kubernetes distributions.  It is
-enabled when the API server &lt;code&gt;--enable-admission-plugins=&lt;/code&gt; flag has &lt;code&gt;ResourceQuota&lt;/code&gt; as
-one of its arguments.&lt;/p&gt;
-&lt;p&gt;A resource quota is enforced in a particular namespace when there is a
-ResourceQuota in that namespace.&lt;/p&gt;
-&lt;h2 id=&#34;compute-resource-quota&#34;&gt;Compute Resource Quota&lt;/h2&gt;
-&lt;p&gt;You can limit the total sum of &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/manage-resources-containers/&#34;&gt;compute resources&lt;/a&gt; that can be requested in a given namespace.&lt;/p&gt;
-&lt;p&gt;The following resource types are supported:&lt;/p&gt;
+&lt;!--
+## Enabling Resource Quota
+
+Resource Quota support is enabled by default for many Kubernetes distributions.  It is
+enabled when the API server `--enable-admission-plugins=` flag has `ResourceQuota` as
+one of its arguments.
+
+A resource quota is enforced in a particular namespace when there is a
+ResourceQuota in that namespace.
+ --&gt;
+&lt;h2 id=&#34;enabling-resource-quota&#34;&gt;启用资源配额&lt;/h2&gt;
+&lt;p&gt;对支持配额的支持在许多 k8s 发行中是默认开启的。 当 API 服务在其 &lt;code&gt;--enable-admission-plugins=&lt;/code&gt;
+中包含 &lt;code&gt;ResourceQuota&lt;/code&gt; 就用户了该特性。&lt;/p&gt;
+&lt;p&gt;当一个命名空间中有一个 &lt;code&gt;ResourceQuota&lt;/code&gt; 对象时，就会对这个命名空间执行资源配额。&lt;/p&gt;
+&lt;!--
+## Compute Resource Quota
+
+You can limit the total sum of [compute resources](/docs/concepts/configuration/manage-resources-containers/) that can be requested in a given namespace.
+
+The following resource types are supported:
+
+| Resource Name | Description |
+| --------------------- | ----------------------------------------------------------- |
+| `limits.cpu` | Across all pods in a non-terminal state, the sum of CPU limits cannot exceed this value. |
+| `limits.memory` | Across all pods in a non-terminal state, the sum of memory limits cannot exceed this value. |
+| `requests.cpu` | Across all pods in a non-terminal state, the sum of CPU requests cannot exceed this value. |
+| `requests.memory` | Across all pods in a non-terminal state, the sum of memory requests cannot exceed this value. |
+| `hugepages-&lt;size&gt;` | Across all pods in a non-terminal state, the number of huge page requests of the specified size cannot exceed this value. |
+| `cpu` | Same as `requests.cpu` |
+| `memory` | Same as `requests.memory` |
+ --&gt;
+&lt;h2 id=&#34;compute-resource-quota&#34;&gt;计算资源配额&lt;/h2&gt;
+&lt;p&gt;用户可以限制在指定命名空间可以请求的
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/manage-resources-containers/&#34;&gt;计算资源&lt;/a&gt;
+的总和&lt;/p&gt;
+&lt;p&gt;支持以下资源类型:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th&gt;Resource Name&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;资源名称&lt;/th&gt;
+&lt;th&gt;描述&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;limits.cpu&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Across all pods in a non-terminal state, the sum of CPU limits cannot exceed this value.&lt;/td&gt;
+&lt;td&gt;所有不是终止状态的 Pod 的 CPU 上限总和不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;limits.memory&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Across all pods in a non-terminal state, the sum of memory limits cannot exceed this value.&lt;/td&gt;
+&lt;td&gt;所有不是终止状态的 Pod 的 内存 上限总和不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;requests.cpu&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Across all pods in a non-terminal state, the sum of CPU requests cannot exceed this value.&lt;/td&gt;
+&lt;td&gt;所有不是终止状态的 Pod 的 CPU 保底要求总和不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;requests.memory&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Across all pods in a non-terminal state, the sum of memory requests cannot exceed this value.&lt;/td&gt;
+&lt;td&gt;所有不是终止状态的 Pod 的 内存 保底要求总和不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;hugepages-&amp;lt;size&amp;gt;&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Across all pods in a non-terminal state, the number of huge page requests of the specified size cannot exceed this value.&lt;/td&gt;
+&lt;td&gt;所有不是终止状态的 Pod 的这个尺寸的保底要求总和不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;cpu&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Same as &lt;code&gt;requests.cpu&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;同 &lt;code&gt;requests.cpu&lt;/code&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;memory&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Same as &lt;code&gt;requests.memory&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;同 &lt;code&gt;requests.memory&lt;/code&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h3 id=&#34;resource-quota-for-extended-resources&#34;&gt;Resource Quota For Extended Resources&lt;/h3&gt;
-&lt;p&gt;In addition to the resources mentioned above, in release 1.10, quota support for
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/manage-resources-containers/#extended-resources&#34;&gt;extended resources&lt;/a&gt; is added.&lt;/p&gt;
-&lt;p&gt;As overcommit is not allowed for extended resources, it makes no sense to specify both &lt;code&gt;requests&lt;/code&gt;
-and &lt;code&gt;limits&lt;/code&gt; for the same extended resource in a quota. So for extended resources, only quota items
-with prefix &lt;code&gt;requests.&lt;/code&gt; is allowed for now.&lt;/p&gt;
-&lt;p&gt;Take the GPU resource as an example, if the resource name is &lt;code&gt;nvidia.com/gpu&lt;/code&gt;, and you want to
-limit the total number of GPUs requested in a namespace to 4, you can define a quota as follows:&lt;/p&gt;
+&lt;!--
+### Resource Quota For Extended Resources
+
+In addition to the resources mentioned above, in release 1.10, quota support for
+[extended resources](/docs/concepts/configuration/manage-resources-containers/#extended-resources) is added.
+
+As overcommit is not allowed for extended resources, it makes no sense to specify both `requests`
+and `limits` for the same extended resource in a quota. So for extended resources, only quota items
+with prefix `requests.` is allowed for now.
+
+Take the GPU resource as an example, if the resource name is `nvidia.com/gpu`, and you want to
+limit the total number of GPUs requested in a namespace to 4, you can define a quota as follows:
+
+* `requests.nvidia.com/gpu: 4`
+
+See [Viewing and Setting Quotas](#viewing-and-setting-quotas) for more detail information.
+ --&gt;
+&lt;h3 id=&#34;resource-quota-for-extended-resources&#34;&gt;扩展资源的资源配额&lt;/h3&gt;
+&lt;p&gt;除了上面提到的资源外， 在 v1.10 版本中添加了对
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/manage-resources-containers/#extended-resources&#34;&gt;扩展资源&lt;/a&gt;
+的配额支持。&lt;/p&gt;
+&lt;p&gt;因为扩展资源不能超量使用， 所以在配额中对于都一个扩展资源同时指定 &lt;code&gt;requests&lt;/code&gt; 和 &lt;code&gt;limits&lt;/code&gt; 是
+没有意义的，目前只允许使用 &lt;code&gt;requests.&lt;/code&gt; 开头的配额条目。&lt;/p&gt;
+&lt;p&gt;就拿 GPU 资源来举例， 如果资源名称是 &lt;code&gt;nvidia.com/gpu&lt;/code&gt;，然后希望在命名空间中对 GPU 的申请总和
+为 4， 就可以定义下面这样一个配额:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;requests.nvidia.com/gpu: 4&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;See &lt;a href=&#34;#viewing-and-setting-quotas&#34;&gt;Viewing and Setting Quotas&lt;/a&gt; for more detail information.&lt;/p&gt;
-&lt;h2 id=&#34;storage-resource-quota&#34;&gt;Storage Resource Quota&lt;/h2&gt;
-&lt;p&gt;You can limit the total sum of &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/&#34;&gt;storage resources&lt;/a&gt; that can be requested in a given namespace.&lt;/p&gt;
-&lt;p&gt;In addition, you can limit consumption of storage resources based on associated storage-class.&lt;/p&gt;
+&lt;p&gt;更多信息见 &lt;a href=&#34;#viewing-and-setting-quotas&#34;&gt;查看和设置配额&lt;/a&gt;&lt;/p&gt;
+&lt;!--
+## Storage Resource Quota
+
+You can limit the total sum of [storage resources](/docs/concepts/storage/persistent-volumes/) that can be requested in a given namespace.
+
+In addition, you can limit consumption of storage resources based on associated storage-class.
+
+| Resource Name | Description |
+| --------------------- | ----------------------------------------------------------- |
+| `requests.storage` | Across all persistent volume claims, the sum of storage requests cannot exceed this value. |
+| `persistentvolumeclaims` | The total number of [PersistentVolumeClaims](/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims) that can exist in the namespace. |
+| `&lt;storage-class-name&gt;.storageclass.storage.k8s.io/requests.storage` | Across all persistent volume claims associated with the `&lt;storage-class-name&gt;`, the sum of storage requests cannot exceed this value. |
+| `&lt;storage-class-name&gt;.storageclass.storage.k8s.io/persistentvolumeclaims` | Across all persistent volume claims associated with the storage-class-name, the total number of [persistent volume claims](/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims) that can exist in the namespace. |
+
+For example, if an operator wants to quota storage with `gold` storage class separate from `bronze` storage class, the operator can
+define a quota as follows:
+
+* `gold.storageclass.storage.k8s.io/requests.storage: 500Gi`
+* `bronze.storageclass.storage.k8s.io/requests.storage: 100Gi`
+
+In release 1.8, quota support for local ephemeral storage is added as an alpha feature:
+
+| Resource Name | Description |
+| ------------------------------- |----------------------------------------------------------- |
+| `requests.ephemeral-storage` | Across all pods in the namespace, the sum of local ephemeral storage requests cannot exceed this value. |
+| `limits.ephemeral-storage` | Across all pods in the namespace, the sum of local ephemeral storage limits cannot exceed this value. |
+| `ephemeral-storage` | Same as `requests.ephemeral-storage`. |
+ --&gt;
+&lt;h2 id=&#34;storage-resource-quota&#34;&gt;存储资源配额&lt;/h2&gt;
+&lt;p&gt;用户可以限制在指定命名空间中能够要求
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/&#34;&gt;计算资源&lt;/a&gt;
+的总和。&lt;/p&gt;
+&lt;p&gt;另外，也可以基于对应的存储类别(StorageClass)来限制消耗的存储资源上限。&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th&gt;Resource Name&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;资源名称&lt;/th&gt;
+&lt;th&gt;描述&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;requests.storage&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Across all persistent volume claims, the sum of storage requests cannot exceed this value.&lt;/td&gt;
+&lt;td&gt;包括所有的 PVC， 存储请求的问题不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;persistentvolumeclaims&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The total number of &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims&#34;&gt;PersistentVolumeClaims&lt;/a&gt; that can exist in the namespace.&lt;/td&gt;
+&lt;td&gt;在命名空间中可以存在 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims&#34;&gt;PersistentVolumeClaims&lt;/a&gt; 的数量不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;&amp;lt;storage-class-name&amp;gt;.storageclass.storage.k8s.io/requests.storage&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Across all persistent volume claims associated with the &lt;code&gt;&amp;lt;storage-class-name&amp;gt;&lt;/code&gt;, the sum of storage requests cannot exceed this value.&lt;/td&gt;
+&lt;td&gt;所有使用这个 &lt;code&gt;&amp;lt;storage-class-name&amp;gt;&lt;/code&gt; 的  PVC 所请求的存储资源总和不能超过这个值.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;&amp;lt;storage-class-name&amp;gt;.storageclass.storage.k8s.io/persistentvolumeclaims&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Across all persistent volume claims associated with the storage-class-name, the total number of &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims&#34;&gt;persistent volume claims&lt;/a&gt; that can exist in the namespace.&lt;/td&gt;
+&lt;td&gt;所有使用这个 &lt;code&gt;&amp;lt;storage-class-name&amp;gt;&lt;/code&gt; 的 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims&#34;&gt;PVC&lt;/a&gt; 的数量不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;For example, if an operator wants to quota storage with &lt;code&gt;gold&lt;/code&gt; storage class separate from &lt;code&gt;bronze&lt;/code&gt; storage class, the operator can
-define a quota as follows:&lt;/p&gt;
+&lt;p&gt;例如, 如果一个运维人员想要分别定义 &lt;code&gt;gold&lt;/code&gt; 存储类别与 &lt;code&gt;bronze&lt;/code&gt; 存储类别配额，则可以定义如下配额:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;gold.storageclass.storage.k8s.io/requests.storage: 500Gi&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;bronze.storageclass.storage.k8s.io/requests.storage: 100Gi&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;In release 1.8, quota support for local ephemeral storage is added as an alpha feature:&lt;/p&gt;
+&lt;p&gt;In release 1.8, quota support for local ephemeral storage is added as an alpha feature:
+在 v1.8 中，配额作为 alpha 特性支持本地临时存储&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th&gt;Resource Name&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;资源名称&lt;/th&gt;
+&lt;th&gt;描述&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;requests.ephemeral-storage&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Across all pods in the namespace, the sum of local ephemeral storage requests cannot exceed this value.&lt;/td&gt;
+&lt;td&gt;命名空间内所有的 Pod 请求本地临时存储资源的总和不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;limits.ephemeral-storage&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Across all pods in the namespace, the sum of local ephemeral storage limits cannot exceed this value.&lt;/td&gt;
+&lt;td&gt;命名空间内所有的 Pod 本地临时存储配置上限的总和不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;ephemeral-storage&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Same as &lt;code&gt;requests.ephemeral-storage&lt;/code&gt;.&lt;/td&gt;
+&lt;td&gt;同 &lt;code&gt;requests.ephemeral-storage&lt;/code&gt;.&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h2 id=&#34;object-count-quota&#34;&gt;Object Count Quota&lt;/h2&gt;
-&lt;p&gt;You can set quota for the total number of certain resources of all standard,
-namespaced resource types using the following syntax:&lt;/p&gt;
+&lt;!--
+## Object Count Quota
+
+You can set quota for the total number of certain resources of all standard,
+namespaced resource types using the following syntax:
+
+* `count/&lt;resource&gt;.&lt;group&gt;` for resources from non-core groups
+* `count/&lt;resource&gt;` for resources from the core group
+
+Here is an example set of resources users may want to put under object count quota:
+
+* `count/persistentvolumeclaims`
+* `count/services`
+* `count/secrets`
+* `count/configmaps`
+* `count/replicationcontrollers`
+* `count/deployments.apps`
+* `count/replicasets.apps`
+* `count/statefulsets.apps`
+* `count/jobs.batch`
+* `count/cronjobs.batch`
+
+The same syntax can be used for custom resources.
+For example, to create a quota on a `widgets` custom resource in the `example.com` API group, use `count/widgets.example.com`.
+
+When using `count/*` resource quota, an object is charged against the quota if it exists in server storage.
+These types of quotas are useful to protect against exhaustion of storage resources.  For example, you may
+want to limit the number of Secrets in a server given their large size. Too many Secrets in a cluster can
+actually prevent servers and controllers from starting. You can set a quota for Jobs to protect against
+a poorly configured CronJob. CronJobs that create too many Jobs in a namespace can lead to a denial of service.
+
+It is also possible to do generic object count quota on a limited set of resources.
+The following types are supported:
+
+| Resource Name | Description |
+| ------------------------------- | ------------------------------------------------- |
+| `configmaps` | The total number of ConfigMaps that can exist in the namespace. |
+| `persistentvolumeclaims` | The total number of [PersistentVolumeClaims](/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims) that can exist in the namespace. |
+| `pods` | The total number of Pods in a non-terminal state that can exist in the namespace.  A pod is in a terminal state if `.status.phase in (Failed, Succeeded)` is true.  |
+| `replicationcontrollers` | The total number of ReplicationControllers that can exist in the namespace. |
+| `resourcequotas` | The total number of ResourceQuotas that can exist in the namespace. |
+| `services` | The total number of Services that can exist in the namespace. |
+| `services.loadbalancers` | The total number of Services of type `LoadBalancer` that can exist in the namespace. |
+| `services.nodeports` | The total number of Services of type `NodePort` that can exist in the namespace. |
+| `secrets` | The total number of Secrets that can exist in the namespace. |
+
+For example, `pods` quota counts and enforces a maximum on the number of `pods`
+created in a single namespace that are not terminal. You might want to set a `pods`
+quota on a namespace to avoid the case where a user creates many small pods and
+exhausts the cluster&#39;s supply of Pod IPs.
+ --&gt;
+&lt;h2 id=&#34;object-count-quota&#34;&gt;对象数量配额&lt;/h2&gt;
+&lt;p&gt;用户可以使用下面的语法为所有标准的特定资源，有命名空间的资源类型设置配额总数:
+&lt;blockquote&gt;
+  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;code&gt;count/&amp;lt;resource&amp;gt;.&amp;lt;group&amp;gt;&lt;/code&gt; for resources from non-core groups&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;count/&amp;lt;resource&amp;gt;&lt;/code&gt; for resources from the core group&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;count/&amp;lt;resource&amp;gt;.&amp;lt;group&amp;gt;&lt;/code&gt; 用于非核心组的资源&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;count/&amp;lt;resource&amp;gt;&lt;/code&gt; 用于核心组的资源&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Here is an example set of resources users may want to put under object count quota:&lt;/p&gt;
+&lt;p&gt;以下是一些用户可能希望添加数量配额的资源集合示例:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;count/persistentvolumeclaims&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;count/services&lt;/code&gt;&lt;/li&gt;
@@ -343,106 +465,172 @@ namespaced resource types using the following syntax:&lt;/p&gt;
 &lt;li&gt;&lt;code&gt;count/jobs.batch&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;count/cronjobs.batch&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;The same syntax can be used for custom resources.
-For example, to create a quota on a &lt;code&gt;widgets&lt;/code&gt; custom resource in the &lt;code&gt;example.com&lt;/code&gt; API group, use &lt;code&gt;count/widgets.example.com&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;When using &lt;code&gt;count/*&lt;/code&gt; resource quota, an object is charged against the quota if it exists in server storage.
-These types of quotas are useful to protect against exhaustion of storage resources.  For example, you may
-want to limit the number of Secrets in a server given their large size. Too many Secrets in a cluster can
-actually prevent servers and controllers from starting. You can set a quota for Jobs to protect against
-a poorly configured CronJob. CronJobs that create too many Jobs in a namespace can lead to a denial of service.&lt;/p&gt;
-&lt;p&gt;It is also possible to do generic object count quota on a limited set of resources.
-The following types are supported:&lt;/p&gt;
+&lt;p&gt;自定义资源也可以使用同样的语法。 例如，要为 &lt;code&gt;example.com&lt;/code&gt; API 组中的  &lt;code&gt;widgets&lt;/code&gt; 自定义资源
+创建一个配额，可以用 &lt;code&gt;count/widgets.example.com&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;当使用 &lt;code&gt;count/*&lt;/code&gt; 资源配额时， 如果它存在于服务器存储它就会消耗对应的配额。  这些类别的配额在
+防止存储资源耗尽上是相当有用的。 例如， 用户可以希望限制给予其大尺寸的服务器上的 Secret 的数量。
+如果集群中有太多的 Secret 就会阻止服务和控制器的启动。 用户也可以对 Job 数量设置配额来应对
+配置不良的 CronJob。 CronJob 可能在一个命名空间中创建太多 Job 而导致拒绝服务。&lt;/p&gt;
+&lt;p&gt;也可以为资源集添加通用对象数量配额。
+支持以下资源类型:&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th&gt;Resource Name&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;资源名称&lt;/th&gt;
+&lt;th&gt;描述&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;configmaps&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The total number of ConfigMaps that can exist in the namespace.&lt;/td&gt;
+&lt;td&gt;这个命名空间中的 ConfigMap 的总数不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;persistentvolumeclaims&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The total number of &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims&#34;&gt;PersistentVolumeClaims&lt;/a&gt; that can exist in the namespace.&lt;/td&gt;
+&lt;td&gt;这个命名空间中的 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims&#34;&gt;PersistentVolumeClaim&lt;/a&gt; 的总数不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;pods&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The total number of Pods in a non-terminal state that can exist in the namespace.  A pod is in a terminal state if &lt;code&gt;.status.phase in (Failed, Succeeded)&lt;/code&gt; is true.&lt;/td&gt;
+&lt;td&gt;这个命名空间中不是终止状态的 Pod 的总数不能超过这个值.  如果 Pod 的 &lt;code&gt;.status.phase 是 (Failed, Succeeded)&lt;/code&gt; 则就是终止状态&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;replicationcontrollers&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The total number of ReplicationControllers that can exist in the namespace.&lt;/td&gt;
+&lt;td&gt;这个命名空间中 ReplicationController 的总数不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;resourcequotas&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The total number of ResourceQuotas that can exist in the namespace.&lt;/td&gt;
+&lt;td&gt;这个命名空间中 ResourceQuota 的总数不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;services&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The total number of Services that can exist in the namespace.&lt;/td&gt;
+&lt;td&gt;这个命名空间中 Service 的总数不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;services.loadbalancers&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The total number of Services of type &lt;code&gt;LoadBalancer&lt;/code&gt; that can exist in the namespace.&lt;/td&gt;
+&lt;td&gt;这个命名空间中 &lt;code&gt;LoadBalancer&lt;/code&gt; 类型的 Service 的总数不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;services.nodeports&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The total number of Services of type &lt;code&gt;NodePort&lt;/code&gt; that can exist in the namespace.&lt;/td&gt;
+&lt;td&gt;这个命名空间中 &lt;code&gt;NodePort&lt;/code&gt; 类型的 Service 的总数不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;secrets&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;The total number of Secrets that can exist in the namespace.&lt;/td&gt;
+&lt;td&gt;这个命名空间中 Secret 的总数不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;For example, &lt;code&gt;pods&lt;/code&gt; quota counts and enforces a maximum on the number of &lt;code&gt;pods&lt;/code&gt;
-created in a single namespace that are not terminal. You might want to set a &lt;code&gt;pods&lt;/code&gt;
-quota on a namespace to avoid the case where a user creates many small pods and
-exhausts the cluster&amp;rsquo;s supply of Pod IPs.&lt;/p&gt;
-&lt;h2 id=&#34;quota-scopes&#34;&gt;Quota Scopes&lt;/h2&gt;
-&lt;p&gt;Each quota can have an associated set of &lt;code&gt;scopes&lt;/code&gt;. A quota will only measure usage for a resource if it matches
-the intersection of enumerated scopes.&lt;/p&gt;
-&lt;p&gt;When a scope is added to the quota, it limits the number of resources it supports to those that pertain to the scope.
-Resources specified on the quota outside of the allowed set results in a validation error.&lt;/p&gt;
+&lt;p&gt;例如， &lt;code&gt;pods&lt;/code&gt; 配额数量就是确保在一个命名空间中不是终止状态的 Pod 的最大数量。 用户可能希望在
+命名空间上设置一个 &lt;code&gt;pods&lt;/code&gt; 配置为防止因为一个用户创建太多小的 Pod 而耗用集群的 Pod IP。&lt;/p&gt;
+&lt;!--
+## Quota Scopes
+
+Each quota can have an associated set of `scopes`. A quota will only measure usage for a resource if it matches
+the intersection of enumerated scopes.
+
+When a scope is added to the quota, it limits the number of resources it supports to those that pertain to the scope.
+Resources specified on the quota outside of the allowed set results in a validation error.
+
+| Scope | Description |
+| ----- | ----------- |
+| `Terminating` | Match pods where `.spec.activeDeadlineSeconds &gt;= 0` |
+| `NotTerminating` | Match pods where `.spec.activeDeadlineSeconds is nil` |
+| `BestEffort` | Match pods that have best effort quality of service. |
+| `NotBestEffort` | Match pods that do not have best effort quality of service. |
+| `PriorityClass` | Match pods that references the specified [priority class](/docs/concepts/configuration/pod-priority-preemption). |
+
+The `BestEffort` scope restricts a quota to tracking the following resource:
+
+* `pods`
+
+The `Terminating`, `NotTerminating`, `NotBestEffort` and `PriorityClass`
+scopes restrict a quota to tracking the following resources:
+
+* `pods`
+* `cpu`
+* `memory`
+* `requests.cpu`
+* `requests.memory`
+* `limits.cpu`
+* `limits.memory`
+
+Note that you cannot specify both the `Terminating` and the `NotTerminating`
+scopes in the same quota, and you cannot specify both the `BestEffort` and
+`NotBestEffort` scopes in the same quota either.
+
+The `scopeSelector` supports the following values in the `operator` field:
+
+* `In`
+* `NotIn`
+* `Exists`
+* `DoesNotExist`
+
+When using one of the following values as the `scopeName` when defining the
+`scopeSelector`, the `operator` must be `Exists`.
+
+* `Terminating`
+* `NotTerminating`
+* `BestEffort`
+* `NotBestEffort`
+
+If the `operator` is `In` or `NotIn`, the `values` field must have at least
+one value. For example:
+
+```yaml
+  scopeSelector:
+    matchExpressions:
+      - scopeName: PriorityClass
+        operator: In
+        values:
+          - middle
+```
+
+If the `operator` is `Exists` or `DoesNotExist`, the `values` field must *NOT* be
+specified.
+ --&gt;
+&lt;h2 id=&#34;quota-scopes&#34;&gt;配额作用域&lt;/h2&gt;
+&lt;p&gt;每个配额都可以有一个相应的作用域(&lt;code&gt;scopes&lt;/code&gt;)集合。 一个配额只会度量在其作用域集合交集内的资源使用。&lt;/p&gt;
+&lt;p&gt;当一个配额添加了作用域后，它就只会限制在它作用域内的资源使用数量。
+配额上指定的资源是允许集合之外就会导致验证错误。&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
+&lt;/blockquote&gt;
+
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th&gt;Scope&lt;/th&gt;
-&lt;th&gt;Description&lt;/th&gt;
+&lt;th&gt;作用域&lt;/th&gt;
+&lt;th&gt;描述&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;Terminating&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Match pods where &lt;code&gt;.spec.activeDeadlineSeconds &amp;gt;= 0&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;匹配 &lt;code&gt;.spec.activeDeadlineSeconds &amp;gt;= 0&lt;/code&gt; 的 Pod&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;NotTerminating&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Match pods where &lt;code&gt;.spec.activeDeadlineSeconds is nil&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;匹配 &lt;code&gt;.spec.activeDeadlineSeconds is nil&lt;/code&gt; 的 Pod&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;BestEffort&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Match pods that have best effort quality of service.&lt;/td&gt;
+&lt;td&gt;匹配服务质量是尽最大努力的 Pod&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;NotBestEffort&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Match pods that do not have best effort quality of service.&lt;/td&gt;
+&lt;td&gt;匹配服务质量不是尽最大努力的 Pod&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;PriorityClass&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;Match pods that references the specified &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-priority-preemption&#34;&gt;priority class&lt;/a&gt;.&lt;/td&gt;
+&lt;td&gt;匹配引用了指定 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/pod-priority-preemption&#34;&gt;PriorityClass&lt;/a&gt; 的 Pod&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;The &lt;code&gt;BestEffort&lt;/code&gt; scope restricts a quota to tracking the following resource:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;BestEffort&lt;/code&gt; 作用域限制配额跟踪下面的资源:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;pods&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;The &lt;code&gt;Terminating&lt;/code&gt;, &lt;code&gt;NotTerminating&lt;/code&gt;, &lt;code&gt;NotBestEffort&lt;/code&gt; and &lt;code&gt;PriorityClass&lt;/code&gt;
-scopes restrict a quota to tracking the following resources:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Terminating&lt;/code&gt;, &lt;code&gt;NotTerminating&lt;/code&gt;, &lt;code&gt;NotBestEffort&lt;/code&gt; &lt;code&gt;PriorityClass&lt;/code&gt; 作用域限制配额
+跟踪下面的资源:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;pods&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;cpu&lt;/code&gt;&lt;/li&gt;
@@ -452,10 +640,9 @@ scopes restrict a quota to tracking the following resources:&lt;/p&gt;
 &lt;li&gt;&lt;code&gt;limits.cpu&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;limits.memory&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Note that you cannot specify both the &lt;code&gt;Terminating&lt;/code&gt; and the &lt;code&gt;NotTerminating&lt;/code&gt;
-scopes in the same quota, and you cannot specify both the &lt;code&gt;BestEffort&lt;/code&gt; and
-&lt;code&gt;NotBestEffort&lt;/code&gt; scopes in the same quota either.&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;scopeSelector&lt;/code&gt; supports the following values in the &lt;code&gt;operator&lt;/code&gt; field:&lt;/p&gt;
+&lt;p&gt;要注意不能在同一个配额中同时指定 &lt;code&gt;Terminating&lt;/code&gt; 和 &lt;code&gt;NotTerminating&lt;/code&gt; 作用域，也不能
+在同一个配额中同时指定 &lt;code&gt;BestEffort&lt;/code&gt; 和 &lt;code&gt;NotBestEffort&lt;/code&gt; 作用域.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;scopeSelector&lt;/code&gt; 的 &lt;code&gt;operator&lt;/code&gt; 字段支持以下值:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;In&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;NotIn&lt;/code&gt;&lt;/li&gt;
@@ -464,23 +651,222 @@ scopes in the same quota, and you cannot specify both the &lt;code&gt;BestEffort
 &lt;/ul&gt;
 &lt;p&gt;When using one of the following values as the &lt;code&gt;scopeName&lt;/code&gt; when defining the
 &lt;code&gt;scopeSelector&lt;/code&gt;, the &lt;code&gt;operator&lt;/code&gt; must be &lt;code&gt;Exists&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;在使用以下任意一个值作为 &lt;code&gt;scopeName&lt;/code&gt; 定义 &lt;code&gt;scopeSelector&lt;/code&gt; 时， &lt;code&gt;operator&lt;/code&gt; 必须是 &lt;code&gt;Exists&lt;/code&gt;.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;Terminating&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;NotTerminating&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;BestEffort&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;NotBestEffort&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;If the &lt;code&gt;operator&lt;/code&gt; is &lt;code&gt;In&lt;/code&gt; or &lt;code&gt;NotIn&lt;/code&gt;, the &lt;code&gt;values&lt;/code&gt; field must have at least
-one value. For example:&lt;/p&gt;
+&lt;p&gt;如果 &lt;code&gt;operator&lt;/code&gt; 是 &lt;code&gt;In&lt;/code&gt; 或 &lt;code&gt;NotIn&lt;/code&gt;, &lt;code&gt;values&lt;/code&gt; 字段就至少有一个值。 例如:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;scopeSelector&lt;/span&gt;:
     &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
       - &lt;span style=&#34;color:#f92672&#34;&gt;scopeName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PriorityClass&lt;/span&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
           - &lt;span style=&#34;color:#ae81ff&#34;&gt;middle&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If the &lt;code&gt;operator&lt;/code&gt; is &lt;code&gt;Exists&lt;/code&gt; or &lt;code&gt;DoesNotExist&lt;/code&gt;, the &lt;code&gt;values&lt;/code&gt; field must &lt;em&gt;NOT&lt;/em&gt; be
-specified.&lt;/p&gt;
-&lt;h3 id=&#34;resource-quota-per-priorityclass&#34;&gt;Resource Quota Per PriorityClass&lt;/h3&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果 &lt;code&gt;operator&lt;/code&gt; 是 &lt;code&gt;Exists&lt;/code&gt; 或 &lt;code&gt;DoesNotExist&lt;/code&gt;, &lt;code&gt;values&lt;/code&gt; 字段就 &lt;em&gt;不能&lt;/em&gt; 设置&lt;/p&gt;
+&lt;!--
+### Resource Quota Per PriorityClass
+
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.17 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+
+Pods can be created at a specific [priority](/docs/concepts/configuration/pod-priority-preemption/#pod-priority).
+You can control a pod&#39;s consumption of system resources based on a pod&#39;s priority, by using the `scopeSelector`
+field in the quota spec.
+
+A quota is matched and consumed only if `scopeSelector` in the quota spec selects the pod.
+
+When quota is scoped for priority class using `scopeSelector` field, quota object is restricted to track only following resources:
+
+* `pods`
+* `cpu`
+* `memory`
+* `ephemeral-storage`
+* `limits.cpu`
+* `limits.memory`
+* `limits.ephemeral-storage`
+* `requests.cpu`
+* `requests.memory`
+* `requests.ephemeral-storage`
+
+This example creates a quota object and matches it with pods at specific priorities. The example
+works as follows:
+
+- Pods in the cluster have one of the three priority classes, &#34;low&#34;, &#34;medium&#34;, &#34;high&#34;.
+- One quota object is created for each priority.
+
+Save the following YAML to a file `quota.yml`.
+
+```yaml
+apiVersion: v1
+kind: List
+items:
+- apiVersion: v1
+  kind: ResourceQuota
+  metadata:
+    name: pods-high
+  spec:
+    hard:
+      cpu: &#34;1000&#34;
+      memory: 200Gi
+      pods: &#34;10&#34;
+    scopeSelector:
+      matchExpressions:
+      - operator : In
+        scopeName: PriorityClass
+        values: [&#34;high&#34;]
+- apiVersion: v1
+  kind: ResourceQuota
+  metadata:
+    name: pods-medium
+  spec:
+    hard:
+      cpu: &#34;10&#34;
+      memory: 20Gi
+      pods: &#34;10&#34;
+    scopeSelector:
+      matchExpressions:
+      - operator : In
+        scopeName: PriorityClass
+        values: [&#34;medium&#34;]
+- apiVersion: v1
+  kind: ResourceQuota
+  metadata:
+    name: pods-low
+  spec:
+    hard:
+      cpu: &#34;5&#34;
+      memory: 10Gi
+      pods: &#34;10&#34;
+    scopeSelector:
+      matchExpressions:
+      - operator : In
+        scopeName: PriorityClass
+        values: [&#34;low&#34;]
+```
+
+Apply the YAML using `kubectl create`.
+
+```shell
+kubectl create -f ./quota.yml
+```
+
+```
+resourcequota/pods-high created
+resourcequota/pods-medium created
+resourcequota/pods-low created
+```
+
+Verify that `Used` quota is `0` using `kubectl describe quota`.
+
+```shell
+kubectl describe quota
+```
+
+```
+Name:       pods-high
+Namespace:  default
+Resource    Used  Hard
+--------    ----  ----
+cpu         0     1k
+memory      0     200Gi
+pods        0     10
+
+
+Name:       pods-low
+Namespace:  default
+Resource    Used  Hard
+--------    ----  ----
+cpu         0     5
+memory      0     10Gi
+pods        0     10
+
+
+Name:       pods-medium
+Namespace:  default
+Resource    Used  Hard
+--------    ----  ----
+cpu         0     10
+memory      0     20Gi
+pods        0     10
+```
+
+Create a pod with priority &#34;high&#34;. Save the following YAML to a
+file `high-priority-pod.yml`.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: high-priority
+spec:
+  containers:
+  - name: high-priority
+    image: ubuntu
+    command: [&#34;/bin/sh&#34;]
+    args: [&#34;-c&#34;, &#34;while true; do echo hello; sleep 10;done&#34;]
+    resources:
+      requests:
+        memory: &#34;10Gi&#34;
+        cpu: &#34;500m&#34;
+      limits:
+        memory: &#34;10Gi&#34;
+        cpu: &#34;500m&#34;
+  priorityClassName: high
+```
+
+Apply it with `kubectl create`.
+
+```shell
+kubectl create -f ./high-priority-pod.yml
+```
+
+Verify that &#34;Used&#34; stats for &#34;high&#34; priority quota, `pods-high`, has changed and that
+the other two quotas are unchanged.
+
+```shell
+kubectl describe quota
+```
+
+```
+Name:       pods-high
+Namespace:  default
+Resource    Used  Hard
+--------    ----  ----
+cpu         500m  1k
+memory      10Gi  200Gi
+pods        1     10
+
+
+Name:       pods-low
+Namespace:  default
+Resource    Used  Hard
+--------    ----  ----
+cpu         0     5
+memory      0     10Gi
+pods        0     10
+
+
+Name:       pods-medium
+Namespace:  default
+Resource    Used  Hard
+--------    ----  ----
+cpu         0     10
+memory      0     20Gi
+pods        0     10
+```
+--&gt;
+&lt;h3 id=&#34;resource-quota-per-priorityclass&#34;&gt;每个 PriorityClass 的资源配额&lt;/h3&gt;
 
 
 
@@ -494,8 +880,14 @@ specified.&lt;/p&gt;
 &lt;p&gt;Pods can be created at a specific &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-priority-preemption/#pod-priority&#34;&gt;priority&lt;/a&gt;.
 You can control a pod&amp;rsquo;s consumption of system resources based on a pod&amp;rsquo;s priority, by using the &lt;code&gt;scopeSelector&lt;/code&gt;
 field in the quota spec.&lt;/p&gt;
-&lt;p&gt;A quota is matched and consumed only if &lt;code&gt;scopeSelector&lt;/code&gt; in the quota spec selects the pod.&lt;/p&gt;
-&lt;p&gt;When quota is scoped for priority class using &lt;code&gt;scopeSelector&lt;/code&gt; field, quota object is restricted to track only following resources:&lt;/p&gt;
+&lt;p&gt;Pod 可以以一个指定的
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-priority-preemption/#pod-priority&#34;&gt;优先级&lt;/a&gt;
+来创建。
+用户可以通过使用配额定义中的 &lt;code&gt;scopeSelector&lt;/code&gt; 字段来基于 Pod 的优先级来控制一个 Pod 可以消耗
+的系统资源。&lt;/p&gt;
+&lt;p&gt;A quota is matched and consumed only if &lt;code&gt;scopeSelector&lt;/code&gt; in the quota spec selects the pod.
+配额只有在其定义的 &lt;code&gt;scopeSelector&lt;/code&gt; 匹配的 Pod 才会消耗。&lt;/p&gt;
+&lt;p&gt;当配额使用 &lt;code&gt;scopeSelector&lt;/code&gt; 字段设置优先级类别作用域， 配额对象就被限制在只能跟踪以下资源:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;pods&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;cpu&lt;/code&gt;&lt;/li&gt;
@@ -508,13 +900,12 @@ field in the quota spec.&lt;/p&gt;
 &lt;li&gt;&lt;code&gt;requests.memory&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;requests.ephemeral-storage&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;This example creates a quota object and matches it with pods at specific priorities. The example
-works as follows:&lt;/p&gt;
+&lt;p&gt;这个示例创建一个配额对象，匹配指定优先级的 Pod。 工作内容如下:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Pods in the cluster have one of the three priority classes, &amp;ldquo;low&amp;rdquo;, &amp;ldquo;medium&amp;rdquo;, &amp;ldquo;high&amp;rdquo;.&lt;/li&gt;
-&lt;li&gt;One quota object is created for each priority.&lt;/li&gt;
+&lt;li&gt;集群中的 Pod 有这三种优先级类别， &amp;ldquo;low&amp;rdquo;, &amp;ldquo;medium&amp;rdquo;, &amp;ldquo;high&amp;rdquo; 中的一种。&lt;/li&gt;
+&lt;li&gt;每个优先级类别创建一个对应的配额对象&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Save the following YAML to a file &lt;code&gt;quota.yml&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;将以下 YAML 保存到文件 &lt;code&gt;quota.yml&lt;/code&gt;.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;List&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;items&lt;/span&gt;:
@@ -560,12 +951,12 @@ works as follows:&lt;/p&gt;
       - &lt;span style=&#34;color:#f92672&#34;&gt;operator &lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;scopeName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PriorityClass&lt;/span&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;: [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;low&amp;#34;&lt;/span&gt;]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Apply the YAML using &lt;code&gt;kubectl create&lt;/code&gt;.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;使用 &lt;code&gt;kubectl create&lt;/code&gt; 应用 YAML.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create -f ./quota.yml
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre&gt;&lt;code&gt;resourcequota/pods-high created
 resourcequota/pods-medium created
 resourcequota/pods-low created
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Verify that &lt;code&gt;Used&lt;/code&gt; quota is &lt;code&gt;0&lt;/code&gt; using &lt;code&gt;kubectl describe quota&lt;/code&gt;.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;使用  &lt;code&gt;kubectl describe quota&lt;/code&gt; 验证对配额的使用(&lt;code&gt;Used&lt;/code&gt;) 都是 &lt;code&gt;0&lt;/code&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl describe quota
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre&gt;&lt;code&gt;Name:       pods-high
 Namespace:  default
@@ -592,8 +983,7 @@ Resource    Used  Hard
 cpu         0     10
 memory      0     20Gi
 pods        0     10
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Create a pod with priority &amp;ldquo;high&amp;rdquo;. Save the following YAML to a
-file &lt;code&gt;high-priority-pod.yml&lt;/code&gt;.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;创建一个优先级是 &amp;ldquo;high&amp;rdquo; 的 Pod. 将以下 YAML 保存到文件 &lt;code&gt;high-priority-pod.yml&lt;/code&gt;.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -612,10 +1002,9 @@ file &lt;code&gt;high-priority-pod.yml&lt;/code&gt;.&lt;/p&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;memory&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;10Gi&amp;#34;&lt;/span&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;cpu&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;500m&amp;#34;&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;priorityClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;high&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Apply it with &lt;code&gt;kubectl create&lt;/code&gt;.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;通过 &lt;code&gt;kubectl create&lt;/code&gt; 命令应用.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create -f ./high-priority-pod.yml
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Verify that &amp;ldquo;Used&amp;rdquo; stats for &amp;ldquo;high&amp;rdquo; priority quota, &lt;code&gt;pods-high&lt;/code&gt;, has changed and that
-the other two quotas are unchanged.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;验证 &amp;ldquo;high&amp;rdquo; 优先级的配额的使用状态，这时 &lt;code&gt;pods-high&lt;/code&gt; 配额发生变化，其它两个不变&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl describe quota
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre&gt;&lt;code&gt;Name:       pods-high
 Namespace:  default
@@ -642,14 +1031,150 @@ Resource    Used  Hard
 cpu         0     10
 memory      0     20Gi
 pods        0     10
-&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;requests-vs-limits&#34;&gt;Requests compared to Limits&lt;/h2&gt;
-&lt;p&gt;When allocating compute resources, each container may specify a request and a limit value for either CPU or memory.
-The quota can be configured to quota either value.&lt;/p&gt;
-&lt;p&gt;If the quota has a value specified for &lt;code&gt;requests.cpu&lt;/code&gt; or &lt;code&gt;requests.memory&lt;/code&gt;, then it requires that every incoming
-container makes an explicit request for those resources.  If the quota has a value specified for &lt;code&gt;limits.cpu&lt;/code&gt; or &lt;code&gt;limits.memory&lt;/code&gt;,
-then it requires that every incoming container specifies an explicit limit for those resources.&lt;/p&gt;
-&lt;h2 id=&#34;viewing-and-setting-quotas&#34;&gt;Viewing and Setting Quotas&lt;/h2&gt;
-&lt;p&gt;Kubectl supports creating, updating, and viewing quotas:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;!--
+## Requests compared to Limits {#requests-vs-limits}
+
+When allocating compute resources, each container may specify a request and a limit value for either CPU or memory.
+The quota can be configured to quota either value.
+
+If the quota has a value specified for `requests.cpu` or `requests.memory`, then it requires that every incoming
+container makes an explicit request for those resources.  If the quota has a value specified for `limits.cpu` or `limits.memory`,
+then it requires that every incoming container specifies an explicit limit for those resources.
+ --&gt;
+&lt;h2 id=&#34;requests-vs-limits&#34;&gt;比较保底要求与使用上限&lt;/h2&gt;
+&lt;p&gt;在分配计算资源时，每个容器都可以对CPU 或/和 memory 指定一个 保底要求 和一个使用上限值。
+配额也可以配置任意一个值的额度。&lt;/p&gt;
+&lt;p&gt;如果配额为 &lt;code&gt;requests.cpu&lt;/code&gt; 或 &lt;code&gt;requests.memory&lt;/code&gt; 指定了一个值，则就要求每个新进的容器需要
+显示的设置这些资源的保底要求。
+如果配额为 &lt;code&gt;limits.cpu&lt;/code&gt; 或 &lt;code&gt;limits.memory&lt;/code&gt; 指定了一个值，则就要求每个新进的容器需要
+显示的设置这些资源的使用上限。&lt;/p&gt;
+&lt;!--
+## Viewing and Setting Quotas
+
+Kubectl supports creating, updating, and viewing quotas:
+
+```shell
+kubectl create namespace myspace
+```
+
+```shell
+cat &lt;&lt;EOF &gt; compute-resources.yaml
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: compute-resources
+spec:
+  hard:
+    requests.cpu: &#34;1&#34;
+    requests.memory: 1Gi
+    limits.cpu: &#34;2&#34;
+    limits.memory: 2Gi
+    requests.nvidia.com/gpu: 4
+EOF
+```
+
+```shell
+kubectl create -f ./compute-resources.yaml --namespace=myspace
+```
+
+```shell
+cat &lt;&lt;EOF &gt; object-counts.yaml
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: object-counts
+spec:
+  hard:
+    configmaps: &#34;10&#34;
+    persistentvolumeclaims: &#34;4&#34;
+    pods: &#34;4&#34;
+    replicationcontrollers: &#34;20&#34;
+    secrets: &#34;10&#34;
+    services: &#34;10&#34;
+    services.loadbalancers: &#34;2&#34;
+EOF
+```
+
+```shell
+kubectl create -f ./object-counts.yaml --namespace=myspace
+```
+
+```shell
+kubectl get quota --namespace=myspace
+```
+
+```
+NAME                    AGE
+compute-resources       30s
+object-counts           32s
+```
+
+```shell
+kubectl describe quota compute-resources --namespace=myspace
+```
+
+```
+Name:                    compute-resources
+Namespace:               myspace
+Resource                 Used  Hard
+--------                 ----  ----
+limits.cpu               0     2
+limits.memory            0     2Gi
+requests.cpu             0     1
+requests.memory          0     1Gi
+requests.nvidia.com/gpu  0     4
+```
+
+```shell
+kubectl describe quota object-counts --namespace=myspace
+```
+
+```
+Name:                   object-counts
+Namespace:              myspace
+Resource                Used    Hard
+--------                ----    ----
+configmaps              0       10
+persistentvolumeclaims  0       4
+pods                    0       4
+replicationcontrollers  0       20
+secrets                 1       10
+services                0       10
+services.loadbalancers  0       2
+```
+
+Kubectl also supports object count quota for all standard namespaced resources
+using the syntax `count/&lt;resource&gt;.&lt;group&gt;`:
+
+```shell
+kubectl create namespace myspace
+```
+
+```shell
+kubectl create quota test --hard=count/deployments.apps=2,count/replicasets.apps=4,count/pods=3,count/secrets=4 --namespace=myspace
+```
+
+```shell
+kubectl create deployment nginx --image=nginx --namespace=myspace --replicas=2
+```
+
+```shell
+kubectl describe quota --namespace=myspace
+```
+
+```
+Name:                         test
+Namespace:                    myspace
+Resource                      Used  Hard
+--------                      ----  ----
+count/deployments.apps        1     2
+count/pods                    2     3
+count/replicasets.apps        1     4
+count/secrets                 1     4
+```
+ --&gt;
+&lt;h2 id=&#34;viewing-and-setting-quotas&#34;&gt;查看和使用配额&lt;/h2&gt;
+&lt;p&gt;kubectl 支持创建，修改，查看配额:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create namespace myspace
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;cat &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt; compute-resources.yaml
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;apiVersion: v1
@@ -707,8 +1232,8 @@ replicationcontrollers  0       20
 secrets                 1       10
 services                0       10
 services.loadbalancers  0       2
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Kubectl also supports object count quota for all standard namespaced resources
-using the syntax &lt;code&gt;count/&amp;lt;resource&amp;gt;.&amp;lt;group&amp;gt;&lt;/code&gt;:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;qq
+kubectl 也支持对所有的标准有命名空间资源使用 &lt;code&gt;count/&amp;lt;resource&amp;gt;.&amp;lt;group&amp;gt;&lt;/code&gt; 语法设置对象数配额:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create namespace myspace
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create quota test --hard&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;count/deployments.apps&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;2,count/replicasets.apps&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;4,count/pods&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;3,count/secrets&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt; --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;myspace
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create deployment nginx --image&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;nginx --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;myspace --replicas&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
@@ -721,30 +1246,112 @@ count/deployments.apps        1     2
 count/pods                    2     3
 count/replicasets.apps        1     4
 count/secrets                 1     4
-&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;quota-and-cluster-capacity&#34;&gt;Quota and Cluster Capacity&lt;/h2&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;!--
+## Quota and Cluster Capacity
+
+ResourceQuotas are independent of the cluster capacity. They are
+expressed in absolute units.  So, if you add nodes to your cluster, this does *not*
+automatically give each namespace the ability to consume more resources.
+
+Sometimes more complex policies may be desired, such as:
+
+- Proportionally divide total cluster resources among several teams.
+- Allow each tenant to grow resource usage as needed, but have a generous
+  limit to prevent accidental resource exhaustion.
+- Detect demand from one namespace, add nodes, and increase quota.
+
+Such policies could be implemented using `ResourceQuotas` as building blocks, by
+writing a &#34;controller&#34; that watches the quota usage and adjusts the quota
+hard limits of each namespace according to other signals.
+
+Note that resource quota divides up aggregate cluster resources, but it creates no
+restrictions around nodes: pods from several namespaces may run on the same node.
+ --&gt;
+&lt;h2 id=&#34;quota-and-cluster-capacity&#34;&gt;配额与集群容量&lt;/h2&gt;
 &lt;p&gt;ResourceQuotas are independent of the cluster capacity. They are
 expressed in absolute units.  So, if you add nodes to your cluster, this does &lt;em&gt;not&lt;/em&gt;
 automatically give each namespace the ability to consume more resources.&lt;/p&gt;
-&lt;p&gt;Sometimes more complex policies may be desired, such as:&lt;/p&gt;
+&lt;p&gt;资源配额是独立于集群容量的。他们是以绝对单位来表达的。 所以，如果向集群中添加了节点，并 &lt;em&gt;不&lt;/em&gt; 能
+自动地给予每个命名空间消耗更多资源的能力。&lt;/p&gt;
+&lt;p&gt;Sometimes more complex policies may be desired, such as:
+有时候还需要更加复杂的策略，如:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Proportionally divide total cluster resources among several teams.&lt;/li&gt;
-&lt;li&gt;Allow each tenant to grow resource usage as needed, but have a generous
-limit to prevent accidental resource exhaustion.&lt;/li&gt;
-&lt;li&gt;Detect demand from one namespace, add nodes, and increase quota.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Proportionally divide total cluster resources among several teams.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Allow each tenant to grow resource usage as needed, but have a generous
+limit to prevent accidental resource exhaustion.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Detect demand from one namespace, add nodes, and increase quota.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在几个团队之间按比例分配集群总资源。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;允许每个租户根据需要增加资源，但有一个相对较充裕的限制阴谋诡计意外的资源耗尽&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;侦测一个命名空间的要求，添加节点，再增加配额。&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Such policies could be implemented using &lt;code&gt;ResourceQuotas&lt;/code&gt; as building blocks, by
 writing a &amp;ldquo;controller&amp;rdquo; that watches the quota usage and adjusts the quota
 hard limits of each namespace according to other signals.&lt;/p&gt;
+&lt;p&gt;这些策略可以使用 &lt;code&gt;ResourceQuotas&lt;/code&gt; 作为实现基础，通过编写控制器(&amp;ldquo;controller&amp;rdquo;) 来监测配额的
+使用情况，并根据其它信息自适应每个命名空间的配额的硬限制&lt;/p&gt;
 &lt;p&gt;Note that resource quota divides up aggregate cluster resources, but it creates no
 restrictions around nodes: pods from several namespaces may run on the same node.&lt;/p&gt;
-&lt;h2 id=&#34;limit-priority-class-consumption-by-default&#34;&gt;Limit Priority Class consumption by default&lt;/h2&gt;
-&lt;p&gt;It may be desired that pods at a particular priority, eg. &amp;ldquo;cluster-services&amp;rdquo;,
-should be allowed in a namespace, if and only if, a matching quota object exists.&lt;/p&gt;
-&lt;p&gt;With this mechanism, operators are able to restrict usage of certain high
+&lt;p&gt;要注意资源配额分割了集群的资源，但它并不会在节点上创建限制：来自不同命名空间的 Pod 可以运行在同
+一个节点上。&lt;/p&gt;
+&lt;!--
+## Limit Priority Class consumption by default
+
+It may be desired that pods at a particular priority, eg. &#34;cluster-services&#34;,
+should be allowed in a namespace, if and only if, a matching quota object exists.
+
+With this mechanism, operators are able to restrict usage of certain high
 priority classes to a limited number of namespaces and not every namespace
-will be able to consume these priority classes by default.&lt;/p&gt;
-&lt;p&gt;To enforce this, &lt;code&gt;kube-apiserver&lt;/code&gt; flag &lt;code&gt;--admission-control-config-file&lt;/code&gt; should be
-used to pass path to the following configuration file:&lt;/p&gt;
+will be able to consume these priority classes by default.
+
+To enforce this, `kube-apiserver` flag `--admission-control-config-file` should be
+used to pass path to the following configuration file:
+
+```yaml
+apiVersion: apiserver.config.k8s.io/v1
+kind: AdmissionConfiguration
+plugins:
+- name: &#34;ResourceQuota&#34;
+  configuration:
+    apiVersion: apiserver.config.k8s.io/v1
+    kind: ResourceQuotaConfiguration
+    limitedResources:
+    - resource: pods
+      matchScopes:
+      - scopeName: PriorityClass
+        operator: In
+        values: [&#34;cluster-services&#34;]
+```
+
+Now, &#34;cluster-services&#34; pods will be allowed in only those namespaces where a quota object with a matching `scopeSelector` is present.
+For example:
+
+```yaml
+    scopeSelector:
+      matchExpressions:
+      - scopeName: PriorityClass
+        operator: In
+        values: [&#34;cluster-services&#34;]
+```
+ --&gt;
+&lt;h2 id=&#34;limit-priority-class-consumption-by-default&#34;&gt;限制指定优先级类别的默认消耗&lt;/h2&gt;
+&lt;p&gt;还有种可能是希望指定优先级的 Pod，就例如，&amp;ldquo;cluster-services&amp;rdquo;,就允许且仅允许它们在有匹配配额
+对象存在的命名空间中。&lt;/p&gt;
+&lt;p&gt;通过这种机制，运维人员可以使得在默认情况下限制特定高优先级类别的使用在有限的几个命名空间中，
+而不是每个命名空间都可以消费这些优先级类别。&lt;/p&gt;
+&lt;p&gt;而要实现这一点，&lt;code&gt;kube-apiserver&lt;/code&gt; 的 &lt;code&gt;--admission-control-config-file&lt;/code&gt; 应该传入包含下面
+内容的文件的路径:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apiserver.config.k8s.io/v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;AdmissionConfiguration&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;plugins&lt;/span&gt;:
@@ -758,8 +1365,8 @@ used to pass path to the following configuration file:&lt;/p&gt;
       - &lt;span style=&#34;color:#f92672&#34;&gt;scopeName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PriorityClass&lt;/span&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;: [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;cluster-services&amp;#34;&lt;/span&gt;]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now, &amp;ldquo;cluster-services&amp;rdquo; pods will be allowed in only those namespaces where a quota object with a matching &lt;code&gt;scopeSelector&lt;/code&gt; is present.
-For example:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;此时，使用 &amp;ldquo;cluster-services&amp;rdquo; 优先级类别的 Pod 就允许且仅允许它们在这些命名空间中，这些命名
+空间中要有一个配额的 &lt;code&gt;scopeSelector&lt;/code&gt; 匹配 &amp;ldquo;cluster-services&amp;rdquo; 这个优先级类别的。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;scopeSelector&lt;/span&gt;:
       &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
       - &lt;span style=&#34;color:#f92672&#34;&gt;scopeName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PriorityClass&lt;/span&gt;
@@ -767,10 +1374,10 @@ For example:&lt;/p&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;: [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;cluster-services&amp;#34;&lt;/span&gt;]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;See &lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/resource-management/admission_control_resource_quota.md&#34;&gt;ResourceQuota design doc&lt;/a&gt; for more information.&lt;/li&gt;
-&lt;li&gt;See a &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/quota-api-object/&#34;&gt;detailed example for how to use resource quota&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Read &lt;a href=&#34;https://github.com/kubernetes/community/blob/master/contributors/design-proposals/scheduling/pod-priority-resourcequota.md&#34;&gt;Quota support for priority class design doc&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;See &lt;a href=&#34;https://github.com/kubernetes/kubernetes/pull/36765&#34;&gt;LimitedResources&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/resource-management/admission_control_resource_quota.md&#34;&gt;ResourceQuota 设计文稿&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/quota-api-object/&#34;&gt;怎么使用资源配额的详细示例&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes/community/blob/master/contributors/design-proposals/scheduling/pod-priority-resourcequota.md&#34;&gt;对优先级类别配额支持的设计文稿&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes/kubernetes/pull/36765&#34;&gt;LimitedResources&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>
