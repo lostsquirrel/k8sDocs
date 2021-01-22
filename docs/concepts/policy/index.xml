@@ -1384,6 +1384,1372 @@ For example:
     </item>
     
     <item>
+      <title>Docs: Pod 安全策略</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/pod-security-policy/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/pod-security-policy/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- pweil-
+- tallclair
+title: Pod Security Policies
+content_type: concept
+weight: 30
+---
+ --&gt;
+&lt;!-- overview --&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.19 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;!--
+Pod Security Policies enable fine-grained authorization of pod creation and
+updates.
+ --&gt;
+&lt;p&gt;Pod 安全策略给予 Pod 的创建和更新更细粒度的授权。&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## What is a Pod Security Policy?
+
+A _Pod Security Policy_ is a cluster-level resource that controls security
+sensitive aspects of the pod specification. The [PodSecurityPolicy](/docs/reference/generated/kubernetes-api/v1.19/#podsecuritypolicy-v1beta1-policy) objects
+define a set of conditions that a pod must run with in order to be accepted into
+the system, as well as defaults for the related fields. They allow an
+administrator to control the following:
+
+| Control Aspect                                      | Field Names                                 |
+| ----------------------------------------------------| ------------------------------------------- |
+| Running of privileged containers                    | [`privileged`](#privileged)                                |
+| Usage of host namespaces                            | [`hostPID`, `hostIPC`](#host-namespaces)    |
+| Usage of host networking and ports                  | [`hostNetwork`, `hostPorts`](#host-namespaces) |
+| Usage of volume types                               | [`volumes`](#volumes-and-file-systems)      |
+| Usage of the host filesystem                        | [`allowedHostPaths`](#volumes-and-file-systems) |
+| Allow specific FlexVolume drivers                   | [`allowedFlexVolumes`](#flexvolume-drivers) |
+| Allocating an FSGroup that owns the pod&#39;s volumes   | [`fsGroup`](#volumes-and-file-systems)      |
+| Requiring the use of a read only root file system   | [`readOnlyRootFilesystem`](#volumes-and-file-systems) |
+| The user and group IDs of the container             | [`runAsUser`, `runAsGroup`, `supplementalGroups`](#users-and-groups) |
+| Restricting escalation to root privileges           | [`allowPrivilegeEscalation`, `defaultAllowPrivilegeEscalation`](#privilege-escalation) |
+| Linux capabilities                                  | [`defaultAddCapabilities`, `requiredDropCapabilities`, `allowedCapabilities`](#capabilities) |
+| The SELinux context of the container                | [`seLinux`](#selinux)                       |
+| The Allowed Proc Mount types for the container      | [`allowedProcMountTypes`](#allowedprocmounttypes) |
+| The AppArmor profile used by containers             | [annotations](#apparmor)                    |
+| The seccomp profile used by containers              | [annotations](#seccomp)                     |
+| The sysctl profile used by containers               | [`forbiddenSysctls`,`allowedUnsafeSysctls`](#sysctl)                      |
+ --&gt;
+&lt;h2 id=&#34;what-is-a-pod-security-policy&#34;&gt;Pod 安全策略是啥&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;Pod 安全策略&lt;/em&gt; 是一个集群层的资源，它被用来控制 Pod 定义中的安全敏感方面的内容。
+&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podsecuritypolicy-v1beta1-policy&#34;&gt;PodSecurityPolicy&lt;/a&gt; 对象是一个条件集合， 一个 Pod 只有以符合这些条件和与这些条件相关的默认设置的方式运行才能被系统接受。
+它允许系统管理进行以下控制:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;控制方面&lt;/th&gt;
+&lt;th&gt;字段名称&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;运行特权容器&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#privileged&#34;&gt;&lt;code&gt;privileged&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;使用主机命名空间&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#host-namespaces&#34;&gt;&lt;code&gt;hostPID&lt;/code&gt;, &lt;code&gt;hostIPC&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;使用主机网络和端口&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#host-namespaces&#34;&gt;&lt;code&gt;hostNetwork&lt;/code&gt;, &lt;code&gt;hostPorts&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;能够使用的卷类型&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#volumes-and-file-systems&#34;&gt;&lt;code&gt;volumes&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;能够使用主机文件系统&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#volumes-and-file-systems&#34;&gt;&lt;code&gt;allowedHostPaths&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;允许设置 FlexVolume 驱动&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#flexvolume-drivers&#34;&gt;&lt;code&gt;allowedFlexVolumes&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;分配一个包含 Pod 卷的 FSGroup&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#volumes-and-file-systems&#34;&gt;&lt;code&gt;fsGroup&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;要求使用一个只读根文件系统&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#volumes-and-file-systems&#34;&gt;&lt;code&gt;readOnlyRootFilesystem&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;用户的 UID 和 GID&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#users-and-groups&#34;&gt;&lt;code&gt;runAsUser&lt;/code&gt;, &lt;code&gt;runAsGroup&lt;/code&gt;, &lt;code&gt;supplementalGroups&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;限制升级到 root 权限&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#privilege-escalation&#34;&gt;&lt;code&gt;allowPrivilegeEscalation&lt;/code&gt;, &lt;code&gt;defaultAllowPrivilegeEscalation&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Linux 功能&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#capabilities&#34;&gt;&lt;code&gt;defaultAddCapabilities&lt;/code&gt;, &lt;code&gt;requiredDropCapabilities&lt;/code&gt;, &lt;code&gt;allowedCapabilities&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;容器的 SELinux 上下文&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#selinux&#34;&gt;&lt;code&gt;seLinux&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;允许容器 Proc 挂载类型&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#allowedprocmounttypes&#34;&gt;&lt;code&gt;allowedProcMountTypes&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;容器使用的 AppArmor 方案&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#apparmor&#34;&gt;annotations&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;容器使用的 seccomp 方案&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#seccomp&#34;&gt;annotations&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;容器使用的 sysctl 方案&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;#sysctl&#34;&gt;&lt;code&gt;forbiddenSysctls&lt;/code&gt;,&lt;code&gt;allowedUnsafeSysctls&lt;/code&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;!--
+## Enabling Pod Security Policies
+
+Pod security policy control is implemented as an optional (but recommended)
+[admission
+controller](/docs/reference/access-authn-authz/admission-controllers/#podsecuritypolicy). PodSecurityPolicies
+are enforced by [enabling the admission
+controller](/docs/reference/access-authn-authz/admission-controllers/#how-do-i-turn-on-an-admission-control-plug-in),
+but doing so without authorizing any policies **will prevent any pods from being
+created** in the cluster.
+
+Since the pod security policy API (`policy/v1beta1/podsecuritypolicy`) is
+enabled independently of the admission controller, for existing clusters it is
+recommended that policies are added and authorized before enabling the admission
+controller.
+ --&gt;
+&lt;h2 id=&#34;enabling-pod-security-policies&#34;&gt;启用 Pod 安全策略&lt;/h2&gt;
+&lt;p&gt;Pod 安全策略控制是以一个可选(但推荐)的
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/admission-controllers/#podsecuritypolicy&#34;&gt;准入控制器&lt;/a&gt;
+来实现的。 &lt;code&gt;PodSecurityPolicy&lt;/code&gt; 是通过
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/admission-controllers/#how-do-i-turn-on-an-admission-control-plug-in&#34;&gt;开启准入控制器&lt;/a&gt;
+来执行的，但如果只用 Pod 安全策略，而没有授权任意策略会使得集群 &lt;strong&gt;阻止所有 Pod 的创建&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;因为 Pod 安全策略 API (&lt;code&gt;policy/v1beta1/podsecuritypolicy&lt;/code&gt;) 的启用是独立于准入控制器的，
+对象已经存在的集群建议在启用准入策略之间先添加策略和授权。&lt;/p&gt;
+&lt;!--
+## Authorizing Policies
+
+When a PodSecurityPolicy resource is created, it does nothing. In order to use
+it, the requesting user or target pod&#39;s [service
+account](/docs/tasks/configure-pod-container/configure-service-account/) must be
+authorized to use the policy, by allowing the `use` verb on the policy.
+
+Most Kubernetes pods are not created directly by users. Instead, they are
+typically created indirectly as part of a
+[Deployment](/docs/concepts/workloads/controllers/deployment/),
+[ReplicaSet](/docs/concepts/workloads/controllers/replicaset/), or other
+templated controller via the controller manager. Granting the controller access
+to the policy would grant access for *all* pods created by that controller,
+so the preferred method for authorizing policies is to grant access to the
+pod&#39;s service account (see [example](#run-another-pod)).
+ --&gt;
+&lt;h2 id=&#34;authorizing-policies&#34;&gt;对策略授权&lt;/h2&gt;
+&lt;p&gt;当一个 &lt;code&gt;PodSecurityPolicy&lt;/code&gt; 资源被创建后，它是不会干事情的。要使用它， 请求用户或目标 Pod 的
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/configure-pod-container/configure-service-account/&#34;&gt;服务账号&lt;/a&gt; 必须有
+使用这个策略的授权，这个授权是能会在策略上使用 &lt;code&gt;use&lt;/code&gt; 动词实现的。&lt;/p&gt;
+&lt;p&gt;大多数 k8s 中的 Pod 都不是由用户直接创建的。 而通常是通过控制器管理器作为
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/deployment/&#34;&gt;Deployment&lt;/a&gt;,
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/replicaset/&#34;&gt;ReplicaSet&lt;/a&gt;, 或其它模板控制器
+的一部分间接创建的。 授予策略该控制器的访问权限也就是授予对该控制创建的 &lt;em&gt;所有&lt;/em&gt; Pod 的访问权限，
+所以授予策略权限的和冼方式是授予 Pod 的账号访问权限(见 &lt;a href=&#34;#run-another-pod&#34;&gt;示例&lt;/a&gt;)&lt;/p&gt;
+&lt;!--
+### Via RBAC
+
+[RBAC](/docs/reference/access-authn-authz/rbac/) is a standard Kubernetes
+authorization mode, and can easily be used to authorize use of policies.
+
+First, a `Role` or `ClusterRole` needs to grant access to `use` the desired
+policies. The rules to grant access look like this:
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: &lt;role name&gt;
+rules:
+- apiGroups: [&#39;policy&#39;]
+  resources: [&#39;podsecuritypolicies&#39;]
+  verbs:     [&#39;use&#39;]
+  resourceNames:
+  - &lt;list of policies to authorize&gt;
+```
+
+Then the `(Cluster)Role` is bound to the authorized user(s):
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: &lt;binding name&gt;
+roleRef:
+  kind: ClusterRole
+  name: &lt;role name&gt;
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+# Authorize specific service accounts:
+- kind: ServiceAccount
+  name: &lt;authorized service account name&gt;
+  namespace: &lt;authorized pod namespace&gt;
+# Authorize specific users (not recommended):
+- kind: User
+  apiGroup: rbac.authorization.k8s.io
+  name: &lt;authorized user name&gt;
+```
+
+If a `RoleBinding` (not a `ClusterRoleBinding`) is used, it will only grant
+usage for pods being run in the same namespace as the binding. This can be
+paired with system groups to grant access to all pods run in the namespace:
+```yaml
+# Authorize all service accounts in a namespace:
+- kind: Group
+  apiGroup: rbac.authorization.k8s.io
+  name: system:serviceaccounts
+# Or equivalently, all authenticated users in a namespace:
+- kind: Group
+  apiGroup: rbac.authorization.k8s.io
+  name: system:authenticated
+```
+
+For more examples of RBAC bindings, see [Role Binding
+Examples](/docs/reference/access-authn-authz/rbac#role-binding-examples).
+For a complete example of authorizing a PodSecurityPolicy, see
+[below](#example).
+
+ --&gt;
+&lt;h3 id=&#34;via-rbac&#34;&gt;通过 RBAC&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/rbac/&#34;&gt;RBAC&lt;/a&gt; is a standard Kubernetes
+authorization mode, and can easily be used to authorize use of policies.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/rbac/&#34;&gt;RBAC&lt;/a&gt;
+是标准的 k8s 授权模式， 它可以轻松地用于授权策略的使用。&lt;/p&gt;
+&lt;p&gt;First, a &lt;code&gt;Role&lt;/code&gt; or &lt;code&gt;ClusterRole&lt;/code&gt; needs to grant access to &lt;code&gt;use&lt;/code&gt; the desired
+policies. The rules to grant access look like this:&lt;/p&gt;
+&lt;p&gt;首先， 一个 &lt;code&gt;Role&lt;/code&gt; 或 &lt;code&gt;ClusterRole&lt;/code&gt; 需要授权使用(&lt;code&gt;use&lt;/code&gt;) 期望的策略。 授权的规则如下:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;rbac.authorization.k8s.io/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ClusterRole&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;role name&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;rules&lt;/span&gt;:
+- &lt;span style=&#34;color:#f92672&#34;&gt;apiGroups&lt;/span&gt;: [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;policy&amp;#39;&lt;/span&gt;]
+  &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;: [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;podsecuritypolicies&amp;#39;&lt;/span&gt;]
+  &lt;span style=&#34;color:#f92672&#34;&gt;verbs&lt;/span&gt;:     [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;use&amp;#39;&lt;/span&gt;]
+  &lt;span style=&#34;color:#f92672&#34;&gt;resourceNames&lt;/span&gt;:
+  - &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;list of policies to authorize&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Then the &lt;code&gt;(Cluster)Role&lt;/code&gt; is bound to the authorized user(s):
+然后将 &lt;code&gt;(Cluster)Role&lt;/code&gt; 绑定到授权的用户:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;rbac.authorization.k8s.io/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ClusterRoleBinding&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;binding name&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;roleRef&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ClusterRole&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;role name&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;apiGroup&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;rbac.authorization.k8s.io&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;subjects&lt;/span&gt;:
+&lt;span style=&#34;color:#75715e&#34;&gt;# 授权给指定服务账号&lt;/span&gt;
+- &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ServiceAccount&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;authorized service account name&amp;gt;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;namespace&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;authorized pod namespace&amp;gt;&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# 授权给指定用户(不推荐)&lt;/span&gt;
+- &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;User&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;apiGroup&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;rbac.authorization.k8s.io&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;authorized user name&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果使用的是 &lt;code&gt;RoleBinding&lt;/code&gt; (不是 &lt;code&gt;ClusterRoleBinding&lt;/code&gt;)，它就只能给予运行在同一个命名空间
+的 Pod 的使用作为绑定。 这也可以搭上系统组的方式授予对命名空间中所有 Pod 的访问权限:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 授权给命名空间中所有的服务账号&lt;/span&gt;
+- &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Group&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;apiGroup&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;rbac.authorization.k8s.io&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;system:serviceaccounts&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# 等效的，授权给命名空间中的所有授权用户&lt;/span&gt;
+- &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Group&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;apiGroup&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;rbac.authorization.k8s.io&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;system:authenticated&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;更多 RBAC 绑定的示例， 见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/rbac#role-binding-examples&#34;&gt;角色绑定示例&lt;/a&gt;.
+对一个 &lt;code&gt;PodSecurityPolicy&lt;/code&gt; 授权的完整示例， 见
+&lt;a href=&#34;#example&#34;&gt;下面&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+### Troubleshooting
+
+- The [controller manager](/docs/reference/command-line-tools-reference/kube-controller-manager/)
+  must be run against the secured API port and must not have superuser permissions. See
+  [Controlling Access to the Kubernetes API](/docs/concepts/security/controlling-access)
+  to learn about API server access controls.  
+  If the controller manager connected through the trusted API port (also known as the
+  `localhost` listener), requests would bypass authentication and authorization modules;
+  all PodSecurityPolicy objects would be allowed, and users would be able to create grant
+  themselves the ability to create privileged containers.
+
+  For more details on configuring controller manager authorization, see
+  [Controller Roles](/docs/reference/access-authn-authz/rbac/#controller-roles).
+ --&gt;
+&lt;h3 id=&#34;troubleshooting&#34;&gt;故障排除&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/kube-controller-manager/&#34;&gt;控制器管理器&lt;/a&gt;
+必须要对接一个安全的 API 端口，并且必须不能有超级用户权限。 学习 API 服务访问控制见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/controlling-access&#34;&gt;k8s API 访问控制&lt;/a&gt;
+如果控制器管理器是通过受信的 API 端口(也就是我们知道的 &lt;code&gt;localhost&lt;/code&gt; 监听器)连接的，请求就会
+绕过认证和授权模块； 所以的 PodSecurityPolicy 对象都是被允许的，用户也可以给自己授予创建
+特权容器的能力。&lt;/p&gt;
+&lt;p&gt;更多关于配置控制器管理器授权的信息，见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/rbac/#controller-roles&#34;&gt;控制器角色&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+## Policy Order
+
+In addition to restricting pod creation and update, pod security policies can
+also be used to provide default values for many of the fields that it
+controls. When multiple policies are available, the pod security policy
+controller selects policies according to the following criteria:
+
+1. PodSecurityPolicies which allow the pod as-is, without changing defaults or
+mutating the pod, are preferred.  The order of these non-mutating
+PodSecurityPolicies doesn&#39;t matter.
+2. If the pod must be defaulted or mutated, the first PodSecurityPolicy
+(ordered by name) to allow the pod is selected.
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; During update operations (during which mutations to pod specs are disallowed)
+only non-mutating PodSecurityPolicies are used to validate the pod.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+ --&gt;
+&lt;h2 id=&#34;policy-order&#34;&gt;策略顺序&lt;/h2&gt;
+&lt;p&gt;在限制 Pod 的创建和修改外， Pod 安全策略也可以且用于为它控制的许多字段提供默认舉。 当有多个策略
+存在时， Pod 安全策略控制权限下面的条件选择策略:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;PodSecurityPolicy 首选是允许 Pod 保持原样，不用修改默认或修改 Pod。 这些不修改 Pod 的
+PodSecurityPolicy 的顺序是没有啥影响的。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果 Pod 必须要设置默认值或进行修改，允许 Pod 的第一个(以名称排序) PodSecurityPolicy
+会被选中。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 在更新操作中(在对 Pod 定义不允许修改时) 只有不修改 Pod 的 PodSecurityPolicy 会被用于验证
+Pod&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;!--
+## Example
+
+_This example assumes you have a running cluster with the PodSecurityPolicy
+admission controller enabled and you have cluster admin privileges._
+ --&gt;
+&lt;h2 id=&#34;example&#34;&gt;示例&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;这个示例假设运行的集群中启用了 PodSecurityPolicy 准入控制器并且用户有集群管理员权限&lt;/em&gt;&lt;/p&gt;
+&lt;!--
+### Set up
+
+Set up a namespace and a service account to act as for this example. We&#39;ll use
+this service account to mock a non-admin user.
+
+```shell
+kubectl create namespace psp-example
+kubectl create serviceaccount -n psp-example fake-user
+kubectl create rolebinding -n psp-example fake-editor --clusterrole=edit --serviceaccount=psp-example:fake-user
+```
+
+To make it clear which user we&#39;re acting as and save some typing, create 2
+aliases:
+
+```shell
+alias kubectl-admin=&#39;kubectl -n psp-example&#39;
+alias kubectl-user=&#39;kubectl --as=system:serviceaccount:psp-example:fake-user -n psp-example&#39;
+```
+ --&gt;
+&lt;h3 id=&#34;开搞&#34;&gt;开搞&lt;/h3&gt;
+&lt;p&gt;设置一个命名空间和一个服务账号为在这个例子中使用。 我们会用这个服务账号扮演非管理员用户。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl create namespace psp-example
+kubectl create serviceaccount -n psp-example fake-user
+kubectl create rolebinding -n psp-example fake-editor --clusterrole&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;edit --serviceaccount&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;psp-example:fake-user
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;为了清楚的显示我们是以哪个用户进行的操作，并省些敲字的工夫，创建 2 个别名:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;alias kubectl-admin&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;kubectl -n psp-example&amp;#39;&lt;/span&gt;
+alias kubectl-user&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;kubectl --as=system:serviceaccount:psp-example:fake-user -n psp-example&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+### Create a policy and a pod
+
+Define the example PodSecurityPolicy object in a file. This is a policy that
+simply prevents the creation of privileged pods.
+The name of a PodSecurityPolicy object must be a valid
+[DNS subdomain name](/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table class=&#34;includecode&#34; id=&#34;policyexample-pspyaml&#34;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;
+                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/policy/example-psp.yaml&#34; download=&#34;policy/example-psp.yaml&#34;&gt;
+                    &lt;code&gt;policy/example-psp.yaml&lt;/code&gt;
+                &lt;/a&gt;
+                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;policyexample-pspyaml&#39;)&#34; title=&#34;Copy policy/example-psp.yaml to clipboard&#34;&gt;
+            &lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;policy/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PodSecurityPolicy&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;example&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;privileged&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;# 不允许特权 Pod ！&lt;/span&gt;
+  &lt;span style=&#34;color:#75715e&#34;&gt;# 以下为一些必要字段&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;seLinux&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;RunAsAny&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;supplementalGroups&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;RunAsAny&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;runAsUser&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;RunAsAny&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;fsGroup&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;RunAsAny&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;*&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+
+
+And create it with kubectl:
+
+```shell
+kubectl-admin create -f example-psp.yaml
+```
+
+Now, as the unprivileged user, try to create a simple pod:
+
+```shell
+kubectl-user create -f- &lt;&lt;EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pause
+spec:
+  containers:
+    - name: pause
+      image: k8s.gcr.io/pause
+EOF
+```
+
+The output is similar to this:
+
+```
+Error from server (Forbidden): error when creating &#34;STDIN&#34;: pods &#34;pause&#34; is forbidden: unable to validate against any pod security policy: []
+```
+
+**What happened?** Although the PodSecurityPolicy was created, neither the
+pod&#39;s service account nor `fake-user` have permission to use the new policy:
+
+```shell
+kubectl-user auth can-i use podsecuritypolicy/example
+no
+```
+
+Create the rolebinding to grant `fake-user` the `use` verb on the example
+policy:
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; This is not the recommended way! See the &lt;a href=&#34;#run-another-pod&#34;&gt;next section&lt;/a&gt;
+for the preferred approach.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+
+```shell
+kubectl-admin create role psp:unprivileged \
+    --verb=use \
+    --resource=podsecuritypolicy \
+    --resource-name=example
+role &#34;psp:unprivileged&#34; created
+
+kubectl-admin create rolebinding fake-user:psp:unprivileged \
+    --role=psp:unprivileged \
+    --serviceaccount=psp-example:fake-user
+rolebinding &#34;fake-user:psp:unprivileged&#34; created
+
+kubectl-user auth can-i use podsecuritypolicy/example
+yes
+```
+
+Now retry creating the pod:
+
+```shell
+kubectl-user create -f- &lt;&lt;EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pause
+spec:
+  containers:
+    - name: pause
+      image: k8s.gcr.io/pause
+EOF
+```
+
+The output is similar to this
+
+```
+pod &#34;pause&#34; created
+```
+
+It works as expected! But any attempts to create a privileged pod should still
+be denied:
+
+```shell
+kubectl-user create -f- &lt;&lt;EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: privileged
+spec:
+  containers:
+    - name: pause
+      image: k8s.gcr.io/pause
+      securityContext:
+        privileged: true
+EOF
+```
+
+The output is similar to this:
+
+```
+Error from server (Forbidden): error when creating &#34;STDIN&#34;: pods &#34;privileged&#34; is forbidden: unable to validate against any pod security policy: [spec.containers[0].securityContext.privileged: Invalid value: true: Privileged containers are not allowed]
+```
+
+Delete the pod before moving on:
+
+```shell
+kubectl-user delete pod pause
+```
+ --&gt;
+&lt;h3 id=&#34;create-a-policy-and-a-pod&#34;&gt;创建一个策略和一个 Pod&lt;/h3&gt;
+&lt;p&gt;在一个文件中定义这个示例的 PodSecurityPolicy 对象。 这个策略的作用就是防止特权容器的创建。
+PodSecurityPolicy 对象的名称必须是一个有效的
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;.&lt;/p&gt;
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table class=&#34;includecode&#34; id=&#34;policyexample-pspyaml&#34;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;
+                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/policy/example-psp.yaml&#34; download=&#34;policy/example-psp.yaml&#34;&gt;
+                    &lt;code&gt;policy/example-psp.yaml&lt;/code&gt;
+                &lt;/a&gt;
+                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;policyexample-pspyaml&#39;)&#34; title=&#34;Copy policy/example-psp.yaml to clipboard&#34;&gt;
+            &lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;policy/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PodSecurityPolicy&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;example&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;privileged&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;# 不允许特权 Pod ！&lt;/span&gt;
+  &lt;span style=&#34;color:#75715e&#34;&gt;# 以下为一些必要字段&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;seLinux&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;RunAsAny&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;supplementalGroups&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;RunAsAny&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;runAsUser&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;RunAsAny&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;fsGroup&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;RunAsAny&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;*&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+
+&lt;p&gt;使用 kubectl 创建:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl-admin create -f example-psp.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;此时，作为一个非特权用户，尝试创建一个简单的 Pod:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl-user create -f- &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt;EOF
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;apiVersion: v1
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;kind: Pod
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  name: pause
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;spec:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  containers:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    - name: pause
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;      image: k8s.gcr.io/pause
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Error from server (Forbidden): error when creating &amp;quot;STDIN&amp;quot;: pods &amp;quot;pause&amp;quot; is forbidden: unable to validate against any pod security policy: []
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;发生了啥?&lt;/strong&gt; 尽管创建了 PodSecurityPolicy， 但不管是 Pod 的服务账号或 &lt;code&gt;fake-user&lt;/code&gt; 拥有
+使用这个新策略的权限:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl-user auth can-i use podsecuritypolicy/example
+no
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;创建一个角色绑定来授予 &lt;code&gt;fake-user&lt;/code&gt; 使用(&lt;code&gt;use&lt;/code&gt;) 这个示例策略:&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 不推荐使用这种方式！首选方式见 &lt;a href=&#34;#run-another-pod&#34;&gt;下一节&lt;/a&gt;&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl-admin create role psp:unprivileged &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --verb&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;use &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --resource&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;podsecuritypolicy &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --resource-name&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;example
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# 输出&lt;/span&gt;
+role &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;psp:unprivileged&amp;#34;&lt;/span&gt; created
+
+kubectl-admin create rolebinding fake-user:psp:unprivileged &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --role&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;psp:unprivileged &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --serviceaccount&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;psp-example:fake-user
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# 输出&lt;/span&gt;
+rolebinding &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;fake-user:psp:unprivileged&amp;#34;&lt;/span&gt; created
+
+kubectl-user auth can-i use podsecuritypolicy/example
+yes
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;现在再次尝试创建 Pod:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl-user create -f- &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt;EOF
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;apiVersion: v1
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;kind: Pod
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  name: pause
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;spec:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  containers:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    - name: pause
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;      image: k8s.gcr.io/pause
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;pod &amp;quot;pause&amp;quot; created
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;结果与预期相符！但任何创建特权 Pod 的尝试都会被拒绝:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl-user create -f- &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt;EOF
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;apiVersion: v1
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;kind: Pod
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;metadata:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  name: privileged
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;spec:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  containers:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    - name: pause
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;      image: k8s.gcr.io/pause
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;      securityContext:
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;        privileged: true
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Error from server (Forbidden): error when creating &amp;quot;STDIN&amp;quot;: pods &amp;quot;privileged&amp;quot; is forbidden: unable to validate against any pod security policy: [spec.containers[0].securityContext.privileged: Invalid value: true: Privileged containers are not allowed]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;在往下之前先删除这个 Pod:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl-user delete pod pause
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+### Run another pod
+
+Let&#39;s try that again, slightly differently:
+
+```shell
+kubectl-user create deployment pause --image=k8s.gcr.io/pause
+deployment &#34;pause&#34; created
+
+kubectl-user get pods
+No resources found.
+
+kubectl-user get events | head -n 2
+LASTSEEN   FIRSTSEEN   COUNT     NAME              KIND         SUBOBJECT                TYPE      REASON                  SOURCE                                  MESSAGE
+1m         2m          15        pause-7774d79b5   ReplicaSet                            Warning   FailedCreate            replicaset-controller                   Error creating: pods &#34;pause-7774d79b5-&#34; is forbidden: no providers available to validate pod request
+```
+
+**What happened?** We already bound the `psp:unprivileged` role for our `fake-user`,
+why are we getting the error `Error creating: pods &#34;pause-7774d79b5-&#34; is
+forbidden: no providers available to validate pod request`? The answer lies in
+the source - `replicaset-controller`. Fake-user successfully created the
+deployment (which successfully created a replicaset), but when the replicaset
+went to create the pod it was not authorized to use the example
+podsecuritypolicy.
+
+In order to fix this, bind the `psp:unprivileged` role to the pod&#39;s service
+account instead. In this case (since we didn&#39;t specify it) the service account
+is `default`:
+
+```shell
+kubectl-admin create rolebinding default:psp:unprivileged \
+    --role=psp:unprivileged \
+    --serviceaccount=psp-example:default
+rolebinding &#34;default:psp:unprivileged&#34; created
+```
+
+Now if you give it a minute to retry, the replicaset-controller should
+eventually succeed in creating the pod:
+
+```shell
+kubectl-user get pods --watch
+NAME                    READY     STATUS    RESTARTS   AGE
+pause-7774d79b5-qrgcb   0/1       Pending   0         1s
+pause-7774d79b5-qrgcb   0/1       Pending   0         1s
+pause-7774d79b5-qrgcb   0/1       ContainerCreating   0         1s
+pause-7774d79b5-qrgcb   1/1       Running   0         2s
+```
+ --&gt;
+&lt;h3 id=&#34;Run-another-pod&#34;&gt;运行另一个 Pod&lt;/h3&gt;
+&lt;p&gt;我们再来一次稍微不同的尝试:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl-user create deployment pause --image&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;k8s.gcr.io/pause
+&lt;span style=&#34;color:#75715e&#34;&gt;# 输出&lt;/span&gt;
+deployment &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pause&amp;#34;&lt;/span&gt; created
+
+kubectl-user get pods
+&lt;span style=&#34;color:#75715e&#34;&gt;# 输出&lt;/span&gt;
+No resources found.
+
+kubectl-user get events | head -n &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# 输出&lt;/span&gt;
+LASTSEEN   FIRSTSEEN   COUNT     NAME              KIND         SUBOBJECT                TYPE      REASON                  SOURCE                                  MESSAGE
+1m         2m          &lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt;        pause-7774d79b5   ReplicaSet                            Warning   FailedCreate            replicaset-controller                   Error creating: pods &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pause-7774d79b5-&amp;#34;&lt;/span&gt; is forbidden: no providers available to validate pod request
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;发生了啥?&lt;/strong&gt;  我们已经将角色 &lt;code&gt;psp:unprivileged&lt;/code&gt; 绑定到用户 &lt;code&gt;fake-user&lt;/code&gt;， 为啥还得到错误
+信息 &lt;code&gt;Error creating: pods &amp;quot;pause-7774d79b5-&amp;quot; is forbidden: no providers available to validate pod request&lt;/code&gt;? 原因在来源 - &lt;code&gt;replicaset-controller&lt;/code&gt;.
+测试用户成功地创建了 Deployment(也就是成功创建了一个 ReplcatSet)，但当 ReplcatSet 开始
+创建 Pod 时， 它没有被授权使用示例的 Pod 安全策略&lt;/p&gt;
+&lt;p&gt;而要修复这个问题， 将 &lt;code&gt;psp:unprivileged&lt;/code&gt; 绑定到 Pod 的服务账号上。 在这种情况下(因为我们没有指定)
+那服务账号就是 &lt;code&gt;default&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl-admin create rolebinding default:psp:unprivileged &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --role&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;psp:unprivileged &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --serviceaccount&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;psp-example:default
+&lt;span style=&#34;color:#75715e&#34;&gt;# 输出&lt;/span&gt;
+rolebinding &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;default:psp:unprivileged&amp;#34;&lt;/span&gt; created
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这时再重试， &lt;code&gt;replicaset-controller&lt;/code&gt; 应该最终可以成功创建这个 Pod:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl-user get pods --watch
+NAME                    READY     STATUS    RESTARTS   AGE
+pause-7774d79b5-qrgcb   0/1       Pending   &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;         1s
+pause-7774d79b5-qrgcb   0/1       Pending   &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;         1s
+pause-7774d79b5-qrgcb   0/1       ContainerCreating   &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;         1s
+pause-7774d79b5-qrgcb   1/1       Running   &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;         2s
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;clean-up&#34;&gt;收尾&lt;/h3&gt;
+&lt;p&gt;删除命名空间，清楚示例中的大多数资源：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl-admin delete ns psp-example
+&lt;span style=&#34;color:#75715e&#34;&gt;# 输出&lt;/span&gt;
+namespace &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;psp-example&amp;#34;&lt;/span&gt; deleted
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;要注意 &lt;code&gt;PodSecurityPolicy&lt;/code&gt; 资源是没有命名空间的，需要单独清除:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl-admin delete psp example
+&lt;span style=&#34;color:#75715e&#34;&gt;# 输出&lt;/span&gt;
+podsecuritypolicy &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;example&amp;#34;&lt;/span&gt; deleted
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+### Example Policies
+
+This is the least restrictive policy you can create, equivalent to not using the
+pod security policy admission controller:
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table class=&#34;includecode&#34; id=&#34;policyprivileged-pspyaml&#34;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;
+                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/policy/privileged-psp.yaml&#34; download=&#34;policy/privileged-psp.yaml&#34;&gt;
+                    &lt;code&gt;policy/privileged-psp.yaml&lt;/code&gt;
+                &lt;/a&gt;
+                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;policyprivileged-pspyaml&#39;)&#34; title=&#34;Copy policy/privileged-psp.yaml to clipboard&#34;&gt;
+            &lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;policy/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PodSecurityPolicy&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;privileged&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;seccomp.security.alpha.kubernetes.io/allowedProfileNames&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;*&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;privileged&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;allowPrivilegeEscalation&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;allowedCapabilities&lt;/span&gt;:
+  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;*&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;*&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostNetwork&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostPorts&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;min&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;max&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;65535&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostIPC&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostPID&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;runAsUser&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;RunAsAny&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;seLinux&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;RunAsAny&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;supplementalGroups&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;RunAsAny&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;fsGroup&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;RunAsAny&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+
+
+This is an example of a restrictive policy that requires users to run as an
+unprivileged user, blocks possible escalations to root, and requires use of
+several security mechanisms.
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table class=&#34;includecode&#34; id=&#34;policyrestricted-pspyaml&#34;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;
+                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/policy/restricted-psp.yaml&#34; download=&#34;policy/restricted-psp.yaml&#34;&gt;
+                    &lt;code&gt;policy/restricted-psp.yaml&lt;/code&gt;
+                &lt;/a&gt;
+                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;policyrestricted-pspyaml&#39;)&#34; title=&#34;Copy policy/restricted-psp.yaml to clipboard&#34;&gt;
+            &lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;policy/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PodSecurityPolicy&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;restricted&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;seccomp.security.alpha.kubernetes.io/allowedProfileNames&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;docker/default,runtime/default&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;apparmor.security.beta.kubernetes.io/allowedProfileNames&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;runtime/default&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;seccomp.security.alpha.kubernetes.io/defaultProfileName&lt;/span&gt;:  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;runtime/default&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;apparmor.security.beta.kubernetes.io/defaultProfileName&lt;/span&gt;:  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;runtime/default&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;privileged&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+  &lt;span style=&#34;color:#75715e&#34;&gt;# 防止提升为 root 时需要&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;allowPrivilegeEscalation&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+  &lt;span style=&#34;color:#75715e&#34;&gt;# 这个与 非 root + 不允许权限提供是重复的， 但可以通过提供它来加深防御&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;requiredDropCapabilities&lt;/span&gt;:
+    - &lt;span style=&#34;color:#ae81ff&#34;&gt;ALL&lt;/span&gt;
+  &lt;span style=&#34;color:#75715e&#34;&gt;# 允许核心卷类型&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;configMap&amp;#39;&lt;/span&gt;
+    - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;emptyDir&amp;#39;&lt;/span&gt;
+    - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;projected&amp;#39;&lt;/span&gt;
+    - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;secret&amp;#39;&lt;/span&gt;
+    - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;downwardAPI&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# 假定由集群管理员创建的 PV 是可以安全使用的&lt;/span&gt;
+    - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;persistentVolumeClaim&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostNetwork&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostIPC&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostPID&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;runAsUser&lt;/span&gt;:
+    &lt;span style=&#34;color:#75715e&#34;&gt;# 要求容器不能以 root 权限运行&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MustRunAsNonRoot&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;seLinux&lt;/span&gt;:
+    &lt;span style=&#34;color:#75715e&#34;&gt;# 这个策略假定节点是使用的 AppArmor 而不是 SELinux&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;RunAsAny&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;supplementalGroups&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MustRunAs&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;ranges&lt;/span&gt;:
+      &lt;span style=&#34;color:#75715e&#34;&gt;# 禁止添加 root 组&lt;/span&gt;
+      - &lt;span style=&#34;color:#f92672&#34;&gt;min&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;max&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;65535&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;fsGroup&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MustRunAs&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;ranges&lt;/span&gt;:
+      &lt;span style=&#34;color:#75715e&#34;&gt;# 禁止添加 root 组&lt;/span&gt;
+      - &lt;span style=&#34;color:#f92672&#34;&gt;min&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;max&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;65535&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;readOnlyRootFilesystem&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+
+
+See [Pod Security Standards](/docs/concepts/security/pod-security-standards/#policy-instantiation) for more examples.
+ --&gt;
+&lt;h3 id=&#34;example-policies&#34;&gt;示例策略&lt;/h3&gt;
+&lt;p&gt;这是一个用户可以创建最没有约束性的策略， 等效于不使用 Pod 安全策略准入控制:&lt;/p&gt;
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table class=&#34;includecode&#34; id=&#34;policyprivileged-pspyaml&#34;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;
+                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/policy/privileged-psp.yaml&#34; download=&#34;policy/privileged-psp.yaml&#34;&gt;
+                    &lt;code&gt;policy/privileged-psp.yaml&lt;/code&gt;
+                &lt;/a&gt;
+                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;policyprivileged-pspyaml&#39;)&#34; title=&#34;Copy policy/privileged-psp.yaml to clipboard&#34;&gt;
+            &lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;policy/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PodSecurityPolicy&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;privileged&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;seccomp.security.alpha.kubernetes.io/allowedProfileNames&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;*&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;privileged&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;allowPrivilegeEscalation&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;allowedCapabilities&lt;/span&gt;:
+  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;*&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;*&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostNetwork&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostPorts&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;min&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;max&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;65535&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostIPC&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostPID&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;runAsUser&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;RunAsAny&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;seLinux&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;RunAsAny&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;supplementalGroups&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;RunAsAny&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;fsGroup&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;RunAsAny&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+
+&lt;p&gt;这是一个有约束的策略，它要求用户以非特别用户运行，阻止可能提升为 root, 并要求使用几个安全机制。
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table class=&#34;includecode&#34; id=&#34;policyrestricted-pspyaml&#34;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;
+                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/policy/restricted-psp.yaml&#34; download=&#34;policy/restricted-psp.yaml&#34;&gt;
+                    &lt;code&gt;policy/restricted-psp.yaml&lt;/code&gt;
+                &lt;/a&gt;
+                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;policyrestricted-pspyaml&#39;)&#34; title=&#34;Copy policy/restricted-psp.yaml to clipboard&#34;&gt;
+            &lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;policy/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PodSecurityPolicy&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;restricted&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;seccomp.security.alpha.kubernetes.io/allowedProfileNames&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;docker/default,runtime/default&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;apparmor.security.beta.kubernetes.io/allowedProfileNames&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;runtime/default&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;seccomp.security.alpha.kubernetes.io/defaultProfileName&lt;/span&gt;:  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;runtime/default&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;apparmor.security.beta.kubernetes.io/defaultProfileName&lt;/span&gt;:  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;runtime/default&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;privileged&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+  &lt;span style=&#34;color:#75715e&#34;&gt;# 防止提升为 root 时需要&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;allowPrivilegeEscalation&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+  &lt;span style=&#34;color:#75715e&#34;&gt;# 这个与 非 root + 不允许权限提供是重复的， 但可以通过提供它来加深防御&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;requiredDropCapabilities&lt;/span&gt;:
+    - &lt;span style=&#34;color:#ae81ff&#34;&gt;ALL&lt;/span&gt;
+  &lt;span style=&#34;color:#75715e&#34;&gt;# 允许核心卷类型&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;configMap&amp;#39;&lt;/span&gt;
+    - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;emptyDir&amp;#39;&lt;/span&gt;
+    - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;projected&amp;#39;&lt;/span&gt;
+    - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;secret&amp;#39;&lt;/span&gt;
+    - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;downwardAPI&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# 假定由集群管理员创建的 PV 是可以安全使用的&lt;/span&gt;
+    - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;persistentVolumeClaim&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostNetwork&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostIPC&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostPID&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;runAsUser&lt;/span&gt;:
+    &lt;span style=&#34;color:#75715e&#34;&gt;# 要求容器不能以 root 权限运行&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MustRunAsNonRoot&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;seLinux&lt;/span&gt;:
+    &lt;span style=&#34;color:#75715e&#34;&gt;# 这个策略假定节点是使用的 AppArmor 而不是 SELinux&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;RunAsAny&amp;#39;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;supplementalGroups&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MustRunAs&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;ranges&lt;/span&gt;:
+      &lt;span style=&#34;color:#75715e&#34;&gt;# 禁止添加 root 组&lt;/span&gt;
+      - &lt;span style=&#34;color:#f92672&#34;&gt;min&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;max&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;65535&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;fsGroup&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;rule&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MustRunAs&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;ranges&lt;/span&gt;:
+      &lt;span style=&#34;color:#75715e&#34;&gt;# 禁止添加 root 组&lt;/span&gt;
+      - &lt;span style=&#34;color:#f92672&#34;&gt;min&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;max&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;65535&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;readOnlyRootFilesystem&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;/p&gt;
+&lt;p&gt;更多示例见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/pod-security-standards/#policy-instantiation&#34;&gt;Pod 安全标准&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+## Policy Reference
+
+### Privileged
+
+**Privileged** - determines if any container in a pod can enable privileged mode.
+By default a container is not allowed to access any devices on the host, but a
+&#34;privileged&#34; container is given access to all devices on the host. This allows
+the container nearly all the same access as processes running on the host.
+This is useful for containers that want to use linux capabilities like
+manipulating the network stack and accessing devices.
+ --&gt;
+&lt;h2 id=&#34;policy-reference&#34;&gt;策略使用参数&lt;/h2&gt;
+&lt;h3 id=&#34;privileged&#34;&gt;Privileged&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Privileged&lt;/strong&gt; - 决定容器中的任意 Pod 是否可以启用特权模式。默认情况下容器是不允许访问主机上
+的任意设备的，但 &amp;ldquo;特权(privileged)&amp;rdquo; 是可以访问宿主机上的所有设备的。 这就允许容器可以与运行在
+主机上的进程拥有几乎相同的访问权限。 这对于想要使用 Linux 功能，如操作网络栈和访问设备是很有用的。&lt;/p&gt;
+&lt;!--
+### Host namespaces
+
+**HostPID** - Controls whether the pod containers can share the host process ID
+namespace. Note that when paired with ptrace this can be used to escalate
+privileges outside of the container (ptrace is forbidden by default).
+
+**HostIPC** - Controls whether the pod containers can share the host IPC
+namespace.
+
+**HostNetwork** - Controls whether the pod may use the node network
+namespace. Doing so gives the pod access to the loopback device, services
+listening on localhost, and could be used to snoop on network activity of other
+pods on the same node.
+
+**HostPorts** - Provides a list of ranges of allowable ports in the host
+network namespace. Defined as a list of `HostPortRange`, with `min`(inclusive)
+and `max`(inclusive). Defaults to no allowed host ports.
+ --&gt;
+&lt;h3 id=&#34;host-namespaces&#34;&gt;宿主机命名空间&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;HostPID&lt;/strong&gt; - Controls whether the pod containers can share the host process ID
+namespace. Note that when paired with ptrace this can be used to escalate
+privileges outside of the container (ptrace is forbidden by default).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;HostPID&lt;/strong&gt; - 控制
+&lt;strong&gt;HostIPC&lt;/strong&gt; - Controls whether the pod containers can share the host IPC
+namespace.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;HostNetwork&lt;/strong&gt; - Controls whether the pod may use the node network
+namespace. Doing so gives the pod access to the loopback device, services
+listening on localhost, and could be used to snoop on network activity of other
+pods on the same node.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;HostPorts&lt;/strong&gt; - Provides a list of ranges of allowable ports in the host
+network namespace. Defined as a list of &lt;code&gt;HostPortRange&lt;/code&gt;, with &lt;code&gt;min&lt;/code&gt;(inclusive)
+and &lt;code&gt;max&lt;/code&gt;(inclusive). Defaults to no allowed host ports.&lt;/p&gt;
+&lt;h3 id=&#34;volumes-and-file-systems&#34;&gt;Volumes and file systems&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Volumes&lt;/strong&gt; - Provides a list of allowed volume types. The allowable values
+correspond to the volume sources that are defined when creating a volume. For
+the complete list of volume types, see &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/#types-of-volumes&#34;&gt;Types of
+Volumes&lt;/a&gt;. Additionally, &lt;code&gt;*&lt;/code&gt;
+may be used to allow all volume types.&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;recommended minimum set&lt;/strong&gt; of allowed volumes for new PSPs are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;configMap&lt;/li&gt;
+&lt;li&gt;downwardAPI&lt;/li&gt;
+&lt;li&gt;emptyDir&lt;/li&gt;
+&lt;li&gt;persistentVolumeClaim&lt;/li&gt;
+&lt;li&gt;secret&lt;/li&gt;
+&lt;li&gt;projected&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote class=&#34;warning&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;警告：&lt;/strong&gt; PodSecurityPolicy does not limit the types of &lt;code&gt;PersistentVolume&lt;/code&gt; objects that
+may be referenced by a &lt;code&gt;PersistentVolumeClaim&lt;/code&gt;, and hostPath type
+&lt;code&gt;PersistentVolumes&lt;/code&gt; do not support read-only access mode. Only trusted users
+should be granted permission to create &lt;code&gt;PersistentVolume&lt;/code&gt; objects.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;FSGroup&lt;/strong&gt; - Controls the supplemental group applied to some volumes.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;MustRunAs&lt;/em&gt; - Requires at least one &lt;code&gt;range&lt;/code&gt; to be specified. Uses the
+minimum value of the first range as the default. Validates against all ranges.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;MayRunAs&lt;/em&gt; - Requires at least one &lt;code&gt;range&lt;/code&gt; to be specified. Allows
+&lt;code&gt;FSGroups&lt;/code&gt; to be left unset without providing a default. Validates against
+all ranges if &lt;code&gt;FSGroups&lt;/code&gt; is set.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - No default provided. Allows any &lt;code&gt;fsGroup&lt;/code&gt; ID to be specified.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;AllowedHostPaths&lt;/strong&gt; - This specifies a list of host paths that are allowed
+to be used by hostPath volumes. An empty list means there is no restriction on
+host paths used. This is defined as a list of objects with a single &lt;code&gt;pathPrefix&lt;/code&gt;
+field, which allows hostPath volumes to mount a path that begins with an
+allowed prefix, and a &lt;code&gt;readOnly&lt;/code&gt; field indicating it must be mounted read-only.
+For example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;allowedHostPaths&lt;/span&gt;:
+  &lt;span style=&#34;color:#75715e&#34;&gt;# This allows &amp;#34;/foo&amp;#34;, &amp;#34;/foo/&amp;#34;, &amp;#34;/foo/bar&amp;#34; etc., but&lt;/span&gt;
+  &lt;span style=&#34;color:#75715e&#34;&gt;# disallows &amp;#34;/fool&amp;#34;, &amp;#34;/etc/foo&amp;#34; etc.&lt;/span&gt;
+  &lt;span style=&#34;color:#75715e&#34;&gt;# &amp;#34;/foo/../&amp;#34; is never valid.&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;pathPrefix&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/foo&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;readOnly&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# only allow read-only mounts&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote class=&#34;warning&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;警告：&lt;/strong&gt; &lt;p&gt;There are many ways a container with unrestricted access to the host
+filesystem can escalate privileges, including reading data from other
+containers, and abusing the credentials of system services, such as Kubelet.&lt;/p&gt;
+&lt;p&gt;Writeable hostPath directory volumes allow containers to write
+to the filesystem in ways that let them traverse the host filesystem outside the &lt;code&gt;pathPrefix&lt;/code&gt;.
+&lt;code&gt;readOnly: true&lt;/code&gt;, available in Kubernetes 1.11+, must be used on &lt;strong&gt;all&lt;/strong&gt; &lt;code&gt;allowedHostPaths&lt;/code&gt;
+to effectively limit access to the specified &lt;code&gt;pathPrefix&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;ReadOnlyRootFilesystem&lt;/strong&gt; - Requires that containers must run with a read-only
+root filesystem (i.e. no writable layer).&lt;/p&gt;
+&lt;h3 id=&#34;flexvolume-drivers&#34;&gt;FlexVolume drivers&lt;/h3&gt;
+&lt;p&gt;This specifies a list of FlexVolume drivers that are allowed to be used
+by flexvolume. An empty list or nil means there is no restriction on the drivers.
+Please make sure &lt;a href=&#34;#volumes-and-file-systems&#34;&gt;&lt;code&gt;volumes&lt;/code&gt;&lt;/a&gt; field contains the
+&lt;code&gt;flexVolume&lt;/code&gt; volume type; no FlexVolume driver is allowed otherwise.&lt;/p&gt;
+&lt;p&gt;For example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;policy/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PodSecurityPolicy&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;allow-flex-volumes&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#75715e&#34;&gt;# ... other spec fields&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#ae81ff&#34;&gt;flexVolume&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;allowedFlexVolumes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#f92672&#34;&gt;driver&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;example/lvm&lt;/span&gt;
+    - &lt;span style=&#34;color:#f92672&#34;&gt;driver&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;example/cifs&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;users-and-groups&#34;&gt;Users and groups&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;RunAsUser&lt;/strong&gt; - Controls which user ID the containers are run with.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;MustRunAs&lt;/em&gt; - Requires at least one &lt;code&gt;range&lt;/code&gt; to be specified. Uses the
+minimum value of the first range as the default. Validates against all ranges.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;MustRunAsNonRoot&lt;/em&gt; - Requires that the pod be submitted with a non-zero
+&lt;code&gt;runAsUser&lt;/code&gt; or have the &lt;code&gt;USER&lt;/code&gt; directive defined (using a numeric UID) in the
+image. Pods which have specified neither &lt;code&gt;runAsNonRoot&lt;/code&gt; nor &lt;code&gt;runAsUser&lt;/code&gt; settings
+will be mutated to set &lt;code&gt;runAsNonRoot=true&lt;/code&gt;, thus requiring a defined non-zero
+numeric &lt;code&gt;USER&lt;/code&gt; directive in the container. No default provided. Setting
+&lt;code&gt;allowPrivilegeEscalation=false&lt;/code&gt; is strongly recommended with this strategy.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - No default provided. Allows any &lt;code&gt;runAsUser&lt;/code&gt; to be specified.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;RunAsGroup&lt;/strong&gt; - Controls which primary group ID the containers are run with.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;MustRunAs&lt;/em&gt; - Requires at least one &lt;code&gt;range&lt;/code&gt; to be specified. Uses the
+minimum value of the first range as the default. Validates against all ranges.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;MayRunAs&lt;/em&gt; - Does not require that RunAsGroup be specified. However, when RunAsGroup
+is specified, they have to fall in the defined range.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - No default provided. Allows any &lt;code&gt;runAsGroup&lt;/code&gt; to be specified.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;SupplementalGroups&lt;/strong&gt; - Controls which group IDs containers add.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;MustRunAs&lt;/em&gt; - Requires at least one &lt;code&gt;range&lt;/code&gt; to be specified. Uses the
+minimum value of the first range as the default. Validates against all ranges.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;MayRunAs&lt;/em&gt; - Requires at least one &lt;code&gt;range&lt;/code&gt; to be specified. Allows
+&lt;code&gt;supplementalGroups&lt;/code&gt; to be left unset without providing a default.
+Validates against all ranges if &lt;code&gt;supplementalGroups&lt;/code&gt; is set.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - No default provided. Allows any &lt;code&gt;supplementalGroups&lt;/code&gt; to be
+specified.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;privilege-escalation&#34;&gt;Privilege Escalation&lt;/h3&gt;
+&lt;p&gt;These options control the &lt;code&gt;allowPrivilegeEscalation&lt;/code&gt; container option. This bool
+directly controls whether the
+&lt;a href=&#34;https://www.kernel.org/doc/Documentation/prctl/no_new_privs.txt&#34;&gt;&lt;code&gt;no_new_privs&lt;/code&gt;&lt;/a&gt;
+flag gets set on the container process. This flag will prevent &lt;code&gt;setuid&lt;/code&gt; binaries
+from changing the effective user ID, and prevent files from enabling extra
+capabilities (e.g. it will prevent the use of the &lt;code&gt;ping&lt;/code&gt; tool). This behavior is
+required to effectively enforce &lt;code&gt;MustRunAsNonRoot&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AllowPrivilegeEscalation&lt;/strong&gt; - Gates whether or not a user is allowed to set the
+security context of a container to &lt;code&gt;allowPrivilegeEscalation=true&lt;/code&gt;. This
+defaults to allowed so as to not break setuid binaries. Setting it to &lt;code&gt;false&lt;/code&gt;
+ensures that no child process of a container can gain more privileges than its parent.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;DefaultAllowPrivilegeEscalation&lt;/strong&gt; - Sets the default for the
+&lt;code&gt;allowPrivilegeEscalation&lt;/code&gt; option. The default behavior without this is to allow
+privilege escalation so as to not break setuid binaries. If that behavior is not
+desired, this field can be used to default to disallow, while still permitting
+pods to request &lt;code&gt;allowPrivilegeEscalation&lt;/code&gt; explicitly.&lt;/p&gt;
+&lt;h3 id=&#34;capabilities&#34;&gt;Capabilities&lt;/h3&gt;
+&lt;p&gt;Linux capabilities provide a finer grained breakdown of the privileges
+traditionally associated with the superuser. Some of these capabilities can be
+used to escalate privileges or for container breakout, and may be restricted by
+the PodSecurityPolicy. For more details on Linux capabilities, see
+&lt;a href=&#34;http://man7.org/linux/man-pages/man7/capabilities.7.html&#34;&gt;capabilities(7)&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The following fields take a list of capabilities, specified as the capability
+name in ALL_CAPS without the &lt;code&gt;CAP_&lt;/code&gt; prefix.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AllowedCapabilities&lt;/strong&gt; - Provides a list of capabilities that are allowed to be added
+to a container. The default set of capabilities are implicitly allowed. The
+empty set means that no additional capabilities may be added beyond the default
+set. &lt;code&gt;*&lt;/code&gt; can be used to allow all capabilities.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;RequiredDropCapabilities&lt;/strong&gt; - The capabilities which must be dropped from
+containers. These capabilities are removed from the default set, and must not be
+added. Capabilities listed in &lt;code&gt;RequiredDropCapabilities&lt;/code&gt; must not be included in
+&lt;code&gt;AllowedCapabilities&lt;/code&gt; or &lt;code&gt;DefaultAddCapabilities&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;DefaultAddCapabilities&lt;/strong&gt; - The capabilities which are added to containers by
+default, in addition to the runtime defaults. See the &lt;a href=&#34;https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities&#34;&gt;Docker
+documentation&lt;/a&gt;
+for the default list of capabilities when using the Docker runtime.&lt;/p&gt;
+&lt;h3 id=&#34;selinux&#34;&gt;SELinux&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;MustRunAs&lt;/em&gt; - Requires &lt;code&gt;seLinuxOptions&lt;/code&gt; to be configured. Uses
+&lt;code&gt;seLinuxOptions&lt;/code&gt; as the default. Validates against &lt;code&gt;seLinuxOptions&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - No default provided. Allows any &lt;code&gt;seLinuxOptions&lt;/code&gt; to be
+specified.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;allowedprocmounttypes&#34;&gt;AllowedProcMountTypes&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;allowedProcMountTypes&lt;/code&gt; is a list of allowed ProcMountTypes.
+Empty or nil indicates that only the &lt;code&gt;DefaultProcMountType&lt;/code&gt; may be used.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;DefaultProcMount&lt;/code&gt; uses the container runtime defaults for readonly and masked
+paths for /proc.  Most container runtimes mask certain paths in /proc to avoid
+accidental security exposure of special devices or information. This is denoted
+as the string &lt;code&gt;Default&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The only other ProcMountType is &lt;code&gt;UnmaskedProcMount&lt;/code&gt;, which bypasses the
+default masking behavior of the container runtime and ensures the newly
+created /proc the container stays intact with no modifications. This is
+denoted as the string &lt;code&gt;Unmasked&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;apparmor&#34;&gt;AppArmor&lt;/h3&gt;
+&lt;p&gt;Controlled via annotations on the PodSecurityPolicy. Refer to the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tutorials/clusters/apparmor/#podsecuritypolicy-annotations&#34;&gt;AppArmor
+documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;seccomp&#34;&gt;Seccomp&lt;/h3&gt;
+&lt;p&gt;As of Kubernetes v1.19, you can use the &lt;code&gt;seccompProfile&lt;/code&gt; field in the
+&lt;code&gt;securityContext&lt;/code&gt; of Pods or containers to &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tutorials/clusters/seccomp&#34;&gt;control use of seccomp
+profiles&lt;/a&gt;. In prior versions, seccomp was
+controlled by adding annotations to a Pod. The same PodSecurityPolicies can be
+used with either version to enforce how these fields or annotations are applied.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;seccomp.security.alpha.kubernetes.io/defaultProfileName&lt;/strong&gt; - Annotation that
+specifies the default seccomp profile to apply to containers. Possible values
+are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;unconfined&lt;/code&gt; - Seccomp is not applied to the container processes (this is the
+default in Kubernetes), if no alternative is provided.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;runtime/default&lt;/code&gt; - The default container runtime profile is used.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;docker/default&lt;/code&gt; - The Docker default seccomp profile is used. Deprecated as
+of Kubernetes 1.11. Use &lt;code&gt;runtime/default&lt;/code&gt; instead.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;localhost/&amp;lt;path&amp;gt;&lt;/code&gt; - Specify a profile as a file on the node located at
+&lt;code&gt;&amp;lt;seccomp_root&amp;gt;/&amp;lt;path&amp;gt;&lt;/code&gt;, where &lt;code&gt;&amp;lt;seccomp_root&amp;gt;&lt;/code&gt; is defined via the
+&lt;code&gt;--seccomp-profile-root&lt;/code&gt; flag on the Kubelet. If the &lt;code&gt;--seccomp-profile-root&lt;/code&gt;
+flag is not defined, the default path will be used, which is
+&lt;code&gt;&amp;lt;root-dir&amp;gt;/seccomp&lt;/code&gt; where &lt;code&gt;&amp;lt;root-dir&amp;gt;&lt;/code&gt; is specified by the &lt;code&gt;--root-dir&lt;/code&gt; flag.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; The &lt;code&gt;--seccomp-profile-root&lt;/code&gt; flag is deprecated since Kubernetes
+v1.19. Users are encouraged to use the default path.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;seccomp.security.alpha.kubernetes.io/allowedProfileNames&lt;/strong&gt; - Annotation that
+specifies which values are allowed for the pod seccomp annotations. Specified as
+a comma-delimited list of allowed values. Possible values are those listed
+above, plus &lt;code&gt;*&lt;/code&gt; to allow all profiles. Absence of this annotation means that the
+default cannot be changed.&lt;/p&gt;
+&lt;h3 id=&#34;sysctl&#34;&gt;Sysctl&lt;/h3&gt;
+&lt;p&gt;By default, all safe sysctls are allowed.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;forbiddenSysctls&lt;/code&gt; - excludes specific sysctls. You can forbid a combination of safe and unsafe sysctls in the list. To forbid setting any sysctls, use &lt;code&gt;*&lt;/code&gt; on its own.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;allowedUnsafeSysctls&lt;/code&gt; - allows specific sysctls that had been disallowed by the default list, so long as these are not listed in &lt;code&gt;forbiddenSysctls&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Refer to the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/sysctl-cluster/#podsecuritypolicy&#34;&gt;Sysctl documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;See &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/pod-security-standards/&#34;&gt;Pod Security Standards&lt;/a&gt; for policy recommendations.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Refer to &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubernetes-api/v1.19/#podsecuritypolicy-v1beta1-policy&#34;&gt;Pod Security Policy Reference&lt;/a&gt; for the api details.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: </title>
       <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/pid-limiting/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>

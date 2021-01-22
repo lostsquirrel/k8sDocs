@@ -9,40 +9,39 @@ metadata:
     apparmor.security.beta.kubernetes.io/defaultProfileName:  'runtime/default'
 spec:
   privileged: false
-  # Required to prevent escalations to root.
+  # 防止提升为 root 时需要
   allowPrivilegeEscalation: false
-  # This is redundant with non-root + disallow privilege escalation,
-  # but we can provide it for defense in depth.
+  # 这个与 非 root + 不允许权限提供是重复的， 但可以通过提供它来加深防御
   requiredDropCapabilities:
     - ALL
-  # Allow core volume types.
+  # 允许核心卷类型
   volumes:
     - 'configMap'
     - 'emptyDir'
     - 'projected'
     - 'secret'
     - 'downwardAPI'
-    # Assume that persistentVolumes set up by the cluster admin are safe to use.
+    # 假定由集群管理员创建的 PV 是可以安全使用的
     - 'persistentVolumeClaim'
   hostNetwork: false
   hostIPC: false
   hostPID: false
   runAsUser:
-    # Require the container to run without root privileges.
+    # 要求容器不能以 root 权限运行
     rule: 'MustRunAsNonRoot'
   seLinux:
-    # This policy assumes the nodes are using AppArmor rather than SELinux.
+    # 这个策略假定节点是使用的 AppArmor 而不是 SELinux
     rule: 'RunAsAny'
   supplementalGroups:
     rule: 'MustRunAs'
     ranges:
-      # Forbid adding the root group.
+      # 禁止添加 root 组
       - min: 1
         max: 65535
   fsGroup:
     rule: 'MustRunAs'
     ranges:
-      # Forbid adding the root group.
+      # 禁止添加 root 组
       - min: 1
         max: 65535
   readOnlyRootFilesystem: false
