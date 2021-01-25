@@ -2523,34 +2523,31 @@ network namespace. Defined as a list of `HostPortRange`, with `min`(inclusive)
 and `max`(inclusive). Defaults to no allowed host ports.
  --&gt;
 &lt;h3 id=&#34;host-namespaces&#34;&gt;宿主机命名空间&lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;HostPID&lt;/strong&gt; - Controls whether the pod containers can share the host process ID
-namespace. Note that when paired with ptrace this can be used to escalate
-privileges outside of the container (ptrace is forbidden by default).&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;HostPID&lt;/strong&gt; - 控制
-&lt;strong&gt;HostIPC&lt;/strong&gt; - Controls whether the pod containers can share the host IPC
-namespace.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;HostNetwork&lt;/strong&gt; - Controls whether the pod may use the node network
-namespace. Doing so gives the pod access to the loopback device, services
-listening on localhost, and could be used to snoop on network activity of other
-pods on the same node.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;HostPorts&lt;/strong&gt; - Provides a list of ranges of allowable ports in the host
-network namespace. Defined as a list of &lt;code&gt;HostPortRange&lt;/code&gt;, with &lt;code&gt;min&lt;/code&gt;(inclusive)
-and &lt;code&gt;max&lt;/code&gt;(inclusive). Defaults to no allowed host ports.&lt;/p&gt;
-&lt;h3 id=&#34;volumes-and-file-systems&#34;&gt;Volumes and file systems&lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;Volumes&lt;/strong&gt; - Provides a list of allowed volume types. The allowable values
+&lt;p&gt;&lt;strong&gt;HostPID&lt;/strong&gt; - 控制 Pod 中的容器是否可以共享宿主机的进程 ID 命名空间。 要注意当与 &lt;code&gt;ptrace&lt;/code&gt; 搭配，
+可以被用来升级到容器外的权限(ptrace 默认是禁止的)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;HostIPC&lt;/strong&gt; - 控制 Pod 中的容器是否可以共享宿主机的 IPC 命名空间&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;HostNetwork&lt;/strong&gt; - 控制 Pod 中的容器是否可以共享宿主机的网络命名空间。 如果可以，就会给予 Pod
+访问圆环设备的能力，监听 localhost 的服务，并可以用来嗅探同一个节点上其它 Pod 的网络活动。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;HostPorts&lt;/strong&gt; - 提供主机网络命名空间中允许的端口范围列表。 定义方式为 &lt;code&gt;HostPortRange&lt;/code&gt; 列表，
+其中有 &lt;code&gt;min&lt;/code&gt;(包括) 和 &lt;code&gt;max&lt;/code&gt;(包括). 默认为不允许使用主机端口。&lt;/p&gt;
+&lt;!--
+### Volumes and file systems
+
+**Volumes** - Provides a list of allowed volume types. The allowable values
 correspond to the volume sources that are defined when creating a volume. For
-the complete list of volume types, see &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/#types-of-volumes&#34;&gt;Types of
-Volumes&lt;/a&gt;. Additionally, &lt;code&gt;*&lt;/code&gt;
-may be used to allow all volume types.&lt;/p&gt;
-&lt;p&gt;The &lt;strong&gt;recommended minimum set&lt;/strong&gt; of allowed volumes for new PSPs are:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;configMap&lt;/li&gt;
-&lt;li&gt;downwardAPI&lt;/li&gt;
-&lt;li&gt;emptyDir&lt;/li&gt;
-&lt;li&gt;persistentVolumeClaim&lt;/li&gt;
-&lt;li&gt;secret&lt;/li&gt;
-&lt;li&gt;projected&lt;/li&gt;
-&lt;/ul&gt;
+the complete list of volume types, see [Types of
+Volumes](/docs/concepts/storage/volumes/#types-of-volumes). Additionally, `*`
+may be used to allow all volume types.
+
+The **recommended minimum set** of allowed volumes for new PSPs are:
+
+- configMap
+- downwardAPI
+- emptyDir
+- persistentVolumeClaim
+- secret
+- projected
+
 &lt;blockquote class=&#34;warning&#34;&gt;
   &lt;div&gt;&lt;strong&gt;警告：&lt;/strong&gt; PodSecurityPolicy does not limit the types of &lt;code&gt;PersistentVolume&lt;/code&gt; objects that
 may be referenced by a &lt;code&gt;PersistentVolumeClaim&lt;/code&gt;, and hostPath type
@@ -2558,28 +2555,33 @@ may be referenced by a &lt;code&gt;PersistentVolumeClaim&lt;/code&gt;, and hostP
 should be granted permission to create &lt;code&gt;PersistentVolume&lt;/code&gt; objects.&lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;&lt;strong&gt;FSGroup&lt;/strong&gt; - Controls the supplemental group applied to some volumes.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;MustRunAs&lt;/em&gt; - Requires at least one &lt;code&gt;range&lt;/code&gt; to be specified. Uses the
-minimum value of the first range as the default. Validates against all ranges.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;MayRunAs&lt;/em&gt; - Requires at least one &lt;code&gt;range&lt;/code&gt; to be specified. Allows
-&lt;code&gt;FSGroups&lt;/code&gt; to be left unset without providing a default. Validates against
-all ranges if &lt;code&gt;FSGroups&lt;/code&gt; is set.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - No default provided. Allows any &lt;code&gt;fsGroup&lt;/code&gt; ID to be specified.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;AllowedHostPaths&lt;/strong&gt; - This specifies a list of host paths that are allowed
+
+**FSGroup** - Controls the supplemental group applied to some volumes.
+
+- *MustRunAs* - Requires at least one `range` to be specified. Uses the
+minimum value of the first range as the default. Validates against all ranges.
+- *MayRunAs* - Requires at least one `range` to be specified. Allows
+`FSGroups` to be left unset without providing a default. Validates against
+all ranges if `FSGroups` is set.
+- *RunAsAny* - No default provided. Allows any `fsGroup` ID to be specified.
+
+**AllowedHostPaths** - This specifies a list of host paths that are allowed
 to be used by hostPath volumes. An empty list means there is no restriction on
-host paths used. This is defined as a list of objects with a single &lt;code&gt;pathPrefix&lt;/code&gt;
+host paths used. This is defined as a list of objects with a single `pathPrefix`
 field, which allows hostPath volumes to mount a path that begins with an
-allowed prefix, and a &lt;code&gt;readOnly&lt;/code&gt; field indicating it must be mounted read-only.
-For example:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;allowedHostPaths&lt;/span&gt;:
-  &lt;span style=&#34;color:#75715e&#34;&gt;# This allows &amp;#34;/foo&amp;#34;, &amp;#34;/foo/&amp;#34;, &amp;#34;/foo/bar&amp;#34; etc., but&lt;/span&gt;
-  &lt;span style=&#34;color:#75715e&#34;&gt;# disallows &amp;#34;/fool&amp;#34;, &amp;#34;/etc/foo&amp;#34; etc.&lt;/span&gt;
-  &lt;span style=&#34;color:#75715e&#34;&gt;# &amp;#34;/foo/../&amp;#34; is never valid.&lt;/span&gt;
-  - &lt;span style=&#34;color:#f92672&#34;&gt;pathPrefix&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/foo&amp;#34;&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;readOnly&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# only allow read-only mounts&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote class=&#34;warning&#34;&gt;
+allowed prefix, and a `readOnly` field indicating it must be mounted read-only.
+For example:
+
+```yaml
+allowedHostPaths:
+  # This allows &#34;/foo&#34;, &#34;/foo/&#34;, &#34;/foo/bar&#34; etc., but
+  # disallows &#34;/fool&#34;, &#34;/etc/foo&#34; etc.
+  # &#34;/foo/../&#34; is never valid.
+  - pathPrefix: &#34;/foo&#34;
+    readOnly: true # only allow read-only mounts
+```
+
+&lt;blockquote class=&#34;warning&#34;&gt;
   &lt;div&gt;&lt;strong&gt;警告：&lt;/strong&gt; &lt;p&gt;There are many ways a container with unrestricted access to the host
 filesystem can escalate privileges, including reading data from other
 containers, and abusing the credentials of system services, such as Kubelet.&lt;/p&gt;
@@ -2590,55 +2592,152 @@ to effectively limit access to the specified &lt;code&gt;pathPrefix&lt;/code&gt;
 &lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;&lt;strong&gt;ReadOnlyRootFilesystem&lt;/strong&gt; - Requires that containers must run with a read-only
-root filesystem (i.e. no writable layer).&lt;/p&gt;
-&lt;h3 id=&#34;flexvolume-drivers&#34;&gt;FlexVolume drivers&lt;/h3&gt;
-&lt;p&gt;This specifies a list of FlexVolume drivers that are allowed to be used
+
+**ReadOnlyRootFilesystem** - Requires that containers must run with a read-only
+root filesystem (i.e. no writable layer).
+ --&gt;
+&lt;h3 id=&#34;volumes-and-file-systems&#34;&gt;卷和文件系统&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Volumes&lt;/strong&gt; - 提供一个允许的卷类型列表。 所允许的值对应创建卷时定义的源。 完整的卷类型列表，见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/#types-of-volumes&#34;&gt;卷类型&lt;/a&gt;.
+另外， &lt;code&gt;*&lt;/code&gt; 可以用在允许所有卷类型的地方。&lt;/p&gt;
+&lt;p&gt;用于新的 PSP 允许的卷类型 &lt;strong&gt;推荐最小集&lt;/strong&gt; 为:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;configMap&lt;/li&gt;
+&lt;li&gt;downwardAPI&lt;/li&gt;
+&lt;li&gt;emptyDir&lt;/li&gt;
+&lt;li&gt;persistentVolumeClaim&lt;/li&gt;
+&lt;li&gt;secret&lt;/li&gt;
+&lt;li&gt;projected&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote class=&#34;warning&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;警告：&lt;/strong&gt; PodSecurityPolicy 并不会限制可能被 &lt;code&gt;PersistentVolumeClaim&lt;/code&gt; 引用的 &lt;code&gt;PersistentVolume&lt;/code&gt;
+的类型，hostPath 类型的 &lt;code&gt;PersistentVolume&lt;/code&gt; 不支持只读访问模式。 只有受信才应该被授予创建
+&lt;code&gt;PersistentVolume&lt;/code&gt; 对象的权限&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;FSGroup&lt;/strong&gt; - 控制应用到一些卷的副加组。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;MustRunAs&lt;/em&gt; - 要求必须至少指定一个 &lt;code&gt;range&lt;/code&gt;， 使用第一个范围内的最小值作为默认值。对其配置的所有范围进行验证。&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;MayRunAs&lt;/em&gt; - 要求必须至少指定一个 &lt;code&gt;range&lt;/code&gt;，允许 &lt;code&gt;FSGroups&lt;/code&gt; 在不提供默认值的情况下不设置。
+如果设置了 &lt;code&gt;FSGroups&lt;/code&gt; 则对其所有范围进行验证&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - 不提供默认。 允许指定任意 &lt;code&gt;fsGroup&lt;/code&gt; ID&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;AllowedHostPaths&lt;/strong&gt; - 指定可以被 hostPath 卷使用的主机路径的列表。 空列表表示不限制对主机
+路径的使用。 这个是通过使用一个 &lt;code&gt;pathPrefix&lt;/code&gt; 字段的对象的列表定义的， 它允许 hostPath 卷可以
+挂载以这个允许的前缀的路径，&lt;code&gt;readOnly&lt;/code&gt; 字段表示它只能只读模式挂载。 示例:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;allowedHostPaths&lt;/span&gt;:
+  &lt;span style=&#34;color:#75715e&#34;&gt;# 表示允许 &amp;#34;/foo&amp;#34;, &amp;#34;/foo/&amp;#34;, &amp;#34;/foo/bar&amp;#34; 等，&lt;/span&gt;
+  &lt;span style=&#34;color:#75715e&#34;&gt;# 便不允许 &amp;#34;/fool&amp;#34;, &amp;#34;/etc/foo&amp;#34; 等.&lt;/span&gt;
+  &lt;span style=&#34;color:#75715e&#34;&gt;# &amp;#34;/foo/../&amp;#34; 永远不无效.&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;pathPrefix&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/foo&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;readOnly&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# 只允许只读挂载&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote class=&#34;warning&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;警告：&lt;/strong&gt; &lt;p&gt;一个可以不受限访问主机文件的容器有许多方式可以实现权限逃逸，包含读取其它容器的数据，滥用系统服务
+凭据，如 kubelet.&lt;/p&gt;
+&lt;p&gt;可写的 hostPath 目录卷允许容器这攷文件系统，方式就是让它们穿过 &lt;code&gt;pathPrefix&lt;/code&gt; 外的文件系统。
+&lt;code&gt;readOnly: true&lt;/code&gt;, 是从 k8s v1.11+ 开始有的， 必须使用的 &lt;em&gt;所有&lt;/em&gt; &lt;code&gt;allowedHostPaths&lt;/code&gt; 上
+来有效限制对指定 &lt;code&gt;pathPrefix&lt;/code&gt; 的访问。&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
+&lt;/blockquote&gt;&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;ReadOnlyRootFilesystem&lt;/strong&gt; -  要求容器必须以只读根文件系统方式运行 (例如， 没有可写层)&lt;/p&gt;
+&lt;!--
+### FlexVolume drivers
+
+This specifies a list of FlexVolume drivers that are allowed to be used
 by flexvolume. An empty list or nil means there is no restriction on the drivers.
-Please make sure &lt;a href=&#34;#volumes-and-file-systems&#34;&gt;&lt;code&gt;volumes&lt;/code&gt;&lt;/a&gt; field contains the
-&lt;code&gt;flexVolume&lt;/code&gt; volume type; no FlexVolume driver is allowed otherwise.&lt;/p&gt;
-&lt;p&gt;For example:&lt;/p&gt;
+Please make sure [`volumes`](#volumes-and-file-systems) field contains the
+`flexVolume` volume type; no FlexVolume driver is allowed otherwise.
+
+For example:
+
+```yaml
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: allow-flex-volumes
+spec:
+  # ... other spec fields
+  volumes:
+    - flexVolume
+  allowedFlexVolumes:
+    - driver: example/lvm
+    - driver: example/cifs
+```
+ --&gt;
+&lt;h3 id=&#34;flexvolume-drivers&#34;&gt;Flexvolume 驱动&lt;/h3&gt;
+&lt;p&gt;指定允许被 Flexvolume 使用的 Flexvolume 驱动列表。 一个空列表或 nil 表示对驱动没有限制。
+请确保 &lt;a href=&#34;#volumes-and-file-systems&#34;&gt;&lt;code&gt;volumes&lt;/code&gt;&lt;/a&gt; 字段中包含了 &lt;code&gt;flexVolume&lt;/code&gt; 卷类型。
+否则就不会允许任意 FlexVolume 驱动。
+例如:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;policy/v1beta1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PodSecurityPolicy&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
   &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;allow-flex-volumes&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#75715e&#34;&gt;# ... other spec fields&lt;/span&gt;
+  &lt;span style=&#34;color:#75715e&#34;&gt;# ... 其它定义字段&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;volumes&lt;/span&gt;:
     - &lt;span style=&#34;color:#ae81ff&#34;&gt;flexVolume&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;allowedFlexVolumes&lt;/span&gt;:
     - &lt;span style=&#34;color:#f92672&#34;&gt;driver&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;example/lvm&lt;/span&gt;
     - &lt;span style=&#34;color:#f92672&#34;&gt;driver&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;example/cifs&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;users-and-groups&#34;&gt;Users and groups&lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;RunAsUser&lt;/strong&gt; - Controls which user ID the containers are run with.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;!--
+### Users and groups
+
+**RunAsUser** - Controls which user ID the containers are run with.
+
+- *MustRunAs* - Requires at least one `range` to be specified. Uses the
+minimum value of the first range as the default. Validates against all ranges.
+- *MustRunAsNonRoot* - Requires that the pod be submitted with a non-zero
+`runAsUser` or have the `USER` directive defined (using a numeric UID) in the
+image. Pods which have specified neither `runAsNonRoot` nor `runAsUser` settings
+will be mutated to set `runAsNonRoot=true`, thus requiring a defined non-zero
+numeric `USER` directive in the container. No default provided. Setting
+`allowPrivilegeEscalation=false` is strongly recommended with this strategy.
+- *RunAsAny* - No default provided. Allows any `runAsUser` to be specified.
+
+**RunAsGroup** - Controls which primary group ID the containers are run with.
+
+- *MustRunAs* - Requires at least one `range` to be specified. Uses the
+minimum value of the first range as the default. Validates against all ranges.
+- *MayRunAs* - Does not require that RunAsGroup be specified. However, when RunAsGroup
+is specified, they have to fall in the defined range.
+- *RunAsAny* - No default provided. Allows any `runAsGroup` to be specified.
+
+
+**SupplementalGroups** - Controls which group IDs containers add.
+
+- *MustRunAs* - Requires at least one `range` to be specified. Uses the
+minimum value of the first range as the default. Validates against all ranges.
+- *MayRunAs* - Requires at least one `range` to be specified. Allows
+`supplementalGroups` to be left unset without providing a default.
+Validates against all ranges if `supplementalGroups` is set.
+- *RunAsAny* - No default provided. Allows any `supplementalGroups` to be
+specified.
+ --&gt;
+&lt;h3 id=&#34;users-and-groups&#34;&gt;用户和组&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;RunAsUser&lt;/strong&gt; - 控制容器使用哪个 UID 运行。&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;em&gt;MustRunAs&lt;/em&gt; - Requires at least one &lt;code&gt;range&lt;/code&gt; to be specified. Uses the
-minimum value of the first range as the default. Validates against all ranges.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;MustRunAsNonRoot&lt;/em&gt; - Requires that the pod be submitted with a non-zero
-&lt;code&gt;runAsUser&lt;/code&gt; or have the &lt;code&gt;USER&lt;/code&gt; directive defined (using a numeric UID) in the
-image. Pods which have specified neither &lt;code&gt;runAsNonRoot&lt;/code&gt; nor &lt;code&gt;runAsUser&lt;/code&gt; settings
-will be mutated to set &lt;code&gt;runAsNonRoot=true&lt;/code&gt;, thus requiring a defined non-zero
-numeric &lt;code&gt;USER&lt;/code&gt; directive in the container. No default provided. Setting
-&lt;code&gt;allowPrivilegeEscalation=false&lt;/code&gt; is strongly recommended with this strategy.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - No default provided. Allows any &lt;code&gt;runAsUser&lt;/code&gt; to be specified.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;MustRunAs&lt;/em&gt; - 要求至少指定一个范围(&lt;code&gt;range&lt;/code&gt;). 使用第一个范围的最小值作为默认值。 验证时使用所有范围&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;MustRunAsNonRoot&lt;/em&gt; - 要求 Pod 提交一个非零的 &lt;code&gt;runAsUser&lt;/code&gt; 或镜像中有  &lt;code&gt;USER&lt;/code&gt; 定义(使用一个数字 UID)。
+没有指定 &lt;code&gt;runAsNonRoot&lt;/code&gt; 或 &lt;code&gt;runAsUser&lt;/code&gt; 的 Pod 会被设置 &lt;code&gt;runAsNonRoot=true&lt;/code&gt;， 这样需要
+在容器中定义一个非零的 &lt;code&gt;USER&lt;/code&gt; 指令。 不提供默认值。 在这个策略中强烈建议设置 &lt;code&gt;allowPrivilegeEscalation=false&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - 没有提供默认值。 允许指定任意 &lt;code&gt;runAsUser&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;RunAsGroup&lt;/strong&gt; - Controls which primary group ID the containers are run with.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;RunAsGroup&lt;/strong&gt; - 控制容器使用哪个 GID 作为主 GID 运行。&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;em&gt;MustRunAs&lt;/em&gt; - Requires at least one &lt;code&gt;range&lt;/code&gt; to be specified. Uses the
-minimum value of the first range as the default. Validates against all ranges.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;MayRunAs&lt;/em&gt; - Does not require that RunAsGroup be specified. However, when RunAsGroup
-is specified, they have to fall in the defined range.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - No default provided. Allows any &lt;code&gt;runAsGroup&lt;/code&gt; to be specified.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;MustRunAs&lt;/em&gt; - 要求至少指定一个范围(&lt;code&gt;range&lt;/code&gt;). 使用第一个范围的最小值作为默认值。 验证时使用所有范围&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;MayRunAs&lt;/em&gt; - 不是必须要指定 RunAsGroup。 但，当指定 RunAsGroup 时，他们会落到定义的范围内&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - 没有提供默认值。 允许指定任意 &lt;code&gt;runAsGroup&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;SupplementalGroups&lt;/strong&gt; - Controls which group IDs containers add.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;SupplementalGroups&lt;/strong&gt; - 控制容器添加的 GID&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;em&gt;MustRunAs&lt;/em&gt; - Requires at least one &lt;code&gt;range&lt;/code&gt; to be specified. Uses the
-minimum value of the first range as the default. Validates against all ranges.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;MayRunAs&lt;/em&gt; - Requires at least one &lt;code&gt;range&lt;/code&gt; to be specified. Allows
-&lt;code&gt;supplementalGroups&lt;/code&gt; to be left unset without providing a default.
-Validates against all ranges if &lt;code&gt;supplementalGroups&lt;/code&gt; is set.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - No default provided. Allows any &lt;code&gt;supplementalGroups&lt;/code&gt; to be
-specified.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;MustRunAs&lt;/em&gt; - 要求至少指定一个范围(&lt;code&gt;range&lt;/code&gt;). 使用第一个范围的最小值作为默认值。 验证时使用所有范围&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;MayRunAs&lt;/em&gt; - 要求至少指定一个(&lt;code&gt;range&lt;/code&gt;). 允许不设置 &lt;code&gt;supplementalGroups&lt;/code&gt; 也不提供默认值。
+如果设置了 &lt;code&gt;supplementalGroups&lt;/code&gt; 验证时使用所有范围&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - 没有提供默认值。 允许指定任意 &lt;code&gt;supplementalGroups&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h3 id=&#34;privilege-escalation&#34;&gt;Privilege Escalation&lt;/h3&gt;
 &lt;p&gt;These options control the &lt;code&gt;allowPrivilegeEscalation&lt;/code&gt; container option. This bool
@@ -2677,24 +2776,45 @@ added. Capabilities listed in &lt;code&gt;RequiredDropCapabilities&lt;/code&gt; 
 default, in addition to the runtime defaults. See the &lt;a href=&#34;https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities&#34;&gt;Docker
 documentation&lt;/a&gt;
 for the default list of capabilities when using the Docker runtime.&lt;/p&gt;
+&lt;!--
+### SELinux
+
+- *MustRunAs* - Requires `seLinuxOptions` to be configured. Uses
+`seLinuxOptions` as the default. Validates against `seLinuxOptions`.
+- *RunAsAny* - No default provided. Allows any `seLinuxOptions` to be
+specified.
+ --&gt;
 &lt;h3 id=&#34;selinux&#34;&gt;SELinux&lt;/h3&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;em&gt;MustRunAs&lt;/em&gt; - Requires &lt;code&gt;seLinuxOptions&lt;/code&gt; to be configured. Uses
-&lt;code&gt;seLinuxOptions&lt;/code&gt; as the default. Validates against &lt;code&gt;seLinuxOptions&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - No default provided. Allows any &lt;code&gt;seLinuxOptions&lt;/code&gt; to be
-specified.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;MustRunAs&lt;/em&gt; - 要求配置 &lt;code&gt;seLinuxOptions&lt;/code&gt;。 默认使用 &lt;code&gt;seLinuxOptions&lt;/code&gt;。 使用 &lt;code&gt;seLinuxOptions&lt;/code&gt; 验证。&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - 没提供默认值。允许指定任意 &lt;code&gt;seLinuxOptions&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;allowedprocmounttypes&#34;&gt;AllowedProcMountTypes&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;allowedProcMountTypes&lt;/code&gt; is a list of allowed ProcMountTypes.
-Empty or nil indicates that only the &lt;code&gt;DefaultProcMountType&lt;/code&gt; may be used.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;DefaultProcMount&lt;/code&gt; uses the container runtime defaults for readonly and masked
+&lt;!--
+### AllowedProcMountTypes
+
+`allowedProcMountTypes` is a list of allowed ProcMountTypes.
+Empty or nil indicates that only the `DefaultProcMountType` may be used.
+
+`DefaultProcMount` uses the container runtime defaults for readonly and masked
 paths for /proc.  Most container runtimes mask certain paths in /proc to avoid
 accidental security exposure of special devices or information. This is denoted
-as the string &lt;code&gt;Default&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;The only other ProcMountType is &lt;code&gt;UnmaskedProcMount&lt;/code&gt;, which bypasses the
+as the string `Default`.
+
+The only other ProcMountType is `UnmaskedProcMount`, which bypasses the
 default masking behavior of the container runtime and ensures the newly
 created /proc the container stays intact with no modifications. This is
-denoted as the string &lt;code&gt;Unmasked&lt;/code&gt;.&lt;/p&gt;
+denoted as the string `Unmasked`.
+ --&gt;
+&lt;h3 id=&#34;allowedprocmounttypes&#34;&gt;AllowedProcMountTypes&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;allowedProcMountTypes&lt;/code&gt; 是一个被允许的 ProcMountType 列表。 如果是空或 nil 则表示只能使用 &lt;code&gt;DefaultProcMountType&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;DefaultProcMount&lt;/code&gt; 对只读或 &lt;code&gt;/proc&lt;/code&gt; 遮罩路径使用容器运行时的默认设置。 大多数容器运行时会
+隐藏 /proc 中的一些特定目录来避免意外的暴露特殊设备或信息的安全风险。 这就是这个 &lt;code&gt;Default&lt;/code&gt; 的含义。&lt;/p&gt;
+&lt;p&gt;公有的另一个 ProcMountType 是 &lt;code&gt;UnmaskedProcMount&lt;/code&gt;, 就是绕过容器运行时默认的遮罩行为并确保
+新创建的 /proc 的容器保持完整，不被修改。 这就是 &lt;code&gt;Unmasked&lt;/code&gt; 的含义
+&lt;blockquote&gt;
+  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
 &lt;h3 id=&#34;apparmor&#34;&gt;AppArmor&lt;/h3&gt;
 &lt;p&gt;Controlled via annotations on the PodSecurityPolicy. Refer to the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tutorials/clusters/apparmor/#podsecuritypolicy-annotations&#34;&gt;AppArmor
 documentation&lt;/a&gt;.&lt;/p&gt;
