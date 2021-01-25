@@ -805,23 +805,18 @@ and `max`(inclusive). Defaults to no allowed host ports.
 
 ### 宿主机命名空间 {#host-namespaces}
 
-**HostPID** - Controls whether the pod containers can share the host process ID
-namespace. Note that when paired with ptrace this can be used to escalate
-privileges outside of the container (ptrace is forbidden by default).
+**HostPID** - 控制 Pod 中的容器是否可以共享宿主机的进程 ID 命名空间。 要注意当与 `ptrace` 搭配，
+可以被用来升级到容器外的权限(ptrace 默认是禁止的)
 
-**HostPID** - 控制
-**HostIPC** - Controls whether the pod containers can share the host IPC
-namespace.
+**HostIPC** - 控制 Pod 中的容器是否可以共享宿主机的 IPC 命名空间
 
-**HostNetwork** - Controls whether the pod may use the node network
-namespace. Doing so gives the pod access to the loopback device, services
-listening on localhost, and could be used to snoop on network activity of other
-pods on the same node.
+**HostNetwork** - 控制 Pod 中的容器是否可以共享宿主机的网络命名空间。 如果可以，就会给予 Pod
+访问圆环设备的能力，监听 localhost 的服务，并可以用来嗅探同一个节点上其它 Pod 的网络活动。
 
-**HostPorts** - Provides a list of ranges of allowable ports in the host
-network namespace. Defined as a list of `HostPortRange`, with `min`(inclusive)
-and `max`(inclusive). Defaults to no allowed host ports.
+**HostPorts** - 提供主机网络命名空间中允许的端口范围列表。 定义方式为 `HostPortRange` 列表，
+其中有 `min`(包括) 和 `max`(包括). 默认为不允许使用主机端口。
 
+<!--
 ### Volumes and file systems
 
 **Volumes** - Provides a list of allowed volume types. The allowable values
@@ -883,7 +878,62 @@ to effectively limit access to the specified `pathPrefix`.
 
 **ReadOnlyRootFilesystem** - Requires that containers must run with a read-only
 root filesystem (i.e. no writable layer).
+ -->
 
+### 卷和文件系统 {#volumes-and-file-systems}
+
+**Volumes** - 提供一个允许的卷类型列表。 所允许的值对应创建卷时定义的源。 完整的卷类型列表，见
+[卷类型](/docs/concepts/storage/volumes/#types-of-volumes).
+另外， `*` 可以用在允许所有卷类型的地方。
+
+用于新的 PSP 允许的卷类型 **推荐最小集** 为:
+
+- configMap
+- downwardAPI
+- emptyDir
+- persistentVolumeClaim
+- secret
+- projected
+
+{{< warning >}}
+PodSecurityPolicy 并不会限制可能被 `PersistentVolumeClaim` 引用的 `PersistentVolume`
+的类型，hostPath 类型的 `PersistentVolume` 不支持只读访问模式。 只有受信才应该被授予创建
+`PersistentVolume` 对象的权限
+{{< /warning >}}
+
+**FSGroup** - 控制应用到一些卷的副加组。
+
+- *MustRunAs* - 要求必须至少指定一个 `range`， 使用第一个范围内的最小值作为默认值。对其配置的所有范围进行验证。
+- *MayRunAs* - 要求必须至少指定一个 `range`，允许 `FSGroups` 在不提供默认值的情况下不设置。
+  如果设置了 `FSGroups` 则对其所有范围进行验证
+- *RunAsAny* - 不提供默认。 允许指定任意 `fsGroup` ID
+
+**AllowedHostPaths** - 指定可以被 hostPath 卷使用的主机路径的列表。 空列表表示不限制对主机
+路径的使用。 这个是通过使用一个 `pathPrefix` 字段的对象的列表定义的， 它允许 hostPath 卷可以
+挂载以这个允许的前缀的路径，`readOnly` 字段表示它只能只读模式挂载。 示例:
+
+```yaml
+allowedHostPaths:
+  # 表示允许 "/foo", "/foo/", "/foo/bar" 等，
+  # 便不允许 "/fool", "/etc/foo" 等.
+  # "/foo/../" 永远不无效.
+  - pathPrefix: "/foo"
+    readOnly: true # 只允许只读挂载
+```
+
+{{< warning >}}
+一个可以不受限访问主机文件的容器有许多方式可以实现权限逃逸，包含读取其它容器的数据，滥用系统服务
+凭据，如 kubelet.
+
+可写的 hostPath 目录卷允许容器这攷文件系统，方式就是让它们穿过 `pathPrefix` 外的文件系统。
+`readOnly: true`, 是从 k8s v1.11+ 开始有的， 必须使用的 *所有* `allowedHostPaths` 上
+来有效限制对指定 `pathPrefix` 的访问。
+{{<todo-optimize>}}
+{{< /warning >}}
+
+**ReadOnlyRootFilesystem** -  要求容器必须以只读根文件系统方式运行 (例如， 没有可写层)
+
+<!--
 ### FlexVolume drivers
 
 This specifies a list of FlexVolume drivers that are allowed to be used
@@ -906,7 +956,30 @@ spec:
     - driver: example/lvm
     - driver: example/cifs
 ```
+ -->
 
+### Flexvolume 驱动 {#flexvolume-drivers}
+
+指定允许被 Flexvolume 使用的 Flexvolume 驱动列表。 一个空列表或 nil 表示对驱动没有限制。
+请确保 [`volumes`](#volumes-and-file-systems) 字段中包含了 `flexVolume` 卷类型。
+否则就不会允许任意 FlexVolume 驱动。
+例如:
+
+```yaml
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: allow-flex-volumes
+spec:
+  # ... 其它定义字段
+  volumes:
+    - flexVolume
+  allowedFlexVolumes:
+    - driver: example/lvm
+    - driver: example/cifs
+```
+
+<!--
 ### Users and groups
 
 **RunAsUser** - Controls which user ID the containers are run with.
@@ -939,6 +1012,30 @@ minimum value of the first range as the default. Validates against all ranges.
 Validates against all ranges if `supplementalGroups` is set.
 - *RunAsAny* - No default provided. Allows any `supplementalGroups` to be
 specified.
+ -->
+
+### 用户和组 {#users-and-groups}
+
+**RunAsUser** - 控制容器使用哪个 UID 运行。
+
+- *MustRunAs* - 要求至少指定一个范围(`range`). 使用第一个范围的最小值作为默认值。 验证时使用所有范围
+- *MustRunAsNonRoot* - 要求 Pod 提交一个非零的 `runAsUser` 或镜像中有  `USER` 定义(使用一个数字 UID)。
+没有指定 `runAsNonRoot` 或 `runAsUser` 的 Pod 会被设置 `runAsNonRoot=true`， 这样需要
+在容器中定义一个非零的 `USER` 指令。 不提供默认值。 在这个策略中强烈建议设置 `allowPrivilegeEscalation=false`
+- *RunAsAny* - 没有提供默认值。 允许指定任意 `runAsUser`
+
+**RunAsGroup** - 控制容器使用哪个 GID 作为主 GID 运行。
+
+- *MustRunAs* - 要求至少指定一个范围(`range`). 使用第一个范围的最小值作为默认值。 验证时使用所有范围
+- *MayRunAs* - 不是必须要指定 RunAsGroup。 但，当指定 RunAsGroup 时，他们会落到定义的范围内
+- *RunAsAny* - 没有提供默认值。 允许指定任意 `runAsGroup`
+
+**SupplementalGroups** - 控制容器添加的 GID
+
+- *MustRunAs* - 要求至少指定一个范围(`range`). 使用第一个范围的最小值作为默认值。 验证时使用所有范围
+- *MayRunAs* - 要求至少指定一个(`range`). 允许不设置 `supplementalGroups` 也不提供默认值。
+  如果设置了 `supplementalGroups` 验证时使用所有范围
+- *RunAsAny* - 没有提供默认值。 允许指定任意 `supplementalGroups`
 
 ### Privilege Escalation
 
@@ -987,13 +1084,21 @@ default, in addition to the runtime defaults. See the [Docker
 documentation](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities)
 for the default list of capabilities when using the Docker runtime.
 
+<!--
 ### SELinux
 
 - *MustRunAs* - Requires `seLinuxOptions` to be configured. Uses
 `seLinuxOptions` as the default. Validates against `seLinuxOptions`.
 - *RunAsAny* - No default provided. Allows any `seLinuxOptions` to be
 specified.
+ -->
 
+### SELinux
+
+- *MustRunAs* - 要求配置 `seLinuxOptions`。 默认使用 `seLinuxOptions`。 使用 `seLinuxOptions` 验证。
+- *RunAsAny* - 没提供默认值。允许指定任意 `seLinuxOptions`
+
+<!--
 ### AllowedProcMountTypes
 
 `allowedProcMountTypes` is a list of allowed ProcMountTypes.
@@ -1008,6 +1113,18 @@ The only other ProcMountType is `UnmaskedProcMount`, which bypasses the
 default masking behavior of the container runtime and ensures the newly
 created /proc the container stays intact with no modifications. This is
 denoted as the string `Unmasked`.
+ -->
+
+### AllowedProcMountTypes
+
+`allowedProcMountTypes` 是一个被允许的 ProcMountType 列表。 如果是空或 nil 则表示只能使用 `DefaultProcMountType`
+
+`DefaultProcMount` 对只读或 `/proc` 遮罩路径使用容器运行时的默认设置。 大多数容器运行时会
+隐藏 /proc 中的一些特定目录来避免意外的暴露特殊设备或信息的安全风险。 这就是这个 `Default` 的含义。
+
+公有的另一个 ProcMountType 是 `UnmaskedProcMount`, 就是绕过容器运行时默认的遮罩行为并确保
+新创建的 /proc 的容器保持完整，不被修改。 这就是 `Unmasked` 的含义
+{{<todo-optimize>}}
 
 ### AppArmor
 
