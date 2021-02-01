@@ -1037,6 +1037,7 @@ specified.
   如果设置了 `supplementalGroups` 验证时使用所有范围
 - *RunAsAny* - 没有提供默认值。 允许指定任意 `supplementalGroups`
 
+<!--
 ### Privilege Escalation
 
 These options control the `allowPrivilegeEscalation` container option. This bool
@@ -1057,7 +1058,26 @@ ensures that no child process of a container can gain more privileges than its p
 privilege escalation so as to not break setuid binaries. If that behavior is not
 desired, this field can be used to default to disallow, while still permitting
 pods to request `allowPrivilegeEscalation` explicitly.
+ -->
 
+### 权限提升 {#privilege-escalation}
+
+这个选项控制容器的 `allowPrivilegeEscalation` 选项。这个布尔值选项直接控制是否在容器进程上
+设置
+[`no_new_privs`](https://www.kernel.org/doc/Documentation/prctl/no_new_privs.txt)
+标记。 这个标记会阻止 `setuid` 修改生效的 UID， 和阻止文件启用额外的功能(例如， 它会阻止
+使用 `ping` 工具)。这个行为需要同时执行 `MustRunAsNonRoot`.
+
+**AllowPrivilegeEscalation** - 控制是否允许用户设置容器安全上下文中的 `allowPrivilegeEscalation=true`
+的开头。这个选项默认是允许的，所以不会破坏 `setuid` 的功能。 将其设置为 `false` 则会确保
+容器的子进程不能比它的父进程获得更多的权限。
+
+**DefaultAllowPrivilegeEscalation** - 为 `allowPrivilegeEscalation` 选项设置默认值。
+在不设置这个选择的情况下是允许权限提升的，这时不会破坏 `setuid` 的功能。如果不希望这种行为，
+这个字段就可以将这种默认行为设置为不允许权限提升， 但 Pod 中也可以显示地请求 `allowPrivilegeEscalation`
+来让它可以权限提升。
+
+<!--
 ### Capabilities
 
 Linux capabilities provide a finer grained breakdown of the privileges
@@ -1083,6 +1103,26 @@ added. Capabilities listed in `RequiredDropCapabilities` must not be included in
 default, in addition to the runtime defaults. See the [Docker
 documentation](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities)
 for the default list of capabilities when using the Docker runtime.
+ -->
+
+### Linux 功能 {#capabilities}
+
+Linux 功能为超级用户关联的传统权限分割为更细的粒度。 这些功能中的一些可以用来提升权限或用于容器逃逸，
+也可能受 `PodSecurityPolicy` 限制。更多关于 Linux 功能的信息, 见
+[capabilities(7)](http://man7.org/linux/man-pages/man7/capabilities.7.html).
+
+下面的字段就对应一个功能列表，由 ALL_CAPS 中指定的功能名称去掉 `CAP_` 前缀。
+
+**AllowedCapabilities** - 提供一个允许添加到容器中的功能列表。 默认功能集隐式的含义是允许的。
+如果设置一个空集则表示除了默认功能集外不允许添加额外的功能。 `*` 用来表示允许所有功能。
+
+**RequiredDropCapabilities** - 必须要从容器是移除的功能。将这些功能从默认功能集中移除，并
+不被再添加。出现在 `RequiredDropCapabilities` 中的功能是不能出现在 `AllowedCapabilities`
+或 `DefaultAddCapabilities` 中的.
+
+**DefaultAddCapabilities** - 默认添加到容器中的功能，还要加上运行时中的默认功能。 使用
+Docker 作为运行时的默认功能集, 见
+[Docker 文档](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities)
 
 <!--
 ### SELinux
@@ -1126,11 +1166,20 @@ denoted as the string `Unmasked`.
 新创建的 /proc 的容器保持完整，不被修改。 这就是 `Unmasked` 的含义
 {{<todo-optimize>}}
 
+<!--
 ### AppArmor
 
 Controlled via annotations on the PodSecurityPolicy. Refer to the [AppArmor
 documentation](/docs/tutorials/clusters/apparmor/#podsecuritypolicy-annotations).
+ -->
 
+### AppArmor
+
+通过 PodSecurityPolicy 上的注解控制。
+参见
+[AppArmor 文档](/k8sDocs/docs/tutorials/clusters/apparmor/#podsecuritypolicy-annotations).
+
+<!--
 ### Seccomp
 
 As of Kubernetes v1.19, you can use the `seccompProfile` field in the
@@ -1164,6 +1213,50 @@ specifies which values are allowed for the pod seccomp annotations. Specified as
 a comma-delimited list of allowed values. Possible values are those listed
 above, plus `*` to allow all profiles. Absence of this annotation means that the
 default cannot be changed.
+ -->
+
+
+### Seccomp
+
+从 k8s v1.19 开始， 可以使用 Pod 或容器中的 `securityContext` 中的 `seccompProfile`
+字段
+[控制使用的 seccomp 方案](/docs/tutorials/clusters/seccomp).
+在之前的版本中， seccomp 是通过向 Pod 上添加注解控制的。 同一个 PodSecurityPolicy 可以在
+不同的版本中以这些字段或注解来执行。
+
+**seccomp.security.alpha.kubernetes.io/defaultProfileName** - 这个注解指定默认应用
+在容器上的 `seccomp` 方案。 可能的值有:
+
+- `unconfined` - 如果没有提供其它选项，不在应用进程上应用 Seccomp (这在 k8s 是默认值)。
+
+- `runtime/default` - 使用容器运行时默认的方案
+
+- `docker/default` - 使用 Docker 默认的 seccomp 方案。自 k8s v1.11 废弃，替代值为 `runtime/default`
+
+- `localhost/<path>` - 指定个节点上的 `<seccomp_root>/<path>` 文件作为方案， 其中 `<seccomp_root>`
+  通过 Kubelet 的 `--seccomp-profile-root` 标记设置。 如果没有定义 `--seccomp-profile-root`，
+  则会使用默认路径，默认路径为 `<root-dir>/seccomp`， 其中 `<root-dir>` 是通过 `--root-dir`
+  标记指定的
+
+{{< note >}}
+  从 k8s v1.19 开始 `--seccomp-profile-root` 标记就废弃了，鼓励用户使用默认路径
+{{< /note >}}
+
+**seccomp.security.alpha.kubernetes.io/allowedProfileNames** - 指定 Pod `seccomp`
+注解可以使用的值。 允许的值以逗号分隔。 可能的值就是上面列表的那些， 加上 `*` 允许所有方案。
+如果没有这个注解则默认不能被修改。
+
+<!--
+### Sysctl
+
+By default, all safe sysctls are allowed.
+
+- `forbiddenSysctls` - excludes specific sysctls. You can forbid a combination of safe and unsafe sysctls in the list. To forbid setting any sysctls, use `*` on its own.
+- `allowedUnsafeSysctls` - allows specific sysctls that had been disallowed by the default list, so long as these are not listed in `forbiddenSysctls`.
+
+Refer to the [Sysctl documentation](
+/docs/tasks/administer-cluster/sysctl-cluster/#podsecuritypolicy).
+ -->
 
 ### Sysctl
 
