@@ -2739,43 +2739,81 @@ specified.
 如果设置了 &lt;code&gt;supplementalGroups&lt;/code&gt; 验证时使用所有范围&lt;/li&gt;
 &lt;li&gt;&lt;em&gt;RunAsAny&lt;/em&gt; - 没有提供默认值。 允许指定任意 &lt;code&gt;supplementalGroups&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;privilege-escalation&#34;&gt;Privilege Escalation&lt;/h3&gt;
-&lt;p&gt;These options control the &lt;code&gt;allowPrivilegeEscalation&lt;/code&gt; container option. This bool
+&lt;!--
+### Privilege Escalation
+
+These options control the `allowPrivilegeEscalation` container option. This bool
 directly controls whether the
-&lt;a href=&#34;https://www.kernel.org/doc/Documentation/prctl/no_new_privs.txt&#34;&gt;&lt;code&gt;no_new_privs&lt;/code&gt;&lt;/a&gt;
-flag gets set on the container process. This flag will prevent &lt;code&gt;setuid&lt;/code&gt; binaries
+[`no_new_privs`](https://www.kernel.org/doc/Documentation/prctl/no_new_privs.txt)
+flag gets set on the container process. This flag will prevent `setuid` binaries
 from changing the effective user ID, and prevent files from enabling extra
-capabilities (e.g. it will prevent the use of the &lt;code&gt;ping&lt;/code&gt; tool). This behavior is
-required to effectively enforce &lt;code&gt;MustRunAsNonRoot&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;AllowPrivilegeEscalation&lt;/strong&gt; - Gates whether or not a user is allowed to set the
-security context of a container to &lt;code&gt;allowPrivilegeEscalation=true&lt;/code&gt;. This
-defaults to allowed so as to not break setuid binaries. Setting it to &lt;code&gt;false&lt;/code&gt;
-ensures that no child process of a container can gain more privileges than its parent.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;DefaultAllowPrivilegeEscalation&lt;/strong&gt; - Sets the default for the
-&lt;code&gt;allowPrivilegeEscalation&lt;/code&gt; option. The default behavior without this is to allow
+capabilities (e.g. it will prevent the use of the `ping` tool). This behavior is
+required to effectively enforce `MustRunAsNonRoot`.
+
+**AllowPrivilegeEscalation** - Gates whether or not a user is allowed to set the
+security context of a container to `allowPrivilegeEscalation=true`. This
+defaults to allowed so as to not break setuid binaries. Setting it to `false`
+ensures that no child process of a container can gain more privileges than its parent.
+
+**DefaultAllowPrivilegeEscalation** - Sets the default for the
+`allowPrivilegeEscalation` option. The default behavior without this is to allow
 privilege escalation so as to not break setuid binaries. If that behavior is not
 desired, this field can be used to default to disallow, while still permitting
-pods to request &lt;code&gt;allowPrivilegeEscalation&lt;/code&gt; explicitly.&lt;/p&gt;
-&lt;h3 id=&#34;capabilities&#34;&gt;Capabilities&lt;/h3&gt;
-&lt;p&gt;Linux capabilities provide a finer grained breakdown of the privileges
+pods to request `allowPrivilegeEscalation` explicitly.
+ --&gt;
+&lt;h3 id=&#34;privilege-escalation&#34;&gt;权限提升&lt;/h3&gt;
+&lt;p&gt;这个选项控制容器的 &lt;code&gt;allowPrivilegeEscalation&lt;/code&gt; 选项。这个布尔值选项直接控制是否在容器进程上
+设置
+&lt;a href=&#34;https://www.kernel.org/doc/Documentation/prctl/no_new_privs.txt&#34;&gt;&lt;code&gt;no_new_privs&lt;/code&gt;&lt;/a&gt;
+标记。 这个标记会阻止 &lt;code&gt;setuid&lt;/code&gt; 修改生效的 UID， 和阻止文件启用额外的功能(例如， 它会阻止
+使用 &lt;code&gt;ping&lt;/code&gt; 工具)。这个行为需要同时执行 &lt;code&gt;MustRunAsNonRoot&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AllowPrivilegeEscalation&lt;/strong&gt; - 控制是否允许用户设置容器安全上下文中的 &lt;code&gt;allowPrivilegeEscalation=true&lt;/code&gt;
+的开头。这个选项默认是允许的，所以不会破坏 &lt;code&gt;setuid&lt;/code&gt; 的功能。 将其设置为 &lt;code&gt;false&lt;/code&gt; 则会确保
+容器的子进程不能比它的父进程获得更多的权限。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;DefaultAllowPrivilegeEscalation&lt;/strong&gt; - 为 &lt;code&gt;allowPrivilegeEscalation&lt;/code&gt; 选项设置默认值。
+在不设置这个选择的情况下是允许权限提升的，这时不会破坏 &lt;code&gt;setuid&lt;/code&gt; 的功能。如果不希望这种行为，
+这个字段就可以将这种默认行为设置为不允许权限提升， 但 Pod 中也可以显示地请求 &lt;code&gt;allowPrivilegeEscalation&lt;/code&gt;
+来让它可以权限提升。&lt;/p&gt;
+&lt;!--
+### Capabilities
+
+Linux capabilities provide a finer grained breakdown of the privileges
 traditionally associated with the superuser. Some of these capabilities can be
 used to escalate privileges or for container breakout, and may be restricted by
 the PodSecurityPolicy. For more details on Linux capabilities, see
-&lt;a href=&#34;http://man7.org/linux/man-pages/man7/capabilities.7.html&#34;&gt;capabilities(7)&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The following fields take a list of capabilities, specified as the capability
-name in ALL_CAPS without the &lt;code&gt;CAP_&lt;/code&gt; prefix.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;AllowedCapabilities&lt;/strong&gt; - Provides a list of capabilities that are allowed to be added
+[capabilities(7)](http://man7.org/linux/man-pages/man7/capabilities.7.html).
+
+The following fields take a list of capabilities, specified as the capability
+name in ALL_CAPS without the `CAP_` prefix.
+
+**AllowedCapabilities** - Provides a list of capabilities that are allowed to be added
 to a container. The default set of capabilities are implicitly allowed. The
 empty set means that no additional capabilities may be added beyond the default
-set. &lt;code&gt;*&lt;/code&gt; can be used to allow all capabilities.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;RequiredDropCapabilities&lt;/strong&gt; - The capabilities which must be dropped from
+set. `*` can be used to allow all capabilities.
+
+**RequiredDropCapabilities** - The capabilities which must be dropped from
 containers. These capabilities are removed from the default set, and must not be
-added. Capabilities listed in &lt;code&gt;RequiredDropCapabilities&lt;/code&gt; must not be included in
-&lt;code&gt;AllowedCapabilities&lt;/code&gt; or &lt;code&gt;DefaultAddCapabilities&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;DefaultAddCapabilities&lt;/strong&gt; - The capabilities which are added to containers by
-default, in addition to the runtime defaults. See the &lt;a href=&#34;https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities&#34;&gt;Docker
-documentation&lt;/a&gt;
-for the default list of capabilities when using the Docker runtime.&lt;/p&gt;
+added. Capabilities listed in `RequiredDropCapabilities` must not be included in
+`AllowedCapabilities` or `DefaultAddCapabilities`.
+
+**DefaultAddCapabilities** - The capabilities which are added to containers by
+default, in addition to the runtime defaults. See the [Docker
+documentation](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities)
+for the default list of capabilities when using the Docker runtime.
+ --&gt;
+&lt;h3 id=&#34;capabilities&#34;&gt;Linux 功能&lt;/h3&gt;
+&lt;p&gt;Linux 功能为超级用户关联的传统权限分割为更细的粒度。 这些功能中的一些可以用来提升权限或用于容器逃逸，
+也可能受 &lt;code&gt;PodSecurityPolicy&lt;/code&gt; 限制。更多关于 Linux 功能的信息, 见
+&lt;a href=&#34;http://man7.org/linux/man-pages/man7/capabilities.7.html&#34;&gt;capabilities(7)&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;下面的字段就对应一个功能列表，由 ALL_CAPS 中指定的功能名称去掉 &lt;code&gt;CAP_&lt;/code&gt; 前缀。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;AllowedCapabilities&lt;/strong&gt; - 提供一个允许添加到容器中的功能列表。 默认功能集隐式的含义是允许的。
+如果设置一个空集则表示除了默认功能集外不允许添加额外的功能。 &lt;code&gt;*&lt;/code&gt; 用来表示允许所有功能。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;RequiredDropCapabilities&lt;/strong&gt; - 必须要从容器是移除的功能。将这些功能从默认功能集中移除，并
+不被再添加。出现在 &lt;code&gt;RequiredDropCapabilities&lt;/code&gt; 中的功能是不能出现在 &lt;code&gt;AllowedCapabilities&lt;/code&gt;
+或 &lt;code&gt;DefaultAddCapabilities&lt;/code&gt; 中的.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;DefaultAddCapabilities&lt;/strong&gt; - 默认添加到容器中的功能，还要加上运行时中的默认功能。 使用
+Docker 作为运行时的默认功能集, 见
+&lt;a href=&#34;https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities&#34;&gt;Docker 文档&lt;/a&gt;&lt;/p&gt;
 &lt;!--
 ### SELinux
 
@@ -2815,40 +2853,95 @@ denoted as the string `Unmasked`.
   &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
 &lt;/blockquote&gt;
 &lt;/p&gt;
+&lt;!--
+### AppArmor
+
+Controlled via annotations on the PodSecurityPolicy. Refer to the [AppArmor
+documentation](/docs/tutorials/clusters/apparmor/#podsecuritypolicy-annotations).
+ --&gt;
 &lt;h3 id=&#34;apparmor&#34;&gt;AppArmor&lt;/h3&gt;
-&lt;p&gt;Controlled via annotations on the PodSecurityPolicy. Refer to the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tutorials/clusters/apparmor/#podsecuritypolicy-annotations&#34;&gt;AppArmor
-documentation&lt;/a&gt;.&lt;/p&gt;
-&lt;h3 id=&#34;seccomp&#34;&gt;Seccomp&lt;/h3&gt;
-&lt;p&gt;As of Kubernetes v1.19, you can use the &lt;code&gt;seccompProfile&lt;/code&gt; field in the
-&lt;code&gt;securityContext&lt;/code&gt; of Pods or containers to &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tutorials/clusters/seccomp&#34;&gt;control use of seccomp
-profiles&lt;/a&gt;. In prior versions, seccomp was
+&lt;p&gt;通过 PodSecurityPolicy 上的注解控制。
+参见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tutorials/clusters/apparmor/#podsecuritypolicy-annotations&#34;&gt;AppArmor 文档&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+### Seccomp
+
+As of Kubernetes v1.19, you can use the `seccompProfile` field in the
+`securityContext` of Pods or containers to [control use of seccomp
+profiles](/docs/tutorials/clusters/seccomp). In prior versions, seccomp was
 controlled by adding annotations to a Pod. The same PodSecurityPolicies can be
-used with either version to enforce how these fields or annotations are applied.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;seccomp.security.alpha.kubernetes.io/defaultProfileName&lt;/strong&gt; - Annotation that
+used with either version to enforce how these fields or annotations are applied.
+
+**seccomp.security.alpha.kubernetes.io/defaultProfileName** - Annotation that
 specifies the default seccomp profile to apply to containers. Possible values
-are:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;unconfined&lt;/code&gt; - Seccomp is not applied to the container processes (this is the
-default in Kubernetes), if no alternative is provided.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;runtime/default&lt;/code&gt; - The default container runtime profile is used.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;docker/default&lt;/code&gt; - The Docker default seccomp profile is used. Deprecated as
-of Kubernetes 1.11. Use &lt;code&gt;runtime/default&lt;/code&gt; instead.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;localhost/&amp;lt;path&amp;gt;&lt;/code&gt; - Specify a profile as a file on the node located at
-&lt;code&gt;&amp;lt;seccomp_root&amp;gt;/&amp;lt;path&amp;gt;&lt;/code&gt;, where &lt;code&gt;&amp;lt;seccomp_root&amp;gt;&lt;/code&gt; is defined via the
-&lt;code&gt;--seccomp-profile-root&lt;/code&gt; flag on the Kubelet. If the &lt;code&gt;--seccomp-profile-root&lt;/code&gt;
-flag is not defined, the default path will be used, which is
-&lt;code&gt;&amp;lt;root-dir&amp;gt;/seccomp&lt;/code&gt; where &lt;code&gt;&amp;lt;root-dir&amp;gt;&lt;/code&gt; is specified by the &lt;code&gt;--root-dir&lt;/code&gt; flag.&lt;/li&gt;
-&lt;/ul&gt;
+are:
+
+- `unconfined` - Seccomp is not applied to the container processes (this is the
+  default in Kubernetes), if no alternative is provided.
+- `runtime/default` - The default container runtime profile is used.
+- `docker/default` - The Docker default seccomp profile is used. Deprecated as
+  of Kubernetes 1.11. Use `runtime/default` instead.
+- `localhost/&lt;path&gt;` - Specify a profile as a file on the node located at
+  `&lt;seccomp_root&gt;/&lt;path&gt;`, where `&lt;seccomp_root&gt;` is defined via the
+  `--seccomp-profile-root` flag on the Kubelet. If the `--seccomp-profile-root`
+  flag is not defined, the default path will be used, which is
+  `&lt;root-dir&gt;/seccomp` where `&lt;root-dir&gt;` is specified by the `--root-dir` flag.
+
 &lt;blockquote class=&#34;note&#34;&gt;
   &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; The &lt;code&gt;--seccomp-profile-root&lt;/code&gt; flag is deprecated since Kubernetes
 v1.19. Users are encouraged to use the default path.&lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;&lt;strong&gt;seccomp.security.alpha.kubernetes.io/allowedProfileNames&lt;/strong&gt; - Annotation that
+
+**seccomp.security.alpha.kubernetes.io/allowedProfileNames** - Annotation that
 specifies which values are allowed for the pod seccomp annotations. Specified as
 a comma-delimited list of allowed values. Possible values are those listed
-above, plus &lt;code&gt;*&lt;/code&gt; to allow all profiles. Absence of this annotation means that the
-default cannot be changed.&lt;/p&gt;
+above, plus `*` to allow all profiles. Absence of this annotation means that the
+default cannot be changed.
+ --&gt;
+&lt;h3 id=&#34;seccomp&#34;&gt;Seccomp&lt;/h3&gt;
+&lt;p&gt;从 k8s v1.19 开始， 可以使用 Pod 或容器中的 &lt;code&gt;securityContext&lt;/code&gt; 中的 &lt;code&gt;seccompProfile&lt;/code&gt;
+字段
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tutorials/clusters/seccomp&#34;&gt;控制使用的 seccomp 方案&lt;/a&gt;.
+在之前的版本中， seccomp 是通过向 Pod 上添加注解控制的。 同一个 PodSecurityPolicy 可以在
+不同的版本中以这些字段或注解来执行。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;seccomp.security.alpha.kubernetes.io/defaultProfileName&lt;/strong&gt; - 这个注解指定默认应用
+在容器上的 &lt;code&gt;seccomp&lt;/code&gt; 方案。 可能的值有:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;unconfined&lt;/code&gt; - 如果没有提供其它选项，不在应用进程上应用 Seccomp (这在 k8s 是默认值)。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;runtime/default&lt;/code&gt; - 使用容器运行时默认的方案&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;docker/default&lt;/code&gt; - 使用 Docker 默认的 seccomp 方案。自 k8s v1.11 废弃，替代值为 &lt;code&gt;runtime/default&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;localhost/&amp;lt;path&amp;gt;&lt;/code&gt; - 指定个节点上的 &lt;code&gt;&amp;lt;seccomp_root&amp;gt;/&amp;lt;path&amp;gt;&lt;/code&gt; 文件作为方案， 其中 &lt;code&gt;&amp;lt;seccomp_root&amp;gt;&lt;/code&gt;
+通过 Kubelet 的 &lt;code&gt;--seccomp-profile-root&lt;/code&gt; 标记设置。 如果没有定义 &lt;code&gt;--seccomp-profile-root&lt;/code&gt;，
+则会使用默认路径，默认路径为 &lt;code&gt;&amp;lt;root-dir&amp;gt;/seccomp&lt;/code&gt;， 其中 &lt;code&gt;&amp;lt;root-dir&amp;gt;&lt;/code&gt; 是通过 &lt;code&gt;--root-dir&lt;/code&gt;
+标记指定的&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 从 k8s v1.19 开始 &lt;code&gt;--seccomp-profile-root&lt;/code&gt; 标记就废弃了，鼓励用户使用默认路径&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;seccomp.security.alpha.kubernetes.io/allowedProfileNames&lt;/strong&gt; - 指定 Pod &lt;code&gt;seccomp&lt;/code&gt;
+注解可以使用的值。 允许的值以逗号分隔。 可能的值就是上面列表的那些， 加上 &lt;code&gt;*&lt;/code&gt; 允许所有方案。
+如果没有这个注解则默认不能被修改。&lt;/p&gt;
+&lt;!--
+### Sysctl
+
+By default, all safe sysctls are allowed.
+
+- `forbiddenSysctls` - excludes specific sysctls. You can forbid a combination of safe and unsafe sysctls in the list. To forbid setting any sysctls, use `*` on its own.
+- `allowedUnsafeSysctls` - allows specific sysctls that had been disallowed by the default list, so long as these are not listed in `forbiddenSysctls`.
+
+Refer to the [Sysctl documentation](
+/docs/tasks/administer-cluster/sysctl-cluster/#podsecuritypolicy).
+ --&gt;
 &lt;h3 id=&#34;sysctl&#34;&gt;Sysctl&lt;/h3&gt;
 &lt;p&gt;By default, all safe sysctls are allowed.&lt;/p&gt;
 &lt;ul&gt;
