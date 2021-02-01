@@ -120,7 +120,7 @@ See [Viewing and Setting Quotas](#viewing-and-setting-quotas) for more detail in
 ### 扩展资源的资源配额 {#resource-quota-for-extended-resources}
 
 除了上面提到的资源外， 在 v1.10 版本中添加了对
-[扩展资源](/docs/concepts/configuration/manage-resources-containers/#extended-resources)
+[扩展资源](/k8sDocs/docs/reference/configuration/manage-resources-containers/#extended-resources)
 的配额支持。
 
 因为扩展资源不能超量使用， 所以在配额中对于都一个扩展资源同时指定 `requests` 和 `limits` 是
@@ -165,7 +165,7 @@ In release 1.8, quota support for local ephemeral storage is added as an alpha f
 ## 存储资源配额 {#storage-resource-quota}
 
 用户可以限制在指定命名空间中能够要求
-[计算资源](/docs/concepts/storage/persistent-volumes/)
+[计算资源](/k8sDocs/docs/reference/storage/persistent-volumes/)
 的总和。
 
 另外，也可以基于对应的存储类别(StorageClass)来限制消耗的存储资源上限。
@@ -175,7 +175,7 @@ In release 1.8, quota support for local ephemeral storage is added as an alpha f
 | `requests.storage` | 包括所有的 PVC， 存储请求的问题不能超过这个值|
 | `persistentvolumeclaims` | 在命名空间中可以存在 [PersistentVolumeClaims](/k8sDocs/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims) 的数量不能超过这个值 |
 | `<storage-class-name>.storageclass.storage.k8s.io/requests.storage` | 所有使用这个 `<storage-class-name>` 的  PVC 所请求的存储资源总和不能超过这个值. |
-| `<storage-class-name>.storageclass.storage.k8s.io/persistentvolumeclaims` | 所有使用这个 `<storage-class-name>` 的 [PVC](/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims) 的数量不能超过这个值 |
+| `<storage-class-name>.storageclass.storage.k8s.io/persistentvolumeclaims` | 所有使用这个 `<storage-class-name>` 的 [PVC](/k8sDocs/docs/reference/storage/persistent-volumes/#persistentvolumeclaims) 的数量不能超过这个值 |
 
 例如, 如果一个运维人员想要分别定义 `gold` 存储类别与 `bronze` 存储类别配额，则可以定义如下配额:
 
@@ -617,12 +617,12 @@ pods        0     10
 
 {{< feature-state for_k8s_version="v1.17" state="stable" >}}
 
-Pods can be created at a specific [priority](/docs/concepts/configuration/pod-priority-preemption/#pod-priority).
+Pods can be created at a specific [priority](/k8sDocs/docs/reference/configuration/pod-priority-preemption/#pod-priority).
 You can control a pod's consumption of system resources based on a pod's priority, by using the `scopeSelector`
 field in the quota spec.
 
 Pod 可以以一个指定的
-[优先级](/docs/concepts/configuration/pod-priority-preemption/#pod-priority)
+[优先级](/k8sDocs/docs/reference/configuration/pod-priority-preemption/#pod-priority)
 来创建。
 用户可以通过使用配额定义中的 `scopeSelector` 字段来基于 Pod 的优先级来控制一个 Pod 可以消耗
 的系统资源。

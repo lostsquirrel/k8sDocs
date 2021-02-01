@@ -97,9 +97,9 @@ controller.
 ## 启用 Pod 安全策略 {#enabling-pod-security-policies}
 
 Pod 安全策略控制是以一个可选(但推荐)的
-[准入控制器](/docs/reference/access-authn-authz/admission-controllers/#podsecuritypolicy)
+[准入控制器](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podsecuritypolicy)
 来实现的。 `PodSecurityPolicy` 是通过
-[开启准入控制器](/docs/reference/access-authn-authz/admission-controllers/#how-do-i-turn-on-an-admission-control-plug-in)
+[开启准入控制器](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#how-do-i-turn-on-an-admission-control-plug-in)
 来执行的，但如果只用 Pod 安全策略，而没有授权任意策略会使得集群 **阻止所有 Pod 的创建**。
 
 因为 Pod 安全策略 API (`policy/v1beta1/podsecuritypolicy`) 的启用是独立于准入控制器的，
@@ -130,8 +130,8 @@ pod's service account (see [example](#run-another-pod)).
 使用这个策略的授权，这个授权是能会在策略上使用 `use` 动词实现的。
 
 大多数 k8s 中的 Pod 都不是由用户直接创建的。 而通常是通过控制器管理器作为
-[Deployment](/docs/concepts/workloads/controllers/deployment/),
-[ReplicaSet](/docs/concepts/workloads/controllers/replicaset/), 或其它模板控制器
+[Deployment](/k8sDocs/docs/concepts/workloads/controllers/deployment/),
+[ReplicaSet](/k8sDocs/docs/concepts/workloads/controllers/replicaset/), 或其它模板控制器
 的一部分间接创建的。 授予策略该控制器的访问权限也就是授予对该控制创建的 *所有* Pod 的访问权限，
 所以授予策略权限的和冼方式是授予 Pod 的账号访问权限(见 [示例](#run-another-pod))
 
@@ -202,10 +202,10 @@ For a complete example of authorizing a PodSecurityPolicy, see
 
 ### 通过 RBAC {#via-rbac}
 
-[RBAC](/docs/reference/access-authn-authz/rbac/) is a standard Kubernetes
+[RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) is a standard Kubernetes
 authorization mode, and can easily be used to authorize use of policies.
 
-[RBAC](/docs/reference/access-authn-authz/rbac/)
+[RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
 是标准的 k8s 授权模式， 它可以轻松地用于授权策略的使用。
 
 First, a `Role` or `ClusterRole` needs to grant access to `use` the desired
@@ -264,7 +264,7 @@ subjects:
 ```
 
 更多 RBAC 绑定的示例， 见
-[角色绑定示例](/docs/reference/access-authn-authz/rbac#role-binding-examples).
+[角色绑定示例](https://kubernetes.io/docs/reference/access-authn-authz/rbac#role-binding-examples).
 对一个 `PodSecurityPolicy` 授权的完整示例， 见
 [下面](#example).
 
@@ -286,15 +286,15 @@ subjects:
 
 ### 故障排除 {#troubleshooting}
 
-- [控制器管理器](/docs/reference/command-line-tools-reference/kube-controller-manager/)
+- [控制器管理器](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/)
   必须要对接一个安全的 API 端口，并且必须不能有超级用户权限。 学习 API 服务访问控制见
-  [k8s API 访问控制](/docs/concepts/security/controlling-access)
+  [k8s API 访问控制](/k8sDocs/docs/concepts/security/controlling-access)
   如果控制器管理器是通过受信的 API 端口(也就是我们知道的 `localhost` 监听器)连接的，请求就会
   绕过认证和授权模块； 所以的 PodSecurityPolicy 对象都是被允许的，用户也可以给自己授予创建
   特权容器的能力。
 
   更多关于配置控制器管理器授权的信息，见
-  [控制器角色](/docs/reference/access-authn-authz/rbac/#controller-roles).
+  [控制器角色](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#controller-roles).
 
 <!--
 ## Policy Order
@@ -506,7 +506,7 @@ kubectl-user delete pod pause
 
 在一个文件中定义这个示例的 PodSecurityPolicy 对象。 这个策略的作用就是防止特权容器的创建。
 PodSecurityPolicy 对象的名称必须是一个有效的
-[DNS 子域名](/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
+[DNS 子域名](/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names).
 
 {{< codenew file="policy/example-psp.yaml" >}}
 
@@ -761,7 +761,7 @@ See [Pod Security Standards](/docs/concepts/security/pod-security-standards/#pol
 这是一个有约束的策略，它要求用户以非特别用户运行，阻止可能提升为 root, 并要求使用几个安全机制。
 {{< codenew file="policy/restricted-psp.yaml" >}}
 
-更多示例见 [Pod 安全标准](/docs/concepts/security/pod-security-standards/#policy-instantiation).
+更多示例见 [Pod 安全标准](/k8sDocs/docs/concepts/security/pod-security-standards/#policy-instantiation).
 
 <!--
 ## Policy Reference
@@ -883,7 +883,7 @@ root filesystem (i.e. no writable layer).
 ### 卷和文件系统 {#volumes-and-file-systems}
 
 **Volumes** - 提供一个允许的卷类型列表。 所允许的值对应创建卷时定义的源。 完整的卷类型列表，见
-[卷类型](/docs/concepts/storage/volumes/#types-of-volumes).
+[卷类型](/k8sDocs/docs/concepts/storage/volumes/#types-of-volumes).
 另外， `*` 可以用在允许所有卷类型的地方。
 
 用于新的 PSP 允许的卷类型 **推荐最小集** 为:
@@ -1260,16 +1260,20 @@ Refer to the [Sysctl documentation](
 
 ### Sysctl
 
-By default, all safe sysctls are allowed.
+默认情况下， 所有安全的 `sysctl` 是允许的。
 
-- `forbiddenSysctls` - excludes specific sysctls. You can forbid a combination of safe and unsafe sysctls in the list. To forbid setting any sysctls, use `*` on its own.
-- `allowedUnsafeSysctls` - allows specific sysctls that had been disallowed by the default list, so long as these are not listed in `forbiddenSysctls`.
+- `forbiddenSysctls` - 排除指定 `sysctl` . 可以在这个列表中包含安全和不安全的  `sysctl`。 要禁止所有的 `sysctl`，只使用 `*` 就行。
+- `allowedUnsafeSysctls` - 允许在默认列表中禁止的指定  `sysctl`， 但不能存在于 `forbiddenSysctls` 中.
 
-Refer to the [Sysctl documentation](
-/docs/tasks/administer-cluster/sysctl-cluster/#podsecuritypolicy).
+更多信息， 见
+[Sysctl 文档]( /docs/tasks/administer-cluster/sysctl-cluster/#podsecuritypolicy).
 
 ## {{% heading "whatsnext" %}}
-
+<!--
 - See [Pod Security Standards](/docs/concepts/security/pod-security-standards/) for policy recommendations.
 
-- Refer to [Pod Security Policy Reference](/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#podsecuritypolicy-v1beta1-policy) for the api details.
+- Refer to [Pod Security Policy Reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#podsecuritypolicy-v1beta1-policy) for the api details.
+ -->
+
+- 推荐策略见 [Pod 安全标准](/k8sDocs/docs/concepts/security/pod-security-standards/)
+- [Pod Security Policy Reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/{{< param "version" >}}/#podsecuritypolicy-v1beta1-policy)
