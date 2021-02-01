@@ -20,11 +20,11 @@
 <meta property="og:description" content="功能特性状态: Kubernetes v1.19 [beta] Pod 安全策略给予 Pod 的创建和更新更细粒度的授权。 Pod 安全策略是啥 Pod 安全策略 是一个集群层的资源，它被用来控制 Pod 定义中的安全敏感方" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/pod-security-policy/" />
-<meta property="article:modified_time" content="2021-02-01T18:21:01+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2021-02-01T22:13:37+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="Pod 安全策略">
 <meta itemprop="description" content="功能特性状态: Kubernetes v1.19 [beta] Pod 安全策略给予 Pod 的创建和更新更细粒度的授权。 Pod 安全策略是啥 Pod 安全策略 是一个集群层的资源，它被用来控制 Pod 定义中的安全敏感方">
-<meta itemprop="dateModified" content="2021-02-01T18:21:01+08:00" />
-<meta itemprop="wordCount" content="6475">
+<meta itemprop="dateModified" content="2021-02-01T22:13:37+08:00" />
+<meta itemprop="wordCount" content="6520">
 
 
 
@@ -851,7 +851,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptspolicypid-limiting" href="/k8sDocs/docs/concepts/policy/pid-limiting/"></a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptspolicypid-limiting" href="/k8sDocs/docs/concepts/policy/pid-limiting/">Process ID Limits And Reservations</a>
       
       
     </li>
@@ -1089,9 +1089,9 @@ controller.
  -->
 <h2 id="enabling-pod-security-policies">启用 Pod 安全策略</h2>
 <p>Pod 安全策略控制是以一个可选(但推荐)的
-<a href="/docs/reference/access-authn-authz/admission-controllers/#podsecuritypolicy">准入控制器</a>
+<a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podsecuritypolicy">准入控制器</a>
 来实现的。 <code>PodSecurityPolicy</code> 是通过
-<a href="/docs/reference/access-authn-authz/admission-controllers/#how-do-i-turn-on-an-admission-control-plug-in">开启准入控制器</a>
+<a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#how-do-i-turn-on-an-admission-control-plug-in">开启准入控制器</a>
 来执行的，但如果只用 Pod 安全策略，而没有授权任意策略会使得集群 <strong>阻止所有 Pod 的创建</strong>。</p>
 <p>因为 Pod 安全策略 API (<code>policy/v1beta1/podsecuritypolicy</code>) 的启用是独立于准入控制器的，
 对象已经存在的集群建议在启用准入策略之间先添加策略和授权。</p>
@@ -1117,8 +1117,8 @@ pod's service account (see [example](#run-another-pod)).
 <a href="/docs/tasks/configure-pod-container/configure-service-account/">服务账号</a> 必须有
 使用这个策略的授权，这个授权是能会在策略上使用 <code>use</code> 动词实现的。</p>
 <p>大多数 k8s 中的 Pod 都不是由用户直接创建的。 而通常是通过控制器管理器作为
-<a href="/docs/concepts/workloads/controllers/deployment/">Deployment</a>,
-<a href="/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a>, 或其它模板控制器
+<a href="/k8sDocs/docs/concepts/workloads/controllers/deployment/">Deployment</a>,
+<a href="/k8sDocs/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a>, 或其它模板控制器
 的一部分间接创建的。 授予策略该控制器的访问权限也就是授予对该控制创建的 <em>所有</em> Pod 的访问权限，
 所以授予策略权限的和冼方式是授予 Pod 的账号访问权限(见 <a href="#run-another-pod">示例</a>)</p>
 <!--
@@ -1186,9 +1186,9 @@ For a complete example of authorizing a PodSecurityPolicy, see
 
  -->
 <h3 id="via-rbac">通过 RBAC</h3>
-<p><a href="/docs/reference/access-authn-authz/rbac/">RBAC</a> is a standard Kubernetes
+<p><a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/">RBAC</a> is a standard Kubernetes
 authorization mode, and can easily be used to authorize use of policies.</p>
-<p><a href="/docs/reference/access-authn-authz/rbac/">RBAC</a>
+<p><a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/">RBAC</a>
 是标准的 k8s 授权模式， 它可以轻松地用于授权策略的使用。</p>
 <p>First, a <code>Role</code> or <code>ClusterRole</code> needs to grant access to <code>use</code> the desired
 policies. The rules to grant access look like this:</p>
@@ -1233,7 +1233,7 @@ policies. The rules to grant access look like this:</p>
   <span style="color:#f92672">apiGroup</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io</span>
   <span style="color:#f92672">name</span>: <span style="color:#ae81ff">system:authenticated</span>
 </code></pre></div><p>更多 RBAC 绑定的示例， 见
-<a href="/docs/reference/access-authn-authz/rbac#role-binding-examples">角色绑定示例</a>.
+<a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac#role-binding-examples">角色绑定示例</a>.
 对一个 <code>PodSecurityPolicy</code> 授权的完整示例， 见
 <a href="#example">下面</a>.</p>
 <!--
@@ -1254,14 +1254,14 @@ policies. The rules to grant access look like this:</p>
 <h3 id="troubleshooting">故障排除</h3>
 <ul>
 <li>
-<p><a href="/docs/reference/command-line-tools-reference/kube-controller-manager/">控制器管理器</a>
+<p><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/">控制器管理器</a>
 必须要对接一个安全的 API 端口，并且必须不能有超级用户权限。 学习 API 服务访问控制见
-<a href="/docs/concepts/security/controlling-access">k8s API 访问控制</a>
+<a href="/k8sDocs/docs/concepts/security/controlling-access">k8s API 访问控制</a>
 如果控制器管理器是通过受信的 API 端口(也就是我们知道的 <code>localhost</code> 监听器)连接的，请求就会
 绕过认证和授权模块； 所以的 PodSecurityPolicy 对象都是被允许的，用户也可以给自己授予创建
 特权容器的能力。</p>
 <p>更多关于配置控制器管理器授权的信息，见
-<a href="/docs/reference/access-authn-authz/rbac/#controller-roles">控制器角色</a>.</p>
+<a href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/#controller-roles">控制器角色</a>.</p>
 </li>
 </ul>
 <!--
@@ -1513,7 +1513,7 @@ kubectl-user delete pod pause
 <h3 id="create-a-policy-and-a-pod">创建一个策略和一个 Pod</h3>
 <p>在一个文件中定义这个示例的 PodSecurityPolicy 对象。 这个策略的作用就是防止特权容器的创建。
 PodSecurityPolicy 对象的名称必须是一个有效的
-<a href="/docs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.</p>
+<a href="/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names">DNS 子域名</a>.</p>
 
 
  
@@ -2031,7 +2031,7 @@ See [Pod Security Standards](/docs/concepts/security/pod-security-standards/#pol
 </table>
 
 </p>
-<p>更多示例见 <a href="/docs/concepts/security/pod-security-standards/#policy-instantiation">Pod 安全标准</a>.</p>
+<p>更多示例见 <a href="/k8sDocs/docs/concepts/security/pod-security-standards/#policy-instantiation">Pod 安全标准</a>.</p>
 <!--
 ## Policy Reference
 
@@ -2144,7 +2144,7 @@ root filesystem (i.e. no writable layer).
  -->
 <h3 id="volumes-and-file-systems">卷和文件系统</h3>
 <p><strong>Volumes</strong> - 提供一个允许的卷类型列表。 所允许的值对应创建卷时定义的源。 完整的卷类型列表，见
-<a href="/docs/concepts/storage/volumes/#types-of-volumes">卷类型</a>.
+<a href="/k8sDocs/docs/concepts/storage/volumes/#types-of-volumes">卷类型</a>.
 另外， <code>*</code> 可以用在允许所有卷类型的地方。</p>
 <p>用于新的 PSP 允许的卷类型 <strong>推荐最小集</strong> 为:</p>
 <ul>
@@ -2489,26 +2489,28 @@ Refer to the [Sysctl documentation](
 /docs/tasks/administer-cluster/sysctl-cluster/#podsecuritypolicy).
  -->
 <h3 id="sysctl">Sysctl</h3>
-<p>By default, all safe sysctls are allowed.</p>
+<p>默认情况下， 所有安全的 <code>sysctl</code> 是允许的。</p>
 <ul>
-<li><code>forbiddenSysctls</code> - excludes specific sysctls. You can forbid a combination of safe and unsafe sysctls in the list. To forbid setting any sysctls, use <code>*</code> on its own.</li>
-<li><code>allowedUnsafeSysctls</code> - allows specific sysctls that had been disallowed by the default list, so long as these are not listed in <code>forbiddenSysctls</code>.</li>
+<li><code>forbiddenSysctls</code> - 排除指定 <code>sysctl</code> . 可以在这个列表中包含安全和不安全的  <code>sysctl</code>。 要禁止所有的 <code>sysctl</code>，只使用 <code>*</code> 就行。</li>
+<li><code>allowedUnsafeSysctls</code> - 允许在默认列表中禁止的指定  <code>sysctl</code>， 但不能存在于 <code>forbiddenSysctls</code> 中.</li>
 </ul>
-<p>Refer to the <a href="/docs/tasks/administer-cluster/sysctl-cluster/#podsecuritypolicy">Sysctl documentation</a>.</p>
+<p>更多信息， 见
+<a href="/docs/tasks/administer-cluster/sysctl-cluster/#podsecuritypolicy">Sysctl 文档</a>.</p>
 <h2 id="相关资料">相关资料</h2>
+<!--
+- See [Pod Security Standards](/docs/concepts/security/pod-security-standards/) for policy recommendations.
+
+- Refer to [Pod Security Policy Reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podsecuritypolicy-v1beta1-policy) for the api details.
+ -->
 <ul>
-<li>
-<p>See <a href="/docs/concepts/security/pod-security-standards/">Pod Security Standards</a> for policy recommendations.</p>
-</li>
-<li>
-<p>Refer to <a href="/docs/reference/generated/kubernetes-api/v1.19/#podsecuritypolicy-v1beta1-policy">Pod Security Policy Reference</a> for the api details.</p>
-</li>
+<li>推荐策略见 <a href="/k8sDocs/docs/concepts/security/pod-security-standards/">Pod 安全标准</a></li>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podsecuritypolicy-v1beta1-policy">Pod Security Policy Reference</a></li>
 </ul>
 
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-02-01 18:21:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/535ab372d4eba4fc58ad7562843c84b430d87348">[WIP] pod security policy day 3 (535ab37)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-02-01 22:13:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/e059e28f4f846a412eb9cc8e9661d13dc043739a">publish pod security policy (e059e28)</a>
 </div>
             
           </main>

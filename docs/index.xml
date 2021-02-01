@@ -10389,7 +10389,7 @@ See [Viewing and Setting Quotas](#viewing-and-setting-quotas) for more detail in
  --&gt;
 &lt;h3 id=&#34;resource-quota-for-extended-resources&#34;&gt;扩展资源的资源配额&lt;/h3&gt;
 &lt;p&gt;除了上面提到的资源外， 在 v1.10 版本中添加了对
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/manage-resources-containers/#extended-resources&#34;&gt;扩展资源&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/reference/configuration/manage-resources-containers/#extended-resources&#34;&gt;扩展资源&lt;/a&gt;
 的配额支持。&lt;/p&gt;
 &lt;p&gt;因为扩展资源不能超量使用， 所以在配额中对于都一个扩展资源同时指定 &lt;code&gt;requests&lt;/code&gt; 和 &lt;code&gt;limits&lt;/code&gt; 是
 没有意义的，目前只允许使用 &lt;code&gt;requests.&lt;/code&gt; 开头的配额条目。&lt;/p&gt;
@@ -10429,7 +10429,7 @@ In release 1.8, quota support for local ephemeral storage is added as an alpha f
  --&gt;
 &lt;h2 id=&#34;storage-resource-quota&#34;&gt;存储资源配额&lt;/h2&gt;
 &lt;p&gt;用户可以限制在指定命名空间中能够要求
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/&#34;&gt;计算资源&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/reference/storage/persistent-volumes/&#34;&gt;计算资源&lt;/a&gt;
 的总和。&lt;/p&gt;
 &lt;p&gt;另外，也可以基于对应的存储类别(StorageClass)来限制消耗的存储资源上限。&lt;/p&gt;
 &lt;table&gt;
@@ -10454,7 +10454,7 @@ In release 1.8, quota support for local ephemeral storage is added as an alpha f
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;&lt;code&gt;&amp;lt;storage-class-name&amp;gt;.storageclass.storage.k8s.io/persistentvolumeclaims&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;所有使用这个 &lt;code&gt;&amp;lt;storage-class-name&amp;gt;&lt;/code&gt; 的 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims&#34;&gt;PVC&lt;/a&gt; 的数量不能超过这个值&lt;/td&gt;
+&lt;td&gt;所有使用这个 &lt;code&gt;&amp;lt;storage-class-name&amp;gt;&lt;/code&gt; 的 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/reference/storage/persistent-volumes/#persistentvolumeclaims&#34;&gt;PVC&lt;/a&gt; 的数量不能超过这个值&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -10973,11 +10973,11 @@ pods        0     10
 &lt;/div&gt;
 
 
-&lt;p&gt;Pods can be created at a specific &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-priority-preemption/#pod-priority&#34;&gt;priority&lt;/a&gt;.
+&lt;p&gt;Pods can be created at a specific &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/reference/configuration/pod-priority-preemption/#pod-priority&#34;&gt;priority&lt;/a&gt;.
 You can control a pod&amp;rsquo;s consumption of system resources based on a pod&amp;rsquo;s priority, by using the &lt;code&gt;scopeSelector&lt;/code&gt;
 field in the quota spec.&lt;/p&gt;
 &lt;p&gt;Pod 可以以一个指定的
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-priority-preemption/#pod-priority&#34;&gt;优先级&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/reference/configuration/pod-priority-preemption/#pod-priority&#34;&gt;优先级&lt;/a&gt;
 来创建。
 用户可以通过使用配额定义中的 &lt;code&gt;scopeSelector&lt;/code&gt; 字段来基于 Pod 的优先级来控制一个 Pod 可以消耗
 的系统资源。&lt;/p&gt;
@@ -12345,9 +12345,9 @@ controller.
  --&gt;
 &lt;h2 id=&#34;enabling-pod-security-policies&#34;&gt;启用 Pod 安全策略&lt;/h2&gt;
 &lt;p&gt;Pod 安全策略控制是以一个可选(但推荐)的
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/admission-controllers/#podsecuritypolicy&#34;&gt;准入控制器&lt;/a&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#podsecuritypolicy&#34;&gt;准入控制器&lt;/a&gt;
 来实现的。 &lt;code&gt;PodSecurityPolicy&lt;/code&gt; 是通过
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/admission-controllers/#how-do-i-turn-on-an-admission-control-plug-in&#34;&gt;开启准入控制器&lt;/a&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#how-do-i-turn-on-an-admission-control-plug-in&#34;&gt;开启准入控制器&lt;/a&gt;
 来执行的，但如果只用 Pod 安全策略，而没有授权任意策略会使得集群 &lt;strong&gt;阻止所有 Pod 的创建&lt;/strong&gt;。&lt;/p&gt;
 &lt;p&gt;因为 Pod 安全策略 API (&lt;code&gt;policy/v1beta1/podsecuritypolicy&lt;/code&gt;) 的启用是独立于准入控制器的，
 对象已经存在的集群建议在启用准入策略之间先添加策略和授权。&lt;/p&gt;
@@ -12373,8 +12373,8 @@ pod&#39;s service account (see [example](#run-another-pod)).
 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/configure-pod-container/configure-service-account/&#34;&gt;服务账号&lt;/a&gt; 必须有
 使用这个策略的授权，这个授权是能会在策略上使用 &lt;code&gt;use&lt;/code&gt; 动词实现的。&lt;/p&gt;
 &lt;p&gt;大多数 k8s 中的 Pod 都不是由用户直接创建的。 而通常是通过控制器管理器作为
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/deployment/&#34;&gt;Deployment&lt;/a&gt;,
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/replicaset/&#34;&gt;ReplicaSet&lt;/a&gt;, 或其它模板控制器
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/deployment/&#34;&gt;Deployment&lt;/a&gt;,
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/replicaset/&#34;&gt;ReplicaSet&lt;/a&gt;, 或其它模板控制器
 的一部分间接创建的。 授予策略该控制器的访问权限也就是授予对该控制创建的 &lt;em&gt;所有&lt;/em&gt; Pod 的访问权限，
 所以授予策略权限的和冼方式是授予 Pod 的账号访问权限(见 &lt;a href=&#34;#run-another-pod&#34;&gt;示例&lt;/a&gt;)&lt;/p&gt;
 &lt;!--
@@ -12442,9 +12442,9 @@ For a complete example of authorizing a PodSecurityPolicy, see
 
  --&gt;
 &lt;h3 id=&#34;via-rbac&#34;&gt;通过 RBAC&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/rbac/&#34;&gt;RBAC&lt;/a&gt; is a standard Kubernetes
+&lt;p&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/rbac/&#34;&gt;RBAC&lt;/a&gt; is a standard Kubernetes
 authorization mode, and can easily be used to authorize use of policies.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/rbac/&#34;&gt;RBAC&lt;/a&gt;
+&lt;p&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/rbac/&#34;&gt;RBAC&lt;/a&gt;
 是标准的 k8s 授权模式， 它可以轻松地用于授权策略的使用。&lt;/p&gt;
 &lt;p&gt;First, a &lt;code&gt;Role&lt;/code&gt; or &lt;code&gt;ClusterRole&lt;/code&gt; needs to grant access to &lt;code&gt;use&lt;/code&gt; the desired
 policies. The rules to grant access look like this:&lt;/p&gt;
@@ -12489,7 +12489,7 @@ policies. The rules to grant access look like this:&lt;/p&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;apiGroup&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;rbac.authorization.k8s.io&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;system:authenticated&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;更多 RBAC 绑定的示例， 见
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/rbac#role-binding-examples&#34;&gt;角色绑定示例&lt;/a&gt;.
+&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/rbac#role-binding-examples&#34;&gt;角色绑定示例&lt;/a&gt;.
 对一个 &lt;code&gt;PodSecurityPolicy&lt;/code&gt; 授权的完整示例， 见
 &lt;a href=&#34;#example&#34;&gt;下面&lt;/a&gt;.&lt;/p&gt;
 &lt;!--
@@ -12510,14 +12510,14 @@ policies. The rules to grant access look like this:&lt;/p&gt;
 &lt;h3 id=&#34;troubleshooting&#34;&gt;故障排除&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/kube-controller-manager/&#34;&gt;控制器管理器&lt;/a&gt;
+&lt;p&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/&#34;&gt;控制器管理器&lt;/a&gt;
 必须要对接一个安全的 API 端口，并且必须不能有超级用户权限。 学习 API 服务访问控制见
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/controlling-access&#34;&gt;k8s API 访问控制&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/security/controlling-access&#34;&gt;k8s API 访问控制&lt;/a&gt;
 如果控制器管理器是通过受信的 API 端口(也就是我们知道的 &lt;code&gt;localhost&lt;/code&gt; 监听器)连接的，请求就会
 绕过认证和授权模块； 所以的 PodSecurityPolicy 对象都是被允许的，用户也可以给自己授予创建
 特权容器的能力。&lt;/p&gt;
 &lt;p&gt;更多关于配置控制器管理器授权的信息，见
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/rbac/#controller-roles&#34;&gt;控制器角色&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/rbac/#controller-roles&#34;&gt;控制器角色&lt;/a&gt;.&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;!--
@@ -12769,7 +12769,7 @@ kubectl-user delete pod pause
 &lt;h3 id=&#34;create-a-policy-and-a-pod&#34;&gt;创建一个策略和一个 Pod&lt;/h3&gt;
 &lt;p&gt;在一个文件中定义这个示例的 PodSecurityPolicy 对象。 这个策略的作用就是防止特权容器的创建。
 PodSecurityPolicy 对象的名称必须是一个有效的
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/names#dns-subdomain-names&#34;&gt;DNS 子域名&lt;/a&gt;.&lt;/p&gt;
 
 
  
@@ -13287,7 +13287,7 @@ See [Pod Security Standards](/docs/concepts/security/pod-security-standards/#pol
 &lt;/table&gt;
 
 &lt;/p&gt;
-&lt;p&gt;更多示例见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/pod-security-standards/#policy-instantiation&#34;&gt;Pod 安全标准&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;更多示例见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/security/pod-security-standards/#policy-instantiation&#34;&gt;Pod 安全标准&lt;/a&gt;.&lt;/p&gt;
 &lt;!--
 ## Policy Reference
 
@@ -13400,7 +13400,7 @@ root filesystem (i.e. no writable layer).
  --&gt;
 &lt;h3 id=&#34;volumes-and-file-systems&#34;&gt;卷和文件系统&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;Volumes&lt;/strong&gt; - 提供一个允许的卷类型列表。 所允许的值对应创建卷时定义的源。 完整的卷类型列表，见
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/volumes/#types-of-volumes&#34;&gt;卷类型&lt;/a&gt;.
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/volumes/#types-of-volumes&#34;&gt;卷类型&lt;/a&gt;.
 另外， &lt;code&gt;*&lt;/code&gt; 可以用在允许所有卷类型的地方。&lt;/p&gt;
 &lt;p&gt;用于新的 PSP 允许的卷类型 &lt;strong&gt;推荐最小集&lt;/strong&gt; 为:&lt;/p&gt;
 &lt;ul&gt;
@@ -13745,20 +13745,22 @@ Refer to the [Sysctl documentation](
 /docs/tasks/administer-cluster/sysctl-cluster/#podsecuritypolicy).
  --&gt;
 &lt;h3 id=&#34;sysctl&#34;&gt;Sysctl&lt;/h3&gt;
-&lt;p&gt;By default, all safe sysctls are allowed.&lt;/p&gt;
+&lt;p&gt;默认情况下， 所有安全的 &lt;code&gt;sysctl&lt;/code&gt; 是允许的。&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;code&gt;forbiddenSysctls&lt;/code&gt; - excludes specific sysctls. You can forbid a combination of safe and unsafe sysctls in the list. To forbid setting any sysctls, use &lt;code&gt;*&lt;/code&gt; on its own.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;allowedUnsafeSysctls&lt;/code&gt; - allows specific sysctls that had been disallowed by the default list, so long as these are not listed in &lt;code&gt;forbiddenSysctls&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;forbiddenSysctls&lt;/code&gt; - 排除指定 &lt;code&gt;sysctl&lt;/code&gt; . 可以在这个列表中包含安全和不安全的  &lt;code&gt;sysctl&lt;/code&gt;。 要禁止所有的 &lt;code&gt;sysctl&lt;/code&gt;，只使用 &lt;code&gt;*&lt;/code&gt; 就行。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;allowedUnsafeSysctls&lt;/code&gt; - 允许在默认列表中禁止的指定  &lt;code&gt;sysctl&lt;/code&gt;， 但不能存在于 &lt;code&gt;forbiddenSysctls&lt;/code&gt; 中.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Refer to the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/sysctl-cluster/#podsecuritypolicy&#34;&gt;Sysctl documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;更多信息， 见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/sysctl-cluster/#podsecuritypolicy&#34;&gt;Sysctl 文档&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;!--
+- See [Pod Security Standards](/docs/concepts/security/pod-security-standards/) for policy recommendations.
+
+- Refer to [Pod Security Policy Reference](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podsecuritypolicy-v1beta1-policy) for the api details.
+ --&gt;
 &lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;See &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/security/pod-security-standards/&#34;&gt;Pod Security Standards&lt;/a&gt; for policy recommendations.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Refer to &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubernetes-api/v1.19/#podsecuritypolicy-v1beta1-policy&#34;&gt;Pod Security Policy Reference&lt;/a&gt; for the api details.&lt;/p&gt;
-&lt;/li&gt;
+&lt;li&gt;推荐策略见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/security/pod-security-standards/&#34;&gt;Pod 安全标准&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podsecuritypolicy-v1beta1-policy&#34;&gt;Pod Security Policy Reference&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>
@@ -17659,6 +17661,125 @@ Upon availability of the new PVC, the cloned PVC is consumed the same as other P
 &lt;p&gt;在可用性上，克隆体的 PVC 与其它的 PVC 一样。 新创建的 PVC 是一个独立的对象。 它可以消费，克隆，创建快照，
 并在不影响它源 PVC 的情况下独立的删除。 这就是说克隆的源和目标之间没有任意形式的链接，对源的
 修改或删除也不会影响它克隆体&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Process ID Limits And Reservations</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/pid-limiting/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/pid-limiting/</guid>
+      <description>
+        
+        
+        &lt;!-- overview --&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.20 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;Kubernetes allow you to limit the number of process IDs (PIDs) that a &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/pods/&#39; target=&#39;_blank&#39;&gt;Pod&lt;span class=&#39;tooltip-text&#39;&gt;Pod 表示集群中运行的一组容器的集合&lt;/span&gt;
+&lt;/a&gt; can use.
+You can also reserve a number of allocatable PIDs for each &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/2-concepts/01-architecture/00-nodes/&#39; target=&#39;_blank&#39;&gt;node&lt;span class=&#39;tooltip-text&#39;&gt;一个节点就是 k8s 中的一个工作机&lt;/span&gt;
+&lt;/a&gt;
+for use by the operating system and daemons (rather than by Pods).&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;p&gt;Process IDs (PIDs) are a fundamental resource on nodes. It is trivial to hit the
+task limit without hitting any other resource limits, which can then cause
+instability to a host machine.&lt;/p&gt;
+&lt;p&gt;Cluster administrators require mechanisms to ensure that Pods running in the
+cluster cannot induce PID exhaustion that prevents host daemons (such as the
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubelet&#39; target=&#39;_blank&#39;&gt;kubelet&lt;span class=&#39;tooltip-text&#39;&gt;An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.&lt;/span&gt;
+&lt;/a&gt; or
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/kube-proxy/&#39; target=&#39;_blank&#39;&gt;kube-proxy&lt;span class=&#39;tooltip-text&#39;&gt;kube-proxy is a network proxy that runs on each node in the cluster.&lt;/span&gt;
+&lt;/a&gt;,
+and potentially also the container runtime) from running.
+In addition, it is important to ensure that PIDs are limited among Pods in order
+to ensure they have limited impact on other workloads on the same node.&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; On certain Linux installations, the operating system sets the PIDs limit to a low default,
+such as &lt;code&gt;32768&lt;/code&gt;. Consider raising the value of &lt;code&gt;/proc/sys/kernel/pid_max&lt;/code&gt;.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;You can configure a kubelet to limit the number of PIDs a given Pod can consume.
+For example, if your node&amp;rsquo;s host OS is set to use a maximum of &lt;code&gt;262144&lt;/code&gt; PIDs and
+expect to host less than &lt;code&gt;250&lt;/code&gt; Pods, one can give each Pod a budget of &lt;code&gt;1000&lt;/code&gt;
+PIDs to prevent using up that node&amp;rsquo;s overall number of available PIDs. If the
+admin wants to overcommit PIDs similar to CPU or memory, they may do so as well
+with some additional risks. Either way, a single Pod will not be able to bring
+the whole machine down. This kind of resource limiting helps to prevent simple
+fork bombs from affecting operation of an entire cluster.&lt;/p&gt;
+&lt;p&gt;Per-Pod PID limiting allows administrators to protect one Pod from another, but
+does not ensure that all Pods scheduled onto that host are unable to impact the node overall.
+Per-Pod limiting also does not protect the node agents themselves from PID exhaustion.&lt;/p&gt;
+&lt;p&gt;You can also reserve an amount of PIDs for node overhead, separate from the
+allocation to Pods. This is similar to how you can reserve CPU, memory, or other
+resources for use by the operating system and other facilities outside of Pods
+and their containers.&lt;/p&gt;
+&lt;p&gt;PID limiting is a an important sibling to &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/manage-resources-containers/&#34;&gt;compute
+resource&lt;/a&gt; requests
+and limits. However, you specify it in a different way: rather than defining a
+Pod&amp;rsquo;s resource limit in the &lt;code&gt;.spec&lt;/code&gt; for a Pod, you configure the limit as a
+setting on the kubelet. Pod-defined PID limits are not currently supported.&lt;/p&gt;
+&lt;blockquote class=&#34;caution&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;注意：&lt;/strong&gt; This means that the limit that applies to a Pod may be different depending on
+where the Pod is scheduled. To make things simple, it&amp;rsquo;s easiest if all Nodes use
+the same PID resource limits and reservations.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;node-pid-limits&#34;&gt;Node PID limits&lt;/h2&gt;
+&lt;p&gt;Kubernetes allows you to reserve a number of process IDs for the system use. To
+configure the reservation, use the parameter &lt;code&gt;pid=&amp;lt;number&amp;gt;&lt;/code&gt; in the
+&lt;code&gt;--system-reserved&lt;/code&gt; and &lt;code&gt;--kube-reserved&lt;/code&gt; command line options to the kubelet.
+The value you specified declares that the specified number of process IDs will
+be reserved for the system as a whole and for Kubernetes system daemons
+respectively.&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Before Kubernetes version 1.20, PID resource limiting with Node-level
+reservations required enabling the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;feature
+gate&lt;/a&gt;
+&lt;code&gt;SupportNodePidsLimit&lt;/code&gt; to work.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;pod-pid-limits&#34;&gt;Pod PID limits&lt;/h2&gt;
+&lt;p&gt;Kubernetes allows you to limit the number of processes running in a Pod. You
+specify this limit at the node level, rather than configuring it as a resource
+limit for a particular Pod. Each Node can have a different PID limit.&lt;br&gt;
+To configure the limit, you can specify the command line parameter &lt;code&gt;--pod-max-pids&lt;/code&gt; to the kubelet, or set &lt;code&gt;PodPidsLimit&lt;/code&gt; in the kubelet &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/kubelet-config-file/&#34;&gt;configuration file&lt;/a&gt;.&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Before Kubernetes version 1.20, PID resource limiting for Pods required enabling
+the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;feature gate&lt;/a&gt;
+&lt;code&gt;SupportPodPidsLimit&lt;/code&gt; to work.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;pid-based-eviction&#34;&gt;PID based eviction&lt;/h2&gt;
+&lt;p&gt;You can configure kubelet to start terminating a Pod when it is misbehaving and consuming abnormal amount of resources.
+This feature is called eviction. You can &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/out-of-resource&#34;&gt;Configure Out of Resource Handling&lt;/a&gt; for various eviction signals.
+Use &lt;code&gt;pid.available&lt;/code&gt; eviction signal to configure the threshold for number of PIDs used by Pod.
+You can set soft and hard eviction policies. However, even with the hard eviction policy, if the number of PIDs growing very fast,
+node can still get into unstable state by hitting the node PIDs limit.
+Eviction signal value is calculated periodically and does NOT enforce the limit.&lt;/p&gt;
+&lt;p&gt;PID limiting - per Pod and per Node sets the hard limit.
+Once the limit is hit, workload will start experiencing failures when trying to get a new PID.
+It may or may not lead to rescheduling of a Pod,
+depending on how workload reacts on these failures and how liveleness and readiness
+probes are configured for the Pod. However, if limits were set correctly,
+you can guarantee that other Pods workload and system processes will not run out of PIDs
+when one Pod is misbehaving.&lt;/p&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Refer to the &lt;a href=&#34;https://github.com/kubernetes/enhancements/blob/097b4d8276bc9564e56adf72505d43ce9bc5e9e8/keps/sig-node/20190129-pid-limiting.md&#34;&gt;PID Limiting enhancement document&lt;/a&gt; for more information.&lt;/li&gt;
+&lt;li&gt;For historical context, read &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/blog/2019/04/15/process-id-limiting-for-stability-improvements-in-kubernetes-1.14/&#34;&gt;Process ID Limiting for Stability Improvements in Kubernetes 1.14&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Read &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/manage-resources-containers/&#34;&gt;Managing Resources for Containers&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Learn how to &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/out-of-resource&#34;&gt;Configure Out of Resource Handling&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
 
       </description>
     </item>
@@ -28961,162 +29082,6 @@ ReplicationController 也是通过标签选择器来指定被其管理的 Pod&lt
 &lt;p&gt;字段选择器可以同时对多种类型对象进行筛选， 例如以下示例表示，选择所有不属于 &lt;code&gt;default&lt;/code&gt; 命名空间的 &lt;code&gt;Statefulsets&lt;/code&gt; 和 &lt;code&gt;Services&lt;/code&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get statefulsets,services --all-namespaces --field-selector metadata.namespace!&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;default
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: 标签设置指导</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/</link>
-      <pubDate>Fri, 03 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/06-common-labels/</guid>
-      <description>
-        
-        
-        &lt;p&gt;用户可以使用 kubectl 和 dashboard 外的可视化管理工具。一些通用的描述对象信息的标签配置可以让这些工具更好地工作
-为了工具能更好的使用这些标签，建议标签以方便查询的方式来定义对象信息
-元数据是围绕应用这个概念来组织的。k8s 并不是一个平台即服务(PaaS),也没有一个对应用有一个强制的格式规范。只是通过元数据来提供应用的描述和信息。关于应用所包含的信息的的规范是相关宽松的
-注意: 只能推荐使用这些标签。以方便对应用的管理，这些都不是 k8s 核心工具所必要的
-共享标签和注解需要共享一个共同的前缀 &lt;code&gt;app.kubernetes.io&lt;/code&gt;, 没有前缀的标签是用户私有的。在共享标签上使用使用共享前缀是为了保证不会影响到用户私有的标签。&lt;/p&gt;
-&lt;h2 id=&#34;标签&#34;&gt;标签&lt;/h2&gt;
-&lt;p&gt;为了给读者一个标签使用的整体印象，以下标签可以用在第一个资源对象上。&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;标签键&lt;/th&gt;
-&lt;th&gt;说明&lt;/th&gt;
-&lt;th&gt;示例值&lt;/th&gt;
-&lt;th&gt;值数据类型&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;app.kubernetes.io/name&lt;/td&gt;
-&lt;td&gt;应用名称&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;mysql&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;string&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;app.kubernetes.io/instance&lt;/td&gt;
-&lt;td&gt;用于识别应用实例的唯一名称&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;wordpress-abcxzy&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;string&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;app.kubernetes.io/version&lt;/td&gt;
-&lt;td&gt;应用的当前版本 (如 版本号, 版本哈希, 等.)&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;5.7.21&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;string&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;app.kubernetes.io/component&lt;/td&gt;
-&lt;td&gt;架构中的结构名&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;database&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;string&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;app.kubernetes.io/part-of&lt;/td&gt;
-&lt;td&gt;这个对象是哪个应用的一部分&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;wordpress&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;string&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;app.kubernetes.io/managed-by&lt;/td&gt;
-&lt;td&gt;用于管理这个对象的工具&lt;/td&gt;
-&lt;td&gt;&lt;code&gt;helm&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;string&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;以下是一个 &lt;code&gt;StatefulSet&lt;/code&gt; 的实践示例&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;StatefulSet&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysql&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/instance&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress-abcxzy&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/version&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;5.7.21&amp;#34;&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;database&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/part-of&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/managed-by&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;helm&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;应用及应用实例&#34;&gt;应用及应用实例&lt;/h2&gt;
-&lt;p&gt;一个应用可能在 k8s 集群的一个命名空间中安装一次或多次。比如 安装多个 wordpress 的(不同)网站
-应用名和其实例名都应该作区分， 比如 一个 wordpress 应用为 &lt;code&gt;app.kubernetes.io/name: wordpress&lt;/code&gt;, 其实例可以设置为 &lt;code&gt;app.kubernetes.io/instance: wordpress-abcxzy&lt;/code&gt; 这就应用和实例就比较好识别，当一个应用有多个实例是每个实例的名称都要唯一。&lt;/p&gt;
-&lt;h2 id=&#34;示例&#34;&gt;示例&lt;/h2&gt;
-&lt;p&gt;以下示例展示这些标签的不同用法&lt;/p&gt;
-&lt;h3 id=&#34;一个简单的无状态-service&#34;&gt;一个简单的无状态 Service&lt;/h3&gt;
-&lt;p&gt;以下应用场景为 用一个 Deployment 和 Service 对象部署一个简单的无状态服务。 以下为其标签的最简配置
-Deployment 用于管理应用运行的 Pod&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deployment&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myservice&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/instance&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myservice-abcxzy&lt;/span&gt;
-...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Service 用于应用接入&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Service&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myservice&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/instance&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myservice-abcxzy&lt;/span&gt;
-...
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;带数据库的web应用&#34;&gt;带数据库的Web应用&lt;/h3&gt;
-&lt;p&gt;稍复杂一点的应用场景: 一个web 应用(WordPress)用到一个数据库(MySQL), 通过 Helm 安装&lt;/p&gt;
-&lt;p&gt;WordPress 的 Deployment&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deployment&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/instance&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress-abcxzy&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/version&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;4.9.4&amp;#34;&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/managed-by&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;helm&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;server&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/part-of&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress&lt;/span&gt;
-...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;WordPress 的 Service&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Service&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/instance&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress-abcxzy&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/version&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;4.9.4&amp;#34;&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/managed-by&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;helm&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;server&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/part-of&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress&lt;/span&gt;
-...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;MySQL 的 StatefulSet&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;StatefulSet&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysql&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/instance&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysql-abcxzy&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/version&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;5.7.21&amp;#34;&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/managed-by&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;helm&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;database&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/part-of&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress&lt;/span&gt;
-...
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;MySQL 的 Service&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Service&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysql&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/instance&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mysql-abcxzy&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/version&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;5.7.21&amp;#34;&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/managed-by&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;helm&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;database&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app.kubernetes.io/part-of&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;wordpress&lt;/span&gt;
-...
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在 StatefulSet 和 Service 可以找到它们自己的信息所属的应用的信息。这些在更大的应用中相当有用。&lt;/p&gt;
-
       </description>
     </item>
     

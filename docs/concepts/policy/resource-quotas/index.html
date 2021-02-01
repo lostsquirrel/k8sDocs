@@ -20,10 +20,10 @@
 <meta property="og:description" content="当多个用户或小组共享一个固定数量节点的集群时，就可能要担心一个小组可能使用超出公开分离的资源。 资源配额就一个为管理员解决定个问题的工具。 一个" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/policy/resource-quotas/" />
-<meta property="article:modified_time" content="2021-02-01T18:21:01+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2021-02-01T22:13:37+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="资源配额">
 <meta itemprop="description" content="当多个用户或小组共享一个固定数量节点的集群时，就可能要担心一个小组可能使用超出公开分离的资源。 资源配额就一个为管理员解决定个问题的工具。 一个">
-<meta itemprop="dateModified" content="2021-02-01T18:21:01+08:00" />
+<meta itemprop="dateModified" content="2021-02-01T22:13:37+08:00" />
 <meta itemprop="wordCount" content="5627">
 
 
@@ -851,7 +851,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptspolicypid-limiting" href="/k8sDocs/docs/concepts/policy/pid-limiting/"></a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptspolicypid-limiting" href="/k8sDocs/docs/concepts/policy/pid-limiting/">Process ID Limits And Reservations</a>
       
       
     </li>
@@ -1071,7 +1071,7 @@ See [Viewing and Setting Quotas](#viewing-and-setting-quotas) for more detail in
  -->
 <h3 id="resource-quota-for-extended-resources">扩展资源的资源配额</h3>
 <p>除了上面提到的资源外， 在 v1.10 版本中添加了对
-<a href="/docs/concepts/configuration/manage-resources-containers/#extended-resources">扩展资源</a>
+<a href="/k8sDocs/docs/reference/configuration/manage-resources-containers/#extended-resources">扩展资源</a>
 的配额支持。</p>
 <p>因为扩展资源不能超量使用， 所以在配额中对于都一个扩展资源同时指定 <code>requests</code> 和 <code>limits</code> 是
 没有意义的，目前只允许使用 <code>requests.</code> 开头的配额条目。</p>
@@ -1111,7 +1111,7 @@ In release 1.8, quota support for local ephemeral storage is added as an alpha f
  -->
 <h2 id="storage-resource-quota">存储资源配额</h2>
 <p>用户可以限制在指定命名空间中能够要求
-<a href="/docs/concepts/storage/persistent-volumes/">计算资源</a>
+<a href="/k8sDocs/docs/reference/storage/persistent-volumes/">计算资源</a>
 的总和。</p>
 <p>另外，也可以基于对应的存储类别(StorageClass)来限制消耗的存储资源上限。</p>
 <table>
@@ -1136,7 +1136,7 @@ In release 1.8, quota support for local ephemeral storage is added as an alpha f
 </tr>
 <tr>
 <td><code>&lt;storage-class-name&gt;.storageclass.storage.k8s.io/persistentvolumeclaims</code></td>
-<td>所有使用这个 <code>&lt;storage-class-name&gt;</code> 的 <a href="/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">PVC</a> 的数量不能超过这个值</td>
+<td>所有使用这个 <code>&lt;storage-class-name&gt;</code> 的 <a href="/k8sDocs/docs/reference/storage/persistent-volumes/#persistentvolumeclaims">PVC</a> 的数量不能超过这个值</td>
 </tr>
 </tbody>
 </table>
@@ -1655,11 +1655,11 @@ pods        0     10
 </div>
 
 
-<p>Pods can be created at a specific <a href="/docs/concepts/configuration/pod-priority-preemption/#pod-priority">priority</a>.
+<p>Pods can be created at a specific <a href="/k8sDocs/docs/reference/configuration/pod-priority-preemption/#pod-priority">priority</a>.
 You can control a pod&rsquo;s consumption of system resources based on a pod&rsquo;s priority, by using the <code>scopeSelector</code>
 field in the quota spec.</p>
 <p>Pod 可以以一个指定的
-<a href="/docs/concepts/configuration/pod-priority-preemption/#pod-priority">优先级</a>
+<a href="/k8sDocs/docs/reference/configuration/pod-priority-preemption/#pod-priority">优先级</a>
 来创建。
 用户可以通过使用配额定义中的 <code>scopeSelector</code> 字段来基于 Pod 的优先级来控制一个 Pod 可以消耗
 的系统资源。</p>
@@ -2161,7 +2161,7 @@ For example:
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-02-01 18:21:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/535ab372d4eba4fc58ad7562843c84b430d87348">[WIP] pod security policy day 3 (535ab37)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-02-01 22:13:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/e059e28f4f846a412eb9cc8e9661d13dc043739a">publish pod security policy (e059e28)</a>
 </div>
             
           </main>
