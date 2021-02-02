@@ -126,7 +126,7 @@ pod's service account (see [example](#run-another-pod)).
 ## 对策略授权 {#authorizing-policies}
 
 当一个 `PodSecurityPolicy` 资源被创建后，它是不会干事情的。要使用它， 请求用户或目标 Pod 的
-[服务账号](/docs/tasks/configure-pod-container/configure-service-account/) 必须有
+[服务账号](/k8sDocs/docs/tasks/configure-pod-container/configure-service-account/) 必须有
 使用这个策略的授权，这个授权是能会在策略上使用 `use` 动词实现的。
 
 大多数 k8s 中的 Pod 都不是由用户直接创建的。 而通常是通过控制器管理器作为
@@ -1266,7 +1266,7 @@ Refer to the [Sysctl documentation](
 - `allowedUnsafeSysctls` - 允许在默认列表中禁止的指定  `sysctl`， 但不能存在于 `forbiddenSysctls` 中.
 
 更多信息， 见
-[Sysctl 文档]( /docs/tasks/administer-cluster/sysctl-cluster/#podsecuritypolicy).
+[Sysctl 文档](/k8sDocs/docs/tasks/administer-cluster/sysctl-cluster/#podsecuritypolicy).
 
 ## {{% heading "whatsnext" %}}
 <!--
