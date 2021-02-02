@@ -135,7 +135,7 @@ conditions 字段描述的是 所有状态为 Running 的节点， 示例如下:
 
 节点的生命周期管理器会自动创建代理节点状态的 `Taint`. 调度器在分配 Pod 到节点时会顾及节点上的 Taint. Pod 也可以配置容忍节点的某些 `Taint`
 
-了解更多 Taint 相关信息见[这里](../../09-scheduling-eviction/01-taint-and-toleration.md)
+了解更多 Taint 相关信息见[这里](/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/)
 
 ### 容量和可分配状态
 
