@@ -1,0 +1,196 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubernetes – 调度与驱逐</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/</link>
+    <description>Recent content in 调度与驱逐 on Kubernetes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: k8s 中的调度器</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/kube-scheduler/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/kube-scheduler/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+title: Kubernetes Scheduler
+content_type: concept
+weight: 10
+---
+ --&gt;
+&lt;!-- overview --&gt;
+&lt;p&gt;在 k8s 中， 调度指的是搞清楚
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/pods/&#39; target=&#39;_blank&#39;&gt;Pod&lt;span class=&#39;tooltip-text&#39;&gt;Pod 表示集群中运行的一组容器的集合&lt;/span&gt;
+&lt;/a&gt;
+是不是与
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/2-concepts/01-architecture/00-nodes/&#39; target=&#39;_blank&#39;&gt;节点&lt;span class=&#39;tooltip-text&#39;&gt;一个节点就是 k8s 中的一个工作机&lt;/span&gt;
+&lt;/a&gt;
+匹配，当匹配了
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubelet&#39; target=&#39;_blank&#39;&gt;Kubelet&lt;span class=&#39;tooltip-text&#39;&gt;An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.&lt;/span&gt;
+&lt;/a&gt;
+才能在这个节点运行这个 Pod。&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## Scheduling overview {#scheduling}
+
+A scheduler watches for newly created Pods that have no Node assigned. For
+every Pod that the scheduler discovers, the scheduler becomes responsible
+for finding the best Node for that Pod to run on. The scheduler reaches
+this placement decision taking into account the scheduling principles
+described below.
+
+If you want to understand why Pods are placed onto a particular Node,
+or if you&#39;re planning to implement a custom scheduler yourself, this
+page will help you learn about scheduling.
+ --&gt;
+&lt;h2 id=&#34;scheduling&#34;&gt;调度概览&lt;/h2&gt;
+&lt;p&gt;一个调度器会监测新创建但还没分配节点的 Pod。对于这个调度器发现的每一个 Pod， 它就将负责为这个
+Pod 找到其运行的最佳节点。 调度器在进程调度决策时会考量现面介绍的调度原则。&lt;/p&gt;
+&lt;p&gt;如果你想为明白为啥这个 Pod 会放到一个特定的节点，或你计划自己实现一个自定义调度器，本文会帮助你
+学习调度。&lt;/p&gt;
+&lt;!--
+## kube-scheduler
+
+[kube-scheduler](/docs/reference/command-line-tools-reference/kube-scheduler/)
+is the default scheduler for Kubernetes and runs as part of the
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-control-plane&#39; target=&#39;_blank&#39;&gt;control plane&lt;span class=&#39;tooltip-text&#39;&gt;暴露那些定义，部署，管理容器生命周期的 API 和接口的容器编排层。&lt;/span&gt;
+&lt;/a&gt;.
+kube-scheduler is designed so that, if you want and need to, you can
+write your own scheduling component and use that instead.
+
+For every newly created pod or other unscheduled pods, kube-scheduler
+selects an optimal node for them to run on. However, every container in
+pods has different requirements for resources and every pod also has
+different requirements. Therefore, existing nodes need to be filtered
+according to the specific scheduling requirements.
+
+In a cluster, Nodes that meet the scheduling requirements for a Pod
+are called _feasible_ nodes. If none of the nodes are suitable, the pod
+remains unscheduled until the scheduler is able to place it.
+
+The scheduler finds feasible Nodes for a Pod and then runs a set of
+functions to score the feasible Nodes and picks a Node with the highest
+score among the feasible ones to run the Pod. The scheduler then notifies
+the API server about this decision in a process called _binding_.
+
+Factors that need taken into account for scheduling decisions include
+individual and collective resource requirements, hardware / software /
+policy constraints, affinity and anti-affinity specifications, data
+locality, inter-workload interference, and so on.
+ --&gt;
+&lt;h2 id=&#34;kube-scheduler&#34;&gt;kube-scheduler&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/command-line-tools-reference/kube-scheduler/&#34;&gt;kube-scheduler&lt;/a&gt;
+是 k8s 默认的调度器，并作为
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-control-plane&#39; target=&#39;_blank&#39;&gt;Control Plane&lt;span class=&#39;tooltip-text&#39;&gt;暴露那些定义，部署，管理容器生命周期的 API 和接口的容器编排层。&lt;/span&gt;
+&lt;/a&gt;
+的一部分运行。
+kube-scheduler 在设计时就考虑到，如果用户希望并且有必要就可以编写并使用自己的调度模块，来代替默认
+的调度器。&lt;/p&gt;
+&lt;p&gt;对于每新创建的 Pod 或其它未调度的 Pod，kube-scheduler 选择一个最合适它们节点让他们运行。但是，
+Pod 中的每个容器对资源有不同的保底要求同时每个 Pod 也有不同的要求。 因此，会根据这些调度要求过
+滤现有的节点。&lt;/p&gt;
+&lt;p&gt;在一个集群中， 那些满足 Pod 调度要求的节点就叫做 &lt;em&gt;可用的&lt;/em&gt; 节点。 如果没有一个节点合适，则 Pod
+在调度器为其找到可用的节点之前就是未调度状态。&lt;/p&gt;
+&lt;p&gt;调度器为一个 Pod 找到一系列可用的节点，然后对这些可用节点运行一系统函数进行算分，选择这些可用节点
+中得分最高的可用节点来运行这个 Pod。 这时候调度器会通过一个叫做 &lt;em&gt;绑定(binding)&lt;/em&gt; 的过程通知 API 服务关于这次的决定&lt;/p&gt;
+&lt;p&gt;在做调度决策时需要考量的因素包含 单个各总体的资源需求， 硬件 / 软件 策略约束， 亲和性和反亲和性规范，
+数据地区，内部工作负载干扰，等等。&lt;/p&gt;
+&lt;!--
+### Node selection in kube-scheduler {#kube-scheduler-implementation}
+
+kube-scheduler selects a node for the pod in a 2-step operation:
+
+1. Filtering
+1. Scoring
+
+The _filtering_ step finds the set of Nodes where it&#39;s feasible to
+schedule the Pod. For example, the PodFitsResources filter checks whether a
+candidate Node has enough available resource to meet a Pod&#39;s specific
+resource requests. After this step, the node list contains any suitable
+Nodes; often, there will be more than one. If the list is empty, that
+Pod isn&#39;t (yet) schedulable.
+
+In the _scoring_ step, the scheduler ranks the remaining nodes to choose
+the most suitable Pod placement. The scheduler assigns a score to each Node
+that survived filtering, basing this score on the active scoring rules.
+
+Finally, kube-scheduler assigns the Pod to the Node with the highest ranking.
+If there is more than one node with equal scores, kube-scheduler selects
+one of these at random.
+
+There are two supported ways to configure the filtering and scoring behavior
+of the scheduler:
+
+
+1. [Scheduling Policies](/docs/reference/scheduling/policies) allow you to configure _Predicates_ for filtering and _Priorities_ for scoring.
+1. [Scheduling Profiles](/docs/reference/scheduling/config/#profiles) allow you to configure Plugins that implement different scheduling stages, including: `QueueSort`, `Filter`, `Score`, `Bind`, `Reserve`, `Permit`, and others. You can also configure the kube-scheduler to run different profiles.
+
+ --&gt;
+&lt;h3 id=&#34;kube-scheduler-implementation&#34;&gt;kube-scheduler 中的节点选择&lt;/h3&gt;
+&lt;p&gt;kube-scheduler 为 Pod 选择一个节点有 2 步操作:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;过滤&lt;/li&gt;
+&lt;li&gt;算分&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;过滤&lt;/em&gt; 这一步是找到那些可以调度这个 Pod 的节点集合。 例如， PodFitsResources 过虑器检查这个
+候选节点的可用资源是否满足 Pod 配置的资源要求。 在这一步之后，节点列表中还包含有任意可用节点；
+通常会有不止一个。 如果列表是空，则这个 Pod 就不可调度。&lt;/p&gt;
+&lt;p&gt;在 &lt;em&gt;算分&lt;/em&gt; 这一步，调度器会将剩余的节点排名挑选最适合放置 Pod 的地方。 调度会为每个在上步中留在
+列表中的节点分配一个分数， 基于这个分数来激活算分规则&lt;/p&gt;
+&lt;p&gt;最终， kube-scheduler 将这个 Pod 分配给排名第一的节点。如果有多个节点并列第一(分数一样)，
+kube-scheduler 会从中随机选一个。&lt;/p&gt;
+&lt;p&gt;支持以下两种配置调度器的过滤和算分行为:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/scheduling/policies&#34;&gt;调度策略&lt;/a&gt;
+允许用户为过滤的 &lt;em&gt;Predicates&lt;/em&gt; 和为算分的 &lt;em&gt;优先级&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/scheduling/config/#profiles&#34;&gt;调度方案&lt;/a&gt;
+允许用户配置不同的插件，这些插件实现了不同的调度阶段，包括:
+&lt;code&gt;QueueSort&lt;/code&gt;, &lt;code&gt;Filter&lt;/code&gt;, &lt;code&gt;Score&lt;/code&gt;, &lt;code&gt;Bind&lt;/code&gt;, &lt;code&gt;Reserve&lt;/code&gt;, &lt;code&gt;Permit&lt;/code&gt;, 等。
+也可以配置 kube-scheduler 运行不同的方案&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;!--
+* Read about [scheduler performance tuning](/docs/concepts/scheduling-eviction/scheduler-perf-tuning/)
+* Read about [Pod topology spread constraints](/docs/concepts/workloads/pods/pod-topology-spread-constraints/)
+* Read the [reference documentation](/docs/reference/command-line-tools-reference/kube-scheduler/) for kube-scheduler
+* Learn about [configuring multiple schedulers](/docs/tasks/extend-kubernetes/configure-multiple-schedulers/)
+* Learn about [topology management policies](/docs/tasks/administer-cluster/topology-manager/)
+* Learn about [Pod Overhead](/docs/concepts/scheduling-eviction/pod-overhead/)
+* Learn about scheduling of Pods that use volumes in:
+  * [Volume Topology Support](/docs/concepts/storage/storage-classes/#volume-binding-mode)
+  * [Storage Capacity Tracking](/docs/concepts/storage/storage-capacity/)
+  * [Node-specific Volume Limits](/docs/concepts/storage/storage-limits/)
+ --&gt;
+&lt;ul&gt;
+&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/scheduling-eviction/scheduler-perf-tuning/&#34;&gt;调度器性能优化&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/&#34;&gt;Pod 拓扑散布约束&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;文档 &lt;a href=&#34;https://kubernetes.io/docs/reference/command-line-tools-reference/kube-scheduler/&#34;&gt;kube-scheduler&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/extend-kubernetes/configure-multiple-schedulers/&#34;&gt;配置多个调度器&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/topology-manager/&#34;&gt;拓扑管理策略&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/scheduling-eviction/pod-overhead/&#34;&gt;Pod 上限&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;关于使用卷的 Pod 的调度:
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/storage-classes/#volume-binding-mode&#34;&gt;卷对拓扑的支持&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/storage-capacity/&#34;&gt;存储容量跟踪&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/storage/storage-limits/&#34;&gt;节点级别的卷限制&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

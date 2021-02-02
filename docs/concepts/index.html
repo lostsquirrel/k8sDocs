@@ -21,7 +21,7 @@
 <meta property="og:description" content="生产级别的容器编排系统" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/" />
-<meta property="og:updated_time" content="2021-02-02T14:50:46+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="og:updated_time" content="2021-02-02T16:49:43+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="概念(Concepts)">
 <meta itemprop="description" content="生产级别的容器编排系统">
 <meta name="twitter:card" content="summary"/>
@@ -855,6 +855,35 @@
 
       
       
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/concepts/scheduling-eviction/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">调度与驱逐</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocsconceptsscheduling-eviction">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsscheduling-evictionkube-scheduler" href="/k8sDocs/docs/concepts/scheduling-eviction/kube-scheduler/">k8s 中的调度器</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
     </li>
   </ul>
 </ul>
@@ -1041,6 +1070,8 @@ k8s 控制面板 维护系统中所有对应的记录并用一个持续循环管
             
         
             
+        
+            
                 <div class="entry">
                     <h5>
                         <a href="/k8sDocs/docs/concepts/overview/">概览</a>
@@ -1130,6 +1161,15 @@ k8s 控制面板 维护系统中所有对应的记录并用一个持续循环管
             
         
             
+                <div class="entry">
+                    <h5>
+                        <a href="/k8sDocs/docs/concepts/scheduling-eviction/">调度与驱逐</a>
+                    </h5>
+                    <p>在 k8s 中， 调度指的是搞清楚 Pod 是不是与节点匹配，当匹配了 kubelet 才能在这个节点运行这个 Pod。 驱逐就是在资源不足的节点上主动挂掉一个或多个 Pod 的过程。</p>
+                </div>
+            
+        
+            
         
             
         
@@ -1201,7 +1241,7 @@ k8s 控制面板 维护系统中所有对应的记录并用一个持续循环管
 	</div>
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-02-02 14:50:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/ed1f10899ee380668dbd632b2b89c7b2e1d2eb3d">publish pid limiting (ed1f108)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-02-02 16:49:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/c7388bd73b6bae121b39534c53678720dd2e2e6a">publish kube scheduler (c7388bd)</a>
 </div>
             
           </main>

@@ -11,29 +11,25 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
+<link rel="alternate" type="application/rss&#43;xml" href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/index.xml">
 <link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
 <link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
 <link rel="manifest" href="/k8sDocs/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/k8sDocs/images/kubernetes-192x192.png">
 
-<title>Cloud Controller Manager | Kubernetes</title><meta property="og:title" content="Cloud Controller Manager" />
-<meta property="og:description" content="功能特性状态: Kubernetes v1.11 [beta] 云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施 cloud-controller-manager 是集成了云提供商" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/cloud-controller/" />
-<meta property="article:published_time" content="2020-07-17T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-02-02T16:49:43+08:00" /><meta property="og:site_name" content="Kubernetes" />
-<meta itemprop="name" content="Cloud Controller Manager">
-<meta itemprop="description" content="功能特性状态: Kubernetes v1.11 [beta] 云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施 cloud-controller-manager 是集成了云提供商">
-<meta itemprop="datePublished" content="2020-07-17T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2021-02-02T16:49:43+08:00" />
-<meta itemprop="wordCount" content="1259">
-
-
-
-<meta itemprop="keywords" content="" />
+<title>调度与驱逐 | Kubernetes</title><meta property="og:title" content="调度与驱逐" />
+<meta property="og:description" content="在 k8s 中， 调度指的是搞清楚 Pod 是不是与节点匹配，当匹配了 kubelet 才能在这个节点运行这个 Pod。 驱逐就是在资源不足的节点上主动挂掉一个或多个 Pod 的过程。
+" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/" />
+<meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="调度与驱逐">
+<meta itemprop="description" content="在 k8s 中， 调度指的是搞清楚 Pod 是不是与节点匹配，当匹配了 kubelet 才能在这个节点运行这个 Pod。 驱逐就是在资源不足的节点上主动挂掉一个或多个 Pod 的过程。
+">
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Cloud Controller Manager"/>
-<meta name="twitter:description" content="功能特性状态: Kubernetes v1.11 [beta] 云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施 cloud-controller-manager 是集成了云提供商"/>
+<meta name="twitter:title" content="调度与驱逐"/>
+<meta name="twitter:description" content="在 k8s 中， 调度指的是搞清楚 Pod 是不是与节点匹配，当匹配了 kubelet 才能在这个节点运行这个 Pod。 驱逐就是在资源不足的节点上主动挂掉一个或多个 Pod 的过程。
+"/>
 
 
 
@@ -77,12 +73,15 @@
 
 
 
-<meta name="description" content="功能特性状态: Kubernetes v1.11 [beta] 云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施 cloud-controller-manager 是集成了云提供商">
-<meta property="og:description" content="功能特性状态: Kubernetes v1.11 [beta] 云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施 cloud-controller-manager 是集成了云提供商">
-<meta name="twitter:description" content="功能特性状态: Kubernetes v1.11 [beta] 云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施 cloud-controller-manager 是集成了云提供商">
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/cloud-controller/">
-<meta property="og:title" content="Cloud Controller Manager">
-<meta name="twitter:title" content="Cloud Controller Manager">
+<meta name="description" content="在 k8s 中， 调度指的是搞清楚 Pod 是不是与节点匹配，当匹配了 kubelet 才能在这个节点运行这个 Pod。 驱逐就是在资源不足的节点上主动挂掉一个或多个 Pod 的过程。
+">
+<meta property="og:description" content="在 k8s 中， 调度指的是搞清楚 Pod 是不是与节点匹配，当匹配了 kubelet 才能在这个节点运行这个 Pod。 驱逐就是在资源不足的节点上主动挂掉一个或多个 Pod 的过程。
+">
+<meta name="twitter:description" content="在 k8s 中， 调度指的是搞清楚 Pod 是不是与节点匹配，当匹配了 kubelet 才能在这个节点运行这个 Pod。 驱逐就是在资源不足的节点上主动挂掉一个或多个 Pod 的过程。
+">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/">
+<meta property="og:title" content="调度与驱逐">
+<meta name="twitter:title" content="调度与驱逐">
 <meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
 
 <meta name="twitter:image:alt" content="Kubernetes">
@@ -96,9 +95,9 @@
 <script src="/k8sDocs/js/script.js"></script>
 
 
-    <title>Cloud Controller Manager | Kubernetes</title>
+    <title>调度与驱逐 | Kubernetes</title>
   </head>
-  <body class="td-page td-documentation">
+  <body class="td-section td-documentation">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
@@ -306,10 +305,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/architecture/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">集群架构</a>
+    <a  href="/k8sDocs/docs/concepts/architecture/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">集群架构</a>
   </li>
   <ul>
-    <li class="collapse show" id="k8sdocsdocsconceptsarchitecture">
+    <li class="collapse " id="k8sdocsdocsconceptsarchitecture">
       
       
       
@@ -334,7 +333,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsarchitecturecloud-controller" href="/k8sDocs/docs/concepts/architecture/cloud-controller/">Cloud Controller Manager</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsarchitecturecloud-controller" href="/k8sDocs/docs/concepts/architecture/cloud-controller/">Cloud Controller Manager</a>
       
       
     </li>
@@ -872,10 +871,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/scheduling-eviction/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">调度与驱逐</a>
+    <a  href="/k8sDocs/docs/concepts/scheduling-eviction/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">调度与驱逐</a>
   </li>
   <ul>
-    <li class="collapse " id="k8sdocsdocsconceptsscheduling-eviction">
+    <li class="collapse show" id="k8sdocsdocsconceptsscheduling-eviction">
       
       
       
@@ -922,9 +921,6 @@
 
 
 
-
-
-
 <li class="breadcrumb-item" >
 	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
 </li>
@@ -939,15 +935,8 @@
 
 
 
-<li class="breadcrumb-item" >
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/">集群架构</a>
-</li>
-
-
-
-
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/cloud-controller/">Cloud Controller Manager</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/">调度与驱逐</a>
 </li>
 
 	</ol>
@@ -957,167 +946,219 @@
               
             
               
-    <div class="td-content">
-    
+	<div class="td-content">
+		
+		
+			
+				
+			
+		
+		
+			
 <p>
-  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/architecture/cloud-controller.md" id="editPageButton" target="_blank" data-proofer-ignore>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/scheduling-eviction/_index.md" id="editPageButton" target="_blank" data-proofer-ignore>
     Edit This Page
   </a>
 </p>
 
-  <h1>Cloud Controller Manager</h1>
+  <h1>调度与驱逐</h1>
   
-  
+  <div class="lead">在 k8s 中， 调度指的是搞清楚 Pod 是不是与节点匹配，当匹配了 kubelet 才能在这个节点运行这个 Pod。 驱逐就是在资源不足的节点上主动挂掉一个或多个 Pod 的过程。</div>
+
+<!--
+---
+title: "Scheduling and Eviction"
+weight: 90
+description: >
+  In Kubernetes, scheduling refers to making sure that Pods are matched to Nodes so that the kubelet can run them.
+  Eviction is the process of proactively failing one or more Pods on resource-starved Nodes.
+---
+-->
 
 
-
-
-
-
-<div style="margin-top: 10px; margin-bottom: 10px;">
-<b>功能特性状态:</b> <code>Kubernetes v1.11 [beta]</code>
+		
+		<div class="section-index">
+    
+    
+    
+    
+    <hr class="panel-line">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+                <div class="entry">
+                    <h5>
+                        <a href="/k8sDocs/docs/concepts/scheduling-eviction/kube-scheduler/">k8s 中的调度器</a>
+                    </h5>
+                    <p></p>
+                </div>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    
 </div>
 
-
-<p>云基础设施技术让用户可以在公有云，私有云，混合云上运行 k8s. k8s 倡导自动化， API 驱动，组件之间松耦合的基础设施</p>
-<p><code>cloud-controller-manager</code> 是集成了云提供商控制逻辑的 k8s 控制中心组件。 云提供商控制管理器让集群与云提供商提供的 API 相关系并让与云平台交互的组件和与集群交互的组件分离。</p>
-<p><code>cloud-controller-manager</code> 组件通过让 k8s 与底层云基础设施的交互逻辑解耦，使得云提供上功能发布的节奏与 k8s 项目功能发的节奏分离
-<code>cloud-controller-manager</code> 以插件结构的方便让不同的云提供与可以让其平台可以与 k8s 集成。</p>
-<h2 id="设计">设计</h2>
-<p>以下为 <code>cloud-controller-manager</code> 在 k8s 架构中的位置：
-<img src="https://d33wubrfki0l68.cloudfront.net/7016517375d10c702489167e704dcb99e570df85/7bb53/images/docs/components-of-kubernetes.png" alt="kubernetes architecture"></p>
-<p>The cloud controller manager runs in the control plane as a replicated set of processes (usually, these are containers in Pods). Each cloud-controller-manager implements multiple controllers in a single process.
-云提供商控制管理器在控制中心中以副本集进程的形式运行(通常为 Pod 中的容器)。 每个 <code>cloud-controller-manager</code> 在一个进程中实现了多个控制器。</p>
-<p>{{ <node> }}
-云提供商控制管理器通常以插件的方式运行而不是以控制中心组件的方式运行
-{{ </node> }}</p>
-<h2 id="云提供商控制管理器的功用">云提供商控制管理器的功用</h2>
-<p>云提供商控制管理器包含如下控制器:</p>
-<h3 id="节点控制器">节点控制器</h3>
-<p>节点控制器当在云基础设施上创建服务器时负责创建圣训的节点对象。 节点控制器获取用户在云提供商所租赁的主机的信息。 节点控制器主要有以下功能：</p>
-<ol>
-<li>为控制器通过云提供商API发现的服务器初始化节点信息</li>
-<li>在节点对象上打上云提供商相关的注解和标签，例如 节点部署的区域，和可用资源(CPU, memory, 等)</li>
-<li>获取节点的主机名和网络地址</li>
-<li>验证节点的健康状况。 当一个节点不响应时，控制器会检查云提供商的 API， 确认服务器状态是否被修改为 停用/删除/终止。 如果发现节点已经被从云端删除则从 k8s 集群中删除对应的节点对象</li>
-</ol>
-<p>有些云提供商在实现时会将其分为两个独立的控制器，分别为节点控制器和节点生命周期控制器</p>
-<h3 id="路由控制器">路由控制器</h3>
-<p>路由控制器负责在云提供商配置适当的路由以实现不同节点之间的通信。
-根据云提供商的不同， 路由控制器还可能要为 Pod 网络申请一个IP段</p>
-<h3 id="service-控制器">Service 控制器</h3>
-<p>在云环境中 Service 会与一些云基础设施组件集群，比如负载均衡，IP地址， 网络包过滤，目标健康检测。 Service 控制器在创建 Service 时调用云提供商的API 设置 Service 需要的负载均衡和其它云基础设施组件</p>
-<h2 id="授权">授权</h2>
-<p>本节将分别说明云提供商管理器执行对应操作所需要访问的各种 API 对象的</p>
-<h3 id="节点控制器-1">节点控制器</h3>
-<p>节点控制器只需要访问节点对象。需要提供节点对的的读写权限</p>
-<p><code>v1/Node</code>:</p>
-<ul>
-<li>Get</li>
-<li>List</li>
-<li>Create</li>
-<li>Update</li>
-<li>Patch</li>
-<li>Watch</li>
-<li>Delete</li>
-</ul>
-<h3 id="路由控制器-1">路由控制器</h3>
-<p>路由控制器需要监听节点对象的创建来配置对应的路由。 所以需要节点对象的 <code>Get</code> 权限</p>
-<p><code>v1/Node</code>:</p>
-<ul>
-<li>Get</li>
-</ul>
-<h3 id="service-控制器-1">Service 控制器</h3>
-<p>Service 控制器监听 Service 对象的创建，更新，删除事件来配置对应的 Endpoint</p>
-<p>访问 Service 需要 List， Watch 权限
-更新 Service 需要 Patch， Update 权限
-设置 Service 对的 Endpoint 需要 Create, List, Get, Watch, Update
-最终需要如下：</p>
-<p><code>v1/Service</code>:</p>
-<ul>
-<li>List</li>
-<li>Get</li>
-<li>Watch</li>
-<li>Patch</li>
-<li>Update</li>
-</ul>
-<h3 id="其它权限需求">其它权限需求</h3>
-<p>云提供商控制管理器核心的实现中需要创建  Event 对象的权限。 为了设置安全操作，还需要创建 ServiceAccount 的权限</p>
-<p><code>v1/Event</code>:</p>
-<ul>
-<li>Create</li>
-<li>Patch</li>
-<li>Update</li>
-</ul>
-<p><code>v1/ServiceAccount</code>:</p>
-<ul>
-<li>Create</li>
-</ul>
-<p>最终云提供商控制管理器基于 RBAC ClusterRole 配置如下:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">rbac.authorization.k8s.io/v1</span>
-<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterRole</span>
-<span style="color:#f92672">metadata</span>:
-  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cloud-controller-manager</span>
-<span style="color:#f92672">rules</span>:
-- <span style="color:#f92672">apiGroups</span>:
-  - <span style="color:#e6db74">&#34;&#34;</span>
-  <span style="color:#f92672">resources</span>:
-  - <span style="color:#ae81ff">events</span>
-  <span style="color:#f92672">verbs</span>:
-  - <span style="color:#ae81ff">create</span>
-  - <span style="color:#ae81ff">patch</span>
-  - <span style="color:#ae81ff">update</span>
-- <span style="color:#f92672">apiGroups</span>:
-  - <span style="color:#e6db74">&#34;&#34;</span>
-  <span style="color:#f92672">resources</span>:
-  - <span style="color:#ae81ff">nodes</span>
-  <span style="color:#f92672">verbs</span>:
-  - <span style="color:#e6db74">&#39;*&#39;</span>
-- <span style="color:#f92672">apiGroups</span>:
-  - <span style="color:#e6db74">&#34;&#34;</span>
-  <span style="color:#f92672">resources</span>:
-  - <span style="color:#ae81ff">nodes/status</span>
-  <span style="color:#f92672">verbs</span>:
-  - <span style="color:#ae81ff">patch</span>
-- <span style="color:#f92672">apiGroups</span>:
-  - <span style="color:#e6db74">&#34;&#34;</span>
-  <span style="color:#f92672">resources</span>:
-  - <span style="color:#ae81ff">services</span>
-  <span style="color:#f92672">verbs</span>:
-  - <span style="color:#ae81ff">list</span>
-  - <span style="color:#ae81ff">patch</span>
-  - <span style="color:#ae81ff">update</span>
-  - <span style="color:#ae81ff">watch</span>
-- <span style="color:#f92672">apiGroups</span>:
-  - <span style="color:#e6db74">&#34;&#34;</span>
-  <span style="color:#f92672">resources</span>:
-  - <span style="color:#ae81ff">serviceaccounts</span>
-  <span style="color:#f92672">verbs</span>:
-  - <span style="color:#ae81ff">create</span>
-- <span style="color:#f92672">apiGroups</span>:
-  - <span style="color:#e6db74">&#34;&#34;</span>
-  <span style="color:#f92672">resources</span>:
-  - <span style="color:#ae81ff">persistentvolumes</span>
-  <span style="color:#f92672">verbs</span>:
-  - <span style="color:#ae81ff">get</span>
-  - <span style="color:#ae81ff">list</span>
-  - <span style="color:#ae81ff">update</span>
-  - <span style="color:#ae81ff">watch</span>
-- <span style="color:#f92672">apiGroups</span>:
-  - <span style="color:#e6db74">&#34;&#34;</span>
-  <span style="color:#f92672">resources</span>:
-  - <span style="color:#ae81ff">endpoints</span>
-  <span style="color:#f92672">verbs</span>:
-  - <span style="color:#ae81ff">create</span>
-  - <span style="color:#ae81ff">get</span>
-  - <span style="color:#ae81ff">list</span>
-  - <span style="color:#ae81ff">watch</span>
-  - <span style="color:#ae81ff">update</span>
-</code></pre></div><h2 id="接下来应该看啥">接下来应该看啥</h2>
-<p>这篇讲怎么运行管理 云提供商控制管理器 <a href="../../../3-tasks/01-administer-cluster/09-running-cloud-controller/#cloud-controller-manager">云提供商控制管理器管理</a></p>
-<p>想要自己开发一个 云提供商控制管理器 <a href="../../../3-tasks/01-administer-cluster/18-developing-cloud-controller-manager/">云提供商控制管理器开发</a></p>
-
-
+	</div>
 
             
             <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-02-02 16:49:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/c7388bd73b6bae121b39534c53678720dd2e2e6a">publish kube scheduler (c7388bd)</a>
@@ -1144,9 +1185,9 @@
 
 
 
-<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/architecture/cloud-controller.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/architecture/cloud-controller.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=Cloud%20Controller%20Manager" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/scheduling-eviction/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/scheduling-eviction/_index.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=%e8%b0%83%e5%ba%a6%e4%b8%8e%e9%a9%b1%e9%80%90" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
 
 </div>
 
@@ -1154,28 +1195,6 @@
 
 
 
-
-<nav id="TableOfContents">
-  <ul>
-    <li><a href="#设计">设计</a></li>
-    <li><a href="#云提供商控制管理器的功用">云提供商控制管理器的功用</a>
-      <ul>
-        <li><a href="#节点控制器">节点控制器</a></li>
-        <li><a href="#路由控制器">路由控制器</a></li>
-        <li><a href="#service-控制器">Service 控制器</a></li>
-      </ul>
-    </li>
-    <li><a href="#授权">授权</a>
-      <ul>
-        <li><a href="#节点控制器-1">节点控制器</a></li>
-        <li><a href="#路由控制器-1">路由控制器</a></li>
-        <li><a href="#service-控制器-1">Service 控制器</a></li>
-        <li><a href="#其它权限需求">其它权限需求</a></li>
-      </ul>
-    </li>
-    <li><a href="#接下来应该看啥">接下来应该看啥</a></li>
-  </ul>
-</nav>
 
 
 
