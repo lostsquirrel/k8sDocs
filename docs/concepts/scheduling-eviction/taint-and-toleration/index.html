@@ -16,22 +16,22 @@
 <link rel="manifest" href="/k8sDocs/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/k8sDocs/images/kubernetes-192x192.png">
 
-<title>k8s 中的调度器 | Kubernetes</title><meta property="og:title" content="k8s 中的调度器" />
-<meta property="og:description" content="在 k8s 中， 调度指的是搞清楚 PodPod 表示集群中运行的一组容器的集合 是不是与 节点一个节点就是 k8s 中的一个工作机 匹配，当匹配了 KubeletAn agent that runs on each node in the cluster. It makes sure that containers" />
+<title>毒点(Taint)与耐受性(Toleration) | Kubernetes</title><meta property="og:title" content="毒点(Taint)与耐受性(Toleration)" />
+<meta property="og:description" content="PodsPod 表示集群中运行的一组容器的集合 that *attracts* them to a set of nodes一个节点就是 k8s 中的一个工作机 (either as a preference or a hard requirement). _Taints_ are the opposite -- they allow a node to repel a set of pods. _Tolerations_ are applied to pods," />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/kube-scheduler/" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/" />
 <meta property="article:modified_time" content="2021-02-02T18:02:54+08:00" /><meta property="og:site_name" content="Kubernetes" />
-<meta itemprop="name" content="k8s 中的调度器">
-<meta itemprop="description" content="在 k8s 中， 调度指的是搞清楚 PodPod 表示集群中运行的一组容器的集合 是不是与 节点一个节点就是 k8s 中的一个工作机 匹配，当匹配了 KubeletAn agent that runs on each node in the cluster. It makes sure that containers">
+<meta itemprop="name" content="毒点(Taint)与耐受性(Toleration)">
+<meta itemprop="description" content="PodsPod 表示集群中运行的一组容器的集合 that *attracts* them to a set of nodes一个节点就是 k8s 中的一个工作机 (either as a preference or a hard requirement). _Taints_ are the opposite -- they allow a node to repel a set of pods. _Tolerations_ are applied to pods,">
 <meta itemprop="dateModified" content="2021-02-02T18:02:54+08:00" />
-<meta itemprop="wordCount" content="1320">
+<meta itemprop="wordCount" content="2213">
 
 
 
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="k8s 中的调度器"/>
-<meta name="twitter:description" content="在 k8s 中， 调度指的是搞清楚 PodPod 表示集群中运行的一组容器的集合 是不是与 节点一个节点就是 k8s 中的一个工作机 匹配，当匹配了 KubeletAn agent that runs on each node in the cluster. It makes sure that containers"/>
+<meta name="twitter:title" content="毒点(Taint)与耐受性(Toleration)"/>
+<meta name="twitter:description" content="PodsPod 表示集群中运行的一组容器的集合 that *attracts* them to a set of nodes一个节点就是 k8s 中的一个工作机 (either as a preference or a hard requirement). _Taints_ are the opposite -- they allow a node to repel a set of pods. _Tolerations_ are applied to pods,"/>
 
 
 
@@ -75,12 +75,12 @@
 
 
 
-<meta name="description" content="在 k8s 中， 调度指的是搞清楚 PodPod 表示集群中运行的一组容器的集合 是不是与 节点一个节点就是 k8s 中的一个工作机 匹配，当匹配了 KubeletAn agent that runs on each node in the cluster. It makes sure that containers">
-<meta property="og:description" content="在 k8s 中， 调度指的是搞清楚 PodPod 表示集群中运行的一组容器的集合 是不是与 节点一个节点就是 k8s 中的一个工作机 匹配，当匹配了 KubeletAn agent that runs on each node in the cluster. It makes sure that containers">
-<meta name="twitter:description" content="在 k8s 中， 调度指的是搞清楚 PodPod 表示集群中运行的一组容器的集合 是不是与 节点一个节点就是 k8s 中的一个工作机 匹配，当匹配了 KubeletAn agent that runs on each node in the cluster. It makes sure that containers">
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/kube-scheduler/">
-<meta property="og:title" content="k8s 中的调度器">
-<meta name="twitter:title" content="k8s 中的调度器">
+<meta name="description" content="PodsPod 表示集群中运行的一组容器的集合 that *attracts* them to a set of nodes一个节点就是 k8s 中的一个工作机 (either as a preference or a hard requirement). _Taints_ are the opposite -- they allow a node to repel a set of pods. _Tolerations_ are applied to pods,">
+<meta property="og:description" content="PodsPod 表示集群中运行的一组容器的集合 that *attracts* them to a set of nodes一个节点就是 k8s 中的一个工作机 (either as a preference or a hard requirement). _Taints_ are the opposite -- they allow a node to repel a set of pods. _Tolerations_ are applied to pods,">
+<meta name="twitter:description" content="PodsPod 表示集群中运行的一组容器的集合 that *attracts* them to a set of nodes一个节点就是 k8s 中的一个工作机 (either as a preference or a hard requirement). _Taints_ are the opposite -- they allow a node to repel a set of pods. _Tolerations_ are applied to pods,">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/">
+<meta property="og:title" content="毒点(Taint)与耐受性(Toleration)">
+<meta name="twitter:title" content="毒点(Taint)与耐受性(Toleration)">
 <meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
 
 <meta name="twitter:image:alt" content="Kubernetes">
@@ -94,7 +94,7 @@
 <script src="/k8sDocs/js/script.js"></script>
 
 
-    <title>k8s 中的调度器 | Kubernetes</title>
+    <title>毒点(Taint)与耐受性(Toleration) | Kubernetes</title>
   </head>
   <body class="td-page td-documentation">
     <header>
@@ -880,13 +880,13 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsscheduling-evictionkube-scheduler" href="/k8sDocs/docs/concepts/scheduling-eviction/kube-scheduler/">k8s 中的调度器</a>
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsscheduling-evictionkube-scheduler" href="/k8sDocs/docs/concepts/scheduling-eviction/kube-scheduler/">k8s 中的调度器</a>
       
       
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsscheduling-evictiontaint-and-toleration" href="/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/">毒点(Taint)与耐受性(Toleration)</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsscheduling-evictiontaint-and-toleration" href="/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/">毒点(Taint)与耐受性(Toleration)</a>
       
       
     </li>
@@ -951,7 +951,7 @@
 
 
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/kube-scheduler/">k8s 中的调度器</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/">毒点(Taint)与耐受性(Toleration)</a>
 </li>
 
 	</ol>
@@ -964,179 +964,346 @@
     <div class="td-content">
     
 <p>
-  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/scheduling-eviction/kube-scheduler.md" id="editPageButton" target="_blank" data-proofer-ignore>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/scheduling-eviction/taint-and-toleration.md" id="editPageButton" target="_blank" data-proofer-ignore>
     Edit This Page
   </a>
 </p>
 
-  <h1>k8s 中的调度器</h1>
+  <h1>毒点(Taint)与耐受性(Toleration)</h1>
   
   
 
 <!--
 ---
-title: Kubernetes Scheduler
+reviewers:
+- davidopp
+- kevin-wangzefeng
+- bsalamat
+title: Taints and Tolerations
 content_type: concept
-weight: 10
+weight: 40
 ---
  -->
 <!-- overview -->
-<p>在 k8s 中， 调度指的是搞清楚
+<!--
+[_Node affinity_](/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity),
+is a property of <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pods<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
+</a> that *attracts* them to
+a set of <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/00-nodes/' target='_blank'>nodes<span class='tooltip-text'>一个节点就是 k8s 中的一个工作机</span>
+</a> (either as a preference or a
+hard requirement). _Taints_ are the opposite -- they allow a node to repel a set of pods.
+
+_Tolerations_ are applied to pods, and allow (but do not require) the pods to schedule
+onto nodes with matching taints.
+
+Taints and tolerations work together to ensure that pods are not scheduled
+onto inappropriate nodes. One or more taints are applied to a node; this
+marks that the node should not accept any pods that do not  the taints.
+-->
+<p><a href="/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity"><em>节点亲和性</em></a>,
+是
 <a class='glossary-tooltip' href='/k8sDocs/concepts/workloads/pods/' target='_blank'>Pod<span class='tooltip-text'>Pod 表示集群中运行的一组容器的集合</span>
 </a>
-是不是与
+的一个属性，这个属性会 <em>吸引</em> 它们到一个
 <a class='glossary-tooltip' href='/k8sDocs/2-concepts/01-architecture/00-nodes/' target='_blank'>节点<span class='tooltip-text'>一个节点就是 k8s 中的一个工作机</span>
 </a>
-匹配，当匹配了
-<a class='glossary-tooltip' href='/docs/reference/generated/kubelet' target='_blank'>Kubelet<span class='tooltip-text'>An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.</span>
-</a>
-才能在这个节点运行这个 Pod。</p>
+集合(无论是偏好还是硬性要求)。
+<em>毒点(Taint)</em> 则正好相反 &ndash; 它们允许一个节点排斥特定集合内的 Pod。</p>
+<p><em>耐受性(Toleration)</em> 是会应用到 Pod 上的， 它允许(但不是必须)调度到拥有对应 毒点(Taint)的节点上。</p>
+<p>毒点(Taint)和耐受性(Toleration) 一起工作，以保证 Pod 不会调度到不合适的节点上。一个节点可以
+应用一个或多个毒点(Taint)；这个标记表示节点不应该接收任意不能耐受(tolerate) 这些毒点(Taint)
+的 Pod。</p>
 <!-- body -->
-<!--
-## Scheduling overview {#scheduling}
-
-A scheduler watches for newly created Pods that have no Node assigned. For
-every Pod that the scheduler discovers, the scheduler becomes responsible
-for finding the best Node for that Pod to run on. The scheduler reaches
-this placement decision taking into account the scheduling principles
-described below.
-
-If you want to understand why Pods are placed onto a particular Node,
-or if you're planning to implement a custom scheduler yourself, this
-page will help you learn about scheduling.
- -->
-<h2 id="scheduling">调度概览</h2>
-<p>一个调度器会监测新创建但还没分配节点的 Pod。对于这个调度器发现的每一个 Pod， 它就将负责为这个
-Pod 找到其运行的最佳节点。 调度器在进程调度决策时会考量现面介绍的调度原则。</p>
-<p>如果你想为明白为啥这个 Pod 会放到一个特定的节点，或你计划自己实现一个自定义调度器，本文会帮助你
-学习调度。</p>
-<!--
-## kube-scheduler
-
-[kube-scheduler](/docs/reference/command-line-tools-reference/kube-scheduler/)
-is the default scheduler for Kubernetes and runs as part of the
-<a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-control-plane' target='_blank'>control plane<span class='tooltip-text'>暴露那些定义，部署，管理容器生命周期的 API 和接口的容器编排层。</span>
-</a>.
-kube-scheduler is designed so that, if you want and need to, you can
-write your own scheduling component and use that instead.
-
-For every newly created pod or other unscheduled pods, kube-scheduler
-selects an optimal node for them to run on. However, every container in
-pods has different requirements for resources and every pod also has
-different requirements. Therefore, existing nodes need to be filtered
-according to the specific scheduling requirements.
-
-In a cluster, Nodes that meet the scheduling requirements for a Pod
-are called _feasible_ nodes. If none of the nodes are suitable, the pod
-remains unscheduled until the scheduler is able to place it.
-
-The scheduler finds feasible Nodes for a Pod and then runs a set of
-functions to score the feasible Nodes and picks a Node with the highest
-score among the feasible ones to run the Pod. The scheduler then notifies
-the API server about this decision in a process called _binding_.
-
-Factors that need taken into account for scheduling decisions include
-individual and collective resource requirements, hardware / software /
-policy constraints, affinity and anti-affinity specifications, data
-locality, inter-workload interference, and so on.
- -->
-<h2 id="kube-scheduler">kube-scheduler</h2>
-<p><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-scheduler/">kube-scheduler</a>
-是 k8s 默认的调度器，并作为
-<a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-control-plane' target='_blank'>Control Plane<span class='tooltip-text'>暴露那些定义，部署，管理容器生命周期的 API 和接口的容器编排层。</span>
-</a>
-的一部分运行。
-kube-scheduler 在设计时就考虑到，如果用户希望并且有必要就可以编写并使用自己的调度模块，来代替默认
-的调度器。</p>
-<p>对于每新创建的 Pod 或其它未调度的 Pod，kube-scheduler 选择一个最合适它们节点让他们运行。但是，
-Pod 中的每个容器对资源有不同的保底要求同时每个 Pod 也有不同的要求。 因此，会根据这些调度要求过
-滤现有的节点。</p>
-<p>在一个集群中， 那些满足 Pod 调度要求的节点就叫做 <em>可用的</em> 节点。 如果没有一个节点合适，则 Pod
-在调度器为其找到可用的节点之前就是未调度状态。</p>
-<p>调度器为一个 Pod 找到一系列可用的节点，然后对这些可用节点运行一系统函数进行算分，选择这些可用节点
-中得分最高的可用节点来运行这个 Pod。 这时候调度器会通过一个叫做 <em>绑定(binding)</em> 的过程通知 API 服务关于这次的决定</p>
-<p>在做调度决策时需要考量的因素包含 单个各总体的资源需求， 硬件 / 软件 策略约束， 亲和性和反亲和性规范，
-数据地区，内部工作负载干扰，等等。</p>
-<!--
-### Node selection in kube-scheduler {#kube-scheduler-implementation}
-
-kube-scheduler selects a node for the pod in a 2-step operation:
-
-1. Filtering
-1. Scoring
-
-The _filtering_ step finds the set of Nodes where it's feasible to
-schedule the Pod. For example, the PodFitsResources filter checks whether a
-candidate Node has enough available resource to meet a Pod's specific
-resource requests. After this step, the node list contains any suitable
-Nodes; often, there will be more than one. If the list is empty, that
-Pod isn't (yet) schedulable.
-
-In the _scoring_ step, the scheduler ranks the remaining nodes to choose
-the most suitable Pod placement. The scheduler assigns a score to each Node
-that survived filtering, basing this score on the active scoring rules.
-
-Finally, kube-scheduler assigns the Pod to the Node with the highest ranking.
-If there is more than one node with equal scores, kube-scheduler selects
-one of these at random.
-
-There are two supported ways to configure the filtering and scoring behavior
-of the scheduler:
+<h2 id="concepts">Concepts</h2>
+<p>You add a taint to a node using <a href="/docs/reference/generated/kubectl/kubectl-commands#taint">kubectl taint</a>.
+For example,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl taint nodes node1 key1<span style="color:#f92672">=</span>value1:NoSchedule
+</code></pre></div><p>places a taint on node <code>node1</code>. The taint has key <code>key1</code>, value <code>value1</code>, and taint effect <code>NoSchedule</code>.
+This means that no pod will be able to schedule onto <code>node1</code> unless it has a matching toleration.</p>
+<p>To remove the taint added by the command above, you can run:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl taint nodes node1 key1<span style="color:#f92672">=</span>value1:NoSchedule-
+</code></pre></div><p>You specify a toleration for a pod in the PodSpec. Both of the following tolerations &ldquo;match&rdquo; the
+taint created by the <code>kubectl taint</code> line above, and thus a pod with either toleration would be able
+to schedule onto <code>node1</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">tolerations</span>:
+- <span style="color:#f92672">key</span>: <span style="color:#e6db74">&#34;key1&#34;</span>
+  <span style="color:#f92672">operator</span>: <span style="color:#e6db74">&#34;Equal&#34;</span>
+  <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#34;value1&#34;</span>
+  <span style="color:#f92672">effect</span>: <span style="color:#e6db74">&#34;NoSchedule&#34;</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">tolerations</span>:
+- <span style="color:#f92672">key</span>: <span style="color:#e6db74">&#34;key1&#34;</span>
+  <span style="color:#f92672">operator</span>: <span style="color:#e6db74">&#34;Exists&#34;</span>
+  <span style="color:#f92672">effect</span>: <span style="color:#e6db74">&#34;NoSchedule&#34;</span>
+</code></pre></div><p>Here&rsquo;s an example of a pod that uses tolerations:</p>
 
 
-1. [Scheduling Policies](/docs/reference/scheduling/policies) allow you to configure _Predicates_ for filtering and _Priorities_ for scoring.
-1. [Scheduling Profiles](/docs/reference/scheduling/config/#profiles) allow you to configure Plugins that implement different scheduling stages, including: `QueueSort`, `Filter`, `Score`, `Bind`, `Reserve`, `Permit`, and others. You can also configure the kube-scheduler to run different profiles.
+ 
 
- -->
-<h3 id="kube-scheduler-implementation">kube-scheduler 中的节点选择</h3>
-<p>kube-scheduler 为 Pod 选择一个节点有 2 步操作:</p>
-<ol>
-<li>过滤</li>
-<li>算分</li>
-</ol>
-<p><em>过滤</em> 这一步是找到那些可以调度这个 Pod 的节点集合。 例如， PodFitsResources 过虑器检查这个
-候选节点的可用资源是否满足 Pod 配置的资源要求。 在这一步之后，节点列表中还包含有任意可用节点；
-通常会有不止一个。 如果列表是空，则这个 Pod 就不可调度。</p>
-<p>在 <em>算分</em> 这一步，调度器会将剩余的节点排名挑选最适合放置 Pod 的地方。 调度会为每个在上步中留在
-列表中的节点分配一个分数， 基于这个分数来激活算分规则</p>
-<p>最终， kube-scheduler 将这个 Pod 分配给排名第一的节点。如果有多个节点并列第一(分数一样)，
-kube-scheduler 会从中随机选一个。</p>
-<p>支持以下两种配置调度器的过滤和算分行为:</p>
-<ol>
-<li><a href="https://kubernetes.io/docs/reference/scheduling/policies">调度策略</a>
-允许用户为过滤的 <em>Predicates</em> 和为算分的 <em>优先级</em></li>
-<li><a href="https://kubernetes.io/docs/reference/scheduling/config/#profiles">调度方案</a>
-允许用户配置不同的插件，这些插件实现了不同的调度阶段，包括:
-<code>QueueSort</code>, <code>Filter</code>, <code>Score</code>, <code>Bind</code>, <code>Reserve</code>, <code>Permit</code>, 等。
-也可以配置 kube-scheduler 运行不同的方案</li>
-</ol>
-<h2 id="相关资料">相关资料</h2>
-<!--
-* Read about [scheduler performance tuning](/docs/concepts/scheduling-eviction/scheduler-perf-tuning/)
-* Read about [Pod topology spread constraints](/docs/concepts/workloads/pods/pod-topology-spread-constraints/)
-* Read the [reference documentation](/docs/reference/command-line-tools-reference/kube-scheduler/) for kube-scheduler
-* Learn about [configuring multiple schedulers](/docs/tasks/extend-kubernetes/configure-multiple-schedulers/)
-* Learn about [topology management policies](/docs/tasks/administer-cluster/topology-manager/)
-* Learn about [Pod Overhead](/docs/concepts/scheduling-eviction/pod-overhead/)
-* Learn about scheduling of Pods that use volumes in:
-  * [Volume Topology Support](/docs/concepts/storage/storage-classes/#volume-binding-mode)
-  * [Storage Capacity Tracking](/docs/concepts/storage/storage-capacity/)
-  * [Node-specific Volume Limits](/docs/concepts/storage/storage-limits/)
- -->
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="includecode" id="podspod-with-tolerationyaml">
+    <thead>
+        <tr>
+            <th>
+                <a href="https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/pod-with-toleration.yaml" download="pods/pod-with-toleration.yaml">
+                    <code>pods/pod-with-toleration.yaml</code>
+                </a>
+                <img src="/k8sDocs/images/copycode.svg" style="max-height:24px; cursor: pointer" onclick="copyCode('podspod-with-tolerationyaml')" title="Copy pods/pod-with-toleration.yaml to clipboard">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx</span>
+  <span style="color:#f92672">labels</span>:
+    <span style="color:#f92672">env</span>: <span style="color:#ae81ff">test</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">containers</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx</span>
+    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx</span>
+    <span style="color:#f92672">imagePullPolicy</span>: <span style="color:#ae81ff">IfNotPresent</span>
+  <span style="color:#f92672">tolerations</span>:
+  - <span style="color:#f92672">key</span>: <span style="color:#e6db74">&#34;example-key&#34;</span>
+    <span style="color:#f92672">operator</span>: <span style="color:#e6db74">&#34;Exists&#34;</span>
+    <span style="color:#f92672">effect</span>: <span style="color:#e6db74">&#34;NoSchedule&#34;</span>
+</code></pre></div>  </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<p>The default value for <code>operator</code> is <code>Equal</code>.</p>
+<p>A toleration &ldquo;matches&rdquo; a taint if the keys are the same and the effects are the same, and:</p>
 <ul>
-<li>概念 <a href="/k8sDocs/docs/concepts/scheduling-eviction/scheduler-perf-tuning/">调度器性能优化</a></li>
-<li>概念 <a href="/k8sDocs/docs/concepts/workloads/pods/pod-topology-spread-constraints/">Pod 拓扑散布约束</a></li>
-<li>文档 <a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-scheduler/">kube-scheduler</a></li>
-<li>实践 <a href="/k8sDocs/docs/tasks/extend-kubernetes/configure-multiple-schedulers/">配置多个调度器</a></li>
-<li>实践 <a href="/k8sDocs/docs/tasks/administer-cluster/topology-manager/">拓扑管理策略</a></li>
-<li>概念 <a href="/k8sDocs/docs/concepts/scheduling-eviction/pod-overhead/">Pod 上限</a></li>
-<li>关于使用卷的 Pod 的调度:
-<ul>
-<li><a href="/k8sDocs/docs/concepts/storage/storage-classes/#volume-binding-mode">卷对拓扑的支持</a></li>
-<li><a href="/k8sDocs/docs/concepts/storage/storage-capacity/">存储容量跟踪</a></li>
-<li><a href="/k8sDocs/docs/concepts/storage/storage-limits/">节点级别的卷限制</a></li>
+<li>the <code>operator</code> is <code>Exists</code> (in which case no <code>value</code> should be specified), or</li>
+<li>the <code>operator</code> is <code>Equal</code> and the <code>value</code>s are equal.</li>
 </ul>
+<blockquote class="note">
+  <div><strong>说明：</strong> <p>There are two special cases:</p>
+<p>An empty <code>key</code> with operator <code>Exists</code> matches all keys, values and effects which means this
+will tolerate everything.</p>
+<p>An empty <code>effect</code> matches all effects with key <code>key1</code>.</p>
+</div>
+</blockquote>
+
+<p>The above example used <code>effect</code> of <code>NoSchedule</code>. Alternatively, you can use <code>effect</code> of <code>PreferNoSchedule</code>.
+This is a &ldquo;preference&rdquo; or &ldquo;soft&rdquo; version of <code>NoSchedule</code> &ndash; the system will <em>try</em> to avoid placing a
+pod that does not tolerate the taint on the node, but it is not required. The third kind of <code>effect</code> is
+<code>NoExecute</code>, described later.</p>
+<p>You can put multiple taints on the same node and multiple tolerations on the same pod.
+The way Kubernetes processes multiple taints and tolerations is like a filter: start
+with all of a node&rsquo;s taints, then ignore the ones for which the pod has a matching toleration; the
+remaining un-ignored taints have the indicated effects on the pod. In particular,</p>
+<ul>
+<li>if there is at least one un-ignored taint with effect <code>NoSchedule</code> then Kubernetes will not schedule
+the pod onto that node</li>
+<li>if there is no un-ignored taint with effect <code>NoSchedule</code> but there is at least one un-ignored taint with
+effect <code>PreferNoSchedule</code> then Kubernetes will <em>try</em> to not schedule the pod onto the node</li>
+<li>if there is at least one un-ignored taint with effect <code>NoExecute</code> then the pod will be evicted from
+the node (if it is already running on the node), and will not be
+scheduled onto the node (if it is not yet running on the node).</li>
+</ul>
+<p>For example, imagine you taint a node like this</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl taint nodes node1 key1<span style="color:#f92672">=</span>value1:NoSchedule
+kubectl taint nodes node1 key1<span style="color:#f92672">=</span>value1:NoExecute
+kubectl taint nodes node1 key2<span style="color:#f92672">=</span>value2:NoSchedule
+</code></pre></div><p>And a pod has two tolerations:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">tolerations</span>:
+- <span style="color:#f92672">key</span>: <span style="color:#e6db74">&#34;key1&#34;</span>
+  <span style="color:#f92672">operator</span>: <span style="color:#e6db74">&#34;Equal&#34;</span>
+  <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#34;value1&#34;</span>
+  <span style="color:#f92672">effect</span>: <span style="color:#e6db74">&#34;NoSchedule&#34;</span>
+- <span style="color:#f92672">key</span>: <span style="color:#e6db74">&#34;key1&#34;</span>
+  <span style="color:#f92672">operator</span>: <span style="color:#e6db74">&#34;Equal&#34;</span>
+  <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#34;value1&#34;</span>
+  <span style="color:#f92672">effect</span>: <span style="color:#e6db74">&#34;NoExecute&#34;</span>
+</code></pre></div><p>In this case, the pod will not be able to schedule onto the node, because there is no
+toleration matching the third taint. But it will be able to continue running if it is
+already running on the node when the taint is added, because the third taint is the only
+one of the three that is not tolerated by the pod.</p>
+<p>Normally, if a taint with effect <code>NoExecute</code> is added to a node, then any pods that do
+not tolerate the taint will be evicted immediately, and pods that do tolerate the
+taint will never be evicted. However, a toleration with <code>NoExecute</code> effect can specify
+an optional <code>tolerationSeconds</code> field that dictates how long the pod will stay bound
+to the node after the taint is added. For example,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">tolerations</span>:
+- <span style="color:#f92672">key</span>: <span style="color:#e6db74">&#34;key1&#34;</span>
+  <span style="color:#f92672">operator</span>: <span style="color:#e6db74">&#34;Equal&#34;</span>
+  <span style="color:#f92672">value</span>: <span style="color:#e6db74">&#34;value1&#34;</span>
+  <span style="color:#f92672">effect</span>: <span style="color:#e6db74">&#34;NoExecute&#34;</span>
+  <span style="color:#f92672">tolerationSeconds</span>: <span style="color:#ae81ff">3600</span>
+</code></pre></div><p>means that if this pod is running and a matching taint is added to the node, then
+the pod will stay bound to the node for 3600 seconds, and then be evicted. If the
+taint is removed before that time, the pod will not be evicted.</p>
+<h2 id="example-use-cases">Example Use Cases</h2>
+<p>Taints and tolerations are a flexible way to steer pods <em>away</em> from nodes or evict
+pods that shouldn&rsquo;t be running. A few of the use cases are</p>
+<ul>
+<li>
+<p><strong>Dedicated Nodes</strong>: If you want to dedicate a set of nodes for exclusive use by
+a particular set of users, you can add a taint to those nodes (say,
+<code>kubectl taint nodes nodename dedicated=groupName:NoSchedule</code>) and then add a corresponding
+toleration to their pods (this would be done most easily by writing a custom
+<a href="/docs/reference/access-authn-authz/admission-controllers/">admission controller</a>).
+The pods with the tolerations will then be allowed to use the tainted (dedicated) nodes as
+well as any other nodes in the cluster. If you want to dedicate the nodes to them <em>and</em>
+ensure they <em>only</em> use the dedicated nodes, then you should additionally add a label similar
+to the taint to the same set of nodes (e.g. <code>dedicated=groupName</code>), and the admission
+controller should additionally add a node affinity to require that the pods can only schedule
+onto nodes labeled with <code>dedicated=groupName</code>.</p>
 </li>
+<li>
+<p><strong>Nodes with Special Hardware</strong>: In a cluster where a small subset of nodes have specialized
+hardware (for example GPUs), it is desirable to keep pods that don&rsquo;t need the specialized
+hardware off of those nodes, thus leaving room for later-arriving pods that do need the
+specialized hardware. This can be done by tainting the nodes that have the specialized
+hardware (e.g. <code>kubectl taint nodes nodename special=true:NoSchedule</code> or
+<code>kubectl taint nodes nodename special=true:PreferNoSchedule</code>) and adding a corresponding
+toleration to pods that use the special hardware. As in the dedicated nodes use case,
+it is probably easiest to apply the tolerations using a custom
+<a href="/docs/reference/access-authn-authz/admission-controllers/">admission controller</a>.
+For example, it is recommended to use <a href="/docs/concepts/configuration/manage-resources-containers/#extended-resources">Extended
+Resources</a>
+to represent the special hardware, taint your special hardware nodes with the
+extended resource name and run the
+<a href="/docs/reference/access-authn-authz/admission-controllers/#extendedresourcetoleration">ExtendedResourceToleration</a>
+admission controller. Now, because the nodes are tainted, no pods without the
+toleration will schedule on them. But when you submit a pod that requests the
+extended resource, the <code>ExtendedResourceToleration</code> admission controller will
+automatically add the correct toleration to the pod and that pod will schedule
+on the special hardware nodes. This will make sure that these special hardware
+nodes are dedicated for pods requesting such hardware and you don&rsquo;t have to
+manually add tolerations to your pods.</p>
+</li>
+<li>
+<p><strong>Taint based Evictions</strong>: A per-pod-configurable eviction behavior
+when there are node problems, which is described in the next section.</p>
+</li>
+</ul>
+<h2 id="taint-based-evictions">Taint based Evictions</h2>
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.18 [stable]</code>
+</div>
+
+
+<p>The <code>NoExecute</code> taint effect, mentioned above, affects pods that are already
+running on the node as follows</p>
+<ul>
+<li>pods that do not tolerate the taint are evicted immediately</li>
+<li>pods that tolerate the taint without specifying <code>tolerationSeconds</code> in
+their toleration specification remain bound forever</li>
+<li>pods that tolerate the taint with a specified <code>tolerationSeconds</code> remain
+bound for the specified amount of time</li>
+</ul>
+<p>The node controller automatically taints a Node when certain conditions
+are true. The following taints are built in:</p>
+<ul>
+<li><code>node.kubernetes.io/not-ready</code>: Node is not ready. This corresponds to
+the NodeCondition <code>Ready</code> being &ldquo;<code>False</code>&rdquo;.</li>
+<li><code>node.kubernetes.io/unreachable</code>: Node is unreachable from the node
+controller. This corresponds to the NodeCondition <code>Ready</code> being &ldquo;<code>Unknown</code>&rdquo;.</li>
+<li><code>node.kubernetes.io/out-of-disk</code>: Node becomes out of disk.</li>
+<li><code>node.kubernetes.io/memory-pressure</code>: Node has memory pressure.</li>
+<li><code>node.kubernetes.io/disk-pressure</code>: Node has disk pressure.</li>
+<li><code>node.kubernetes.io/network-unavailable</code>: Node&rsquo;s network is unavailable.</li>
+<li><code>node.kubernetes.io/unschedulable</code>: Node is unschedulable.</li>
+<li><code>node.cloudprovider.kubernetes.io/uninitialized</code>: When the kubelet is started
+with &ldquo;external&rdquo; cloud provider, this taint is set on a node to mark it
+as unusable. After a controller from the cloud-controller-manager initializes
+this node, the kubelet removes this taint.</li>
+</ul>
+<p>In case a node is to be evicted, the node controller or the kubelet adds relevant taints
+with <code>NoExecute</code> effect. If the fault condition returns to normal the kubelet or node
+controller can remove the relevant taint(s).</p>
+<blockquote class="note">
+  <div><strong>说明：</strong> The control plane limits the rate of adding node new taints to nodes. This rate limiting
+manages the number of evictions that are triggered when many nodes become unreachable at
+once (for example: if there is a network disruption).</div>
+</blockquote>
+
+<p>You can specify <code>tolerationSeconds</code> for a Pod to define how long that Pod stays bound
+to a failing or unresponsive Node.</p>
+<p>For example, you might want to keep an application with a lot of local state
+bound to node for a long time in the event of network partition, hoping
+that the partition will recover and thus the pod eviction can be avoided.
+The toleration you set for that Pod might look like:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">tolerations</span>:
+- <span style="color:#f92672">key</span>: <span style="color:#e6db74">&#34;node.kubernetes.io/unreachable&#34;</span>
+  <span style="color:#f92672">operator</span>: <span style="color:#e6db74">&#34;Exists&#34;</span>
+  <span style="color:#f92672">effect</span>: <span style="color:#e6db74">&#34;NoExecute&#34;</span>
+  <span style="color:#f92672">tolerationSeconds</span>: <span style="color:#ae81ff">6000</span>
+</code></pre></div><blockquote class="note">
+  <div><strong>说明：</strong> <p>Kubernetes automatically adds a toleration for
+<code>node.kubernetes.io/not-ready</code> and <code>node.kubernetes.io/unreachable</code>
+with <code>tolerationSeconds=300</code>,
+unless you, or a controller, set those tolerations explicitly.</p>
+<p>These automatically-added tolerations mean that Pods remain bound to
+Nodes for 5 minutes after one of these problems is detected.</p>
+</div>
+</blockquote>
+
+<p><a href="/docs/concepts/workloads/controllers/daemonset/">DaemonSet</a> pods are created with
+<code>NoExecute</code> tolerations for the following taints with no <code>tolerationSeconds</code>:</p>
+<ul>
+<li><code>node.kubernetes.io/unreachable</code></li>
+<li><code>node.kubernetes.io/not-ready</code></li>
+</ul>
+<p>This ensures that DaemonSet pods are never evicted due to these problems.</p>
+<!--
+## Taint Nodes by Condition
+
+The node lifecycle controller automatically creates taints corresponding to
+Node conditions with `NoSchedule` effect.
+Similarly the scheduler does not check Node conditions; instead the scheduler checks taints. This assures that Node conditions don't affect what's scheduled onto the Node. The user can choose to ignore some of the Node's problems (represented as Node conditions) by adding appropriate Pod tolerations.
+
+The DaemonSet controller automatically adds the following `NoSchedule`
+tolerations to all daemons, to prevent DaemonSets from breaking.
+
+  * `node.kubernetes.io/memory-pressure`
+  * `node.kubernetes.io/disk-pressure`
+  * `node.kubernetes.io/out-of-disk` (*only for critical pods*)
+  * `node.kubernetes.io/unschedulable` (1.10 or later)
+  * `node.kubernetes.io/network-unavailable` (*host network only*)
+
+Adding these tolerations ensures backward compatibility. You can also add
+arbitrary tolerations to DaemonSets.
+ -->
+<h2 id="taint-nodes-by-condition">根据条件给节点上毒点(Taint)</h2>
+<p>节点的生命周期控制自动地根据节点状况创建 <code>NoSchedule</code> 效果的毒点(Taint)。
+类似地，调度是不会检查节点状况的；替代方式是调度器检查毒点(Taint)。 这样做能保证节点状况不会影响
+已经调度到这个节点上的工作负载。 用户也可以通过向 Pod 上添加对应的耐受性(Toleration)
+选择忽略一个节点上的问题(以节点状况表示的)。</p>
+<p>DaemonSet 控制器自动添加以下 <code>NoSchedule</code> 耐受性(Toleration)到所有的守护进程， 防止 DaemonSet 挂掉。</p>
+<ul>
+<li><code>node.kubernetes.io/memory-pressure</code></li>
+<li><code>node.kubernetes.io/disk-pressure</code></li>
+<li><code>node.kubernetes.io/out-of-disk</code> (<em>仅对关键 Pod</em>)</li>
+<li><code>node.kubernetes.io/unschedulable</code> (v1.10+)</li>
+<li><code>node.kubernetes.io/network-unavailable</code> (<em>仅主机网络</em>)</li>
+</ul>
+<p>添加这些 耐受性(Toleration) 能确保向后兼容。 用户还可以向 DaemonSet 添加任意 耐受性(Toleration)</p>
+<h2 id="相关资料">相关资料</h2>
+<ul>
+<li>Read about <a href="/docs/tasks/administer-cluster/out-of-resource/">out of resource handling</a> and how you can configure it</li>
+<li>Read about <a href="/docs/concepts/configuration/pod-priority-preemption/">pod priority</a></li>
 </ul>
 
 
@@ -1166,9 +1333,9 @@ kube-scheduler 会从中随机选一个。</p>
 
 
 
-<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/scheduling-eviction/kube-scheduler.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/scheduling-eviction/kube-scheduler.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=k8s%20%e4%b8%ad%e7%9a%84%e8%b0%83%e5%ba%a6%e5%99%a8" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/scheduling-eviction/taint-and-toleration.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/scheduling-eviction/taint-and-toleration.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=%e6%af%92%e7%82%b9%28Taint%29%e4%b8%8e%e8%80%90%e5%8f%97%e6%80%a7%28Toleration%29" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
 
 </div>
 
@@ -1179,12 +1346,10 @@ kube-scheduler 会从中随机选一个。</p>
 
 <nav id="TableOfContents">
   <ul>
-    <li><a href="#scheduling">调度概览</a></li>
-    <li><a href="#kube-scheduler">kube-scheduler</a>
-      <ul>
-        <li><a href="#kube-scheduler-implementation">kube-scheduler 中的节点选择</a></li>
-      </ul>
-    </li>
+    <li><a href="#concepts">Concepts</a></li>
+    <li><a href="#example-use-cases">Example Use Cases</a></li>
+    <li><a href="#taint-based-evictions">Taint based Evictions</a></li>
+    <li><a href="#taint-nodes-by-condition">根据条件给节点上毒点(Taint)</a></li>
     <li><a href="#相关资料">相关资料</a></li>
   </ul>
 </nav>

@@ -141,7 +141,7 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果 &lt;code&gt;Ready&lt;/code&gt; 条件的状态为 &lt;code&gt;Unknown&lt;/code&gt; 或 &lt;code&gt;False&lt;/code&gt; 持续时间超过 &lt;code&gt;pod-eviction-timeout&lt;/code&gt; (通过  kube-controller-manager 参数配置)， 这个节点上所以的 Pod 都会被节点控制器调度为删除。 默认的踢除的超时时间为5分钟。 在某些情况下，当一个节点不可达时，api-server 就不能与节点上的 kubelet 进行通信。 在 kubelet 与 api-server 重新建立连接之前对 Pod 的删除指令传达不到 kubelet. 在这段时间内这些被调度为删除的节点可以继续在分区节点上运行。&lt;/p&gt;
 &lt;p&gt;节点控制器在确认 Pod 在集群中已经停止运行前是不会强制删除的。 所以可以会出现 Pod 运行在状态为  &lt;code&gt;Terminating&lt;/code&gt; 或 &lt;code&gt;Unknown&lt;/code&gt; 的不可达节点上。 有时候 k8s 不能在节点被永久移出集群后不能从基础设施自动的移除，需要管理员手动地删除对应的节点对象。从 k8s 中删除节点对象时，会同时从 api-server 中对应删除节点上运行的所有 Pod 对象，并释放其名称&lt;/p&gt;
 &lt;p&gt;节点的生命周期管理器会自动创建代理节点状态的 &lt;code&gt;Taint&lt;/code&gt;. 调度器在分配 Pod 到节点时会顾及节点上的 Taint. Pod 也可以配置容忍节点的某些 &lt;code&gt;Taint&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;了解更多 Taint 相关信息见&lt;a href=&#34;../../09-scheduling-eviction/01-taint-and-toleration.md&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;了解更多 Taint 相关信息见&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id=&#34;容量和可分配状态&#34;&gt;容量和可分配状态&lt;/h3&gt;
 &lt;p&gt;表示节点上的可用资源: CPU, 内存， 节点可接受 Pod 数量的最大值
 容量(capacity)块下的字段表示节点资源总数

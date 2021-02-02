@@ -21,11 +21,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/nodes/" />
 <meta property="article:published_time" content="2020-07-08T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-02-02T16:49:43+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2021-02-02T18:02:54+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="节点">
 <meta itemprop="description" content="k8s 将用户的工作负载窗口塞进 Pod 里然后运行在节点上，根据集群节点可以是虚拟机或物理机，每个节点必须要有运行 Pod 所需要的服务，并由 k8s 控制中心管理。 一">
 <meta itemprop="datePublished" content="2020-07-08T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2021-02-02T16:49:43+08:00" />
+<meta itemprop="dateModified" content="2021-02-02T18:02:54+08:00" />
 <meta itemprop="wordCount" content="3372">
 
 
@@ -885,6 +885,12 @@
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsscheduling-evictionkube-scheduler" href="/k8sDocs/docs/concepts/scheduling-eviction/kube-scheduler/">k8s 中的调度器</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsscheduling-evictiontaint-and-toleration" href="/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/">毒点(Taint)与耐受性(Toleration)</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -1087,7 +1093,7 @@
 </code></pre></div><p>如果 <code>Ready</code> 条件的状态为 <code>Unknown</code> 或 <code>False</code> 持续时间超过 <code>pod-eviction-timeout</code> (通过  kube-controller-manager 参数配置)， 这个节点上所以的 Pod 都会被节点控制器调度为删除。 默认的踢除的超时时间为5分钟。 在某些情况下，当一个节点不可达时，api-server 就不能与节点上的 kubelet 进行通信。 在 kubelet 与 api-server 重新建立连接之前对 Pod 的删除指令传达不到 kubelet. 在这段时间内这些被调度为删除的节点可以继续在分区节点上运行。</p>
 <p>节点控制器在确认 Pod 在集群中已经停止运行前是不会强制删除的。 所以可以会出现 Pod 运行在状态为  <code>Terminating</code> 或 <code>Unknown</code> 的不可达节点上。 有时候 k8s 不能在节点被永久移出集群后不能从基础设施自动的移除，需要管理员手动地删除对应的节点对象。从 k8s 中删除节点对象时，会同时从 api-server 中对应删除节点上运行的所有 Pod 对象，并释放其名称</p>
 <p>节点的生命周期管理器会自动创建代理节点状态的 <code>Taint</code>. 调度器在分配 Pod 到节点时会顾及节点上的 Taint. Pod 也可以配置容忍节点的某些 <code>Taint</code></p>
-<p>了解更多 Taint 相关信息见<a href="../../09-scheduling-eviction/01-taint-and-toleration.md">这里</a></p>
+<p>了解更多 Taint 相关信息见<a href="/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/">这里</a></p>
 <h3 id="容量和可分配状态">容量和可分配状态</h3>
 <p>表示节点上的可用资源: CPU, 内存， 节点可接受 Pod 数量的最大值
 容量(capacity)块下的字段表示节点资源总数
@@ -1134,7 +1140,7 @@ k8s 调度器保证节点有足够的资源运行分配到其上的 Pod， 调�
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-02-02 16:49:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/c7388bd73b6bae121b39534c53678720dd2e2e6a">publish kube scheduler (c7388bd)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-02-02 18:02:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/e7bdcfb40ac13666ebed4eb366d6e96f03483567">[WIP]taint and toleration day 1 (e7bdcfb)</a>
 </div>
             
           </main>
