@@ -4,22 +4,23 @@ id: control-plane
 date: 2019-05-12
 full_link:
 short_description: >
-  The container orchestration layer that exposes the API and interfaces to define, deploy, and manage the lifecycle of containers.
+  暴露那些定义，部署，管理容器生命周期的 API 和接口的容器编排层。
 
 aka:
 tags:
 - fundamental
 ---
- The container orchestration layer that exposes the API and interfaces to define, deploy, and manage the lifecycle of containers.
+ 暴露那些定义，部署，管理容器生命周期的 API 和接口的容器编排层。
 
- <!--more--> 
- 
- This layer is composed by many different components, such as (but not restricted to):
+ <!--more-->
 
- * {{< glossary_tooltip text="etcd" term_id="etcd" >}}
- * {{< glossary_tooltip text="API Server" term_id="kube-apiserver" >}}
- * {{< glossary_tooltip text="Scheduler" term_id="kube-scheduler" >}}
- * {{< glossary_tooltip text="Controller Manager" term_id="kube-controller-manager" >}}
- * {{< glossary_tooltip text="Cloud Controller Manager" term_id="cloud-controller-manager" >}}
+ 这一层由许多不同的组件构成，诸如(但不限于)
 
- These components can be run as traditional operating system services (daemons) or as containers. The hosts running these components were historically called {{< glossary_tooltip text="masters" term_id="master" >}}.
+ * {{< glossary_tooltip term_id="etcd" >}}
+ * {{< glossary_tooltip term_id="kube-apiserver" >}}
+ * {{< glossary_tooltip term_id="kube-scheduler" >}}
+ * {{< glossary_tooltip term_id="kube-controller-manager" >}}
+ * {{< glossary_tooltip term_id="cloud-controller-manager" >}}
+
+ 这些组件可以以传统的操作系统服务(守护进程)或以容器的方式运行。 这些组件所运行的节点，按传统叫做
+ {{< glossary_tooltip term_id="master" >}}.
