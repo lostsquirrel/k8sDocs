@@ -1,12 +1,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Kubernetes – 学习环境</title>
-    <link>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/</link>
-    <description>Recent content in 学习环境 on Kubernetes</description>
+    <title>Kubernetes – Learning environment</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/docs/setup/learning-environment/</link>
+    <description>Recent content in Learning environment on Kubernetes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     
-	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/index.xml" rel="self" type="application/rss+xml" />
+	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/docs/setup/learning-environment/index.xml" rel="self" type="application/rss+xml" />
     
     
       
@@ -15,11 +15,11 @@
     
     
     <item>
-      <title>Setup: 使用 Minikube 搭建 K8s环境</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/00-minikube/</link>
+      <title>Docs: 使用 Minikube 搭建 K8s环境</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/setup/learning-environment/00-minikube/</link>
       <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/00-minikube/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/setup/learning-environment/00-minikube/</guid>
       <description>
         
         
@@ -346,11 +346,11 @@ The &amp;quot;minikube&amp;quot; cluster has been deleted.
     </item>
     
     <item>
-      <title>Setup: 使用 Kind 搭建 K8s环境</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/01-kind/</link>
+      <title>Docs: 使用 Kind 搭建 K8s环境</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/setup/learning-environment/01-kind/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/setup/01-learning-environment/01-kind/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/setup/learning-environment/01-kind/</guid>
       <description>
         
         

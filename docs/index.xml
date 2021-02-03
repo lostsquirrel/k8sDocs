@@ -22036,6 +22036,656 @@ PersistentVolumeClaim.
     </item>
     
     <item>
+      <title>Docs: 分配 Pod 到节点</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/assign-pod-node/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/assign-pod-node/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- davidopp
+- kevin-wangzefeng
+- bsalamat
+title: Assigning Pods to Nodes
+content_type: concept
+weight: 50
+---
+ --&gt;
+&lt;!-- overview --&gt;
+&lt;!--
+You can constrain a &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/pods/&#39; target=&#39;_blank&#39;&gt;Pod&lt;span class=&#39;tooltip-text&#39;&gt;Pod 表示集群中运行的一组容器的集合&lt;/span&gt;
+&lt;/a&gt; to only be able to run on particular
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/2-concepts/01-architecture/00-nodes/&#39; target=&#39;_blank&#39;&gt;Node(s)&lt;span class=&#39;tooltip-text&#39;&gt;一个节点就是 k8s 中的一个工作机&lt;/span&gt;
+&lt;/a&gt;, or to prefer to run on particular nodes.
+There are several ways to do this, and the recommended approaches all use
+[label selectors](/docs/concepts/overview/working-with-objects/labels/) to make the selection.
+Generally such constraints are unnecessary, as the scheduler will automatically do a reasonable placement
+(e.g. spread your pods across nodes, not place the pod on a node with insufficient free resources, etc.)
+but there are some circumstances where you may want more control on a node where a pod lands, for example to ensure
+that a pod ends up on a machine with an SSD attached to it, or to co-locate pods from two different
+services that communicate a lot into the same availability zone.
+ --&gt;
+&lt;p&gt;用户可以约束一个
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/pods/&#39; target=&#39;_blank&#39;&gt;Pod&lt;span class=&#39;tooltip-text&#39;&gt;Pod 表示集群中运行的一组容器的集合&lt;/span&gt;
+&lt;/a&gt;
+只能运行在特定一个(些)
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/2-concepts/01-architecture/00-nodes/&#39; target=&#39;_blank&#39;&gt;节点&lt;span class=&#39;tooltip-text&#39;&gt;一个节点就是 k8s 中的一个工作机&lt;/span&gt;
+&lt;/a&gt;
+上, 或偏好运行在特定一个(些)节点上。 有几种方式可以做到这一点， 推荐的方式都使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/labels/&#34;&gt;标签选择器&lt;/a&gt;
+进行选择。 通常这种约束不是必要的，因为调度器会自动地进行合理调度(例如: 将 Pod 分散到节点中，
+不会将 Pod 放在资源不足的节点上，等) 但也有些情况希望控制 Pod 调度的节点，例如，确保 Pod
+最终调度到一个使用 SSD 的节点， 或将两有大量通信的 &lt;code&gt;Service&lt;/code&gt; 的 Pod 放置在同一个可用区&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## nodeSelector
+
+`nodeSelector` is the simplest recommended form of node selection constraint.
+`nodeSelector` is a field of PodSpec. It specifies a map of key-value pairs. For the pod to be eligible
+to run on a node, the node must have each of the indicated key-value pairs as labels (it can have
+additional labels as well). The most common usage is one key-value pair.
+
+Let&#39;s walk through an example of how to use `nodeSelector`.
+ --&gt;
+&lt;h2 id=&#34;nodeselector&#34;&gt;&lt;code&gt;nodeSelector&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;nodeSelector&lt;/code&gt; 是推荐的最简单的节点选择的形式。
+&lt;code&gt;nodeSelector&lt;/code&gt; 是 Pod &lt;code&gt;.spec&lt;/code&gt; 的一个字段。 它是一个键值对形式的字典。 用户选择 Pod 运行的节点。
+这个节点必须要有 &lt;code&gt;nodeSelector&lt;/code&gt; 上指定的每一个键值对作为标签(它还可以有额外的标签)。 最常用的是一个键值对。&lt;/p&gt;
+&lt;p&gt;让我们使用一个示例来展示 &lt;code&gt;nodeSelector&lt;/code&gt; 是怎么用的。&lt;/p&gt;
+&lt;!--
+### Step Zero: Prerequisites
+
+This example assumes that you have a basic understanding of Kubernetes pods and that you have [set up a Kubernetes cluster](/docs/setup/).
+ --&gt;
+&lt;h3 id=&#34;step-zero-prerequisites&#34;&gt;第零步: 准备&lt;/h3&gt;
+&lt;p&gt;这个示例假定你对 k8s Pod  有基本理解，并且你需要
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/setup/&#34;&gt;搭建一个 k8s 集群&lt;/a&gt;.&lt;/p&gt;
+&lt;!--
+### Step One: Attach label to the node
+
+Run `kubectl get nodes` to get the names of your cluster&#39;s nodes. Pick out the one that you want to add a label to, and then run `kubectl label nodes &lt;node-name&gt; &lt;label-key&gt;=&lt;label-value&gt;` to add a label to the node you&#39;ve chosen. For example, if my node name is &#39;kubernetes-foo-node-1.c.a-robinson.internal&#39; and my desired label is &#39;disktype=ssd&#39;, then I can run `kubectl label nodes kubernetes-foo-node-1.c.a-robinson.internal disktype=ssd`.
+
+You can verify that it worked by re-running `kubectl get nodes --show-labels` and checking that the node now has a label. You can also use `kubectl describe node &#34;nodename&#34;` to see the full list of labels of the given node.
+ --&gt;
+&lt;h3 id=&#34;step-one-attach-label-to-the-node&#34;&gt;第一步: 给节点打标签&lt;/h3&gt;
+&lt;p&gt;运行&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get nodes
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;查看集群中的节点。 选一个喜欢的， 运行&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;kubectl label nodes &amp;lt;node-name&amp;gt; &amp;lt;label-key&amp;gt;=&amp;lt;label-value&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;在你选择的节点上加一个标签。 例如， 如果我的节点名称为
+&amp;lsquo;kubernetes-foo-node-1.c.a-robinson.internal&amp;rsquo;
+我想要加的标签是 &amp;lsquo;disktype=ssd&amp;rsquo;， 要运行的命令就是&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;kubectl label nodes kubernetes-foo-node-1.c.a-robinson.internal disktype&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;ssd&lt;span style=&#34;color:#e6db74&#34;&gt;`&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;要检查标签是不是加上了，可以运行&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get nodes --show-labels
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;看看那个节点是不是
+有这个标签。 也可以使用&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;kubectl describe node &amp;quot;nodename&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;查看这个节点的完整标签列表。&lt;/p&gt;
+&lt;h3 id=&#34;step-two-add-a-nodeselector-field-to-your-pod-configuration&#34;&gt;第二步: 在 Pod 配置中添加 &lt;code&gt;nodeSelector&lt;/code&gt; 字段&lt;/h3&gt;
+&lt;p&gt;选一个你想运行的 Pod 配置文件， 然后给它加一个下面这样的 &lt;code&gt;nodeSelector&lt;/code&gt;。
+例如， 如果 Pod 的配置是这样的&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;env&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;加上 &lt;code&gt;nodeSelector&lt;/code&gt; 后就是这样:&lt;/p&gt;
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table class=&#34;includecode&#34; id=&#34;podspod-nginxyaml&#34;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;
+                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/pod-nginx.yaml&#34; download=&#34;pods/pod-nginx.yaml&#34;&gt;
+                    &lt;code&gt;pods/pod-nginx.yaml&lt;/code&gt;
+                &lt;/a&gt;
+                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;podspod-nginxyaml&#39;)&#34; title=&#34;Copy pods/pod-nginx.yaml to clipboard&#34;&gt;
+            &lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;env&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;imagePullPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;IfNotPresent&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;nodeSelector&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;disktype&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ssd&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+
+&lt;p&gt;当运行&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl apply -f https://k8s.io/examples/pods/pod-nginx.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;后， 这个 Pod 就会被调度到那个打过标签的节点。 要验证可以运行命令&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl get pods -o wide
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;查看输出结果中这个 Pod 的 &amp;ldquo;NODE&amp;rdquo; 列是不是指定向的是那个节点&lt;/p&gt;
+&lt;!--
+## Interlude: built-in node labels {#built-in-node-labels}
+
+In addition to labels you [attach](#step-one-attach-label-to-the-node), nodes come pre-populated
+with a standard set of labels. See [Well-Known Labels, Annotations and Taints](/docs/reference/kubernetes-api/labels-annotations-taints/) for a list of these.
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; The value of these labels is cloud provider specific and is not guaranteed to be reliable.
+For example, the value of &lt;code&gt;kubernetes.io/hostname&lt;/code&gt; may be the same as the Node name in some environments
+and a different value in other environments.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+ --&gt;
+&lt;h2 id=&#34;built-in-node-labels&#34;&gt;插一嘴: 内置节点标签&lt;/h2&gt;
+&lt;p&gt;在你
+&lt;a href=&#34;#step-one-attach-label-to-the-node&#34;&gt;加&lt;/a&gt;
+的标签外。 节点也可能预先就有一些标签标签。 详见
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/kubernetes-api/labels-annotations-taints/&#34;&gt;常见 标签, 注解和毒点(Taint)&lt;/a&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 这些标签的值是与云提供商关联的，而且并不保证可靠。 例如， 在一些环境中 &lt;code&gt;kubernetes.io/hostname&lt;/code&gt;
+的值可能与节点名称相同，另一些环境则不同&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/p&gt;
+&lt;!--
+## Node isolation/restriction
+
+Adding labels to Node objects allows targeting pods to specific nodes or groups of nodes.
+This can be used to ensure specific pods only run on nodes with certain isolation, security, or regulatory properties.
+When using labels for this purpose, choosing label keys that cannot be modified by the kubelet process on the node is strongly recommended.
+This prevents a compromised node from using its kubelet credential to set those labels on its own Node object,
+and influencing the scheduler to schedule workloads to the compromised node.
+
+The `NodeRestriction` admission plugin prevents kubelets from setting or modifying labels with a `node-restriction.kubernetes.io/` prefix.
+To make use of that label prefix for node isolation:
+
+1. Ensure you are using the [Node authorizer](/docs/reference/access-authn-authz/node/) and have _enabled_ the [NodeRestriction admission plugin](/docs/reference/access-authn-authz/admission-controllers/#noderestriction).
+2. Add labels under the `node-restriction.kubernetes.io/` prefix to your Node objects, and use those labels in your node selectors.
+For example, `example.com.node-restriction.kubernetes.io/fips=true` or `example.com.node-restriction.kubernetes.io/pci-dss=true`.
+ --&gt;
+&lt;h2 id=&#34;node-isolation-restriction&#34;&gt;节点的限离与限制&lt;/h2&gt;
+&lt;p&gt;在节点对象上加标签可以使得 Pod 运行在指定的节点或一组节点。 这可以用来确保指定 Pod 只能运行中
+有特定隔离，安全或监控性质的节点上。
+当将节点用于这个目的时， 在选择标签键时强烈推荐那些不能被节点上运行 kubelet 进程修改的那些键。
+这能防止在节点被黑后，攻击者使用节点上 kubelet 的凭据在它的节点对象上设置这些标签，然后影响
+调度器将工作负载调度到被黑的节点。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;NodeRestriction&lt;/code&gt; 准入插件会防止 kubelet 设置或修改使用 &lt;code&gt;node-restriction.kubernetes.io/&lt;/code&gt;
+前缀的标签。要使用这个标签前缀来实现节点隔离:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;确保你在使用 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/node/&#34;&gt;Node authorizer&lt;/a&gt; 和
+&lt;em&gt;启用了&lt;/em&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/admission-controllers/#noderestriction&#34;&gt;NodeRestriction 准入插件&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;在节点对象上添加 &lt;code&gt;node-restriction.kubernetes.io/&lt;/code&gt; 前缀的标签，并在节点选择器中使用这些标签。
+例如， &lt;code&gt;example.com.node-restriction.kubernetes.io/fips=true&lt;/code&gt; 或 &lt;code&gt;example.com.node-restriction.kubernetes.io/pci-dss=true&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;!--
+## Affinity and anti-affinity
+
+`nodeSelector` provides a very simple way to constrain pods to nodes with particular labels. The affinity/anti-affinity
+feature, greatly expands the types of constraints you can express. The key enhancements are
+
+1. The affinity/anti-affinity language is more expressive. The language offers more matching rules
+   besides exact matches created with a logical AND operation;
+2. you can indicate that the rule is &#34;soft&#34;/&#34;preference&#34; rather than a hard requirement, so if the scheduler
+   can&#39;t satisfy it, the pod will still be scheduled;
+3. you can constrain against labels on other pods running on the node (or other topological domain),
+   rather than against labels on the node itself, which allows rules about which pods can and cannot be co-located
+
+The affinity feature consists of two types of affinity, &#34;node affinity&#34; and &#34;inter-pod affinity/anti-affinity&#34;.
+Node affinity is like the existing `nodeSelector` (but with the first two benefits listed above),
+while inter-pod affinity/anti-affinity constrains against pod labels rather than node labels, as
+described in the third item listed above, in addition to having the first and second properties listed above.
+ --&gt;
+&lt;h2 id=&#34;affinity-and-anti-affinity&#34;&gt;亲和性与反亲和性&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;nodeSelector&lt;/code&gt; provides a very simple way to constrain pods to nodes with particular labels. The affinity/anti-affinity
+feature, greatly expands the types of constraints you can express. The key enhancements are&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The affinity/anti-affinity language is more expressive. The language offers more matching rules
+besides exact matches created with a logical AND operation;&lt;/li&gt;
+&lt;li&gt;you can indicate that the rule is &amp;ldquo;soft&amp;rdquo;/&amp;ldquo;preference&amp;rdquo; rather than a hard requirement, so if the scheduler
+can&amp;rsquo;t satisfy it, the pod will still be scheduled;&lt;/li&gt;
+&lt;li&gt;you can constrain against labels on other pods running on the node (or other topological domain),
+rather than against labels on the node itself, which allows rules about which pods can and cannot be co-located&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The affinity feature consists of two types of affinity, &amp;ldquo;node affinity&amp;rdquo; and &amp;ldquo;inter-pod affinity/anti-affinity&amp;rdquo;.
+Node affinity is like the existing &lt;code&gt;nodeSelector&lt;/code&gt; (but with the first two benefits listed above),
+while inter-pod affinity/anti-affinity constrains against pod labels rather than node labels, as
+described in the third item listed above, in addition to having the first and second properties listed above.&lt;/p&gt;
+&lt;h3 id=&#34;node-affinity&#34;&gt;Node affinity&lt;/h3&gt;
+&lt;p&gt;Node affinity is conceptually similar to &lt;code&gt;nodeSelector&lt;/code&gt; &amp;ndash; it allows you to constrain which nodes your
+pod is eligible to be scheduled on, based on labels on the node.&lt;/p&gt;
+&lt;p&gt;There are currently two types of node affinity, called &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; and
+&lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;. You can think of them as &amp;ldquo;hard&amp;rdquo; and &amp;ldquo;soft&amp;rdquo; respectively,
+in the sense that the former specifies rules that &lt;em&gt;must&lt;/em&gt; be met for a pod to be scheduled onto a node (just like
+&lt;code&gt;nodeSelector&lt;/code&gt; but using a more expressive syntax), while the latter specifies &lt;em&gt;preferences&lt;/em&gt; that the scheduler
+will try to enforce but will not guarantee. The &amp;ldquo;IgnoredDuringExecution&amp;rdquo; part of the names means that, similar
+to how &lt;code&gt;nodeSelector&lt;/code&gt; works, if labels on a node change at runtime such that the affinity rules on a pod are no longer
+met, the pod will still continue to run on the node. In the future we plan to offer
+&lt;code&gt;requiredDuringSchedulingRequiredDuringExecution&lt;/code&gt; which will be just like &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;
+except that it will evict pods from nodes that cease to satisfy the pods&#39; node affinity requirements.&lt;/p&gt;
+&lt;p&gt;Thus an example of &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; would be &amp;ldquo;only run the pod on nodes with Intel CPUs&amp;rdquo;
+and an example &lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; would be &amp;ldquo;try to run this set of pods in failure
+zone XYZ, but if it&amp;rsquo;s not possible, then allow some to run elsewhere&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;Node affinity is specified as field &lt;code&gt;nodeAffinity&lt;/code&gt; of field &lt;code&gt;affinity&lt;/code&gt; in the PodSpec.&lt;/p&gt;
+&lt;p&gt;Here&amp;rsquo;s an example of a pod that uses node affinity:&lt;/p&gt;
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table class=&#34;includecode&#34; id=&#34;podspod-with-node-affinityyaml&#34;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;
+                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/pod-with-node-affinity.yaml&#34; download=&#34;pods/pod-with-node-affinity.yaml&#34;&gt;
+                    &lt;code&gt;pods/pod-with-node-affinity.yaml&lt;/code&gt;
+                &lt;/a&gt;
+                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;podspod-with-node-affinityyaml&#39;)&#34; title=&#34;Copy pods/pod-with-node-affinity.yaml to clipboard&#34;&gt;
+            &lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;with-node-affinity&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;affinity&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;nodeAffinity&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;nodeSelectorTerms&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+          - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kubernetes.io/e2e-az-name&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;e2e-az1&lt;/span&gt;
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;e2e-az2&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;preference&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+          - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;another-node-label-key&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;another-node-label-value&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;with-node-affinity&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;k8s.gcr.io/pause:2.0&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+
+&lt;p&gt;This node affinity rule says the pod can only be placed on a node with a label whose key is
+&lt;code&gt;kubernetes.io/e2e-az-name&lt;/code&gt; and whose value is either &lt;code&gt;e2e-az1&lt;/code&gt; or &lt;code&gt;e2e-az2&lt;/code&gt;. In addition,
+among nodes that meet that criteria, nodes with a label whose key is &lt;code&gt;another-node-label-key&lt;/code&gt; and whose
+value is &lt;code&gt;another-node-label-value&lt;/code&gt; should be preferred.&lt;/p&gt;
+&lt;p&gt;You can see the operator &lt;code&gt;In&lt;/code&gt; being used in the example. The new node affinity syntax supports the following operators: &lt;code&gt;In&lt;/code&gt;, &lt;code&gt;NotIn&lt;/code&gt;, &lt;code&gt;Exists&lt;/code&gt;, &lt;code&gt;DoesNotExist&lt;/code&gt;, &lt;code&gt;Gt&lt;/code&gt;, &lt;code&gt;Lt&lt;/code&gt;.
+You can use &lt;code&gt;NotIn&lt;/code&gt; and &lt;code&gt;DoesNotExist&lt;/code&gt; to achieve node anti-affinity behavior, or use
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#34;&gt;node taints&lt;/a&gt; to repel pods from specific nodes.&lt;/p&gt;
+&lt;p&gt;If you specify both &lt;code&gt;nodeSelector&lt;/code&gt; and &lt;code&gt;nodeAffinity&lt;/code&gt;, &lt;em&gt;both&lt;/em&gt; must be satisfied for the pod
+to be scheduled onto a candidate node.&lt;/p&gt;
+&lt;p&gt;If you specify multiple &lt;code&gt;nodeSelectorTerms&lt;/code&gt; associated with &lt;code&gt;nodeAffinity&lt;/code&gt; types, then the pod can be scheduled onto a node &lt;strong&gt;if one of the&lt;/strong&gt; &lt;code&gt;nodeSelectorTerms&lt;/code&gt; can be satisfied.&lt;/p&gt;
+&lt;p&gt;If you specify multiple &lt;code&gt;matchExpressions&lt;/code&gt; associated with &lt;code&gt;nodeSelectorTerms&lt;/code&gt;, then the pod can be scheduled onto a node &lt;strong&gt;only if all&lt;/strong&gt; &lt;code&gt;matchExpressions&lt;/code&gt; is satisfied.&lt;/p&gt;
+&lt;p&gt;If you remove or change the label of the node where the pod is scheduled, the pod won&amp;rsquo;t be removed. In other words, the affinity selection works only at the time of scheduling the pod.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;weight&lt;/code&gt; field in &lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; is in the range 1-100. For each node that meets all of the scheduling requirements (resource request, RequiredDuringScheduling affinity expressions, etc.), the scheduler will compute a sum by iterating through the elements of this field and adding &amp;ldquo;weight&amp;rdquo; to the sum if the node matches the corresponding MatchExpressions. This score is then combined with the scores of other priority functions for the node. The node(s) with the highest total score are the most preferred.&lt;/p&gt;
+&lt;h4 id=&#34;node-affinity-per-scheduling-profile&#34;&gt;Node affinity per scheduling profile&lt;/h4&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.20 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;When configuring multiple &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/scheduling/config/#multiple-profiles&#34;&gt;scheduling profiles&lt;/a&gt;, you can associate
+a profile with a Node affinity, which is useful if a profile only applies to a specific set of Nodes.
+To do so, add an &lt;code&gt;addedAffinity&lt;/code&gt; to the args of the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/scheduling/config/#scheduling-plugins&#34;&gt;&lt;code&gt;NodeAffinity&lt;/code&gt; plugin&lt;/a&gt;
+in the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/scheduling/config/&#34;&gt;scheduler configuration&lt;/a&gt;. For example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kubescheduler.config.k8s.io/v1beta1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;KubeSchedulerConfiguration&lt;/span&gt;
+
+&lt;span style=&#34;color:#f92672&#34;&gt;profiles&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;schedulerName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;default-scheduler&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;schedulerName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;foo-scheduler&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;pluginConfig&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;NodeAffinity&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;args&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;addedAffinity&lt;/span&gt;:
+            &lt;span style=&#34;color:#f92672&#34;&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/span&gt;:
+              &lt;span style=&#34;color:#f92672&#34;&gt;nodeSelectorTerms&lt;/span&gt;:
+              - &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+                - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;scheduler-profile&lt;/span&gt;
+                  &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+                  &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
+                  - &lt;span style=&#34;color:#ae81ff&#34;&gt;foo&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;addedAffinity&lt;/code&gt; is applied to all Pods that set &lt;code&gt;.spec.schedulerName&lt;/code&gt; to &lt;code&gt;foo-scheduler&lt;/code&gt;, in addition to the
+NodeAffinity specified in the PodSpec.
+That is, in order to match the Pod, Nodes need to satisfy &lt;code&gt;addedAffinity&lt;/code&gt; and the Pod&amp;rsquo;s &lt;code&gt;.spec.NodeAffinity&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Since the &lt;code&gt;addedAffinity&lt;/code&gt; is not visible to end users, its behavior might be unexpected to them. We
+recommend to use node labels that have clear correlation with the profile&amp;rsquo;s scheduler name.&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; The DaemonSet controller, which &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/daemonset/#scheduled-by-default-scheduler&#34;&gt;creates Pods for DaemonSets&lt;/a&gt;
+is not aware of scheduling profiles. For this reason, it is recommended that you keep a scheduler profile, such as the
+&lt;code&gt;default-scheduler&lt;/code&gt;, without any &lt;code&gt;addedAffinity&lt;/code&gt;. Then, the Daemonset&amp;rsquo;s Pod template should use this scheduler name.
+Otherwise, some Pods created by the Daemonset controller might remain unschedulable.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;inter-pod-affinity-and-anti-affinity&#34;&gt;Inter-pod affinity and anti-affinity&lt;/h3&gt;
+&lt;p&gt;Inter-pod affinity and anti-affinity allow you to constrain which nodes your pod is eligible to be scheduled &lt;em&gt;based on
+labels on pods that are already running on the node&lt;/em&gt; rather than based on labels on nodes. The rules are of the form
+&amp;ldquo;this pod should (or, in the case of anti-affinity, should not) run in an X if that X is already running one or more pods that meet rule Y&amp;rdquo;.
+Y is expressed as a LabelSelector with an optional associated list of namespaces; unlike nodes, because pods are namespaced
+(and therefore the labels on pods are implicitly namespaced),
+a label selector over pod labels must specify which namespaces the selector should apply to. Conceptually X is a topology domain
+like node, rack, cloud provider zone, cloud provider region, etc. You express it using a &lt;code&gt;topologyKey&lt;/code&gt; which is the
+key for the node label that the system uses to denote such a topology domain; for example, see the label keys listed above
+in the section &lt;a href=&#34;#built-in-node-labels&#34;&gt;Interlude: built-in node labels&lt;/a&gt;.&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Inter-pod affinity and anti-affinity require substantial amount of
+processing which can slow down scheduling in large clusters significantly. We do
+not recommend using them in clusters larger than several hundred nodes.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Pod anti-affinity requires nodes to be consistently labelled, in other words every node in the cluster must have an appropriate label matching &lt;code&gt;topologyKey&lt;/code&gt;. If some or all nodes are missing the specified &lt;code&gt;topologyKey&lt;/code&gt; label, it can lead to unintended behavior.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;As with node affinity, there are currently two types of pod affinity and anti-affinity, called &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; and
+&lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; which denote &amp;ldquo;hard&amp;rdquo; vs. &amp;ldquo;soft&amp;rdquo; requirements.
+See the description in the node affinity section earlier.
+An example of &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; affinity would be &amp;ldquo;co-locate the pods of service A and service B
+in the same zone, since they communicate a lot with each other&amp;rdquo;
+and an example &lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; anti-affinity would be &amp;ldquo;spread the pods from this service across zones&amp;rdquo;
+(a hard requirement wouldn&amp;rsquo;t make sense, since you probably have more pods than zones).&lt;/p&gt;
+&lt;p&gt;Inter-pod affinity is specified as field &lt;code&gt;podAffinity&lt;/code&gt; of field &lt;code&gt;affinity&lt;/code&gt; in the PodSpec.
+And inter-pod anti-affinity is specified as field &lt;code&gt;podAntiAffinity&lt;/code&gt; of field &lt;code&gt;affinity&lt;/code&gt; in the PodSpec.&lt;/p&gt;
+&lt;h4 id=&#34;an-example-of-a-pod-that-uses-pod-affinity&#34;&gt;An example of a pod that uses pod affinity:&lt;/h4&gt;
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table class=&#34;includecode&#34; id=&#34;podspod-with-pod-affinityyaml&#34;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;
+                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/pod-with-pod-affinity.yaml&#34; download=&#34;pods/pod-with-pod-affinity.yaml&#34;&gt;
+                    &lt;code&gt;pods/pod-with-pod-affinity.yaml&lt;/code&gt;
+                &lt;/a&gt;
+                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;podspod-with-pod-affinityyaml&#39;)&#34; title=&#34;Copy pods/pod-with-pod-affinity.yaml to clipboard&#34;&gt;
+            &lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;with-pod-affinity&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;affinity&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;podAffinity&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;labelSelector&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+          - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;security&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;S1&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;topologyKey&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;failure-domain.beta.kubernetes.io/zone&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;podAntiAffinity&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;podAffinityTerm&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;labelSelector&lt;/span&gt;:
+            &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+            - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;security&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+              &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
+              - &lt;span style=&#34;color:#ae81ff&#34;&gt;S2&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;topologyKey&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;failure-domain.beta.kubernetes.io/zone&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;with-pod-affinity&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;k8s.gcr.io/pause:2.0&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+
+&lt;p&gt;The affinity on this pod defines one pod affinity rule and one pod anti-affinity rule. In this example, the
+&lt;code&gt;podAffinity&lt;/code&gt; is &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;
+while the &lt;code&gt;podAntiAffinity&lt;/code&gt; is &lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;. The
+pod affinity rule says that the pod can be scheduled onto a node only if that node is in the same zone
+as at least one already-running pod that has a label with key &amp;ldquo;security&amp;rdquo; and value &amp;ldquo;S1&amp;rdquo;. (More precisely, the pod is eligible to run
+on node N if node N has a label with key &lt;code&gt;topology.kubernetes.io/zone&lt;/code&gt; and some value V
+such that there is at least one node in the cluster with key &lt;code&gt;topology.kubernetes.io/zone&lt;/code&gt; and
+value V that is running a pod that has a label with key &amp;ldquo;security&amp;rdquo; and value &amp;ldquo;S1&amp;rdquo;.) The pod anti-affinity
+rule says that the pod should not be scheduled onto a node if that node is in the same zone as a pod with
+label having key &amp;ldquo;security&amp;rdquo; and value &amp;ldquo;S2&amp;rdquo;. See the
+&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/scheduling/podaffinity.md&#34;&gt;design doc&lt;/a&gt;
+for many more examples of pod affinity and anti-affinity, both the &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;
+flavor and the &lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; flavor.&lt;/p&gt;
+&lt;p&gt;The legal operators for pod affinity and anti-affinity are &lt;code&gt;In&lt;/code&gt;, &lt;code&gt;NotIn&lt;/code&gt;, &lt;code&gt;Exists&lt;/code&gt;, &lt;code&gt;DoesNotExist&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In principle, the &lt;code&gt;topologyKey&lt;/code&gt; can be any legal label-key. However,
+for performance and security reasons, there are some constraints on topologyKey:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;For pod affinity, empty &lt;code&gt;topologyKey&lt;/code&gt; is not allowed in both &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;
+and &lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;For pod anti-affinity, empty &lt;code&gt;topologyKey&lt;/code&gt; is also not allowed in both &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;
+and &lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;For &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; pod anti-affinity, the admission controller &lt;code&gt;LimitPodHardAntiAffinityTopology&lt;/code&gt; was introduced to limit &lt;code&gt;topologyKey&lt;/code&gt; to &lt;code&gt;kubernetes.io/hostname&lt;/code&gt;. If you want to make it available for custom topologies, you may modify the admission controller, or simply disable it.&lt;/li&gt;
+&lt;li&gt;Except for the above cases, the &lt;code&gt;topologyKey&lt;/code&gt; can be any legal label-key.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;In addition to &lt;code&gt;labelSelector&lt;/code&gt; and &lt;code&gt;topologyKey&lt;/code&gt;, you can optionally specify a list &lt;code&gt;namespaces&lt;/code&gt;
+of namespaces which the &lt;code&gt;labelSelector&lt;/code&gt; should match against (this goes at the same level of the definition as &lt;code&gt;labelSelector&lt;/code&gt; and &lt;code&gt;topologyKey&lt;/code&gt;).
+If omitted or empty, it defaults to the namespace of the pod where the affinity/anti-affinity definition appears.&lt;/p&gt;
+&lt;p&gt;All &lt;code&gt;matchExpressions&lt;/code&gt; associated with &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; affinity and anti-affinity
+must be satisfied for the pod to be scheduled onto a node.&lt;/p&gt;
+&lt;h4 id=&#34;more-practical-use-cases&#34;&gt;More Practical Use-cases&lt;/h4&gt;
+&lt;p&gt;Interpod Affinity and AntiAffinity can be even more useful when they are used with higher
+level collections such as ReplicaSets, StatefulSets, Deployments, etc.  One can easily configure that a set of workloads should
+be co-located in the same defined topology, eg., the same node.&lt;/p&gt;
+&lt;h5 id=&#34;always-co-located-in-the-same-node&#34;&gt;Always co-located in the same node&lt;/h5&gt;
+&lt;p&gt;In a three node cluster, a web application has in-memory cache such as redis. We want the web-servers to be co-located with the cache as much as possible.&lt;/p&gt;
+&lt;p&gt;Here is the yaml snippet of a simple redis deployment with three replicas and selector label &lt;code&gt;app=store&lt;/code&gt;. The deployment has &lt;code&gt;PodAntiAffinity&lt;/code&gt; configured to ensure the scheduler does not co-locate replicas on a single node.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deployment&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis-cache&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;store&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;replicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;store&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;affinity&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;podAntiAffinity&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/span&gt;:
+          - &lt;span style=&#34;color:#f92672&#34;&gt;labelSelector&lt;/span&gt;:
+              &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+              - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;app&lt;/span&gt;
+                &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+                &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
+                - &lt;span style=&#34;color:#ae81ff&#34;&gt;store&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;topologyKey&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;kubernetes.io/hostname&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis-server&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis:3.2-alpine&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The below yaml snippet of the webserver deployment has &lt;code&gt;podAntiAffinity&lt;/code&gt; and &lt;code&gt;podAffinity&lt;/code&gt; configured. This informs the scheduler that all its replicas are to be co-located with pods that have selector label &lt;code&gt;app=store&lt;/code&gt;. This will also ensure that each web-server replica does not co-locate on a single node.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deployment&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;web-server&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;web-store&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;replicas&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;template&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;web-store&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;affinity&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;podAntiAffinity&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/span&gt;:
+          - &lt;span style=&#34;color:#f92672&#34;&gt;labelSelector&lt;/span&gt;:
+              &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+              - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;app&lt;/span&gt;
+                &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+                &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
+                - &lt;span style=&#34;color:#ae81ff&#34;&gt;web-store&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;topologyKey&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;kubernetes.io/hostname&amp;#34;&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;podAffinity&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/span&gt;:
+          - &lt;span style=&#34;color:#f92672&#34;&gt;labelSelector&lt;/span&gt;:
+              &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+              - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;app&lt;/span&gt;
+                &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+                &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
+                - &lt;span style=&#34;color:#ae81ff&#34;&gt;store&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;topologyKey&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;kubernetes.io/hostname&amp;#34;&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;web-app&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx:1.16-alpine&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If we create the above two deployments, our three node cluster should look like below.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;node-1&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;node-2&lt;/th&gt;
+&lt;th style=&#34;text-align:center&#34;&gt;node-3&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&lt;em&gt;webserver-1&lt;/em&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&lt;em&gt;webserver-2&lt;/em&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&lt;em&gt;webserver-3&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&lt;em&gt;cache-1&lt;/em&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&lt;em&gt;cache-2&lt;/em&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:center&#34;&gt;&lt;em&gt;cache-3&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;As you can see, all the 3 replicas of the &lt;code&gt;web-server&lt;/code&gt; are automatically co-located with the cache as expected.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;kubectl get pods -o wide
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The output is similar to this:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;NAME                           READY     STATUS    RESTARTS   AGE       IP           NODE
+redis-cache-1450370735-6dzlj   1/1       Running   0          8m        10.192.4.2   kube-node-3
+redis-cache-1450370735-j2j96   1/1       Running   0          8m        10.192.2.2   kube-node-1
+redis-cache-1450370735-z73mh   1/1       Running   0          8m        10.192.3.1   kube-node-2
+web-server-1287567482-5d4dz    1/1       Running   0          7m        10.192.2.3   kube-node-1
+web-server-1287567482-6f7v5    1/1       Running   0          7m        10.192.4.3   kube-node-3
+web-server-1287567482-s330j    1/1       Running   0          7m        10.192.3.2   kube-node-2
+&lt;/code&gt;&lt;/pre&gt;&lt;h5 id=&#34;never-co-located-in-the-same-node&#34;&gt;Never co-located in the same node&lt;/h5&gt;
+&lt;p&gt;The above example uses &lt;code&gt;PodAntiAffinity&lt;/code&gt; rule with &lt;code&gt;topologyKey: &amp;quot;kubernetes.io/hostname&amp;quot;&lt;/code&gt; to deploy the redis cluster so that
+no two instances are located on the same host.
+See &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tutorials/stateful-application/zookeeper/#tolerating-node-failure&#34;&gt;ZooKeeper tutorial&lt;/a&gt;
+for an example of a StatefulSet configured with anti-affinity for high availability, using the same technique.&lt;/p&gt;
+&lt;h2 id=&#34;nodename&#34;&gt;nodeName&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;nodeName&lt;/code&gt; is the simplest form of node selection constraint, but due
+to its limitations it is typically not used.  &lt;code&gt;nodeName&lt;/code&gt; is a field of
+PodSpec.  If it is non-empty, the scheduler ignores the pod and the
+kubelet running on the named node tries to run the pod.  Thus, if
+&lt;code&gt;nodeName&lt;/code&gt; is provided in the PodSpec, it takes precedence over the
+above methods for node selection.&lt;/p&gt;
+&lt;p&gt;Some of the limitations of using &lt;code&gt;nodeName&lt;/code&gt; to select nodes are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;If the named node does not exist, the pod will not be run, and in
+some cases may be automatically deleted.&lt;/li&gt;
+&lt;li&gt;If the named node does not have the resources to accommodate the
+pod, the pod will fail and its reason will indicate why,
+for example OutOfmemory or OutOfcpu.&lt;/li&gt;
+&lt;li&gt;Node names in cloud environments are not always predictable or
+stable.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Here is an example of a pod config file using the &lt;code&gt;nodeName&lt;/code&gt; field:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;nodeName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kube-01&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The above pod will run on the node kube-01.&lt;/p&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#34;&gt;Taints&lt;/a&gt; allow a Node to &lt;em&gt;repel&lt;/em&gt; a set of Pods.&lt;/p&gt;
+&lt;p&gt;The design documents for
+&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/scheduling/nodeaffinity.md&#34;&gt;node affinity&lt;/a&gt;
+and for &lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/scheduling/podaffinity.md&#34;&gt;inter-pod affinity/anti-affinity&lt;/a&gt; contain extra background information about these features.&lt;/p&gt;
+&lt;p&gt;Once a Pod is assigned to a Node, the kubelet runs the Pod and allocates node-local resources.
+The &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/topology-manager/&#34;&gt;topology manager&lt;/a&gt; can take part in node-level
+resource allocation decisions.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: Ingress</title>
       <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/services-networking/ingress/</link>
       <pubDate>Mon, 21 Sep 2020 00:00:00 +0000</pubDate>
@@ -28742,6 +29392,351 @@ Job 这种 k8s 资源类型的工作模型是，运行一个或多个 Pod 来完
     </item>
     
     <item>
+      <title>Docs: 使用 Minikube 搭建 K8s环境</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/setup/learning-environment/00-minikube/</link>
+      <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/setup/learning-environment/00-minikube/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;特点&#34;&gt;特点&lt;/h2&gt;
+&lt;p&gt;一个用于创建易于部署，运行在虚拟机的的本地单节点 k8s 集群的工具&lt;/p&gt;
+&lt;h2 id=&#34;适用场景&#34;&gt;适用场景&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;尝试与学习 k8s&lt;/li&gt;
+&lt;li&gt;日常开发&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;功能特性&#34;&gt;功能特性&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;DNS&lt;/li&gt;
+&lt;li&gt;NodePorts&lt;/li&gt;
+&lt;li&gt;ConfigMaps and Secrets&lt;/li&gt;
+&lt;li&gt;Dashboards&lt;/li&gt;
+&lt;li&gt;Container Runtime:
+&lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt;,
+&lt;a href=&#34;https://cri-o.io/&#34;&gt;CRI-O&lt;/a&gt;, and
+&lt;a href=&#34;https://github.com/containerd/containerd&#34;&gt;containerd&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Enabling CNI (Container Network Interface)&lt;/li&gt;
+&lt;li&gt;Ingress&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;安装&#34;&gt;安装&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;../../3-tasks/00-tools/install-minikube&#34;&gt;安装 Minikube&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;快速入门&#34;&gt;快速入门&lt;/h2&gt;
+&lt;p&gt;以下简单介绍 minikube 的基本用法，如启动，使用，删除。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;启动 minikube 以创建集群&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt; minikube start
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;更多运行参数参见后续章节&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;使用 kubectl 进行集群管理，更多见后续章节&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;以下命令使用 &lt;code&gt;echoserver&lt;/code&gt; 镜像 创建一个 部署（&lt;code&gt;Deployment&lt;/code&gt;）， 这个镜像是一个简单的 &lt;code&gt;http&lt;/code&gt; 服务，服务端口 &lt;code&gt;8080&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl create deployment hello-minikube --image&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;k8s.gcr.io/echoserver:1.10
+kubectl create deployment hello-minikube --image&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;registry.cn-hangzhou.aliyuncs.com/google_containers/echoserver:1.10
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;根据网络选择一条命令执行，输出结果如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;deployment.apps/hello-minikube created
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;为了能够访问这个 &lt;code&gt;Deployment，&lt;/code&gt; 需要为其创建一个 &lt;code&gt;Service&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl expose deployment hello-minikube --type&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;NodePort --port&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;其中 &lt;code&gt;--type=NodePort&lt;/code&gt; 参数指定服务的类型，输出结果如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;service/hello-minikube exposed
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;需要等到 Deployment 对应的 Pod 启动后，才能在 &lt;code&gt;Service&lt;/code&gt; 访问&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;检查 Pod 是否为 运行(running) 状态,执行如下命令&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get pod
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果输出的 STATUS 列值为 ContainerCreating, 表示 Pod 还在创建中，需要再等一会儿，类似如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;NAME                              READY     STATUS              RESTARTS   AGE
+hello-minikube-3383150820-vctvh   0/1       ContainerCreating   0          3s
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如果输出的 STATUS 列值为 Running, 表示 Pod 启动完成，运行中，类似如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;NAME                              READY     STATUS    RESTARTS   AGE
+hello-minikube-3383150820-vctvh   1/1       Running   0          13s
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;获取 Service 的访问连接信息&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube service hello-minikube --url
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果类型如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;http://172.17.0.3:31579
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;通过浏览器访问以下连接地址，输出类似如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+Hostname: hello-minikube-7df785b6bb-kjtnt
+
+Pod Information:
+ -no pod information available-
+
+Server values:
+ server_version=nginx: 1.13.3 - lua: 10008
+
+Request Information:
+ client_address=172.18.0.1
+ method=GET
+ real path=/
+ query=
+ request_version=1.1
+ request_scheme=http
+ request_uri=http://127.0.0.1:8080/
+
+Request Headers:
+ accept=*/*
+ host=127.0.0.1:31579
+ user-agent=curl/7.65.3
+
+Request Body:
+ -no body in request-
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如果不需要这个服务，删除对应对象&lt;/p&gt;
+&lt;ol start=&#34;7&#34;&gt;
+&lt;li&gt;删除 &lt;code&gt;hello-minikube&lt;/code&gt; &lt;code&gt;Service&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl delete services hello-minikube
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;service &amp;quot;hello-minikube&amp;quot; deleted
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;8&#34;&gt;
+&lt;li&gt;删除 &lt;code&gt;hello-minikube&lt;/code&gt; &lt;code&gt;Deployment&lt;/code&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl delete deployment hello-minikube
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;deployment.extensions &amp;quot;hello-minikube&amp;quot; deleted
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;9&#34;&gt;
+&lt;li&gt;停止本地集群&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube stop
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Stopping &amp;quot;minikube&amp;quot;...
+&amp;quot;minikube&amp;quot; stopped.
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;10&#34;&gt;
+&lt;li&gt;删除本地集群&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube delete
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出如下&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Deleting &amp;quot;minikube&amp;quot; ...
+The &amp;quot;minikube&amp;quot; cluster has been deleted.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;后续章节还有更多关于 集群删除的内容&lt;/p&gt;
+&lt;h2 id=&#34;集群管理&#34;&gt;集群管理&lt;/h2&gt;
+&lt;h3 id=&#34;集群启动&#34;&gt;集群启动&lt;/h3&gt;
+&lt;p&gt;通过 &lt;code&gt;minikube start&lt;/code&gt; 命令启动集群，包含创建和配置一个虚拟机(也可以是其它方式)来运行一个单节点的 k8s 集群。 同时添加 kubectl 与集群交互的配置&lt;/p&gt;
+&lt;p&gt;注意:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;如果需要使用代理命令如下,单独配置的环境变量不会生效&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;shell https_proxy&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;lt;my proxy&amp;gt; minikube start --docker-env http_proxy&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;lt;my proxy&amp;gt; --docker-env https_proxy&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;lt;my proxy&amp;gt; --docker-env no_proxy&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;192.168.99.0/24
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;kubectl 配置会生成一个叫  &lt;code&gt;minikube&lt;/code&gt; 的上下文，并作为默认的上下文，如果需要切换为该上下文执行命令 &lt;code&gt;kubectl config use-context minikube&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;指定-k8s-版本&#34;&gt;指定 k8s 版本&lt;/h3&gt;
+&lt;p&gt;可以通过为 &lt;code&gt;minikube start&lt;/code&gt; 的 &lt;code&gt;--kubernetes-version&lt;/code&gt; 选项指定集群的 k8s 版本，例如以下命令表示指定 k8s 版本为 &lt;code&gt;v1.18.0&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube start --driver&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;lt;driver_name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;指定虚拟机驱动&#34;&gt;指定虚拟机驱动&lt;/h3&gt;
+&lt;p&gt;可以通过为 &lt;code&gt;minikube start&lt;/code&gt; 的 &lt;code&gt;--driver=&amp;lt;enter_driver_name&amp;gt;&lt;/code&gt; 选项指定集群组件宿主机的实现方式，命令类似如下&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube start --driver&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;lt;driver_name&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;minikube 支持驱动如下:
+注意： 驱动详情及插件安装见 &lt;a href=&#34;https://minikube.sigs.k8s.io/docs/reference/drivers/&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;docker (driver installation)&lt;/li&gt;
+&lt;li&gt;virtualbox (driver installation)&lt;/li&gt;
+&lt;li&gt;podman (driver installation) (EXPERIMENTAL)&lt;/li&gt;
+&lt;li&gt;vmwarefusion&lt;/li&gt;
+&lt;li&gt;kvm2 (driver installation)&lt;/li&gt;
+&lt;li&gt;hyperkit (driver installation)&lt;/li&gt;
+&lt;li&gt;hyperv (driver installation) Note that the IP below is dynamic and can change. It can be retrieved with - minikube ip.&lt;/li&gt;
+&lt;li&gt;vmware (driver installation) (VMware unified driver)&lt;/li&gt;
+&lt;li&gt;parallels (driver installation)&lt;/li&gt;
+&lt;li&gt;none(直接将k8s组件运行在主机上，需要主机系统为 Linux 且安装了 Docker)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;警告: 如果使用驱动为 none 时， 某些 k8s 组件容器以超级权限(privileged)运行，会对 minikube 之外的环境产生影响。因此不建议在个人工作站上使用&lt;/p&gt;
+&lt;h3 id=&#34;通过其它的容器运行环境启动集群&#34;&gt;通过其它的容器运行环境启动集群&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;containerd&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube start &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --network-plugin&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;cni &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --enable-default-cni &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --container-runtime&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;containerd &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --bootstrapper&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;kubeadm
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;或者&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube start &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --network-plugin&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;cni &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --enable-default-cni &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --extra-config&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;kubelet.container-runtime&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;remote &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --extra-config&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;kubelet.container-runtime-endpoint&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;unix:///run/containerd/containerd.sock &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --extra-config&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;kubelet.image-service-endpoint&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;unix:///run/containerd/containerd.sock &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --bootstrapper&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;kubeadm
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;CRI-O&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube start &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --network-plugin&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;cni &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --enable-default-cni &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --container-runtime&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;cri-o &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --bootstrapper&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;kubeadm
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;或者&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube start &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --network-plugin&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;cni &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --enable-default-cni &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --extra-config&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;kubelet.container-runtime&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;remote &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --extra-config&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;kubelet.container-runtime-endpoint&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/var/run/crio.sock &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --extra-config&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;kubelet.image-service-endpoint&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/var/run/crio.sock &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    --bootstrapper&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;kubeadm
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;对过重用-minkube-使用的-docker-daemon访问集群内部镜像&#34;&gt;对过重用 minkube 使用的 Docker daemon，访问集群内部镜像&lt;/h3&gt;
+&lt;p&gt;在使用单个虚拟的k8s集群时，重启 minikube 内置的 Docker 后台来避免在你构建自己的镜像的时候需要使用的镜像仓库,这样可以简化操作，加快本地操作体验&lt;/p&gt;
+&lt;p&gt;注意: 不要使用 &lt;code&gt;latest&lt;/code&gt; 作为镜像的标签，因为它是默认值。在镜像摘取策略为 &lt;code&gt;Always&lt;/code&gt;的时候可能会出问题。&lt;/p&gt;
+&lt;p&gt;在 &lt;code&gt;Mac/Linux&lt;/code&gt; 主机下可以通过 &lt;code&gt;minikube docker-env&lt;/code&gt; 命令返回结果，切换 Docker 后台，切换后可以通过以下命令查看其中镜像&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker ps
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;注意:  Centos 7，可能会报如下错误&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt; Could not read CA certificate &amp;quot;/etc/docker/ca.pem&amp;quot;: open /etc/docker/ca.pem: no such file or directory
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;可以通过修改 &lt;code&gt;/etc/sysconfig/docker&lt;/code&gt;, 确保环境变量与 minikube 的一致，脚本类似如下&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;shell &amp;lt; DOCKER_CERT_PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/etc/docker --- &amp;gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; -z &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;DOCKER_CERT_PATH&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; &amp;gt; DOCKER_CERT_PATH&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/etc/docker &amp;gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;初始化时对-k8s-配置&#34;&gt;初始化时对 k8s 配置&lt;/h3&gt;
+&lt;p&gt;在通过 &lt;code&gt;minikube start&lt;/code&gt; 初始化集群时可能通过  &lt;code&gt;--extra-config&lt;/code&gt; 系列选择实现对集群组件的配置
+如果我多个配置，个多次使用该选项， 选项值格式为 &lt;code&gt;component.key=value&lt;/code&gt;， &lt;code&gt;component&lt;/code&gt; 范围见以下列表， &lt;code&gt;key&lt;/code&gt; 和 &lt;code&gt;value&lt;/code&gt; 见明细&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;kubelet TODO&lt;/li&gt;
+&lt;li&gt;apiserver TODO&lt;/li&gt;
+&lt;li&gt;proxy TODO&lt;/li&gt;
+&lt;li&gt;controller-manager TODO&lt;/li&gt;
+&lt;li&gt;etcd TODO&lt;/li&gt;
+&lt;li&gt;scheduler TODO&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;key&lt;/code&gt; 的可用值具体见以上各模块文档的 &lt;code&gt;componentconfigs&lt;/code&gt; 部分&lt;/p&gt;
+&lt;h4 id=&#34;示例&#34;&gt;示例&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;--extra-config=kubelet.MaxPods=5&lt;/code&gt; 将 kubelet 的最大 &lt;code&gt;Pod&lt;/code&gt; 数设置为 &lt;code&gt;5&lt;/code&gt; (minikube 实验时设置大些(单节点原因)，不然后出事)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;--extra-config=scheduler.LeaderElection.LeaderElect=true&lt;/code&gt; 将 scheduler 选举开启(该配置支持结构体嵌套配置)，配置作用见 TODO&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;--extra-config=apiserver.authorization-mode=RBAC&lt;/code&gt; 将 apiserver 的 AuthorizationMode 设置为 RBAC， 设置认证模式&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;停止集群&#34;&gt;停止集群&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;minikube stop&lt;/code&gt; 用于停止集群。 它会关闭其启动的虚拟机，但保存集群的所有状态和数据。再次开启可以恢复集群之前的状态&lt;/p&gt;
+&lt;h3 id=&#34;删除集群&#34;&gt;删除集群&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;minikube delete&lt;/code&gt; 用于删除集群，它全关闭并销毁虚拟机，所有数据和状态都会消失&lt;/p&gt;
+&lt;h3 id=&#34;minikube-升级&#34;&gt;minikube 升级&lt;/h3&gt;
+&lt;p&gt;具体根据安装方式不同有不同的升级方式&lt;/p&gt;
+&lt;h2 id=&#34;集群管理-1&#34;&gt;集群管理&lt;/h2&gt;
+&lt;h3 id=&#34;kubectl&#34;&gt;kubectl&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;minikube start&lt;/code&gt; 命令创建集群时会为 kubectl 添加对应的该集群的上下文配置。且该集群会被设置为默认上下文。
+如果切换到其它上下文后想切换回该集群可以通过以下命令&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl config use-context minikube
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;可在命令参数中指定该上下文&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get pods --context&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;minikube
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;dashboard&#34;&gt;Dashboard&lt;/h3&gt;
+&lt;p&gt;在集群创建好后，可以通过 &lt;code&gt;minikube dashboard&lt;/code&gt; 命令获得 &lt;code&gt;Kubernetes Dashboard&lt;/code&gt;访问地址&lt;/p&gt;
+&lt;h3 id=&#34;services&#34;&gt;Services&lt;/h3&gt;
+&lt;p&gt;在创建类型为 NodePort 的 Service 后，可以通过 &lt;code&gt;minikube service [-n NAMESPACE] [--url] NAME&lt;/code&gt; 命令，获得其访问地址&lt;/p&gt;
+&lt;h2 id=&#34;网络&#34;&gt;网络&lt;/h2&gt;
+&lt;p&gt;minikube 创建的虚拟机通过 &lt;code&gt;host-only&lt;/code&gt; 网络模式与主机通信。 可以通过 &lt;code&gt;minikube ip&lt;/code&gt; 获得
+类型为 NodePort 的 Service 可以通过 这个IP 和对应的端口进行访问&lt;/p&gt;
+&lt;h2 id=&#34;持久化卷&#34;&gt;持久化卷&lt;/h2&gt;
+&lt;p&gt;minikube 支持的 持久化卷 的类型为 &lt;code&gt;hostPath&lt;/code&gt;， 该类型持久化卷直接关联虚拟机内的目录&lt;/p&gt;
+&lt;p&gt;minikube 创建的虚拟机以 &lt;code&gt;tmpfs&lt;/code&gt; 启动，所以多数目录会在重启后消失(&lt;code&gt;minikube stop&lt;/code&gt;), 但如下目录及文件都会一直存在&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;/data&lt;/li&gt;
+&lt;li&gt;/var/lib/minikube&lt;/li&gt;
+&lt;li&gt;/var/lib/docker&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;以下示例为创建一个映射到 &lt;code&gt;/data&lt;/code&gt; 目录的持久化卷&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;PersistentVolume&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;pv0001&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;accessModes&lt;/span&gt;:
+    - &lt;span style=&#34;color:#ae81ff&#34;&gt;ReadWriteOnce&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;capacity&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;storage&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;5Gi&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;hostPath&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/data/pv0001/&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;被挂载的主机目录&#34;&gt;被挂载的主机目录&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;有些 minikube 驱动会将主机目录挂载到虚拟机中，方便文件共享，该特性目前不提供配置且不同系统也不尽相同，具体如下&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Driver&lt;/td&gt;
+&lt;td&gt;OS&lt;/td&gt;
+&lt;td&gt;HostFolder&lt;/td&gt;
+&lt;td&gt;VM&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;VirtualBox&lt;/td&gt;
+&lt;td&gt;Linux&lt;/td&gt;
+&lt;td&gt;/home&lt;/td&gt;
+&lt;td&gt;/hosthome&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;VirtualBox&lt;/td&gt;
+&lt;td&gt;macOS&lt;/td&gt;
+&lt;td&gt;/Users&lt;/td&gt;
+&lt;td&gt;/Users&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;VirtualBox&lt;/td&gt;
+&lt;td&gt;Windows&lt;/td&gt;
+&lt;td&gt;C://Users&lt;/td&gt;
+&lt;td&gt;/c/Users&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;VMware Fusion&lt;/td&gt;
+&lt;td&gt;macOS&lt;/td&gt;
+&lt;td&gt;/Users&lt;/td&gt;
+&lt;td&gt;/mnt/hgfs/Users&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Xhyve&lt;/td&gt;
+&lt;td&gt;macOS&lt;/td&gt;
+&lt;td&gt;/Users&lt;/td&gt;
+&lt;td&gt;/Users&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;注意： KVM 目前还不支持主机目录挂载&lt;/p&gt;
+&lt;h2 id=&#34;私有镜像仓库&#34;&gt;私有镜像仓库&lt;/h2&gt;
+&lt;p&gt;如何访问私有镜像仓库 看这里 TODO&lt;/p&gt;
+&lt;p&gt;使用镜像仓库时推荐使用 &lt;code&gt;ImagePullSecrets&lt;/code&gt; 方式。 如果想在虚拟机中配置，则可以配置在&lt;code&gt;/home/docker.dockercfg&lt;/code&gt; 或 &lt;code&gt;/home/docker/.docker/config.json&lt;/code&gt; 文件中&lt;/p&gt;
+&lt;h2 id=&#34;插件&#34;&gt;插件&lt;/h2&gt;
+&lt;p&gt;如果希望在启动或重启时加载自定义插件，可以将其放在 &lt;code&gt;~/.minikube/addons&lt;/code&gt; 目录。 这个目录中的插件会在 minikube 启动(或重启)虚拟机是加载到虚拟机中&lt;/p&gt;
+&lt;h2 id=&#34;使用-http-代理&#34;&gt;使用 HTTP 代理&lt;/h2&gt;
+&lt;p&gt;在minikube 启动的虚拟机中，包含了 k8s 组件和 Docker daemon, 当 k8s 调度容器到 Docker, 而 Docker 需要外部网络在能拉到镜像时。而外部网络需要配置 HTTP 代理才能访问时，可以通过在 minikube start 启动添加参数配置代理，示例如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;minikube start --docker-env http_proxy&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;http://$YOURPROXY:PORT &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;                 --docker-env https_proxy&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;https://$YOURPROXY:PORT
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;但如果配置了代理可能会让 &lt;code&gt;kubectl&lt;/code&gt; 连接不到虚拟机，需要添加如下配置后再用 &lt;code&gt;minikube start&lt;/code&gt; 启动&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;export no_proxy&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;$no_proxy,&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;minikube ip&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;已知问题&#34;&gt;已知问题&lt;/h2&gt;
+&lt;p&gt;minikube 不支持需要多节点的特性&lt;/p&gt;
+&lt;h2 id=&#34;设计&#34;&gt;设计&lt;/h2&gt;
+&lt;p&gt;minikube 使用 libmachine 配置虚拟机， 通过 kubeadm 管理 k8s 集群创建
+更多信息看&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/cluster-lifecycle/local-cluster-ux.md&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: 使用 Kind 搭建 K8s环境</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/setup/learning-environment/01-kind/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/setup/learning-environment/01-kind/</guid>
+      <description>
+        
+        
+        &lt;p&gt;整理中&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: k8s 是什么</title>
       <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/00-what-is-k8s/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -29377,7 +30372,7 @@ FOO_SERVICE_PORT=&amp;lt;the port the service is running on&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这个配置会让 kublet 使用对应名称的 &lt;code&gt;RuntimeClass&lt;/code&gt; 来运行这个 Pod， 如果没有叫这个名称的 &lt;code&gt;RuntimeClass&lt;/code&gt;， 或者 CRI 不能运行这个名称对应的处理器，则这个进入 &lt;code&gt;Failed&lt;/code&gt; &lt;a href=&#34;../../03-workloads/00-pods/00-pod-lifecycle/#pod-phase&#34;&gt;状态&lt;/a&gt; 。 错误信息在对应的&lt;a href=&#34;../../../3-tasks/08-debug-application-cluster/00-debug-application-introspection/&#34;&gt;事件&lt;/a&gt;对象中
 如果没有 runtimeClassName 字段则使用默认的运行时处理器，与 &lt;code&gt;RuntimeClass&lt;/code&gt; 功能特性关闭等同&lt;/p&gt;
 &lt;h3 id=&#34;cri-配置&#34;&gt;CRI 配置&lt;/h3&gt;
-&lt;p&gt;更多关于 CRI 运行时配置见&lt;a href=&#34;../../../1-setup/02-production-environment/00-container-runtimes/&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;更多关于 CRI 运行时配置见&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/setup/production-environment/&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
 &lt;h4 id=&#34;dockershim&#34;&gt;dockershim&lt;/h4&gt;
 &lt;p&gt;k8s 内置的 dockershim CRI 不支持运行时处理器&lt;/p&gt;
 &lt;h4 id=&#34;containerd&#34;&gt;containerd&lt;/h4&gt;
@@ -29410,7 +30405,7 @@ FOO_SERVICE_PORT=&amp;lt;the port the service is running on&amp;gt;
 &lt;/a&gt; 与 nodeSelector 相似， RuntimeClass 的耐受(tolerations) 会与 Pod 的 耐受(tolerations)的并集组成最终的节点&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#39; target=&#39;_blank&#39;&gt;耐受(tolerations)&lt;span class=&#39;tooltip-text&#39;&gt;A core object consisting of three required properties: key, value, and effect. Tolerations enable the scheduling of pods on nodes or node groups that have a matching taint.&lt;/span&gt;
 &lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;要了解更多关于节点选择与&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#39; target=&#39;_blank&#39;&gt;耐受(tolerations)&lt;span class=&#39;tooltip-text&#39;&gt;A core object consisting of three required properties: key, value, and effect. Tolerations enable the scheduling of pods on nodes or node groups that have a matching taint.&lt;/span&gt;
-&lt;/a&gt;信息，见 &lt;a href=&#34;../../09-scheduling-eviction/02-assign-pod-node/&#34;&gt;分配 Pod 到节点&lt;/a&gt;&lt;/p&gt;
+&lt;/a&gt;信息，见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/scheduling-eviction/assign-pod-node/&#34;&gt;分配 Pod 到节点&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&#34;pod-overhead&#34;&gt;Pod Overhead&lt;/h2&gt;
 &lt;p&gt;
 
@@ -29660,277 +30655,6 @@ Here is some example output of events from running this command:
 &lt;p&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/using-api/api-overview/&#34;&gt;k8s API 概念说明&lt;/a&gt;
 &lt;a href=&#34;https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/&#34;&gt;k8s 最重要基础概念 Pod&lt;/a&gt;
 &lt;a href=&#34;https://kubernetes.io/docs/concepts/architecture/controller/&#34;&gt;k8s 的控制器&lt;/a&gt;&lt;/p&gt;
-
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: 对象命令与ID</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/names/</link>
-      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/names/</guid>
-      <description>
-        
-        
-        &lt;p&gt;在 k8s 的对象中，同一类型的对象名称唯一， 比如在一个 &lt;a href=&#34;./02-namespace&#34;&gt;命名空间&lt;/a&gt;中只能有一个叫 &lt;code&gt;myapp-1234&lt;/code&gt; 在 Pod， 但不同类型的资源可以有相同的名称，比如还可以定义一个叫 &lt;code&gt;myapp-1234&lt;/code&gt; 在 Deployment。
-每个对象也有一个 &lt;code&gt;UID&lt;/code&gt; 这个 &lt;code&gt;UID&lt;/code&gt; 整个集群全局唯一
-用户需要定义非唯一的，用户自定义的属性，则可通过 &lt;a href=&#34;./03-label-selectors&#34;&gt;标签&lt;/a&gt; 和 &lt;a href=&#34;04-annotation&#34;&gt;注解&lt;/a&gt; 实现&lt;/p&gt;
-&lt;h1 id=&#34;对象名称&#34;&gt;对象名称&lt;/h1&gt;
-&lt;p&gt;对象的名称是一个字符串，体现在对象的 URL中， 比如 &lt;code&gt;/api/v1/pods/some-name&lt;/code&gt;
-在同一时间，一个类型的对象名称必须唯一，但如果用户删除的这个对象，则可以用这个名称再创建一个新的对象&lt;/p&gt;
-&lt;p&gt;以下是命令规范三类限制&lt;/p&gt;
-&lt;h3 id=&#34;dns-subdomain-names&#34;&gt;DNS 子域名&lt;/h3&gt;
-&lt;p&gt;多数类型的资源命令必须可以作为 DNS 子域名，定义在这里(&lt;a href=&#34;https://tools.ietf.org/html/rfc1123),&#34;&gt;https://tools.ietf.org/html/rfc1123),&lt;/a&gt; 总结如下:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;不能多于 253个字符&lt;/li&gt;
-&lt;li&gt;只能包含小写字母，数字， &lt;code&gt;-&lt;/code&gt;(中划线)，&lt;code&gt;.&lt;/code&gt;(点)&lt;/li&gt;
-&lt;li&gt;只能以字母数字开头&lt;/li&gt;
-&lt;li&gt;只能以字母数字结尾&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;更多资料见 &lt;a href=&#34;https://en.wikipedia.org/wiki/Subdomain&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
-&lt;h3 id=&#34;dns-标签名&#34;&gt;DNS 标签名&lt;/h3&gt;
-&lt;p&gt;有些资源类型命令遵循 DNS 标签名称， 规则如下：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;最多 63 个字符&lt;/li&gt;
-&lt;li&gt;只能包含小写字母，数字， &lt;code&gt;-&lt;/code&gt;(中划线)&lt;/li&gt;
-&lt;li&gt;只能以字母数字开头&lt;/li&gt;
-&lt;li&gt;只能以字母数字结尾&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;路径分段名&#34;&gt;路径分段名&lt;/h3&gt;
-&lt;p&gt;有些资源类型的命令必须要能够编码到 路径的一段上，所以名称不能包含 &lt;code&gt;.&lt;/code&gt; 或 &lt;code&gt;..&lt;/code&gt;, 也不能包含 &lt;code&gt;/&lt;/code&gt; 或 &lt;code&gt;%&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;以下为一个命令为 &lt;code&gt;nginx-demo&lt;/code&gt; 的 Pod 示例&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx-demo&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
-  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx:1.14.2&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:
-    - &lt;span style=&#34;color:#f92672&#34;&gt;containerPort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;80&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;注意: 还有一些资源类型有更严格的命名规则&lt;/p&gt;
-&lt;h2 id=&#34;uids&#34;&gt;UIDs&lt;/h2&gt;
-&lt;p&gt;由系统创建的对象的唯一标识，类型为字符串
-k8s 集群整个生命周期内，创建的每一个对象的UID都是唯一的，用于区分可能存在或曾今过的相似对象
-k8s UID 是 UUID， 使用标准为  &lt;code&gt;ISO/IEC 9834-8&lt;/code&gt;  和 &lt;code&gt;ITU-T X.667&lt;/code&gt;&lt;/p&gt;
-&lt;h2 id=&#34;引申阅读&#34;&gt;引申阅读&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&#34;./03-label-selectors&#34;&gt;k8s 标签&lt;/a&gt;
-&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/architecture/identifiers.md&#34;&gt;k8s 标识符与命令设计文档&lt;/a&gt;&lt;/p&gt;
-
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: 命名空间(Namespaces)</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/02-namespace/</link>
-      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/02-namespace/</guid>
-      <description>
-        
-        
-        &lt;p&gt;k8s 可以在一个物理集群上创建多个虚拟集群, 每个命名空间就是一个虚拟集群&lt;/p&gt;
-&lt;h2 id=&#34;啥时候用命名空间&#34;&gt;啥时候用命名空间&lt;/h2&gt;
-&lt;p&gt;命名空间是为用户分散于有多个组或项目下的场景设计的。 如果只有二三十个用户就不用想了，当需要用到命名空间的特性时才考虑用命名空间
-命名空间是对象名称的一个作用域，对象命名只需要在一个命名空间唯一即可，命名空间不可以嵌套且一个资源对象只能属于一个命名空间
-命名空间是集群中多个(组)用户分配资源的一个方式(&lt;a href=&#34;../../../08-policy/01-resource-quotas&#34;&gt;通过资源配额&lt;/a&gt;)
-未来版本，一个命名空间下的对象可能有相同的默认访问控制策略
-不必要用命名空间来区分差异较小的资源，比如同一个软件的不同版本，可以同一个命名空间下使用标签(labels)区分这些对象&lt;/p&gt;
-&lt;h2 id=&#34;管理命名空间&#34;&gt;管理命名空间&lt;/h2&gt;
-&lt;p&gt;命名空间的创建和删除请见&lt;a href=&#34;../../../../3-tasks/01-administer-cluster/34-namespaces&#34;&gt;管理指南命名空间部分&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;注意: 在自定义命名空间是，避免使用 &lt;code&gt;kube-&lt;/code&gt; 作为前缀， 这个前缀是 k8s 命名空间保留字&lt;/p&gt;
-&lt;h3 id=&#34;查看&#34;&gt;查看&lt;/h3&gt;
-&lt;p&gt;可以通过以下命令查看当前集群所有命名空间:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get namespaces
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;NAME              STATUS   AGE
-default           Active   1d
-kube-node-lease   Active   1d
-kube-public       Active   1d
-kube-system       Active   1d
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;k8s 启动时会初始化创建以下4个命名空间:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;default：&lt;/code&gt; 当对象不指定命名空间时所属的命名空间&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;kube-system&lt;/code&gt;： 由系统创建对象所在的命名空间&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;kube-public&lt;/code&gt;：可以被所有人访问(包括未授权用户)，一般只能被系统使用，在这个命名空间的对象，整个集群都可访问，公开只是为了方便，不是强制要求&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;kube-node-lease&lt;/code&gt;: 用于放置用于存放与每个节点关联的租约对象，在集群扩容时改善节点心跳性能&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;在请求中添加命名空间&#34;&gt;在请求中添加命名空间&lt;/h3&gt;
-&lt;p&gt;为当前请求添加命名空间 使用 &lt;code&gt;--namespace&lt;/code&gt; 参数
-示例如下：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl run nginx --image&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;nginx --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;lt;insert-namespace-name-here&amp;gt;
-kubectl get pods --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;lt;insert-namespace-name-here&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;设置默认命名空间&#34;&gt;设置默认命名空间&lt;/h3&gt;
-&lt;p&gt;持久化配置 kubectl 默认操作的命名空间&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl config set-context --current --namespace&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;lt;insert-namespace-name-here&amp;gt;
-&lt;span style=&#34;color:#75715e&#34;&gt;# Validate it&lt;/span&gt;
-kubectl config view --minify | grep namespace:
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;命名空间与dns的关系&#34;&gt;命名空间与DNS的关系&lt;/h3&gt;
-&lt;p&gt;当用户创建 &lt;a href=&#34;../../../services-networking/service/&#34;&gt;Service&lt;/a&gt; 时会对应生成一条 &lt;a href=&#34;../../../services-networking/03-dns-pod-service/&#34;&gt;DNS 记录&lt;/a&gt;, 而这条记录中的格式为 &lt;code&gt;&amp;lt;service-name&amp;gt;.&amp;lt;namespace-name&amp;gt;.svc.cluster.local&lt;/code&gt; 也就是说 通过 &lt;code&gt;&amp;lt;service-name&amp;gt;&lt;/code&gt; 只能解析到本命名空间的服务，这在不同命名空间使用同一套配置时相关有用，比如开发，演示，生产等不同环境。如果跨命名空间访问 Service 需要使用全限定名(FQDN)，一般来说只需要 &lt;code&gt;&amp;lt;service-name&amp;gt;.&amp;lt;namespace-name&amp;gt;&lt;/code&gt; 也是可以的&lt;/p&gt;
-&lt;h2 id=&#34;那些不属于任何命名空间的对象&#34;&gt;那些不属于任何命名空间的对象&lt;/h2&gt;
-&lt;p&gt;大多数 k8s 资源( pod, service, replication controller 等)都会属于某一个命名空间。 而 命名空间 资源则不属于任何命名空间。 还有一个底层资源 比如 &lt;a href=&#34;../../../01-architecture/00-nodes/&#34;&gt;节点&lt;/a&gt;， persistentVolumes 也不属于任何命名空间&lt;/p&gt;
-&lt;p&gt;以下命令可以查看资源是否属于命名空间:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 在一个命名空间中&lt;/span&gt;
-kubectl api-resources --namespaced&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;true
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# 不属于任何命名空间&lt;/span&gt;
-kubectl api-resources --namespaced&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;false
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
-&lt;li&gt;Node&lt;/li&gt;
-&lt;li&gt;persistentVolumes&lt;/li&gt;
-&lt;li&gt;Events: 根据事件关联的对象，可能有属于命名空间也可能不属于命名空间&lt;/li&gt;
-&lt;/ul&gt;
-
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: 标签和标签选择器</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/labels/</link>
-      <pubDate>Mon, 29 Jun 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/labels/</guid>
-      <description>
-        
-        
-        &lt;p&gt;标签是附加在对象上的键值对，应该与所在的对象有关且具有意义
-标签可以用于组织和筛选一组对象
-标签可以在对象创建时就定义，也可以在对象创建后任何时间添加或修改
-一个对象可以有多个标签，但同一个对象所有标签的名称必须唯一
-标签可以让UI或命令行工具快速地查询和监听对象，所以标签不适用于非标识性的内容，非标识性内容应该使用注解(&lt;a href=&#34;../04-annotation/&#34;&gt;annotations&lt;/a&gt;)&lt;/p&gt;
-&lt;h2 id=&#34;动机&#34;&gt;动机&lt;/h2&gt;
-&lt;p&gt;标签让用户可以以松耦合的形式把组织架构映射到系统对象上，而不需要客户端存在这些映射
-服务部署和批处理流水线通常胡是多维的实体(比如: 多个分区或部署， 多条发布线， 多个层级， 每个次级又有多个微服务)。 要管理这些对象经常需要多维度分割操作， 这就需要打破严格的层级结构的表现形式， 特别是由基础设施而不是由用户决定的死板的层级结构&lt;/p&gt;
-&lt;p&gt;常用标签示例：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;&amp;quot;release&amp;quot; : &amp;quot;stable&amp;quot;&lt;/code&gt;, &lt;code&gt;&amp;quot;release&amp;quot; : &amp;quot;canary&amp;quot;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;&amp;quot;environment&amp;quot; : &amp;quot;dev&amp;quot;&lt;/code&gt;, &lt;code&gt;&amp;quot;environment&amp;quot; : &amp;quot;qa&amp;quot;&lt;/code&gt;, &lt;code&gt;&amp;quot;environment&amp;quot; : &amp;quot;production&amp;quot;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;&amp;quot;tier&amp;quot; : &amp;quot;frontend&amp;quot;&lt;/code&gt;, &lt;code&gt;&amp;quot;tier&amp;quot; : &amp;quot;backend&amp;quot;&lt;/code&gt;, &lt;code&gt;&amp;quot;tier&amp;quot; : &amp;quot;cache&amp;quot;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;&amp;quot;partition&amp;quot; : &amp;quot;customerA&amp;quot;&lt;/code&gt;, &lt;code&gt;&amp;quot;partition&amp;quot; : &amp;quot;customerB&amp;quot;&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;&amp;quot;track&amp;quot; : &amp;quot;daily&amp;quot;&lt;/code&gt;, &lt;code&gt;&amp;quot;track&amp;quot; : &amp;quot;weekly&amp;quot;&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;syntax-and-character-set&#34;&gt;语法和字符集&lt;/h2&gt;
-&lt;p&gt;标签由 键值对组成。 合法的键可以由两上部分组成， 一个可选的前级加上本身的名称中间用斜线(&lt;code&gt;/&lt;/code&gt;)分隔。
-名称部分 不得多于63个字符，必须以字母或数字 ([a-z0-9A-Z])开头和结束，中间部分可以包含中划线(&lt;code&gt;-&lt;/code&gt;)，下划线 &lt;code&gt;(_)&lt;/code&gt;，点 (&lt;code&gt;.&lt;/code&gt;),字母,数字。
-如果要使用前缀， 前端必须是一个合法的 DNS 字域名，由多个 DNS 标签组成，中间由点(&lt;code&gt;.&lt;/code&gt;)分隔， 总长度不超过 253 个字符&lt;/p&gt;
-&lt;p&gt;如果一个标签键没有前缀则假定它是属于用于私有的，
-由系统自动化组件(e.g. &lt;code&gt;kube-scheduler&lt;/code&gt;, &lt;code&gt;kube-controller-manager&lt;/code&gt;, &lt;code&gt;kube-apiserver&lt;/code&gt;, &lt;code&gt;kubectl&lt;/code&gt;, 或其它第三方自动化工具), 在给用户对象加标签时必须加前缀， &lt;code&gt;kubernetes.io/&lt;/code&gt;和 &lt;code&gt;k8s.io/&lt;/code&gt; 为 k8s 核心组件保留前缀&lt;/p&gt;
-&lt;p&gt;值 可以为空，不多于63个字符，必须以字母或数字 ([&lt;code&gt;a-z0-9A-Z&lt;/code&gt;])开头和结束，中间可以包含中划线(&lt;code&gt;-&lt;/code&gt;)，下划线 &lt;code&gt;(_)&lt;/code&gt;，点 (.),字母,数字&lt;/p&gt;
-&lt;p&gt;以下示例中的 Pod 包含 &lt;code&gt;environment: production&lt;/code&gt; 和 &lt;code&gt;app: nginx&lt;/code&gt; 两个标签:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;label-demo&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;environment&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;production&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;app&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
-  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx:1.14.2&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;ports&lt;/span&gt;:
-    - &lt;span style=&#34;color:#f92672&#34;&gt;containerPort&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;80&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;标签选择器&#34;&gt;标签选择器&lt;/h2&gt;
-&lt;p&gt;与对象名称和对象UID不同，对象标签在对象之间不需要唯一，并且一般来说，会有多个对象有相同的标签
-用户或客户端程序可以选择器可以通过标签选择器选取一个对象集. 标签选择器是 k8s 核心分组r 基础
-目前标签选择器支持两种选择方式： 等值选择，集合选择。
-在待值选择时， 一个标签选择器可以由多个选择条件组成，每个条件用逗号分隔，表示匹配同时满足这些条件的对象，所以这里逗号相当与逻辑与(&lt;code&gt;&amp;amp;&amp;amp;&lt;/code&gt;)关系
-空选择器或不使用选择在不同的情况下，有不同的表现。用户标签的 API 需要要正确和有意义的说明文档
-注意: 对于有些 API 类型，比如 &lt;code&gt;ReplicaSets&lt;/code&gt; 同一个命名空间两个不同实例的标签选择器不能有交叉， 否些控制器就会将些认为是冲突，导致不能别副本数是否正确(TODO 这里需要有一个示例，描述不太好理解)&lt;/p&gt;
-&lt;p&gt;警告: 在编写选择器条件时需要注意，对于 等值选择，集合选择 都没有逻辑与(&lt;code&gt;||&lt;/code&gt;)操作符&lt;/p&gt;
-&lt;h3 id=&#34;等值选择&#34;&gt;等值选择&lt;/h3&gt;
-&lt;p&gt;等值选择可以分别对于标签的 键和值的相等与不相等，只要对象的标签含有选择器所有的条件相匹配的标签就会选中，不管该对象是否还有其它标签
-操作符&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;=,==, 表示等于; 对象标签的键和值都要一致&lt;/li&gt;
-&lt;li&gt;!= 表示不等于; 对象标签有该键，但不是该值
-例：&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code&gt;environment = production # 筛选包含标签键为 environment， 且对应值为 production 的对象
-tier != frontend # 筛选包含标签键为 tier，且对应值不为 frontend 的对象
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;筛选&lt;code&gt;production&lt;/code&gt;环境中层级除 &lt;code&gt;frontend&lt;/code&gt; 外的对象可以写成 &lt;code&gt;environment=production,tier!=frontend&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;等值选择标签选择器的一个应用场景为为 Pod 指定 节点选择的条件。以下 Pod 节点选择的条件为 &lt;code&gt;accelerator=nvidia-tesla-p100&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;cuda-test&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
-    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;cuda-test&lt;/span&gt;
-      &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;k8s.gcr.io/cuda-vector-add:v0.1&amp;#34;&lt;/span&gt;
-      &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
-        &lt;span style=&#34;color:#f92672&#34;&gt;limits&lt;/span&gt;:
-          &lt;span style=&#34;color:#f92672&#34;&gt;nvidia.com/gpu&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;nodeSelector&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;accelerator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nvidia-tesla-p100&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;集合选择器&#34;&gt;集合选择器&lt;/h3&gt;
-&lt;p&gt;标签的集合选择器可以且于多值过虑。 支持三种操作符 &lt;code&gt;in&lt;/code&gt;,&lt;code&gt;notin&lt;/code&gt; 和 &lt;code&gt;exists&lt;/code&gt;(仅用在键上)
-示例:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;environment in (production, qa) # 筛选 有键为 environment 且对应值为 production 或 qa 的对象
-tier notin (frontend, backend) # 筛选 有键为 tier 且值 不是frontend 也不是 backend 的对象和所有不包含键为 tier 的对象
-partition # 筛选 存在键为 tier 不管值是啥的对象
-!partition # 筛选 不存在键为 tier 不管值是啥的对象
-partition,environment notin (qa) # 筛选 存在键为 partition 且 environment 的值不是 qa
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;多个条件之间的逗号赞同一逻辑与(&lt;code&gt;&amp;amp;&amp;amp;&lt;/code&gt;)
-&lt;code&gt;environment=production&lt;/code&gt; 与 &lt;code&gt;environment in (production)&lt;/code&gt; 等同
-&lt;code&gt;!=&lt;/code&gt; 与 &lt;code&gt;notin&lt;/code&gt; 单值时等同
-两种标签选择方式可以组合使用 例： &lt;code&gt;partition in (customerA, customerB),environment!=qa&lt;/code&gt;&lt;/p&gt;
-&lt;h2 id=&#34;选择器在-api-上的使用&#34;&gt;选择器在 API 上的使用&lt;/h2&gt;
-&lt;h3 id=&#34;list-watch-操作时过虑对象&#34;&gt;LIST/ WATCH 操作时过虑对象&lt;/h3&gt;
-&lt;p&gt;在时行LIST/ WATCH 操作时可以通过标签选择筛选需要的对象。 上节提及的两种方式都可以使用， 在URL中请求参数类似如下:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;等值选择: &lt;code&gt;?labelSelector=environment%3Dproduction,tier%3Dfrontend&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;集合选择: &lt;code&gt;?labelSelector=environment+in+%28production%2Cqa%29%2Ctier+in+%28frontend%29&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;也可以用于 REST 客户端 或 &lt;code&gt;kubectl&lt;/code&gt;
-例如 &lt;code&gt;kubectl&lt;/code&gt; 中使用&lt;/p&gt;
-&lt;p&gt;等值选择&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get pods -l environment&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;production,tier&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;frontend
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;集合选择&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get pods -l &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;environment in (production),tier in (frontend)&amp;#39;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;集合选择的表达更宽泛，比如这个可以达到或的效果&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get pods -l &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;environment in (production, qa)&amp;#39;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;逻辑否的效果&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;kubectl get pods -l &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;environment,environment notin (frontend)&amp;#39;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;set-references-in-api-objects-啥意思&#34;&gt;Set references in API objects 啥意思&lt;/h3&gt;
-&lt;p&gt;有些 k8s 对象，比如 &lt;a href=&#34;../../../services-networking/service/&#34;&gt;Service&lt;/a&gt; &lt;a href=&#34;../../../03-workloads/01-controllers/01-replicationcontroller/&#34;&gt;ReplicationController&lt;/a&gt; 也是通过标签选择器来限定被其管理的资源对象，比如 &lt;a href=&#34;../../../03-workloads/00-pods/&#34;&gt;Pod&lt;/a&gt;&lt;/p&gt;
-&lt;h3 id=&#34;service-和-replicationcontroller-对选择器的使用&#34;&gt;&lt;code&gt;Service&lt;/code&gt; 和 &lt;code&gt;ReplicationController&lt;/code&gt; 对选择器的使用&lt;/h3&gt;
-&lt;p&gt;Service 通过标签选择器来指定负载均衡的 Pod
-ReplicationController 也是通过标签选择器来指定被其管理的 Pod&lt;/p&gt;
-&lt;p&gt;只支持等值选择，可以为 &lt;code&gt;yaml&lt;/code&gt; 或 &lt;code&gt;JSON&lt;/code&gt; 格式
-示例:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis # 相当于 component=redis 或 component in (redis)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;支持集合选择的资源&#34;&gt;支持集合选择的资源&lt;/h3&gt;
-&lt;p&gt;较新的资源，如 &lt;code&gt;Job&lt;/code&gt;, &lt;code&gt;Deployment&lt;/code&gt;, &lt;code&gt;ReplicaSet&lt;/code&gt;, &lt;code&gt;DaemonSet&lt;/code&gt; 都支持集合选择&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
-    - {&lt;span style=&#34;color:#f92672&#34;&gt;key: tier, operator: In, values&lt;/span&gt;: [&lt;span style=&#34;color:#ae81ff&#34;&gt;cache]}&lt;/span&gt;
-    - {&lt;span style=&#34;color:#f92672&#34;&gt;key: environment, operator: NotIn, values&lt;/span&gt;: [&lt;span style=&#34;color:#ae81ff&#34;&gt;dev]}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;matchLabels&lt;/code&gt; 是一个键值对字典&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;matchLabels&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;component&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis&lt;/span&gt;
-&lt;span style=&#34;color:#75715e&#34;&gt;# 等同与&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;selector&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
-    - {&lt;span style=&#34;color:#f92672&#34;&gt;key: component, operator: In, values&lt;/span&gt;: [&lt;span style=&#34;color:#ae81ff&#34;&gt;redis]}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;matchExpressions&lt;/code&gt; 是一个条件的集合
-其条件中可用的操作符(operator)包括: &lt;code&gt;In&lt;/code&gt;, &lt;code&gt;NotIn&lt;/code&gt;, &lt;code&gt;Exists&lt;/code&gt;, &lt;code&gt;DoesNotExist&lt;/code&gt;
-&lt;code&gt;NotIn&lt;/code&gt; 的值必须非空
-包括 &lt;code&gt;matchLabels&lt;/code&gt; 和 &lt;code&gt;matchExpressions&lt;/code&gt; 定义的条件,所有条件之间的关系为逻辑与.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;选择节点集合&#34;&gt;选择节点集合&lt;/h3&gt;
-&lt;p&gt;标签的另一个应用场景为筛选 Pod 可以调度的 节点。 具体见&lt;a href=&#34;../../../09-scheduling-eviction/02-assign-pod-node/&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
 
       </description>
     </item>

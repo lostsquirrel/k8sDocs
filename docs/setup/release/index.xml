@@ -1,0 +1,18 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubernetes – 发行说明和版本计划</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/docs/setup/release/</link>
+    <description>Recent content in 发行说明和版本计划 on Kubernetes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/docs/setup/release/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+  </channel>
+</rss>

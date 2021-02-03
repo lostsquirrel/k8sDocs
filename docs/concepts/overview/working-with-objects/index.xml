@@ -355,7 +355,7 @@ ReplicationController 也是通过标签选择器来指定被其管理的 Pod&lt
 包括 &lt;code&gt;matchLabels&lt;/code&gt; 和 &lt;code&gt;matchExpressions&lt;/code&gt; 定义的条件,所有条件之间的关系为逻辑与.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h3 id=&#34;选择节点集合&#34;&gt;选择节点集合&lt;/h3&gt;
-&lt;p&gt;标签的另一个应用场景为筛选 Pod 可以调度的 节点。 具体见&lt;a href=&#34;../../../09-scheduling-eviction/02-assign-pod-node/&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;标签的另一个应用场景为筛选 Pod 可以调度的 节点。 具体见&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/scheduling-eviction/assign-pod-node/&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
 
       </description>
     </item>

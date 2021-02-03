@@ -1,0 +1,86 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubernetes – 入门</title>
+    <link>https://lostsquirrel.github.io/k8sDocs/docs/setup/</link>
+    <description>Recent content in 入门 on Kubernetes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    
+	  <atom:link href="https://lostsquirrel.github.io/k8sDocs/docs/setup/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs: 发行说明和版本计划</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/setup/release/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/setup/release/</guid>
+      <description>
+        
+        
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Learning environment</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/setup/learning-environment/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/setup/learning-environment/</guid>
+      <description>
+        
+        
+        &lt;!--
+{{/* There is a Netlify redirect from this page to /docs/tasks/tools/ */}}
+{{/* This page content only exists to provide a navigation stub */}}
+{{/* and to protect in case that redirect is one day removed. */}}
+
+{{/* If you&#39;re localizing this page, you only need to copy the front matter */}}
+{{/* and add a redirect into &#34;/static/_redirects&#34;, for YOUR localization. */}}
+--&gt;
+&lt;h2 id=&#34;kind&#34;&gt;kind&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://kind.sigs.k8s.io/docs/&#34;&gt;&lt;code&gt;kind&lt;/code&gt;&lt;/a&gt; lets you run Kubernetes on
+your local computer. This tool requires that you have
+&lt;a href=&#34;https://docs.docker.com/get-docker/&#34;&gt;Docker&lt;/a&gt; installed and configured.&lt;/p&gt;
+&lt;p&gt;The kind &lt;a href=&#34;https://kind.sigs.k8s.io/docs/user/quick-start/&#34;&gt;Quick Start&lt;/a&gt; page
+shows you what you need to do to get up and running with kind.&lt;/p&gt;
+&lt;h2 id=&#34;minikube&#34;&gt;minikube&lt;/h2&gt;
+&lt;p&gt;Like &lt;code&gt;kind&lt;/code&gt;, &lt;a href=&#34;https://minikube.sigs.k8s.io/&#34;&gt;&lt;code&gt;minikube&lt;/code&gt;&lt;/a&gt; is a tool that lets you run Kubernetes
+locally. &lt;code&gt;minikube&lt;/code&gt; runs a single-node Kubernetes cluster on your personal
+computer (including Windows, macOS and Linux PCs) so that you can try out
+Kubernetes, or for daily development work.&lt;/p&gt;
+&lt;p&gt;You can follow the official
+&lt;a href=&#34;https://minikube.sigs.k8s.io/docs/start/&#34;&gt;Get Started!&lt;/a&gt; guide if your focus is
+on getting the tool installed.&lt;/p&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Production environment</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/setup/production-environment/</link>
+      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/setup/production-environment/</guid>
+      <description>
+        
+        
+        &lt;!-- overview --&gt;
+&lt;p&gt;TODO&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;&#34;&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

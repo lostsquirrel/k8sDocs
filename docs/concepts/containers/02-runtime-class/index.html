@@ -21,11 +21,11 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/02-runtime-class/" />
 <meta property="article:published_time" content="2020-07-28T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-02-03T14:44:36+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta property="article:modified_time" content="2021-02-03T18:00:48+08:00" /><meta property="og:site_name" content="Kubernetes" />
 <meta itemprop="name" content="Runtime Class">
 <meta itemprop="description" content="功能特性状态: Kubernetes v1.14 [beta] 本文介绍 RuntimeClass 资源和运行时选择机制。 RuntimeClass 是一个选择容器运行时配置的特性。而容器运行时配置则用于运行 Pod 中的容器的。 Motivation 用户可以在不">
 <meta itemprop="datePublished" content="2020-07-28T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2021-02-03T14:44:36+08:00" />
+<meta itemprop="dateModified" content="2021-02-03T18:00:48+08:00" />
 <meta itemprop="wordCount" content="1675">
 
 
@@ -171,6 +171,110 @@
   <ul>
     <li class="collapse show" id="k8sdocsdocs">
       
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/setup/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">入门</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocssetup">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/setup/release/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">发行说明和版本计划</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocssetuprelease">
+      
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/setup/learning-environment/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Learning environment</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocssetuplearning-environment">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocssetuplearning-environment00-minikube" href="/k8sDocs/docs/setup/learning-environment/00-minikube/">使用 Minikube 搭建 K8s环境</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocssetuplearning-environment01-kind" href="/k8sDocs/docs/setup/learning-environment/01-kind/">使用 Kind 搭建 K8s环境</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/k8sDocs/docs/setup/production-environment/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">Production environment</a>
+  </li>
+  <ul>
+    <li class="collapse " id="k8sdocsdocssetupproduction-environment">
+      
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
       
       
       
@@ -891,6 +995,12 @@
       <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsscheduling-evictiontaint-and-toleration" href="/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/">毒点(Taint)与耐受性(Toleration)</a>
       
       
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsscheduling-evictionassign-pod-node" href="/k8sDocs/docs/concepts/scheduling-eviction/assign-pod-node/">分配 Pod 到节点</a>
+      
+      
     </li>
   </ul>
 </ul>
@@ -1039,7 +1149,7 @@
 </code></pre></div><p>这个配置会让 kublet 使用对应名称的 <code>RuntimeClass</code> 来运行这个 Pod， 如果没有叫这个名称的 <code>RuntimeClass</code>， 或者 CRI 不能运行这个名称对应的处理器，则这个进入 <code>Failed</code> <a href="../../03-workloads/00-pods/00-pod-lifecycle/#pod-phase">状态</a> 。 错误信息在对应的<a href="../../../3-tasks/08-debug-application-cluster/00-debug-application-introspection/">事件</a>对象中
 如果没有 runtimeClassName 字段则使用默认的运行时处理器，与 <code>RuntimeClass</code> 功能特性关闭等同</p>
 <h3 id="cri-配置">CRI 配置</h3>
-<p>更多关于 CRI 运行时配置见<a href="../../../1-setup/02-production-environment/00-container-runtimes/">这里</a></p>
+<p>更多关于 CRI 运行时配置见<a href="/k8sDocs/docs/setup/production-environment/">这里</a></p>
 <h4 id="dockershim">dockershim</h4>
 <p>k8s 内置的 dockershim CRI 不支持运行时处理器</p>
 <h4 id="containerd">containerd</h4>
@@ -1072,7 +1182,7 @@
 </a> 与 nodeSelector 相似， RuntimeClass 的耐受(tolerations) 会与 Pod 的 耐受(tolerations)的并集组成最终的节点<a class='glossary-tooltip' href='/docs/concepts/scheduling-eviction/taint-and-toleration/' target='_blank'>耐受(tolerations)<span class='tooltip-text'>A core object consisting of three required properties: key, value, and effect. Tolerations enable the scheduling of pods on nodes or node groups that have a matching taint.</span>
 </a></p>
 <p>要了解更多关于节点选择与<a class='glossary-tooltip' href='/docs/concepts/scheduling-eviction/taint-and-toleration/' target='_blank'>耐受(tolerations)<span class='tooltip-text'>A core object consisting of three required properties: key, value, and effect. Tolerations enable the scheduling of pods on nodes or node groups that have a matching taint.</span>
-</a>信息，见 <a href="../../09-scheduling-eviction/02-assign-pod-node/">分配 Pod 到节点</a></p>
+</a>信息，见 <a href="/k8sDocs/docs/concepts/scheduling-eviction/assign-pod-node/">分配 Pod 到节点</a></p>
 <h2 id="pod-overhead">Pod Overhead</h2>
 <p>
 
@@ -1102,7 +1212,7 @@ Pod <code>overhead</code> 是通过 RuntimeClass 的 overhead 字段进行定义
 
 
             
-            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-02-03 14:44:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/46aae6e657bd28ec9898536f8394d1d21fa2a9cd">publish taint and toleration (46aae6e)</a>
+            <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-02-03 18:00:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/01f44898b32f68990d39c54169ecd38d29b80e0e">[WIP]assign pod node day 1 (01f4489)</a>
 </div>
             
           </main>
