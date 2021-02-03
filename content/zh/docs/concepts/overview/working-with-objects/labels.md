@@ -183,4 +183,4 @@ selector:
 
 ### 选择节点集合
 
-标签的另一个应用场景为筛选 Pod 可以调度的 节点。 具体见[这里](../../../09-scheduling-eviction/02-assign-pod-node/)
+标签的另一个应用场景为筛选 Pod 可以调度的 节点。 具体见[这里](/k8sDocs/docs/concepts/scheduling-eviction/assign-pod-node/)

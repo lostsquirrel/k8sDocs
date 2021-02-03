@@ -61,7 +61,7 @@ spec:
 
 ### CRI 配置
 
-更多关于 CRI 运行时配置见[这里](../../../1-setup/02-production-environment/00-container-runtimes/)
+更多关于 CRI 运行时配置见[这里](/k8sDocs/docs/setup/production-environment/)
 
 #### dockershim
 
@@ -94,7 +94,7 @@ k8s v1.16， RuntimeClass 通过 scheduling 字段实现了对异构系统集群
 {{< todo-optimize >}}
 如果支持的节点上有防止其它 RuntimeClass 的 Pod 在其上运行的一毒点(Taint), 则需要在 RuntimeClass 上添加 {{< glossary_tooltip text="耐受(tolerations)" term_id="toleration" >}} 与 nodeSelector 相似， RuntimeClass 的耐受(tolerations) 会与 Pod 的 耐受(tolerations)的并集组成最终的节点{{< glossary_tooltip text="耐受(tolerations)" term_id="toleration" >}}
 
-要了解更多关于节点选择与{{< glossary_tooltip text="耐受(tolerations)" term_id="toleration" >}}信息，见 [分配 Pod 到节点](../../09-scheduling-eviction/02-assign-pod-node/)
+要了解更多关于节点选择与{{< glossary_tooltip text="耐受(tolerations)" term_id="toleration" >}}信息，见 [分配 Pod 到节点](/k8sDocs/docs/concepts/scheduling-eviction/assign-pod-node/)
 
 ## Pod Overhead
 
