@@ -228,7 +228,7 @@ Taints and tolerations work together to ensure that pods are not scheduled
 onto inappropriate nodes. One or more taints are applied to a node; this
 marks that the node should not accept any pods that do not  the taints.
 --&gt;
-&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity&#34;&gt;&lt;em&gt;节点亲和性&lt;/em&gt;&lt;/a&gt;,
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity&#34;&gt;&lt;em&gt;节点亲和性&lt;/em&gt;&lt;/a&gt;,
 是
 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/concepts/workloads/pods/&#39; target=&#39;_blank&#39;&gt;Pod&lt;span class=&#39;tooltip-text&#39;&gt;Pod 表示集群中运行的一组容器的集合&lt;/span&gt;
 &lt;/a&gt;
@@ -242,27 +242,45 @@ marks that the node should not accept any pods that do not  the taints.
 应用一个或多个毒点(Taint)；这个标记表示节点不应该接收任意不能耐受(tolerate) 这些毒点(Taint)
 的 Pod。&lt;/p&gt;
 &lt;!-- body --&gt;
-&lt;h2 id=&#34;concepts&#34;&gt;Concepts&lt;/h2&gt;
-&lt;p&gt;You add a taint to a node using &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubectl/kubectl-commands#taint&#34;&gt;kubectl taint&lt;/a&gt;.
-For example,&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl taint nodes node1 key1&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;value1:NoSchedule
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;places a taint on node &lt;code&gt;node1&lt;/code&gt;. The taint has key &lt;code&gt;key1&lt;/code&gt;, value &lt;code&gt;value1&lt;/code&gt;, and taint effect &lt;code&gt;NoSchedule&lt;/code&gt;.
-This means that no pod will be able to schedule onto &lt;code&gt;node1&lt;/code&gt; unless it has a matching toleration.&lt;/p&gt;
-&lt;p&gt;To remove the taint added by the command above, you can run:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl taint nodes node1 key1&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;value1:NoSchedule-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You specify a toleration for a pod in the PodSpec. Both of the following tolerations &amp;ldquo;match&amp;rdquo; the
-taint created by the &lt;code&gt;kubectl taint&lt;/code&gt; line above, and thus a pod with either toleration would be able
-to schedule onto &lt;code&gt;node1&lt;/code&gt;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;tolerations&lt;/span&gt;:
-- &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;key1&amp;#34;&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Equal&amp;#34;&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;value&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;value1&amp;#34;&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;effect&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;NoSchedule&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;tolerations&lt;/span&gt;:
-- &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;key1&amp;#34;&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Exists&amp;#34;&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;effect&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;NoSchedule&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Here&amp;rsquo;s an example of a pod that uses tolerations:&lt;/p&gt;
+&lt;!--
+## Concepts
+
+You add a taint to a node using [kubectl taint](/docs/reference/generated/kubectl/kubectl-commands#taint).
+For example,
+
+```shell
+kubectl taint nodes node1 key1=value1:NoSchedule
+```
+
+places a taint on node `node1`. The taint has key `key1`, value `value1`, and taint effect `NoSchedule`.
+This means that no pod will be able to schedule onto `node1` unless it has a matching toleration.
+
+To remove the taint added by the command above, you can run:
+```shell
+kubectl taint nodes node1 key1=value1:NoSchedule-
+```
+
+You specify a toleration for a pod in the PodSpec. Both of the following tolerations &#34;match&#34; the
+taint created by the `kubectl taint` line above, and thus a pod with either toleration would be able
+to schedule onto `node1`:
+
+```yaml
+tolerations:
+- key: &#34;key1&#34;
+  operator: &#34;Equal&#34;
+  value: &#34;value1&#34;
+  effect: &#34;NoSchedule&#34;
+```
+
+```yaml
+tolerations:
+- key: &#34;key1&#34;
+  operator: &#34;Exists&#34;
+  effect: &#34;NoSchedule&#34;
+```
+
+Here&#39;s an example of a pod that uses tolerations:
+
 
 
  
@@ -313,12 +331,14 @@ to schedule onto &lt;code&gt;node1&lt;/code&gt;:&lt;/p&gt;
 &lt;/table&gt;
 
 
-&lt;p&gt;The default value for &lt;code&gt;operator&lt;/code&gt; is &lt;code&gt;Equal&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;A toleration &amp;ldquo;matches&amp;rdquo; a taint if the keys are the same and the effects are the same, and:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;the &lt;code&gt;operator&lt;/code&gt; is &lt;code&gt;Exists&lt;/code&gt; (in which case no &lt;code&gt;value&lt;/code&gt; should be specified), or&lt;/li&gt;
-&lt;li&gt;the &lt;code&gt;operator&lt;/code&gt; is &lt;code&gt;Equal&lt;/code&gt; and the &lt;code&gt;value&lt;/code&gt;s are equal.&lt;/li&gt;
-&lt;/ul&gt;
+
+The default value for `operator` is `Equal`.
+
+A toleration &#34;matches&#34; a taint if the keys are the same and the effects are the same, and:
+
+* the `operator` is `Exists` (in which case no `value` should be specified), or
+* the `operator` is `Equal` and the `value`s are equal.
+
 &lt;blockquote class=&#34;note&#34;&gt;
   &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;p&gt;There are two special cases:&lt;/p&gt;
 &lt;p&gt;An empty &lt;code&gt;key&lt;/code&gt; with operator &lt;code&gt;Exists&lt;/code&gt; matches all keys, values and effects which means this
@@ -327,28 +347,177 @@ will tolerate everything.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;The above example used &lt;code&gt;effect&lt;/code&gt; of &lt;code&gt;NoSchedule&lt;/code&gt;. Alternatively, you can use &lt;code&gt;effect&lt;/code&gt; of &lt;code&gt;PreferNoSchedule&lt;/code&gt;.
-This is a &amp;ldquo;preference&amp;rdquo; or &amp;ldquo;soft&amp;rdquo; version of &lt;code&gt;NoSchedule&lt;/code&gt; &amp;ndash; the system will &lt;em&gt;try&lt;/em&gt; to avoid placing a
-pod that does not tolerate the taint on the node, but it is not required. The third kind of &lt;code&gt;effect&lt;/code&gt; is
-&lt;code&gt;NoExecute&lt;/code&gt;, described later.&lt;/p&gt;
-&lt;p&gt;You can put multiple taints on the same node and multiple tolerations on the same pod.
+
+The above example used `effect` of `NoSchedule`. Alternatively, you can use `effect` of `PreferNoSchedule`.
+This is a &#34;preference&#34; or &#34;soft&#34; version of `NoSchedule` -- the system will *try* to avoid placing a
+pod that does not tolerate the taint on the node, but it is not required. The third kind of `effect` is
+`NoExecute`, described later.
+
+You can put multiple taints on the same node and multiple tolerations on the same pod.
 The way Kubernetes processes multiple taints and tolerations is like a filter: start
-with all of a node&amp;rsquo;s taints, then ignore the ones for which the pod has a matching toleration; the
-remaining un-ignored taints have the indicated effects on the pod. In particular,&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;if there is at least one un-ignored taint with effect &lt;code&gt;NoSchedule&lt;/code&gt; then Kubernetes will not schedule
-the pod onto that node&lt;/li&gt;
-&lt;li&gt;if there is no un-ignored taint with effect &lt;code&gt;NoSchedule&lt;/code&gt; but there is at least one un-ignored taint with
-effect &lt;code&gt;PreferNoSchedule&lt;/code&gt; then Kubernetes will &lt;em&gt;try&lt;/em&gt; to not schedule the pod onto the node&lt;/li&gt;
-&lt;li&gt;if there is at least one un-ignored taint with effect &lt;code&gt;NoExecute&lt;/code&gt; then the pod will be evicted from
+with all of a node&#39;s taints, then ignore the ones for which the pod has a matching toleration; the
+remaining un-ignored taints have the indicated effects on the pod. In particular,
+
+* if there is at least one un-ignored taint with effect `NoSchedule` then Kubernetes will not schedule
+the pod onto that node
+* if there is no un-ignored taint with effect `NoSchedule` but there is at least one un-ignored taint with
+effect `PreferNoSchedule` then Kubernetes will *try* to not schedule the pod onto the node
+* if there is at least one un-ignored taint with effect `NoExecute` then the pod will be evicted from
 the node (if it is already running on the node), and will not be
-scheduled onto the node (if it is not yet running on the node).&lt;/li&gt;
+scheduled onto the node (if it is not yet running on the node).
+
+For example, imagine you taint a node like this
+
+```shell
+kubectl taint nodes node1 key1=value1:NoSchedule
+kubectl taint nodes node1 key1=value1:NoExecute
+kubectl taint nodes node1 key2=value2:NoSchedule
+```
+
+And a pod has two tolerations:
+
+```yaml
+tolerations:
+- key: &#34;key1&#34;
+  operator: &#34;Equal&#34;
+  value: &#34;value1&#34;
+  effect: &#34;NoSchedule&#34;
+- key: &#34;key1&#34;
+  operator: &#34;Equal&#34;
+  value: &#34;value1&#34;
+  effect: &#34;NoExecute&#34;
+```
+
+In this case, the pod will not be able to schedule onto the node, because there is no
+toleration matching the third taint. But it will be able to continue running if it is
+already running on the node when the taint is added, because the third taint is the only
+one of the three that is not tolerated by the pod.
+
+Normally, if a taint with effect `NoExecute` is added to a node, then any pods that do
+not tolerate the taint will be evicted immediately, and pods that do tolerate the
+taint will never be evicted. However, a toleration with `NoExecute` effect can specify
+an optional `tolerationSeconds` field that dictates how long the pod will stay bound
+to the node after the taint is added. For example,
+
+```yaml
+tolerations:
+- key: &#34;key1&#34;
+  operator: &#34;Equal&#34;
+  value: &#34;value1&#34;
+  effect: &#34;NoExecute&#34;
+  tolerationSeconds: 3600
+```
+
+means that if this pod is running and a matching taint is added to the node, then
+the pod will stay bound to the node for 3600 seconds, and then be evicted. If the
+taint is removed before that time, the pod will not be evicted. --&gt;
+&lt;h2 id=&#34;concepts&#34;&gt;概念&lt;/h2&gt;
+&lt;p&gt;用户可以使用
+&lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#taint&#34;&gt;kubectl taint&lt;/a&gt;
+来给一个节点添加一个毒点(Taint),
+例如，&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl taint nodes node1 key1&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;value1:NoSchedule
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在节点 &lt;code&gt;node1&lt;/code&gt; 上放置一个毒点(Taint)。 这个 毒点(Taint)的键是 &lt;code&gt;key1&lt;/code&gt;, 值是 &lt;code&gt;value1&lt;/code&gt;，
+效果是 &lt;code&gt;NoSchedule&lt;/code&gt;。 它的含义是如果 Pod 是没有对应的耐受性(Toleration) 就不能调度到节点
+&lt;code&gt;node1&lt;/code&gt; 上。&lt;/p&gt;
+&lt;p&gt;要移除上面的命令添加的 毒点(Taint)，可以使用:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl taint nodes node1 key1&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;value1:NoSchedule-
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;用户可以在 Pod 的 &lt;code&gt;.spec&lt;/code&gt; 中指定耐受性(Toleration)。 下面的两个耐受性(Toleration) 就可以
+匹配由上面&lt;code&gt;kubectl taint&lt;/code&gt; 命令定义的耐受性(Toleration)，也就是一个 Pod 如果包含以下耐受性(Toleration)
+中的任意一个就可以调度到节点  &lt;code&gt;node1&lt;/code&gt; 上:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;tolerations&lt;/span&gt;:
+- &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;key1&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Equal&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;value&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;value1&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;effect&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;NoSchedule&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;tolerations&lt;/span&gt;:
+- &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;key1&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Exists&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;effect&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;NoSchedule&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;现在是一个使用耐受性(Toleration)的示例:&lt;/p&gt;
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table class=&#34;includecode&#34; id=&#34;podspod-with-tolerationyaml&#34;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;
+                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/pod-with-toleration.yaml&#34; download=&#34;pods/pod-with-toleration.yaml&#34;&gt;
+                    &lt;code&gt;pods/pod-with-toleration.yaml&lt;/code&gt;
+                &lt;/a&gt;
+                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;podspod-with-tolerationyaml&#39;)&#34; title=&#34;Copy pods/pod-with-toleration.yaml to clipboard&#34;&gt;
+            &lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;labels&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;env&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;imagePullPolicy&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;IfNotPresent&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;tolerations&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;example-key&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Exists&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;effect&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;NoSchedule&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+
+&lt;p&gt;&lt;code&gt;operator&lt;/code&gt; 的默认值是 &lt;code&gt;Equal&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;一个耐受性(Toleration)匹配一个毒点(Taint)条件是 键要相同并且效果要一样，同时:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;operator&lt;/code&gt; is &lt;code&gt;Exists&lt;/code&gt; (这种情况不应该指定值), 或&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;operator&lt;/code&gt; is &lt;code&gt;Equal&lt;/code&gt; 并且 &lt;code&gt;value&lt;/code&gt; 是相等的。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;For example, imagine you taint a node like this&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;p&gt;还有两种特殊情况:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;operator&lt;/code&gt; is &lt;code&gt;Exists&lt;/code&gt;, &lt;code&gt;key&lt;/code&gt; 是空表示匹配所有的键，值和效果，也就代表耐受所有毒点(Taint)&lt;/p&gt;
+&lt;p&gt;如果 &lt;code&gt;effect&lt;/code&gt; 是空则匹配键 &lt;code&gt;key1&lt;/code&gt; 的所有效果&lt;/p&gt;
+&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;上面示例果使用的 &lt;code&gt;effect&lt;/code&gt; 是 &lt;code&gt;NoSchedule&lt;/code&gt;. 还有另一个选择是让 &lt;code&gt;effect&lt;/code&gt; 使用 &lt;code&gt;PreferNoSchedule&lt;/code&gt;.
+这是 &lt;code&gt;NoSchedule&lt;/code&gt; 的 &amp;ldquo;偏好&amp;rdquo; 或 &amp;ldquo;软&amp;rdquo; 版本 &amp;ndash; 也就是系统会 &lt;em&gt;尝试&lt;/em&gt; 避免将那些不能耐受这个
+毒点(Taint) 的 Pod 放到这个节点上，但不是一定不能放。 &lt;code&gt;effect&lt;/code&gt; 第三个选择是 &lt;code&gt;NoExecute&lt;/code&gt; 后面
+会介绍。&lt;/p&gt;
+&lt;p&gt;用户可以在一个节点上添加多个毒点(Taint)，也可以在一个 Pod 上定义多个 耐受性(Toleration).
+k8s 处理多个 毒点(Taint)和 耐受性(Toleration)的方式与过虑器类似: 从节点的所有 毒点(Taint)
+开始， 然后忽略掉那些与 Pod 耐受性(Toleration)匹配的；剩下的就是对 Pod 生效的毒点(Taint)。
+特别是，&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果剩下未忽略的毒点(Taint)中至少有一个效果是 &lt;code&gt;NoSchedule&lt;/code&gt; 则 k8s 不会将这个 Pod 调度到这个节点上&lt;/li&gt;
+&lt;li&gt;如果剩下未忽略的毒点(Taint)中没有效果是 &lt;code&gt;NoSchedule&lt;/code&gt;， 但是至少有一个效果是 &lt;code&gt;PreferNoSchedule&lt;/code&gt;
+则 k8s 会 &lt;em&gt;尝试&lt;/em&gt; 不将这个 Pod 调度到这个节点上&lt;/li&gt;
+&lt;li&gt;如果剩下未忽略的毒点(Taint)中至少有一个效果是 &lt;code&gt;NoExecute&lt;/code&gt;，则 Pod 会被从节点驱逐(如果 Pod
+已经在节点上运行)，或不会被调度到这个节点(如果它还没有在这个节点上运行)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;例如，假设将一个节点添加如下毒点(Taint)&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;kubectl taint nodes node1 key1&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;value1:NoSchedule
 kubectl taint nodes node1 key1&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;value1:NoExecute
 kubectl taint nodes node1 key2&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;value2:NoSchedule
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And a pod has two tolerations:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;和一个有以下两个耐受性(Toleration) Pod:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;tolerations&lt;/span&gt;:
 - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;key1&amp;#34;&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Equal&amp;#34;&lt;/span&gt;
@@ -358,70 +527,111 @@ kubectl taint nodes node1 key2&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/sp
   &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Equal&amp;#34;&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;value&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;value1&amp;#34;&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;effect&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;NoExecute&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In this case, the pod will not be able to schedule onto the node, because there is no
-toleration matching the third taint. But it will be able to continue running if it is
-already running on the node when the taint is added, because the third taint is the only
-one of the three that is not tolerated by the pod.&lt;/p&gt;
-&lt;p&gt;Normally, if a taint with effect &lt;code&gt;NoExecute&lt;/code&gt; is added to a node, then any pods that do
-not tolerate the taint will be evicted immediately, and pods that do tolerate the
-taint will never be evicted. However, a toleration with &lt;code&gt;NoExecute&lt;/code&gt; effect can specify
-an optional &lt;code&gt;tolerationSeconds&lt;/code&gt; field that dictates how long the pod will stay bound
-to the node after the taint is added. For example,&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在这种情况下， Pod 是会能调度到这个节点上的， 因为没有一个 耐受性(Toleration)能匹配到第三个
+毒点(Taint)。 但如果这个 Pod 在这些毒点(Taint)添加前已经在这个节点上运行，则它还是可以继续在
+上面运行，因为 Pod 不耐受的毒点(Taint)只有第三个。&lt;/p&gt;
+&lt;p&gt;通常情况下，如果一个效果是 &lt;code&gt;NoExecute&lt;/code&gt; 的毒点(Taint)被添加到节点上，则所有不能耐受这个毒点(Taint)
+的 Pod 立马就会被驱逐，同时耐受这个毒点(Taint) Pod 则永远不会被驱逐。 但是，效果是  &lt;code&gt;NoExecute&lt;/code&gt;
+的 耐受性(Toleration) 还可以指定一个可选的 &lt;code&gt;tolerationSeconds&lt;/code&gt; 字段，表示在节点添加 毒点(Taint)
+后 Pod 还可以在节点上保持绑定状态多久。例如，&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;tolerations&lt;/span&gt;:
 - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;key1&amp;#34;&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Equal&amp;#34;&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;value&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;value1&amp;#34;&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;effect&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;NoExecute&amp;#34;&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;tolerationSeconds&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3600&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;means that if this pod is running and a matching taint is added to the node, then
-the pod will stay bound to the node for 3600 seconds, and then be evicted. If the
-taint is removed before that time, the pod will not be evicted.&lt;/p&gt;
-&lt;h2 id=&#34;example-use-cases&#34;&gt;Example Use Cases&lt;/h2&gt;
-&lt;p&gt;Taints and tolerations are a flexible way to steer pods &lt;em&gt;away&lt;/em&gt; from nodes or evict
-pods that shouldn&amp;rsquo;t be running. A few of the use cases are&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Dedicated Nodes&lt;/strong&gt;: If you want to dedicate a set of nodes for exclusive use by
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;的含义就是如果这个 Pod 运行在一个添加了这个耐受性(Toleration)匹配 毒点(Taint)的节点， 则
+Pod 会继续与节点保持绑定 3600 秒，然后被驱逐。 如果在这个时间之前，这个 毒点(Taint) 被从该
+节点移除，则 Pod 不会被驱逐。&lt;/p&gt;
+&lt;!--
+## Example Use Cases
+
+Taints and tolerations are a flexible way to steer pods *away* from nodes or evict
+pods that shouldn&#39;t be running. A few of the use cases are
+
+* **Dedicated Nodes**: If you want to dedicate a set of nodes for exclusive use by
 a particular set of users, you can add a taint to those nodes (say,
-&lt;code&gt;kubectl taint nodes nodename dedicated=groupName:NoSchedule&lt;/code&gt;) and then add a corresponding
+`kubectl taint nodes nodename dedicated=groupName:NoSchedule`) and then add a corresponding
 toleration to their pods (this would be done most easily by writing a custom
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/admission-controllers/&#34;&gt;admission controller&lt;/a&gt;).
+[admission controller](/docs/reference/access-authn-authz/admission-controllers/)).
 The pods with the tolerations will then be allowed to use the tainted (dedicated) nodes as
-well as any other nodes in the cluster. If you want to dedicate the nodes to them &lt;em&gt;and&lt;/em&gt;
-ensure they &lt;em&gt;only&lt;/em&gt; use the dedicated nodes, then you should additionally add a label similar
-to the taint to the same set of nodes (e.g. &lt;code&gt;dedicated=groupName&lt;/code&gt;), and the admission
+well as any other nodes in the cluster. If you want to dedicate the nodes to them *and*
+ensure they *only* use the dedicated nodes, then you should additionally add a label similar
+to the taint to the same set of nodes (e.g. `dedicated=groupName`), and the admission
 controller should additionally add a node affinity to require that the pods can only schedule
-onto nodes labeled with &lt;code&gt;dedicated=groupName&lt;/code&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Nodes with Special Hardware&lt;/strong&gt;: In a cluster where a small subset of nodes have specialized
-hardware (for example GPUs), it is desirable to keep pods that don&amp;rsquo;t need the specialized
+onto nodes labeled with `dedicated=groupName`.
+
+* **Nodes with Special Hardware**: In a cluster where a small subset of nodes have specialized
+hardware (for example GPUs), it is desirable to keep pods that don&#39;t need the specialized
 hardware off of those nodes, thus leaving room for later-arriving pods that do need the
 specialized hardware. This can be done by tainting the nodes that have the specialized
-hardware (e.g. &lt;code&gt;kubectl taint nodes nodename special=true:NoSchedule&lt;/code&gt; or
-&lt;code&gt;kubectl taint nodes nodename special=true:PreferNoSchedule&lt;/code&gt;) and adding a corresponding
+hardware (e.g. `kubectl taint nodes nodename special=true:NoSchedule` or
+`kubectl taint nodes nodename special=true:PreferNoSchedule`) and adding a corresponding
 toleration to pods that use the special hardware. As in the dedicated nodes use case,
 it is probably easiest to apply the tolerations using a custom
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/admission-controllers/&#34;&gt;admission controller&lt;/a&gt;.
-For example, it is recommended to use &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/manage-resources-containers/#extended-resources&#34;&gt;Extended
-Resources&lt;/a&gt;
+[admission controller](/docs/reference/access-authn-authz/admission-controllers/).
+For example, it is recommended to use [Extended
+Resources](/docs/concepts/configuration/manage-resources-containers/#extended-resources)
 to represent the special hardware, taint your special hardware nodes with the
 extended resource name and run the
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/admission-controllers/#extendedresourcetoleration&#34;&gt;ExtendedResourceToleration&lt;/a&gt;
+[ExtendedResourceToleration](/docs/reference/access-authn-authz/admission-controllers/#extendedresourcetoleration)
 admission controller. Now, because the nodes are tainted, no pods without the
 toleration will schedule on them. But when you submit a pod that requests the
-extended resource, the &lt;code&gt;ExtendedResourceToleration&lt;/code&gt; admission controller will
+extended resource, the `ExtendedResourceToleration` admission controller will
 automatically add the correct toleration to the pod and that pod will schedule
 on the special hardware nodes. This will make sure that these special hardware
-nodes are dedicated for pods requesting such hardware and you don&amp;rsquo;t have to
-manually add tolerations to your pods.&lt;/p&gt;
+nodes are dedicated for pods requesting such hardware and you don&#39;t have to
+manually add tolerations to your pods.
+
+* **Taint based Evictions**: A per-pod-configurable eviction behavior
+when there are node problems, which is described in the next section.
+ --&gt;
+&lt;h2 id=&#34;example-use-cases&#34;&gt;使用场景示例&lt;/h2&gt;
+&lt;p&gt;毒点(Taint) 和 耐受性(Toleration) 是控制 Pod &lt;em&gt;远离&lt;/em&gt; 某些节点或驱逐那些不应该运行的 Pod。
+一些使用场景:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;专用节点&lt;/strong&gt;: 如果想要将一组专用节点让一组特定用户独占，可以在这个节点上添加一个毒点(Taint)
+(就比如, &lt;code&gt;kubectl taint nodes nodename dedicated=groupName:NoSchedule&lt;/code&gt;)然后在他们
+的 Pod 上添加对应的耐受性(Toleration)(实现这个最简单的办法是写一个自定义
+&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/&#34;&gt;准入控制&lt;/a&gt;
+)。
+这些有这个耐受性(Toleration)的 Pod 就被允许使用这些毒掉的(专用)节点和集群中的其它节点。
+如果想将这些节点给他们独占 &lt;em&gt;并且&lt;/em&gt; 确保他们也 &lt;em&gt;只能&lt;/em&gt; 使用这些专用节点, 还应该在这一组节点上添加
+与毒点(Taint)类似的标签(例如 &lt;code&gt;dedicated=groupName&lt;/code&gt;), 然后在准入控制器上另外添加一个节点亲和性
+来标这些 Pod 只能调度到那些有 &lt;code&gt;dedicated=groupName&lt;/code&gt; 标签的节点。&lt;/p&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Taint based Evictions&lt;/strong&gt;: A per-pod-configurable eviction behavior
-when there are node problems, which is described in the next section.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;拥有特殊硬件的节点&lt;/strong&gt;: 在一个集群中，有一小部分节点有专用的硬件(例如 GPU)，这时就希望不要
+将那些不需要这些专用硬件的 Pod 调度到这些节点上， 这样就可以把这些节点留给后来的为那些需要这些专用
+硬件的 Pod。 要做到这一点，可以在这些有专用硬件的节点上加毒点(Taint)(例如，
+&lt;code&gt;kubectl taint nodes nodename special=true:NoSchedule&lt;/code&gt; 或
+&lt;code&gt;kubectl taint nodes nodename special=true:PreferNoSchedule&lt;/code&gt;
+)再在需要这些专用硬件的 Pod 上添加对应的耐受性(Toleration)。 与上面的专用节点使用场景一样，
+应用这些 耐受性(Toleration)最简单的方式就是使用自定义
+&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/&#34;&gt;准入控制器&lt;/a&gt;.
+例如推荐使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/manage-resources-containers/#extended-resources&#34;&gt;扩展资源&lt;/a&gt;
+来表示特殊的硬件， 使用扩展资源的名称作为节点的 毒点(Taint) 然后运行
+&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#extendedresourcetoleration&#34;&gt;ExtendedResourceToleration&lt;/a&gt;
+准入控制器。 此时， 因为节点上已经打了 毒点(Taint)没有对应耐受性(Toleration)的 Pod 不会调度
+到这些节点上。 但当提供一个要求这些扩展资源的 Pod 时， &lt;code&gt;ExtendedResourceToleration&lt;/code&gt; 准入
+控制器会自动为这些 Pod 添加对应的耐受性(Toleration)，这样这些 Pod 就会被调度到这些有特殊硬件
+的节点上。 这会保证这些特殊硬件的节点只会被这些要求这个硬件的 Pod 单独使用，并且不需要手动为这些
+Pod 添加耐受性(Toleration)&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;taint-based-evictions&#34;&gt;Taint based Evictions&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Taint based Evictions&lt;/strong&gt;: A per-pod-configurable eviction behavior
+when there are node problems, which is described in the next section.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;基于毒点(Taint)的驱逐行为&lt;/strong&gt;: 一个每个 Pod 都可配置的驱逐行为就是当节点出问题时进行的，
+这会在下一节点介绍。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!--
+## Taint based Evictions
+
 
 
 
@@ -432,53 +642,61 @@ when there are node problems, which is described in the next section.&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;p&gt;The &lt;code&gt;NoExecute&lt;/code&gt; taint effect, mentioned above, affects pods that are already
-running on the node as follows&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;pods that do not tolerate the taint are evicted immediately&lt;/li&gt;
-&lt;li&gt;pods that tolerate the taint without specifying &lt;code&gt;tolerationSeconds&lt;/code&gt; in
-their toleration specification remain bound forever&lt;/li&gt;
-&lt;li&gt;pods that tolerate the taint with a specified &lt;code&gt;tolerationSeconds&lt;/code&gt; remain
-bound for the specified amount of time&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The node controller automatically taints a Node when certain conditions
-are true. The following taints are built in:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;node.kubernetes.io/not-ready&lt;/code&gt;: Node is not ready. This corresponds to
-the NodeCondition &lt;code&gt;Ready&lt;/code&gt; being &amp;ldquo;&lt;code&gt;False&lt;/code&gt;&amp;rdquo;.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;node.kubernetes.io/unreachable&lt;/code&gt;: Node is unreachable from the node
-controller. This corresponds to the NodeCondition &lt;code&gt;Ready&lt;/code&gt; being &amp;ldquo;&lt;code&gt;Unknown&lt;/code&gt;&amp;rdquo;.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;node.kubernetes.io/out-of-disk&lt;/code&gt;: Node becomes out of disk.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;node.kubernetes.io/memory-pressure&lt;/code&gt;: Node has memory pressure.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;node.kubernetes.io/disk-pressure&lt;/code&gt;: Node has disk pressure.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;node.kubernetes.io/network-unavailable&lt;/code&gt;: Node&amp;rsquo;s network is unavailable.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;node.kubernetes.io/unschedulable&lt;/code&gt;: Node is unschedulable.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;node.cloudprovider.kubernetes.io/uninitialized&lt;/code&gt;: When the kubelet is started
-with &amp;ldquo;external&amp;rdquo; cloud provider, this taint is set on a node to mark it
-as unusable. After a controller from the cloud-controller-manager initializes
-this node, the kubelet removes this taint.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;In case a node is to be evicted, the node controller or the kubelet adds relevant taints
-with &lt;code&gt;NoExecute&lt;/code&gt; effect. If the fault condition returns to normal the kubelet or node
-controller can remove the relevant taint(s).&lt;/p&gt;
+
+The `NoExecute` taint effect, mentioned above, affects pods that are already
+running on the node as follows
+
+ * pods that do not tolerate the taint are evicted immediately
+ * pods that tolerate the taint without specifying `tolerationSeconds` in
+   their toleration specification remain bound forever
+ * pods that tolerate the taint with a specified `tolerationSeconds` remain
+   bound for the specified amount of time
+
+The node controller automatically taints a Node when certain conditions
+are true. The following taints are built in:
+
+ * `node.kubernetes.io/not-ready`: Node is not ready. This corresponds to
+   the NodeCondition `Ready` being &#34;`False`&#34;.
+ * `node.kubernetes.io/unreachable`: Node is unreachable from the node
+   controller. This corresponds to the NodeCondition `Ready` being &#34;`Unknown`&#34;.
+ * `node.kubernetes.io/out-of-disk`: Node becomes out of disk.
+ * `node.kubernetes.io/memory-pressure`: Node has memory pressure.
+ * `node.kubernetes.io/disk-pressure`: Node has disk pressure.
+ * `node.kubernetes.io/network-unavailable`: Node&#39;s network is unavailable.
+ * `node.kubernetes.io/unschedulable`: Node is unschedulable.
+ * `node.cloudprovider.kubernetes.io/uninitialized`: When the kubelet is started
+    with &#34;external&#34; cloud provider, this taint is set on a node to mark it
+    as unusable. After a controller from the cloud-controller-manager initializes
+    this node, the kubelet removes this taint.
+
+In case a node is to be evicted, the node controller or the kubelet adds relevant taints
+with `NoExecute` effect. If the fault condition returns to normal the kubelet or node
+controller can remove the relevant taint(s).
+
 &lt;blockquote class=&#34;note&#34;&gt;
   &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; The control plane limits the rate of adding node new taints to nodes. This rate limiting
 manages the number of evictions that are triggered when many nodes become unreachable at
 once (for example: if there is a network disruption).&lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;You can specify &lt;code&gt;tolerationSeconds&lt;/code&gt; for a Pod to define how long that Pod stays bound
-to a failing or unresponsive Node.&lt;/p&gt;
-&lt;p&gt;For example, you might want to keep an application with a lot of local state
+
+You can specify `tolerationSeconds` for a Pod to define how long that Pod stays bound
+to a failing or unresponsive Node.
+
+For example, you might want to keep an application with a lot of local state
 bound to node for a long time in the event of network partition, hoping
 that the partition will recover and thus the pod eviction can be avoided.
-The toleration you set for that Pod might look like:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;tolerations&lt;/span&gt;:
-- &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;node.kubernetes.io/unreachable&amp;#34;&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Exists&amp;#34;&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;effect&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;NoExecute&amp;#34;&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;tolerationSeconds&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;6000&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote class=&#34;note&#34;&gt;
+The toleration you set for that Pod might look like:
+
+```yaml
+tolerations:
+- key: &#34;node.kubernetes.io/unreachable&#34;
+  operator: &#34;Exists&#34;
+  effect: &#34;NoExecute&#34;
+  tolerationSeconds: 6000
+```
+
+&lt;blockquote class=&#34;note&#34;&gt;
   &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;p&gt;Kubernetes automatically adds a toleration for
 &lt;code&gt;node.kubernetes.io/not-ready&lt;/code&gt; and &lt;code&gt;node.kubernetes.io/unreachable&lt;/code&gt;
 with &lt;code&gt;tolerationSeconds=300&lt;/code&gt;,
@@ -488,13 +706,77 @@ Nodes for 5 minutes after one of these problems is detected.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/daemonset/&#34;&gt;DaemonSet&lt;/a&gt; pods are created with
-&lt;code&gt;NoExecute&lt;/code&gt; tolerations for the following taints with no &lt;code&gt;tolerationSeconds&lt;/code&gt;:&lt;/p&gt;
+
+[DaemonSet](/docs/concepts/workloads/controllers/daemonset/) pods are created with
+`NoExecute` tolerations for the following taints with no `tolerationSeconds`:
+
+  * `node.kubernetes.io/unreachable`
+  * `node.kubernetes.io/not-ready`
+
+This ensures that DaemonSet pods are never evicted due to these problems.
+ --&gt;
+&lt;h2 id=&#34;taint-based-evictions&#34;&gt;基于毒点(Taint) 的驱逐&lt;/h2&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.18 [stable]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;上面提到的影响为 &lt;code&gt;NoExecute&lt;/code&gt; 毒点(Taint)，对已经在节点上运行的 Pod 的影响如下&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;不能耐受这个 毒点(Taint) 的 Pod 会立马被踢出&lt;/li&gt;
+&lt;li&gt;能够耐受这个毒点(Taint)并且在耐受定义中没有指定 &lt;code&gt;tolerationSeconds&lt;/code&gt; 的 Pod 会一直继续在这个节点上运行&lt;/li&gt;
+&lt;li&gt;能够耐受这个毒点(Taint)并且在耐受定义中指定了 &lt;code&gt;tolerationSeconds&lt;/code&gt; 则会继续在这个节点上运行指定的这个时间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;节点控制器会在特定条件满足是自动给节点添加 毒点(Taint). 以下为内置毒点(Taint):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;node.kubernetes.io/not-ready&lt;/code&gt;: 节点还没有就绪。 这对应的节点状态(NodeCondition) &lt;code&gt;Ready&lt;/code&gt; 是 &amp;ldquo;&lt;code&gt;False&lt;/code&gt;&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;node.kubernetes.io/unreachable&lt;/code&gt;: 节点控制器连接不到节点。 这对应的节点状态(NodeCondition) &lt;code&gt;Ready&lt;/code&gt; 是 &amp;ldquo;&lt;code&gt;Unknown&lt;/code&gt;&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;node.kubernetes.io/out-of-disk&lt;/code&gt;: 节点硬盘不足&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;node.kubernetes.io/memory-pressure&lt;/code&gt;: 节点有内存使用紧张&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;node.kubernetes.io/disk-pressure&lt;/code&gt;: 节点有硬盘使用紧张&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;node.kubernetes.io/network-unavailable&lt;/code&gt;: 节点网络不可用&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;node.kubernetes.io/unschedulable&lt;/code&gt;: 节点不能作为调度目标&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;node.cloudprovider.kubernetes.io/uninitialized&lt;/code&gt;: 当 kubelet 使用&amp;quot;外部&amp;quot;云提供商启动时，
+使用这个 毒点(Taint) 将其标记为不可用。 在 &lt;code&gt;cloud-controller-manager&lt;/code&gt; 中的控制器初始化这
+个节点之后， kubelet 会移除这个毒点(Taint)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;有一种情况是一个节点被驱逐了，节点控制器或 kubelet 会添加相应效果为 &lt;code&gt;NoExecute&lt;/code&gt; 的毒点(Taint)。
+如果这个节点从错误状态重新变回正常状态节点控制器或 kubelet 会移除相应的毒点(Taint)。&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 控制中心会限制添加到节点上的 毒点(Taint) 的速率。这个速率限制是在许多节点一下都变得不可达时管理
+被驱逐的数量(例如: 发生了网络抖动)&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;可以为 Pod 指定 &lt;code&gt;tolerationSeconds&lt;/code&gt; 来定义在节点失效或不响应时继续让这个 Pod 保持在这个节点
+上的时间。&lt;/p&gt;
+&lt;p&gt;例如，当一个有许多本地状态应用与在出现网络分区的情况下继续保持在这个节点上相当长一段时间，以期望
+这个分区在些期间能够恢复，这样可以避免 Pod 被驱逐。 设置在这个 Pod 上的耐受性(Toleration)可能
+会长成这个样子:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;tolerations&lt;/span&gt;:
+- &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;node.kubernetes.io/unreachable&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Exists&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;effect&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;NoExecute&amp;#34;&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;tolerationSeconds&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;6000&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;p&gt;除非有用户或控制器显示地设置这些 耐受性(Toleration)，否则 k8s 会自动地在添加
+&lt;code&gt;node.kubernetes.io/not-ready&lt;/code&gt; 和 &lt;code&gt;node.kubernetes.io/unreachable&lt;/code&gt; 在其中设置
+&lt;code&gt;tolerationSeconds=300&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;这些自动添加耐受性(Toleration)表示，在侦测到这个问题时 Pod 最多还会在这个节点上保留 5 分钟。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/daemonset/&#34;&gt;DaemonSet&lt;/a&gt; 的 Pod 在创建时会指定
+下面这些毒点(Taint)对应的效果为 &lt;code&gt;NoExecute&lt;/code&gt; 并且没有 &lt;code&gt;tolerationSeconds&lt;/code&gt; 的耐受性(Toleration):&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;node.kubernetes.io/unreachable&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;node.kubernetes.io/not-ready&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;This ensures that DaemonSet pods are never evicted due to these problems.&lt;/p&gt;
+&lt;p&gt;这会确保 DaemonSet 的 Pod 永远不会因为这些原因而被驱逐。&lt;/p&gt;
 &lt;!--
 ## Taint Nodes by Condition
 
@@ -529,9 +811,13 @@ arbitrary tolerations to DaemonSets.
 &lt;/ul&gt;
 &lt;p&gt;添加这些 耐受性(Toleration) 能确保向后兼容。 用户还可以向 DaemonSet 添加任意 耐受性(Toleration)&lt;/p&gt;
 &lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;!--
+* Read about [out of resource handling](/docs/tasks/administer-cluster/out-of-resource/) and how you can configure it
+* Read about [pod priority](/docs/concepts/configuration/pod-priority-preemption/)
+ --&gt;
 &lt;ul&gt;
-&lt;li&gt;Read about &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/out-of-resource/&#34;&gt;out of resource handling&lt;/a&gt; and how you can configure it&lt;/li&gt;
-&lt;li&gt;Read about &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-priority-preemption/&#34;&gt;pod priority&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/out-of-resource/&#34;&gt;资源不足的处理&lt;/a&gt; 与配置&lt;/li&gt;
+&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/configuration/pod-priority-preemption/&#34;&gt;Pod 优先级&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>
