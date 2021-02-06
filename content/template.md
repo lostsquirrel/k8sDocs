@@ -13,8 +13,6 @@ weight: 2030104
 - []()
 
 
-毒点(Taint)
-耐受性(Toleration)
 
 (/docs/tasks
 (/k8sDocs/docs/tasks
@@ -24,3 +22,9 @@ weight: 2030104
 
 (/docs/reference
 (https://kubernetes.io/docs/reference
+
+亲和性与反亲和性
+亲和性/反亲和性
+
+毒点(Taint)
+耐受性(Toleration)
