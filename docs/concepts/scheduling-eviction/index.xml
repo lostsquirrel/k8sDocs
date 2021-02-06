@@ -864,7 +864,7 @@ services that communicate a lot into the same availability zone.
 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/2-concepts/01-architecture/00-nodes/&#39; target=&#39;_blank&#39;&gt;节点&lt;span class=&#39;tooltip-text&#39;&gt;一个节点就是 k8s 中的一个工作机&lt;/span&gt;
 &lt;/a&gt;
 上, 或偏好运行在特定一个(些)节点上。 有几种方式可以做到这一点， 推荐的方式都使用
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/overview/working-with-objects/labels/&#34;&gt;标签选择器&lt;/a&gt;
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/overview/working-with-objects/labels/&#34;&gt;标签选择器&lt;/a&gt;
 进行选择。 通常这种约束不是必要的，因为调度器会自动地进行合理调度(例如: 将 Pod 分散到节点中，
 不会将 Pod 放在资源不足的节点上，等) 但也有些情况希望控制 Pod 调度的节点，例如，确保 Pod
 最终调度到一个使用 SSD 的节点， 或将两有大量通信的 &lt;code&gt;Service&lt;/code&gt; 的 Pod 放置在同一个可用区&lt;/p&gt;
@@ -998,7 +998,7 @@ and a different value in other environments.&lt;/div&gt;
 &lt;p&gt;在你
 &lt;a href=&#34;#step-one-attach-label-to-the-node&#34;&gt;加&lt;/a&gt;
 的标签外。 节点也可能预先就有一些标签标签。 详见
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/kubernetes-api/labels-annotations-taints/&#34;&gt;常见 标签, 注解和毒点(Taint)&lt;/a&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/reference/kubernetes-api/labels-annotations-taints/&#34;&gt;常见 标签, 注解和毒点(Taint)&lt;/a&gt;
 &lt;blockquote class=&#34;note&#34;&gt;
   &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 这些标签的值是与云提供商关联的，而且并不保证可靠。 例如， 在一些环境中 &lt;code&gt;kubernetes.io/hostname&lt;/code&gt;
 的值可能与节点名称相同，另一些环境则不同&lt;/div&gt;
@@ -1029,9 +1029,9 @@ For example, `example.com.node-restriction.kubernetes.io/fips=true` or `example.
 &lt;p&gt;&lt;code&gt;NodeRestriction&lt;/code&gt; 准入插件会防止 kubelet 设置或修改使用 &lt;code&gt;node-restriction.kubernetes.io/&lt;/code&gt;
 前缀的标签。要使用这个标签前缀来实现节点隔离:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;确保你在使用 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/node/&#34;&gt;Node authorizer&lt;/a&gt; 和
+&lt;li&gt;确保你在使用 &lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/node/&#34;&gt;Node authorizer&lt;/a&gt; 和
 &lt;em&gt;启用了&lt;/em&gt;
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/access-authn-authz/admission-controllers/#noderestriction&#34;&gt;NodeRestriction 准入插件&lt;/a&gt;.&lt;/li&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#noderestriction&#34;&gt;NodeRestriction 准入插件&lt;/a&gt;.&lt;/li&gt;
 &lt;li&gt;在节点对象上添加 &lt;code&gt;node-restriction.kubernetes.io/&lt;/code&gt; 前缀的标签，并在节点选择器中使用这些标签。
 例如， &lt;code&gt;example.com.node-restriction.kubernetes.io/fips=true&lt;/code&gt; 或 &lt;code&gt;example.com.node-restriction.kubernetes.io/pci-dss=true&lt;/code&gt;.&lt;/li&gt;
 &lt;/ol&gt;
@@ -1054,37 +1054,43 @@ while inter-pod affinity/anti-affinity constrains against pod labels rather than
 described in the third item listed above, in addition to having the first and second properties listed above.
  --&gt;
 &lt;h2 id=&#34;affinity-and-anti-affinity&#34;&gt;亲和性与反亲和性&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;nodeSelector&lt;/code&gt; provides a very simple way to constrain pods to nodes with particular labels. The affinity/anti-affinity
-feature, greatly expands the types of constraints you can express. The key enhancements are&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;nodeSelector&lt;/code&gt; 提供了一个十分简单的方式可以使用特定标签将 Pod 约束到某些节点上。 而亲和性与反亲和性
+特性则是大大地扩展了对约束的表达能力。 主要增加有&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;The affinity/anti-affinity language is more expressive. The language offers more matching rules
-besides exact matches created with a logical AND operation;&lt;/li&gt;
-&lt;li&gt;you can indicate that the rule is &amp;ldquo;soft&amp;rdquo;/&amp;ldquo;preference&amp;rdquo; rather than a hard requirement, so if the scheduler
-can&amp;rsquo;t satisfy it, the pod will still be scheduled;&lt;/li&gt;
-&lt;li&gt;you can constrain against labels on other pods running on the node (or other topological domain),
-rather than against labels on the node itself, which allows rules about which pods can and cannot be co-located&lt;/li&gt;
+&lt;li&gt;亲和性/反亲和性 语言有更好的表达能力。 在精确匹配的基础上，通过逻辑与(&lt;code&gt;AND&lt;/code&gt;)操作提供更多的匹配规则&lt;/li&gt;
+&lt;li&gt;可以将规则设置为 &amp;ldquo;软&amp;rdquo;/&amp;ldquo;偏好&amp;rdquo;，而不是强制要求，这样如果调度器找不到满足这个规则的节点也可以
+让 Pod 完成调度&lt;/li&gt;
+&lt;li&gt;还可以将约束应用在运行在同一个节点(或其它拓扑域)的 Pod 上，而不止是节点本身的标签。 这使得
+这些规则可以约束哪些 Pod 不能待在一起&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;The affinity feature consists of two types of affinity, &amp;ldquo;node affinity&amp;rdquo; and &amp;ldquo;inter-pod affinity/anti-affinity&amp;rdquo;.
-Node affinity is like the existing &lt;code&gt;nodeSelector&lt;/code&gt; (but with the first two benefits listed above),
-while inter-pod affinity/anti-affinity constrains against pod labels rather than node labels, as
-described in the third item listed above, in addition to having the first and second properties listed above.&lt;/p&gt;
-&lt;h3 id=&#34;node-affinity&#34;&gt;Node affinity&lt;/h3&gt;
-&lt;p&gt;Node affinity is conceptually similar to &lt;code&gt;nodeSelector&lt;/code&gt; &amp;ndash; it allows you to constrain which nodes your
-pod is eligible to be scheduled on, based on labels on the node.&lt;/p&gt;
-&lt;p&gt;There are currently two types of node affinity, called &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; and
-&lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;. You can think of them as &amp;ldquo;hard&amp;rdquo; and &amp;ldquo;soft&amp;rdquo; respectively,
-in the sense that the former specifies rules that &lt;em&gt;must&lt;/em&gt; be met for a pod to be scheduled onto a node (just like
-&lt;code&gt;nodeSelector&lt;/code&gt; but using a more expressive syntax), while the latter specifies &lt;em&gt;preferences&lt;/em&gt; that the scheduler
-will try to enforce but will not guarantee. The &amp;ldquo;IgnoredDuringExecution&amp;rdquo; part of the names means that, similar
-to how &lt;code&gt;nodeSelector&lt;/code&gt; works, if labels on a node change at runtime such that the affinity rules on a pod are no longer
+&lt;p&gt;亲和特性由两种类型的亲和性组成， &amp;ldquo;节点亲和性&amp;rdquo; 和 &amp;ldquo;Pod 间亲和性/反亲和性&amp;rdquo;。
+节点亲和性与 &lt;code&gt;nodeSelector&lt;/code&gt; 相似(但是有上面提到的增加中的前两条优势)，
+而 Pod 间亲和性/反亲和性是基于 Pod 的标签而不是节点的标签进行约束的， 就如上面第三条提到的，
+同时第一二条的优势也是有的&lt;/p&gt;
+&lt;!--
+### Node affinity
+
+Node affinity is conceptually similar to `nodeSelector` -- it allows you to constrain which nodes your
+pod is eligible to be scheduled on, based on labels on the node.
+
+There are currently two types of node affinity, called `requiredDuringSchedulingIgnoredDuringExecution` and
+`preferredDuringSchedulingIgnoredDuringExecution`. You can think of them as &#34;hard&#34; and &#34;soft&#34; respectively,
+in the sense that the former specifies rules that *must* be met for a pod to be scheduled onto a node (just like
+`nodeSelector` but using a more expressive syntax), while the latter specifies *preferences* that the scheduler
+will try to enforce but will not guarantee. The &#34;IgnoredDuringExecution&#34; part of the names means that, similar
+to how `nodeSelector` works, if labels on a node change at runtime such that the affinity rules on a pod are no longer
 met, the pod will still continue to run on the node. In the future we plan to offer
-&lt;code&gt;requiredDuringSchedulingRequiredDuringExecution&lt;/code&gt; which will be just like &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;
-except that it will evict pods from nodes that cease to satisfy the pods&#39; node affinity requirements.&lt;/p&gt;
-&lt;p&gt;Thus an example of &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; would be &amp;ldquo;only run the pod on nodes with Intel CPUs&amp;rdquo;
-and an example &lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; would be &amp;ldquo;try to run this set of pods in failure
-zone XYZ, but if it&amp;rsquo;s not possible, then allow some to run elsewhere&amp;rdquo;.&lt;/p&gt;
-&lt;p&gt;Node affinity is specified as field &lt;code&gt;nodeAffinity&lt;/code&gt; of field &lt;code&gt;affinity&lt;/code&gt; in the PodSpec.&lt;/p&gt;
-&lt;p&gt;Here&amp;rsquo;s an example of a pod that uses node affinity:&lt;/p&gt;
+`requiredDuringSchedulingRequiredDuringExecution` which will be just like `requiredDuringSchedulingIgnoredDuringExecution`
+except that it will evict pods from nodes that cease to satisfy the pods&#39; node affinity requirements.
+
+Thus an example of `requiredDuringSchedulingIgnoredDuringExecution` would be &#34;only run the pod on nodes with Intel CPUs&#34;
+and an example `preferredDuringSchedulingIgnoredDuringExecution` would be &#34;try to run this set of pods in failure
+zone XYZ, but if it&#39;s not possible, then allow some to run elsewhere&#34;.
+
+Node affinity is specified as field `nodeAffinity` of field `affinity` in the PodSpec.
+
+Here&#39;s an example of a pod that uses node affinity:
+
 
 
  
@@ -1145,20 +1151,236 @@ zone XYZ, but if it&amp;rsquo;s not possible, then allow some to run elsewhere&a
 &lt;/table&gt;
 
 
-&lt;p&gt;This node affinity rule says the pod can only be placed on a node with a label whose key is
-&lt;code&gt;kubernetes.io/e2e-az-name&lt;/code&gt; and whose value is either &lt;code&gt;e2e-az1&lt;/code&gt; or &lt;code&gt;e2e-az2&lt;/code&gt;. In addition,
-among nodes that meet that criteria, nodes with a label whose key is &lt;code&gt;another-node-label-key&lt;/code&gt; and whose
-value is &lt;code&gt;another-node-label-value&lt;/code&gt; should be preferred.&lt;/p&gt;
-&lt;p&gt;You can see the operator &lt;code&gt;In&lt;/code&gt; being used in the example. The new node affinity syntax supports the following operators: &lt;code&gt;In&lt;/code&gt;, &lt;code&gt;NotIn&lt;/code&gt;, &lt;code&gt;Exists&lt;/code&gt;, &lt;code&gt;DoesNotExist&lt;/code&gt;, &lt;code&gt;Gt&lt;/code&gt;, &lt;code&gt;Lt&lt;/code&gt;.
-You can use &lt;code&gt;NotIn&lt;/code&gt; and &lt;code&gt;DoesNotExist&lt;/code&gt; to achieve node anti-affinity behavior, or use
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#34;&gt;node taints&lt;/a&gt; to repel pods from specific nodes.&lt;/p&gt;
-&lt;p&gt;If you specify both &lt;code&gt;nodeSelector&lt;/code&gt; and &lt;code&gt;nodeAffinity&lt;/code&gt;, &lt;em&gt;both&lt;/em&gt; must be satisfied for the pod
-to be scheduled onto a candidate node.&lt;/p&gt;
-&lt;p&gt;If you specify multiple &lt;code&gt;nodeSelectorTerms&lt;/code&gt; associated with &lt;code&gt;nodeAffinity&lt;/code&gt; types, then the pod can be scheduled onto a node &lt;strong&gt;if one of the&lt;/strong&gt; &lt;code&gt;nodeSelectorTerms&lt;/code&gt; can be satisfied.&lt;/p&gt;
-&lt;p&gt;If you specify multiple &lt;code&gt;matchExpressions&lt;/code&gt; associated with &lt;code&gt;nodeSelectorTerms&lt;/code&gt;, then the pod can be scheduled onto a node &lt;strong&gt;only if all&lt;/strong&gt; &lt;code&gt;matchExpressions&lt;/code&gt; is satisfied.&lt;/p&gt;
-&lt;p&gt;If you remove or change the label of the node where the pod is scheduled, the pod won&amp;rsquo;t be removed. In other words, the affinity selection works only at the time of scheduling the pod.&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;weight&lt;/code&gt; field in &lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; is in the range 1-100. For each node that meets all of the scheduling requirements (resource request, RequiredDuringScheduling affinity expressions, etc.), the scheduler will compute a sum by iterating through the elements of this field and adding &amp;ldquo;weight&amp;rdquo; to the sum if the node matches the corresponding MatchExpressions. This score is then combined with the scores of other priority functions for the node. The node(s) with the highest total score are the most preferred.&lt;/p&gt;
-&lt;h4 id=&#34;node-affinity-per-scheduling-profile&#34;&gt;Node affinity per scheduling profile&lt;/h4&gt;
+
+This node affinity rule says the pod can only be placed on a node with a label whose key is
+`kubernetes.io/e2e-az-name` and whose value is either `e2e-az1` or `e2e-az2`. In addition,
+among nodes that meet that criteria, nodes with a label whose key is `another-node-label-key` and whose
+value is `another-node-label-value` should be preferred.
+
+You can see the operator `In` being used in the example. The new node affinity syntax supports the following operators: `In`, `NotIn`, `Exists`, `DoesNotExist`, `Gt`, `Lt`.
+You can use `NotIn` and `DoesNotExist` to achieve node anti-affinity behavior, or use
+[node taints](/docs/concepts/scheduling-eviction/taint-and-toleration/) to repel pods from specific nodes.
+
+If you specify both `nodeSelector` and `nodeAffinity`, *both* must be satisfied for the pod
+to be scheduled onto a candidate node.
+
+If you specify multiple `nodeSelectorTerms` associated with `nodeAffinity` types, then the pod can be scheduled onto a node **if one of the** `nodeSelectorTerms` can be satisfied.
+
+If you specify multiple `matchExpressions` associated with `nodeSelectorTerms`, then the pod can be scheduled onto a node **only if all** `matchExpressions` is satisfied.
+
+If you remove or change the label of the node where the pod is scheduled, the pod won&#39;t be removed. In other words, the affinity selection works only at the time of scheduling the pod.
+
+The `weight` field in `preferredDuringSchedulingIgnoredDuringExecution` is in the range 1-100. For each node that meets all of the scheduling requirements (resource request, RequiredDuringScheduling affinity expressions, etc.), the scheduler will compute a sum by iterating through the elements of this field and adding &#34;weight&#34; to the sum if the node matches the corresponding MatchExpressions. This score is then combined with the scores of other priority functions for the node. The node(s) with the highest total score are the most preferred.
+ --&gt;
+&lt;!--
+### Node affinity
+
+Node affinity is conceptually similar to `nodeSelector` -- it allows you to constrain which nodes your
+pod is eligible to be scheduled on, based on labels on the node.
+
+There are currently two types of node affinity, called `requiredDuringSchedulingIgnoredDuringExecution` and
+`preferredDuringSchedulingIgnoredDuringExecution`. You can think of them as &#34;hard&#34; and &#34;soft&#34; respectively,
+in the sense that the former specifies rules that *must* be met for a pod to be scheduled onto a node (just like
+`nodeSelector` but using a more expressive syntax), while the latter specifies *preferences* that the scheduler
+will try to enforce but will not guarantee. The &#34;IgnoredDuringExecution&#34; part of the names means that, similar
+to how `nodeSelector` works, if labels on a node change at runtime such that the affinity rules on a pod are no longer
+met, the pod will still continue to run on the node. In the future we plan to offer
+`requiredDuringSchedulingRequiredDuringExecution` which will be just like `requiredDuringSchedulingIgnoredDuringExecution`
+except that it will evict pods from nodes that cease to satisfy the pods&#39; node affinity requirements.
+
+Thus an example of `requiredDuringSchedulingIgnoredDuringExecution` would be &#34;only run the pod on nodes with Intel CPUs&#34;
+and an example `preferredDuringSchedulingIgnoredDuringExecution` would be &#34;try to run this set of pods in failure
+zone XYZ, but if it&#39;s not possible, then allow some to run elsewhere&#34;.
+
+Node affinity is specified as field `nodeAffinity` of field `affinity` in the PodSpec.
+
+Here&#39;s an example of a pod that uses node affinity:
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table class=&#34;includecode&#34; id=&#34;podspod-with-node-affinityyaml&#34;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;
+                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/pod-with-node-affinity.yaml&#34; download=&#34;pods/pod-with-node-affinity.yaml&#34;&gt;
+                    &lt;code&gt;pods/pod-with-node-affinity.yaml&lt;/code&gt;
+                &lt;/a&gt;
+                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;podspod-with-node-affinityyaml&#39;)&#34; title=&#34;Copy pods/pod-with-node-affinity.yaml to clipboard&#34;&gt;
+            &lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;with-node-affinity&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;affinity&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;nodeAffinity&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;nodeSelectorTerms&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+          - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kubernetes.io/e2e-az-name&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;e2e-az1&lt;/span&gt;
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;e2e-az2&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;preference&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+          - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;another-node-label-key&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;another-node-label-value&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;with-node-affinity&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;k8s.gcr.io/pause:2.0&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+
+
+This node affinity rule says the pod can only be placed on a node with a label whose key is
+`kubernetes.io/e2e-az-name` and whose value is either `e2e-az1` or `e2e-az2`. In addition,
+among nodes that meet that criteria, nodes with a label whose key is `another-node-label-key` and whose
+value is `another-node-label-value` should be preferred.
+
+You can see the operator `In` being used in the example. The new node affinity syntax supports the following operators: `In`, `NotIn`, `Exists`, `DoesNotExist`, `Gt`, `Lt`.
+You can use `NotIn` and `DoesNotExist` to achieve node anti-affinity behavior, or use
+[node taints](/docs/concepts/scheduling-eviction/taint-and-toleration/) to repel pods from specific nodes.
+
+If you specify both `nodeSelector` and `nodeAffinity`, *both* must be satisfied for the pod
+to be scheduled onto a candidate node.
+
+If you specify multiple `nodeSelectorTerms` associated with `nodeAffinity` types, then the pod can be scheduled onto a node **if one of the** `nodeSelectorTerms` can be satisfied.
+
+If you specify multiple `matchExpressions` associated with `nodeSelectorTerms`, then the pod can be scheduled onto a node **only if all** `matchExpressions` is satisfied.
+
+If you remove or change the label of the node where the pod is scheduled, the pod won&#39;t be removed. In other words, the affinity selection works only at the time of scheduling the pod.
+
+The `weight` field in `preferredDuringSchedulingIgnoredDuringExecution` is in the range 1-100. For each node that meets all of the scheduling requirements (resource request, RequiredDuringScheduling affinity expressions, etc.), the scheduler will compute a sum by iterating through the elements of this field and adding &#34;weight&#34; to the sum if the node matches the corresponding MatchExpressions. This score is then combined with the scores of other priority functions for the node. The node(s) with the highest total score are the most preferred.
+ --&gt;
+&lt;h3 id=&#34;node-affinity&#34;&gt;节点亲和性&lt;/h3&gt;
+&lt;p&gt;节点亲和性概念上与 &lt;code&gt;nodeSelector&lt;/code&gt; 类似 &amp;ndash; 它允许用户基于节点上的标签来约束哪些 Pod 应该调度
+到哪个节点上。&lt;/p&gt;
+&lt;p&gt;目前有两种类型的节点亲和性，叫做 &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; 和
+&lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;. 可以认为他们分别相当于 &amp;ldquo;硬&amp;rdquo; 和 &amp;ldquo;软&amp;rdquo;，
+从这个意义上说，前一个类型指定规则 &lt;em&gt;必须要&lt;/em&gt; 被满足了 Pod 才会被调度到一个节点(就像 &lt;code&gt;nodeSelector&lt;/code&gt;
+但使用表达能力更强的语法)， 而后者指定的是 &lt;em&gt;优先&lt;/em&gt;，也是就调度会尝试满足但不保证会满足。
+名称中的  &amp;ldquo;IgnoredDuringExecution&amp;rdquo; 的含义是如果节点的标签在运行时改变，Pod 上的节点亲和性
+规则不再满足，Pod 还是继续会在节点上运行，就和 &lt;code&gt;nodeSelector&lt;/code&gt; 的工作方式类似。在未来还计划
+提供 &lt;code&gt;requiredDuringSchedulingRequiredDuringExecution&lt;/code&gt; 它就和
+&lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; 差不多，区别就是它会在节点不满足 Pod
+上的节点亲和性时会将 Pod 从节点上驱逐。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; 的一个示例用法: 只能把 Pod 运行在
+使用英特尔 CPU 的节点上。
+&lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; 的一个示例用法: 尝试把这组 Pod 运行在
+XYZ 这个失效区，但如果办不到， 也允许在其它地方运行。&lt;/p&gt;
+&lt;p&gt;节点亲和性是通过 Pod &lt;code&gt;.spec.affinity.nodeAffinity&lt;/code&gt; 字段指定的。&lt;/p&gt;
+&lt;p&gt;下面是一个使用节点亲和性的 Pod 的示例:&lt;/p&gt;
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;table class=&#34;includecode&#34; id=&#34;podspod-with-node-affinityyaml&#34;&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;
+                &lt;a href=&#34;https://%25!s%28%3cnil%3e%29/master/content/zh/examples/pods/pod-with-node-affinity.yaml&#34; download=&#34;pods/pod-with-node-affinity.yaml&#34;&gt;
+                    &lt;code&gt;pods/pod-with-node-affinity.yaml&lt;/code&gt;
+                &lt;/a&gt;
+                &lt;img src=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/images/copycode.svg&#34; style=&#34;max-height:24px; cursor: pointer&#34; onclick=&#34;copyCode(&#39;podspod-with-node-affinityyaml&#39;)&#34; title=&#34;Copy pods/pod-with-node-affinity.yaml to clipboard&#34;&gt;
+            &lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;with-node-affinity&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;affinity&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;nodeAffinity&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;nodeSelectorTerms&lt;/span&gt;:
+        - &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+          - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kubernetes.io/e2e-az-name&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;e2e-az1&lt;/span&gt;
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;e2e-az2&lt;/span&gt;
+      &lt;span style=&#34;color:#f92672&#34;&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;preference&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;matchExpressions&lt;/span&gt;:
+          - &lt;span style=&#34;color:#f92672&#34;&gt;key&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;another-node-label-key&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
+            - &lt;span style=&#34;color:#ae81ff&#34;&gt;another-node-label-value&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;with-node-affinity&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;k8s.gcr.io/pause:2.0&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+
+&lt;p&gt;这个节点亲和性规则的要求是 Pod 只能被放在一个拥有一个标签，这个标签的键是 &lt;code&gt;kubernetes.io/e2e-az-name&lt;/code&gt;
+，标签的值是 &lt;code&gt;e2e-az1&lt;/code&gt; 或 &lt;code&gt;e2e-az2&lt;/code&gt;. 另外，在满足上一条件的节点中，包含一个键为 &lt;code&gt;another-node-label-key&lt;/code&gt;
+值为 &lt;code&gt;another-node-label-value&lt;/code&gt; 的标签的节点优先。&lt;/p&gt;
+&lt;p&gt;可以看到这个示例中使用了 &lt;code&gt;In&lt;/code&gt; 操作符。 新的节点亲和性语法支持以下操作符: &lt;code&gt;In&lt;/code&gt;, &lt;code&gt;NotIn&lt;/code&gt;,
+&lt;code&gt;Exists&lt;/code&gt;, &lt;code&gt;DoesNotExist&lt;/code&gt;, &lt;code&gt;Gt&lt;/code&gt;, &lt;code&gt;Lt&lt;/code&gt;. 可以使用 &lt;code&gt;NotIn&lt;/code&gt; 和 &lt;code&gt;DoesNotExist&lt;/code&gt; 来达成反
+亲和行为， 或使用
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#34;&gt;节点毒点(Taint)&lt;/a&gt; 让 Pod
+避开指定节点。&lt;/p&gt;
+&lt;p&gt;如果同时指定了 &lt;code&gt;nodeSelector&lt;/code&gt; 和 &lt;code&gt;nodeAffinity&lt;/code&gt;，只有同时满足的候选节点才能让 Pod 调度上去。&lt;/p&gt;
+&lt;p&gt;如果在 &lt;code&gt;nodeAffinity&lt;/code&gt; 中配置了多个 &lt;code&gt;nodeSelectorTerms&lt;/code&gt;，当 &lt;strong&gt;有一个&lt;/strong&gt; &lt;code&gt;nodeSelectorTerms&lt;/code&gt;
+被满足 Pod 就可以调度到这个节点。(这个有点歧义)&lt;/p&gt;
+&lt;p&gt;如果在 &lt;code&gt;nodeSelectorTerms&lt;/code&gt; 中指定了多个 &lt;code&gt;matchExpressions&lt;/code&gt;， Pod &lt;strong&gt;在且仅在所有&lt;/strong&gt;
+&lt;code&gt;matchExpressions&lt;/code&gt; 都满足时才能被调度到这个节点上&lt;/p&gt;
+&lt;p&gt;当移除或修改 Pod 运行的节点上的标签时， Pod 不会被移除。 换一句话说， 亲和性配置只有在 Pod
+调度时生效。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; 中 &lt;code&gt;weight&lt;/code&gt; 字段的范围是 &lt;code&gt;1-100&lt;/code&gt;
+对于满足所有调度要求(资源要求， &lt;code&gt;RequiredDuringScheduling&lt;/code&gt; 亲和性表达式，等)，如果节点满足
+对应的匹配表达式，调度器会迭代元素中的这个字段，并将值加到 &amp;ldquo;权重&amp;rdquo; 得分中。再将这个分与节点的
+其它优先级函数得分组合。 最终得分最就的节点(一个或多个)就有最高的优先级&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;!--
+#### Node affinity per scheduling profile
+
 
 
 
@@ -1169,10 +1391,66 @@ to be scheduled onto a candidate node.&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;p&gt;When configuring multiple &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/scheduling/config/#multiple-profiles&#34;&gt;scheduling profiles&lt;/a&gt;, you can associate
+
+When configuring multiple [scheduling profiles](/docs/reference/scheduling/config/#multiple-profiles), you can associate
 a profile with a Node affinity, which is useful if a profile only applies to a specific set of Nodes.
-To do so, add an &lt;code&gt;addedAffinity&lt;/code&gt; to the args of the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/scheduling/config/#scheduling-plugins&#34;&gt;&lt;code&gt;NodeAffinity&lt;/code&gt; plugin&lt;/a&gt;
-in the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/scheduling/config/&#34;&gt;scheduler configuration&lt;/a&gt;. For example:&lt;/p&gt;
+To do so, add an `addedAffinity` to the args of the [`NodeAffinity` plugin](/docs/reference/scheduling/config/#scheduling-plugins)
+in the [scheduler configuration](/docs/reference/scheduling/config/). For example:
+
+```yaml
+apiVersion: kubescheduler.config.k8s.io/v1beta1
+kind: KubeSchedulerConfiguration
+
+profiles:
+  - schedulerName: default-scheduler
+  - schedulerName: foo-scheduler
+    pluginConfig:
+      - name: NodeAffinity
+        args:
+          addedAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+              - matchExpressions:
+                - key: scheduler-profile
+                  operator: In
+                  values:
+                  - foo
+```
+
+The `addedAffinity` is applied to all Pods that set `.spec.schedulerName` to `foo-scheduler`, in addition to the
+NodeAffinity specified in the PodSpec.
+That is, in order to match the Pod, Nodes need to satisfy `addedAffinity` and the Pod&#39;s `.spec.NodeAffinity`.
+
+Since the `addedAffinity` is not visible to end users, its behavior might be unexpected to them. We
+recommend to use node labels that have clear correlation with the profile&#39;s scheduler name.
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; The DaemonSet controller, which &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/daemonset/#scheduled-by-default-scheduler&#34;&gt;creates Pods for DaemonSets&lt;/a&gt;
+is not aware of scheduling profiles. For this reason, it is recommended that you keep a scheduler profile, such as the
+&lt;code&gt;default-scheduler&lt;/code&gt;, without any &lt;code&gt;addedAffinity&lt;/code&gt;. Then, the Daemonset&amp;rsquo;s Pod template should use this scheduler name.
+Otherwise, some Pods created by the Daemonset controller might remain unschedulable.&lt;/div&gt;
+&lt;/blockquote&gt;
+
+ --&gt;
+&lt;h4 id=&#34;node-affinity-per-scheduling-profile&#34;&gt;每个调度方案的节点亲和性&lt;/h4&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.20 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;p&gt;在配置多个
+&lt;a href=&#34;https://kubernetes.io/docs/reference/scheduling/config/#multiple-profiles&#34;&gt;调度方案&lt;/a&gt;
+时，可以在调度方案是添加节点亲和性，如果一个方案只会应用到指定的节点集时，这么做是相当有用的。
+而要在方案中加亲和性则要在
+&lt;a href=&#34;https://kubernetes.io/docs/reference/scheduling/config/&#34;&gt;调度器配置&lt;/a&gt;
+中的
+&lt;a href=&#34;https://kubernetes.io/docs/reference/scheduling/config/#scheduling-plugins&#34;&gt;&lt;code&gt;NodeAffinity&lt;/code&gt; 插件&lt;/a&gt;
+的参数中添加 &lt;code&gt;addedAffinity&lt;/code&gt;。 例如:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kubescheduler.config.k8s.io/v1beta1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;KubeSchedulerConfiguration&lt;/span&gt;
 
@@ -1190,48 +1468,86 @@ in the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/sch
                   &lt;span style=&#34;color:#f92672&#34;&gt;operator&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;In&lt;/span&gt;
                   &lt;span style=&#34;color:#f92672&#34;&gt;values&lt;/span&gt;:
                   - &lt;span style=&#34;color:#ae81ff&#34;&gt;foo&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The &lt;code&gt;addedAffinity&lt;/code&gt; is applied to all Pods that set &lt;code&gt;.spec.schedulerName&lt;/code&gt; to &lt;code&gt;foo-scheduler&lt;/code&gt;, in addition to the
-NodeAffinity specified in the PodSpec.
-That is, in order to match the Pod, Nodes need to satisfy &lt;code&gt;addedAffinity&lt;/code&gt; and the Pod&amp;rsquo;s &lt;code&gt;.spec.NodeAffinity&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Since the &lt;code&gt;addedAffinity&lt;/code&gt; is not visible to end users, its behavior might be unexpected to them. We
-recommend to use node labels that have clear correlation with the profile&amp;rsquo;s scheduler name.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;addedAffinity&lt;/code&gt; 会应用到所有设置 &lt;code&gt;.spec.schedulerName&lt;/code&gt; 为 &lt;code&gt;foo-scheduler&lt;/code&gt; 的 Pod,
+再加上这些 Pod &lt;code&gt;.spec&lt;/code&gt; 中指定的节点亲和性配置为最终的节点亲和性。&lt;/p&gt;
+&lt;p&gt;因为 &lt;code&gt;addedAffinity&lt;/code&gt; 对终端用户是不可见的，导致最终行为不符合用户预期。
+建议使用的标签要与方案的调度器名称有清晰的关联。&lt;/p&gt;
 &lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; The DaemonSet controller, which &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/workloads/controllers/daemonset/#scheduled-by-default-scheduler&#34;&gt;creates Pods for DaemonSets&lt;/a&gt;
-is not aware of scheduling profiles. For this reason, it is recommended that you keep a scheduler profile, such as the
-&lt;code&gt;default-scheduler&lt;/code&gt;, without any &lt;code&gt;addedAffinity&lt;/code&gt;. Then, the Daemonset&amp;rsquo;s Pod template should use this scheduler name.
-Otherwise, some Pods created by the Daemonset controller might remain unschedulable.&lt;/div&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; &lt;code&gt;DaemonSet&lt;/code&gt; 控制器，是用来
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/workloads/controllers/daemonset/#scheduled-by-default-scheduler&#34;&gt;为 DaemonSet 创建 Pod 的&lt;/a&gt;
+，它是不能感知到调度方案的。 因为这个原因， 推荐保留一个没有任何 &lt;code&gt;addedAffinity&lt;/code&gt; 的调度方案，就
+如上面例子中的 &lt;code&gt;default-scheduler&lt;/code&gt;。 这样 &lt;code&gt;Daemonset&lt;/code&gt; 的 Pod 模板就可以使用这个调度器名称。
+否则，有些由 &lt;code&gt;DaemonSet&lt;/code&gt; 控制器创建的 Pod 就能就一直是不可调度状态。&lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;inter-pod-affinity-and-anti-affinity&#34;&gt;Inter-pod affinity and anti-affinity&lt;/h3&gt;
-&lt;p&gt;Inter-pod affinity and anti-affinity allow you to constrain which nodes your pod is eligible to be scheduled &lt;em&gt;based on
-labels on pods that are already running on the node&lt;/em&gt; rather than based on labels on nodes. The rules are of the form
-&amp;ldquo;this pod should (or, in the case of anti-affinity, should not) run in an X if that X is already running one or more pods that meet rule Y&amp;rdquo;.
+&lt;!--
+### Inter-pod affinity and anti-affinity
+
+Inter-pod affinity and anti-affinity allow you to constrain which nodes your pod is eligible to be scheduled *based on
+labels on pods that are already running on the node* rather than based on labels on nodes. The rules are of the form
+&#34;this pod should (or, in the case of anti-affinity, should not) run in an X if that X is already running one or more pods that meet rule Y&#34;.
 Y is expressed as a LabelSelector with an optional associated list of namespaces; unlike nodes, because pods are namespaced
 (and therefore the labels on pods are implicitly namespaced),
 a label selector over pod labels must specify which namespaces the selector should apply to. Conceptually X is a topology domain
-like node, rack, cloud provider zone, cloud provider region, etc. You express it using a &lt;code&gt;topologyKey&lt;/code&gt; which is the
+like node, rack, cloud provider zone, cloud provider region, etc. You express it using a `topologyKey` which is the
 key for the node label that the system uses to denote such a topology domain; for example, see the label keys listed above
-in the section &lt;a href=&#34;#built-in-node-labels&#34;&gt;Interlude: built-in node labels&lt;/a&gt;.&lt;/p&gt;
+in the section [Interlude: built-in node labels](#built-in-node-labels).
+
 &lt;blockquote class=&#34;note&#34;&gt;
   &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Inter-pod affinity and anti-affinity require substantial amount of
 processing which can slow down scheduling in large clusters significantly. We do
 not recommend using them in clusters larger than several hundred nodes.&lt;/div&gt;
 &lt;/blockquote&gt;
 
+
 &lt;blockquote class=&#34;note&#34;&gt;
   &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Pod anti-affinity requires nodes to be consistently labelled, in other words every node in the cluster must have an appropriate label matching &lt;code&gt;topologyKey&lt;/code&gt;. If some or all nodes are missing the specified &lt;code&gt;topologyKey&lt;/code&gt; label, it can lead to unintended behavior.&lt;/div&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;As with node affinity, there are currently two types of pod affinity and anti-affinity, called &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; and
-&lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; which denote &amp;ldquo;hard&amp;rdquo; vs. &amp;ldquo;soft&amp;rdquo; requirements.
+
+As with node affinity, there are currently two types of pod affinity and anti-affinity, called `requiredDuringSchedulingIgnoredDuringExecution` and
+`preferredDuringSchedulingIgnoredDuringExecution` which denote &#34;hard&#34; vs. &#34;soft&#34; requirements.
 See the description in the node affinity section earlier.
-An example of &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; affinity would be &amp;ldquo;co-locate the pods of service A and service B
-in the same zone, since they communicate a lot with each other&amp;rdquo;
-and an example &lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; anti-affinity would be &amp;ldquo;spread the pods from this service across zones&amp;rdquo;
-(a hard requirement wouldn&amp;rsquo;t make sense, since you probably have more pods than zones).&lt;/p&gt;
-&lt;p&gt;Inter-pod affinity is specified as field &lt;code&gt;podAffinity&lt;/code&gt; of field &lt;code&gt;affinity&lt;/code&gt; in the PodSpec.
-And inter-pod anti-affinity is specified as field &lt;code&gt;podAntiAffinity&lt;/code&gt; of field &lt;code&gt;affinity&lt;/code&gt; in the PodSpec.&lt;/p&gt;
-&lt;h4 id=&#34;an-example-of-a-pod-that-uses-pod-affinity&#34;&gt;An example of a pod that uses pod affinity:&lt;/h4&gt;
+An example of `requiredDuringSchedulingIgnoredDuringExecution` affinity would be &#34;co-locate the pods of service A and service B
+in the same zone, since they communicate a lot with each other&#34;
+and an example `preferredDuringSchedulingIgnoredDuringExecution` anti-affinity would be &#34;spread the pods from this service across zones&#34;
+(a hard requirement wouldn&#39;t make sense, since you probably have more pods than zones).
+
+Inter-pod affinity is specified as field `podAffinity` of field `affinity` in the PodSpec.
+And inter-pod anti-affinity is specified as field `podAntiAffinity` of field `affinity` in the PodSpec.
+ --&gt;
+&lt;h3 id=&#34;inter-pod-affinity-and-anti-affinity&#34;&gt;Pod 间的亲和性与反亲和性&lt;/h3&gt;
+&lt;p&gt;Pod 间的亲和性与反亲和性允许用户通过 &lt;em&gt;已经运行在节点上的 Pod 的标签&lt;/em&gt; 而不是节点的标签来决定一个 Pod
+应该调度到哪个节点上。
+其中的规则的形式是这样的: 这个 Pod 应该(或，在反亲和性的情况下，不应该)运行在 X 上，如果
+X 上已经运行了一个或多个匹配 规则 Y 的 Pod。 规则 Y 是以标签选择器的形式存在的，其它可以还有
+一个可选的命名空间列表，因为与节点不一样， Pod 是有命名空间的(因此 Pod 上的标签隐形的就是有命名空间的)
+对于 Pod 标签的标签选择器必须指定这个选择器应用的命名空间。 概念 X 是一个与节点, 机架，云提供商
+的区域，云提供商的地区，等一样的拓扑域，可以使用一个 &lt;code&gt;topologyKey&lt;/code&gt; 来表示它，也就是系统用来
+表示这个拓扑域的节点标签的键。 例子见上面的
+&lt;a href=&#34;#built-in-node-labels&#34;&gt;插一嘴: 内置节点标签&lt;/a&gt;.&lt;/p&gt;
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Pod 间的亲和性与反亲和性需要大量的处理过程，如果在大集群中会极是的减慢调度的速度。 不建议使用在
+集群节点大于几百的节点中。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote class=&#34;note&#34;&gt;
+  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; Pod 反亲和性需要节点都要打上标签，也就是集群中的每个节点必须要有与 &lt;code&gt;topologyKey&lt;/code&gt; 匹配的适当的
+标签。 如果其中的一些或全部没有指定 &lt;code&gt;topologyKey&lt;/code&gt; 标签，如能会导致意外的情况。&lt;/div&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;与节点亲和性一样， Pod 的亲和性与反亲和性目前也有两种类型，
+&lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; 和
+&lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;
+分别表示为 &amp;ldquo;硬&amp;rdquo; vs. &amp;ldquo;软&amp;rdquo; 要求。
+&lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; 亲和性的一个应用示例:
+因为 Service A 和 Service B 之间有大量通信，把它们的 Pod 放置在同一个可用区。
+&lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; 反亲和性的一个应用示例:
+把这个 Service 的 Pod 分散到不同的区域中(在这种情况下，硬性要求就可能会出问题了， 因为 Pod 的
+数量可能是大于区域的)&lt;/p&gt;
+&lt;p&gt;Pod 间的亲和性是通过 Pod &lt;code&gt;.spec.affinity.podAffinity&lt;/code&gt; 来指定的。 而反亲和性则是由
+&lt;code&gt;.spec.affinity.podAntiAffinity&lt;/code&gt; 来指定的。&lt;/p&gt;
+&lt;h4 id=&#34;an-example-of-a-pod-that-uses-pod-affinity&#34;&gt;一个使用 Pod 亲和性的示例:&lt;/h4&gt;
 
 
  
@@ -1296,42 +1612,155 @@ And inter-pod anti-affinity is specified as field &lt;code&gt;podAntiAffinity&lt
 &lt;/table&gt;
 
 
-&lt;p&gt;The affinity on this pod defines one pod affinity rule and one pod anti-affinity rule. In this example, the
-&lt;code&gt;podAffinity&lt;/code&gt; is &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;
-while the &lt;code&gt;podAntiAffinity&lt;/code&gt; is &lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;. The
-pod affinity rule says that the pod can be scheduled onto a node only if that node is in the same zone
-as at least one already-running pod that has a label with key &amp;ldquo;security&amp;rdquo; and value &amp;ldquo;S1&amp;rdquo;. (More precisely, the pod is eligible to run
-on node N if node N has a label with key &lt;code&gt;topology.kubernetes.io/zone&lt;/code&gt; and some value V
-such that there is at least one node in the cluster with key &lt;code&gt;topology.kubernetes.io/zone&lt;/code&gt; and
-value V that is running a pod that has a label with key &amp;ldquo;security&amp;rdquo; and value &amp;ldquo;S1&amp;rdquo;.) The pod anti-affinity
-rule says that the pod should not be scheduled onto a node if that node is in the same zone as a pod with
-label having key &amp;ldquo;security&amp;rdquo; and value &amp;ldquo;S2&amp;rdquo;. See the
-&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/scheduling/podaffinity.md&#34;&gt;design doc&lt;/a&gt;
-for many more examples of pod affinity and anti-affinity, both the &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;
-flavor and the &lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; flavor.&lt;/p&gt;
-&lt;p&gt;The legal operators for pod affinity and anti-affinity are &lt;code&gt;In&lt;/code&gt;, &lt;code&gt;NotIn&lt;/code&gt;, &lt;code&gt;Exists&lt;/code&gt;, &lt;code&gt;DoesNotExist&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;In principle, the &lt;code&gt;topologyKey&lt;/code&gt; can be any legal label-key. However,
-for performance and security reasons, there are some constraints on topologyKey:&lt;/p&gt;
+&lt;p&gt;这个 Pod 中的亲和性定义有一个 Pod 亲和性规则和一个 Pod 反亲和性规则， 在这个例子中
+&lt;code&gt;podAffinity&lt;/code&gt; 是 &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; 而
+&lt;code&gt;podAntiAffinity&lt;/code&gt; 是 &lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;.
+Pod 亲和性规则的含义是: Pod 仅能被调度到一个所在区域中至少有一个已经运行了包含标签键为
+&lt;code&gt;security&lt;/code&gt; 值为 &lt;code&gt;S1&lt;/code&gt; 的 Pod 的节点(也就是如果节点 N 有一个标签键为  &lt;code&gt;topology.kubernetes.io/zone&lt;/code&gt;
+假定标签值为 &lt;code&gt;V&lt;/code&gt;, 然后集群中至少还有另一个节点标签键为  &lt;code&gt;topology.kubernetes.io/zone&lt;/code&gt;
+标签值为 &lt;code&gt;V&lt;/code&gt;, 后面这个节点上运行了一个 Pod 包含了标签 &lt;code&gt;security: S1&lt;/code&gt;).
+Pod 反亲和性规则的含义是: Pod 不应当被调度到节点所在区域中的其它节点上有运行 Pod 包含标签为
+&lt;code&gt;security: S2&lt;/code&gt; 的节点上。 更多关于 Pod 亲和性与反亲和性的示例见
+&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/scheduling/podaffinity.md&#34;&gt;设计文稿&lt;/a&gt;
+其中
+&lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;
+和
+&lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;
+都有&lt;/p&gt;
+&lt;p&gt;Pod 亲和性与反亲和性和合法操作符有 &lt;code&gt;In&lt;/code&gt;, &lt;code&gt;NotIn&lt;/code&gt;, &lt;code&gt;Exists&lt;/code&gt;, &lt;code&gt;DoesNotExist&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;原则上， &lt;code&gt;topologyKey&lt;/code&gt; 可以是任意合法的标签键， 但为了性能和安全的原因，对 &lt;code&gt;topologyKey&lt;/code&gt;
+有些约束:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;For pod affinity, empty &lt;code&gt;topologyKey&lt;/code&gt; is not allowed in both &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;
-and &lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;For pod anti-affinity, empty &lt;code&gt;topologyKey&lt;/code&gt; is also not allowed in both &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;
-and &lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;For &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; pod anti-affinity, the admission controller &lt;code&gt;LimitPodHardAntiAffinityTopology&lt;/code&gt; was introduced to limit &lt;code&gt;topologyKey&lt;/code&gt; to &lt;code&gt;kubernetes.io/hostname&lt;/code&gt;. If you want to make it available for custom topologies, you may modify the admission controller, or simply disable it.&lt;/li&gt;
-&lt;li&gt;Except for the above cases, the &lt;code&gt;topologyKey&lt;/code&gt; can be any legal label-key.&lt;/li&gt;
+&lt;li&gt;对于 Pod 亲和性，&lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; 和
+&lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; 中都不允许有空的 &lt;code&gt;topologyKey&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;对于 Pod 反亲和性，&lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; 和
+&lt;code&gt;preferredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; 中也都不允许有空的 &lt;code&gt;topologyKey&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;对于 &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; Pod 反亲和性， 引入
+&lt;code&gt;LimitPodHardAntiAffinityTopology&lt;/code&gt; 准入控制器来限制 &lt;code&gt;topologyKey&lt;/code&gt; 为 &lt;code&gt;kubernetes.io/hostname&lt;/code&gt;
+如果想要用在自定义拓扑上，则需要修改准入控制器或直接禁用它&lt;/li&gt;
+&lt;li&gt;除了上面的情况， &lt;code&gt;topologyKey&lt;/code&gt; 可以是任意合法的标签键&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;In addition to &lt;code&gt;labelSelector&lt;/code&gt; and &lt;code&gt;topologyKey&lt;/code&gt;, you can optionally specify a list &lt;code&gt;namespaces&lt;/code&gt;
-of namespaces which the &lt;code&gt;labelSelector&lt;/code&gt; should match against (this goes at the same level of the definition as &lt;code&gt;labelSelector&lt;/code&gt; and &lt;code&gt;topologyKey&lt;/code&gt;).
-If omitted or empty, it defaults to the namespace of the pod where the affinity/anti-affinity definition appears.&lt;/p&gt;
-&lt;p&gt;All &lt;code&gt;matchExpressions&lt;/code&gt; associated with &lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; affinity and anti-affinity
-must be satisfied for the pod to be scheduled onto a node.&lt;/p&gt;
-&lt;h4 id=&#34;more-practical-use-cases&#34;&gt;More Practical Use-cases&lt;/h4&gt;
-&lt;p&gt;Interpod Affinity and AntiAffinity can be even more useful when they are used with higher
+&lt;p&gt;在 &lt;code&gt;labelSelector&lt;/code&gt; 和 &lt;code&gt;topologyKey&lt;/code&gt; 外，可以选择指定一个可选的 &lt;code&gt;namespaces&lt;/code&gt; 列表，使得
+&lt;code&gt;labelSelector&lt;/code&gt; 需要来匹配它们(与 &lt;code&gt;labelSelector&lt;/code&gt; 和 &lt;code&gt;topologyKey&lt;/code&gt; 定义同级)。
+如果没有指定或值为空，默认为 亲和性与反亲和性 所在的命名空间中的 Pod。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;requiredDuringSchedulingIgnoredDuringExecution&lt;/code&gt; 亲和性与反亲和性的所有 &lt;code&gt;matchExpressions&lt;/code&gt;
+必须要求被满足时 Pod 才能被调度到这个节点上&lt;/p&gt;
+&lt;!--
+#### More Practical Use-cases
+
+Interpod Affinity and AntiAffinity can be even more useful when they are used with higher
 level collections such as ReplicaSets, StatefulSets, Deployments, etc.  One can easily configure that a set of workloads should
-be co-located in the same defined topology, eg., the same node.&lt;/p&gt;
-&lt;h5 id=&#34;always-co-located-in-the-same-node&#34;&gt;Always co-located in the same node&lt;/h5&gt;
-&lt;p&gt;In a three node cluster, a web application has in-memory cache such as redis. We want the web-servers to be co-located with the cache as much as possible.&lt;/p&gt;
-&lt;p&gt;Here is the yaml snippet of a simple redis deployment with three replicas and selector label &lt;code&gt;app=store&lt;/code&gt;. The deployment has &lt;code&gt;PodAntiAffinity&lt;/code&gt; configured to ensure the scheduler does not co-locate replicas on a single node.&lt;/p&gt;
+be co-located in the same defined topology, eg., the same node.
+ --&gt;
+&lt;h4 id=&#34;more-practical-use-cases&#34;&gt;更实用的应用场景&lt;/h4&gt;
+&lt;p&gt;Pod 亲和性与反亲和性在被用在如 ReplicaSet, StatefulSet, Deployment, 等这些更高一级的资源上
+时可以发挥更大的作用。 这样可以很空间地配置将一组工作负载放在同一个拓扑中，例如， 同一个节点上。&lt;/p&gt;
+&lt;!--
+##### Always co-located in the same node
+
+In a three node cluster, a web application has in-memory cache such as redis. We want the web-servers to be co-located with the cache as much as possible.
+
+Here is the yaml snippet of a simple redis deployment with three replicas and selector label `app=store`. The deployment has `PodAntiAffinity` configured to ensure the scheduler does not co-locate replicas on a single node.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-cache
+spec:
+  selector:
+    matchLabels:
+      app: store
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: store
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - store
+            topologyKey: &#34;kubernetes.io/hostname&#34;
+      containers:
+      - name: redis-server
+        image: redis:3.2-alpine
+```
+
+The below yaml snippet of the webserver deployment has `podAntiAffinity` and `podAffinity` configured. This informs the scheduler that all its replicas are to be co-located with pods that have selector label `app=store`. This will also ensure that each web-server replica does not co-locate on a single node.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-server
+spec:
+  selector:
+    matchLabels:
+      app: web-store
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: web-store
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - web-store
+            topologyKey: &#34;kubernetes.io/hostname&#34;
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - store
+            topologyKey: &#34;kubernetes.io/hostname&#34;
+      containers:
+      - name: web-app
+        image: nginx:1.16-alpine
+```
+
+If we create the above two deployments, our three node cluster should look like below.
+
+|       node-1         |       node-2        |       node-3       |
+|:--------------------:|:-------------------:|:------------------:|
+| *webserver-1*        |   *webserver-2*     |    *webserver-3*   |
+|  *cache-1*           |     *cache-2*       |     *cache-3*      |
+
+As you can see, all the 3 replicas of the `web-server` are automatically co-located with the cache as expected.
+
+```
+kubectl get pods -o wide
+```
+The output is similar to this:
+```
+NAME                           READY     STATUS    RESTARTS   AGE       IP           NODE
+redis-cache-1450370735-6dzlj   1/1       Running   0          8m        10.192.4.2   kube-node-3
+redis-cache-1450370735-j2j96   1/1       Running   0          8m        10.192.2.2   kube-node-1
+redis-cache-1450370735-z73mh   1/1       Running   0          8m        10.192.3.1   kube-node-2
+web-server-1287567482-5d4dz    1/1       Running   0          7m        10.192.2.3   kube-node-1
+web-server-1287567482-6f7v5    1/1       Running   0          7m        10.192.4.3   kube-node-3
+web-server-1287567482-s330j    1/1       Running   0          7m        10.192.3.2   kube-node-2
+```
+ --&gt;
+&lt;h5 id=&#34;always-co-located-in-the-same-node&#34;&gt;始终调度在同一个节点上&lt;/h5&gt;
+&lt;p&gt;在一个3节点的集群中，有一个使用的内存缓存如 redis 的 web 应用。 我们希望 web 服务尽量与缓存
+协同调度。&lt;/p&gt;
+&lt;p&gt;下面是一个简单的三副本的 redis Deployment 的 yaml 片断， 其中选择器标签为 &lt;code&gt;app=store&lt;/code&gt;。
+Deployment 中有 &lt;code&gt;PodAntiAffinity&lt;/code&gt; 配置，确保调度器不会同副本调度在同一个节点上。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deployment&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -1359,7 +1788,9 @@ be co-located in the same defined topology, eg., the same node.&lt;/p&gt;
       &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
       - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis-server&lt;/span&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;redis:3.2-alpine&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The below yaml snippet of the webserver deployment has &lt;code&gt;podAntiAffinity&lt;/code&gt; and &lt;code&gt;podAffinity&lt;/code&gt; configured. This informs the scheduler that all its replicas are to be co-located with pods that have selector label &lt;code&gt;app=store&lt;/code&gt;. This will also ensure that each web-server replica does not co-locate on a single node.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;下面是 web 服务的 Deployment yaml 片断， 其中配置了 &lt;code&gt;podAntiAffinity&lt;/code&gt; 和 &lt;code&gt;podAffinity&lt;/code&gt;
+这些配置告知调度器它的所有副本都要调度到与标签为 &lt;code&gt;app=store&lt;/code&gt; 的 Pod 在一起。这也会保证每个
+web 服务的副本不会被调度到同一个节点上&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;apps/v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deployment&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -1396,7 +1827,7 @@ be co-located in the same defined topology, eg., the same node.&lt;/p&gt;
       &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
       - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;web-app&lt;/span&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx:1.16-alpine&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If we create the above two deployments, our three node cluster should look like below.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果我们创建了上面的两个 Deployment，我们集群中的三个节点看起来应该就是下面这样。&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -1418,9 +1849,9 @@ be co-located in the same defined topology, eg., the same node.&lt;/p&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;As you can see, all the 3 replicas of the &lt;code&gt;web-server&lt;/code&gt; are automatically co-located with the cache as expected.&lt;/p&gt;
+&lt;p&gt;如你所见，就如预期中的那样 &lt;code&gt;web-server&lt;/code&gt; 的三个副本自动地与缓存调度在一起。&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;kubectl get pods -o wide
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The output is similar to this:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;输出结果类似如下:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;NAME                           READY     STATUS    RESTARTS   AGE       IP           NODE
 redis-cache-1450370735-6dzlj   1/1       Running   0          8m        10.192.4.2   kube-node-3
 redis-cache-1450370735-j2j96   1/1       Running   0          8m        10.192.2.2   kube-node-1
@@ -1428,29 +1859,68 @@ redis-cache-1450370735-z73mh   1/1       Running   0          8m        10.192.3
 web-server-1287567482-5d4dz    1/1       Running   0          7m        10.192.2.3   kube-node-1
 web-server-1287567482-6f7v5    1/1       Running   0          7m        10.192.4.3   kube-node-3
 web-server-1287567482-s330j    1/1       Running   0          7m        10.192.3.2   kube-node-2
-&lt;/code&gt;&lt;/pre&gt;&lt;h5 id=&#34;never-co-located-in-the-same-node&#34;&gt;Never co-located in the same node&lt;/h5&gt;
-&lt;p&gt;The above example uses &lt;code&gt;PodAntiAffinity&lt;/code&gt; rule with &lt;code&gt;topologyKey: &amp;quot;kubernetes.io/hostname&amp;quot;&lt;/code&gt; to deploy the redis cluster so that
+&lt;/code&gt;&lt;/pre&gt;&lt;!--
+##### Never co-located in the same node
+
+The above example uses `PodAntiAffinity` rule with `topologyKey: &#34;kubernetes.io/hostname&#34;` to deploy the redis cluster so that
 no two instances are located on the same host.
-See &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tutorials/stateful-application/zookeeper/#tolerating-node-failure&#34;&gt;ZooKeeper tutorial&lt;/a&gt;
-for an example of a StatefulSet configured with anti-affinity for high availability, using the same technique.&lt;/p&gt;
-&lt;h2 id=&#34;nodename&#34;&gt;nodeName&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;nodeName&lt;/code&gt; is the simplest form of node selection constraint, but due
-to its limitations it is typically not used.  &lt;code&gt;nodeName&lt;/code&gt; is a field of
+See [ZooKeeper tutorial](/docs/tutorials/stateful-application/zookeeper/#tolerating-node-failure)
+for an example of a StatefulSet configured with anti-affinity for high availability, using the same technique.
+ --&gt;
+&lt;h5 id=&#34;never-co-located-in-the-same-node&#34;&gt;永远不要调度到同一个节点上&lt;/h5&gt;
+&lt;p&gt;上面的例子中使用包含 &lt;code&gt;topologyKey: &amp;quot;kubernetes.io/hostname&amp;quot;&lt;/code&gt; 的 &lt;code&gt;PodAntiAffinity&lt;/code&gt; 来
+部署 redis 集群，这样任意两个实例都不会被调度到同一个主机上。
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tutorials/stateful-application/zookeeper/#tolerating-node-failure&#34;&gt;ZooKeeper 教程&lt;/a&gt;
+中的一个示例中，一个 StatefulSet 配置了反亲和性来实现高可用，其中使用了同样的技巧。&lt;/p&gt;
+&lt;!--
+## nodeName
+
+`nodeName` is the simplest form of node selection constraint, but due
+to its limitations it is typically not used.  `nodeName` is a field of
 PodSpec.  If it is non-empty, the scheduler ignores the pod and the
 kubelet running on the named node tries to run the pod.  Thus, if
-&lt;code&gt;nodeName&lt;/code&gt; is provided in the PodSpec, it takes precedence over the
-above methods for node selection.&lt;/p&gt;
-&lt;p&gt;Some of the limitations of using &lt;code&gt;nodeName&lt;/code&gt; to select nodes are:&lt;/p&gt;
+`nodeName` is provided in the PodSpec, it takes precedence over the
+above methods for node selection.
+
+Some of the limitations of using `nodeName` to select nodes are:
+
+-   If the named node does not exist, the pod will not be run, and in
+    some cases may be automatically deleted.
+-   If the named node does not have the resources to accommodate the
+    pod, the pod will fail and its reason will indicate why,
+    for example OutOfmemory or OutOfcpu.
+-   Node names in cloud environments are not always predictable or
+    stable.
+
+Here is an example of a pod config file using the `nodeName` field:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  nodeName: kube-01
+```
+
+The above pod will run on the node kube-01.
+ --&gt;
+&lt;h2 id=&#34;nodename&#34;&gt;nodeName&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;nodeName&lt;/code&gt; 是实现节点选择约束的最简单方式，但因为它的限制，通常是不会使用的。
+&lt;code&gt;nodeName&lt;/code&gt; 是 Pod  &lt;code&gt;.spec&lt;/code&gt; 的一个字段。 如果它不是空， 调度器就会忽略这个 Pod， 由 &lt;code&gt;nodeName&lt;/code&gt;
+所设置的名称的节点上的 &lt;code&gt;kubelet&lt;/code&gt; 来尝试运行这个 Pod。 这样， 如果 Pod &lt;code&gt;.spec&lt;/code&gt;  中定义了
+&lt;code&gt;nodeName&lt;/code&gt;， 则它会比上面提到的所有节点选择的优先级都高。&lt;/p&gt;
+&lt;p&gt;使用 &lt;code&gt;nodeName&lt;/code&gt; 进行节点选择的限制有:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;If the named node does not exist, the pod will not be run, and in
-some cases may be automatically deleted.&lt;/li&gt;
-&lt;li&gt;If the named node does not have the resources to accommodate the
-pod, the pod will fail and its reason will indicate why,
-for example OutOfmemory or OutOfcpu.&lt;/li&gt;
-&lt;li&gt;Node names in cloud environments are not always predictable or
-stable.&lt;/li&gt;
+&lt;li&gt;如果没有一个名称是这个的节点， 则 Pod 不会被运行，在某些情况下可以会被自动删除。&lt;/li&gt;
+&lt;li&gt;如果叫这个名称的节点上资源不足以运行这个节点，这个 Pod 就会失败，它的状态信息的原因中会显示为啥，
+比如 &lt;code&gt;OutOfmemory&lt;/code&gt; 或 &lt;code&gt;OutOfcpu&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;云环境中的节点名称可能不是始终可预期的或稳定的。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Here is an example of a pod config file using the &lt;code&gt;nodeName&lt;/code&gt; field:&lt;/p&gt;
+&lt;p&gt;下面就是一个使用 &lt;code&gt;nodeName&lt;/code&gt; 字段的 Pod 配置的示例:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
@@ -1460,15 +1930,27 @@ stable.&lt;/li&gt;
   - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
     &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
   &lt;span style=&#34;color:#f92672&#34;&gt;nodeName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kube-01&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The above pod will run on the node kube-01.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;上面这个 Pod 会运行在节点 &lt;code&gt;kube-01&lt;/code&gt; 上&lt;/p&gt;
 &lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#34;&gt;Taints&lt;/a&gt; allow a Node to &lt;em&gt;repel&lt;/em&gt; a set of Pods.&lt;/p&gt;
-&lt;p&gt;The design documents for
-&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/scheduling/nodeaffinity.md&#34;&gt;node affinity&lt;/a&gt;
-and for &lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/scheduling/podaffinity.md&#34;&gt;inter-pod affinity/anti-affinity&lt;/a&gt; contain extra background information about these features.&lt;/p&gt;
-&lt;p&gt;Once a Pod is assigned to a Node, the kubelet runs the Pod and allocates node-local resources.
-The &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/tasks/administer-cluster/topology-manager/&#34;&gt;topology manager&lt;/a&gt; can take part in node-level
-resource allocation decisions.&lt;/p&gt;
+&lt;!--
+[Taints](/docs/concepts/scheduling-eviction/taint-and-toleration/) allow a Node to *repel* a set of Pods.
+
+The design documents for
+[node affinity](https://git.k8s.io/community/contributors/design-proposals/scheduling/nodeaffinity.md)
+and for [inter-pod affinity/anti-affinity](https://git.k8s.io/community/contributors/design-proposals/scheduling/podaffinity.md) contain extra background information about these features.
+
+Once a Pod is assigned to a Node, the kubelet runs the Pod and allocates node-local resources.
+The [topology manager](/docs/tasks/administer-cluster/topology-manager/) can take part in node-level
+resource allocation decisions.
+ --&gt;
+&lt;p&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#34;&gt;毒点(Taint)&lt;/a&gt;
+允许节点 &lt;em&gt;排斥&lt;/em&gt; 一些 Pod.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/scheduling/nodeaffinity.md&#34;&gt;节点亲和性&lt;/a&gt;
+的设计文稿&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://git.k8s.io/community/contributors/design-proposals/scheduling/podaffinity.md&#34;&gt;Pod 间的 亲和性/反亲和性&lt;/a&gt; 包含了这个特性额外的背景信息&lt;/p&gt;
+&lt;p&gt;当一个 Pod 被分配给一个节点时， kubelet 运行这个节点并分配节点级别的资源。
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/topology-manager/&#34;&gt;拓扑管理器&lt;/a&gt;  可以参与节点级别资源
+分配的决定。&lt;/p&gt;
 
       </description>
     </item>
