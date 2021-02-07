@@ -1,7 +1,7 @@
 ---
 title: 分配 Pod 到节点
 content_type: concept
-weight: 50
+weight: 30
 ---
 
 <!--

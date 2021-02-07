@@ -1,7 +1,7 @@
 ---
 title: 毒点(Taint)与耐受性(Toleration)
 content_type: concept
-weight: 40
+weight: 20
 ---
 <!--
 ---
