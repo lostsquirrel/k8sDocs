@@ -11,22 +11,27 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/index.xml">
 <link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
 <link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
 <link rel="manifest" href="/k8sDocs/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/k8sDocs/images/kubernetes-192x192.png">
 
-<title>集群架构 | Kubernetes</title><meta property="og:title" content="集群架构" />
-<meta property="og:description" content="生产级别的容器编排系统" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/" />
-<meta property="og:site_name" content="Kubernetes" />
-<meta itemprop="name" content="集群架构">
-<meta itemprop="description" content="生产级别的容器编排系统">
+<title>Pod 开销 | Kubernetes</title><meta property="og:title" content="Pod 开销" />
+<meta property="og:description" content="功能特性状态: Kubernetes v1.18 [beta] 当在节点上运行一个 Pod 时， Pod 本身也会占用一定量的系统资源。这些资源与 Pod 中运行的容器所需要 的资源外额外的资源。 Pod 开销 就是一个" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/pod-overhead/" />
+<meta property="article:modified_time" content="2021-02-07T16:33:20+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="Pod 开销">
+<meta itemprop="description" content="功能特性状态: Kubernetes v1.18 [beta] 当在节点上运行一个 Pod 时， Pod 本身也会占用一定量的系统资源。这些资源与 Pod 中运行的容器所需要 的资源外额外的资源。 Pod 开销 就是一个">
+<meta itemprop="dateModified" content="2021-02-07T16:33:20+08:00" />
+<meta itemprop="wordCount" content="1724">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="集群架构"/>
-<meta name="twitter:description" content="生产级别的容器编排系统"/>
+<meta name="twitter:title" content="Pod 开销"/>
+<meta name="twitter:description" content="功能特性状态: Kubernetes v1.18 [beta] 当在节点上运行一个 Pod 时， Pod 本身也会占用一定量的系统资源。这些资源与 Pod 中运行的容器所需要 的资源外额外的资源。 Pod 开销 就是一个"/>
 
 
 
@@ -70,12 +75,12 @@
 
 
 
-<meta name="description" content="">
-<meta property="og:description" content="">
-<meta name="twitter:description" content="">
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/">
-<meta property="og:title" content="集群架构">
-<meta name="twitter:title" content="集群架构">
+<meta name="description" content="功能特性状态: Kubernetes v1.18 [beta] 当在节点上运行一个 Pod 时， Pod 本身也会占用一定量的系统资源。这些资源与 Pod 中运行的容器所需要 的资源外额外的资源。 Pod 开销 就是一个">
+<meta property="og:description" content="功能特性状态: Kubernetes v1.18 [beta] 当在节点上运行一个 Pod 时， Pod 本身也会占用一定量的系统资源。这些资源与 Pod 中运行的容器所需要 的资源外额外的资源。 Pod 开销 就是一个">
+<meta name="twitter:description" content="功能特性状态: Kubernetes v1.18 [beta] 当在节点上运行一个 Pod 时， Pod 本身也会占用一定量的系统资源。这些资源与 Pod 中运行的容器所需要 的资源外额外的资源。 Pod 开销 就是一个">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/pod-overhead/">
+<meta property="og:title" content="Pod 开销">
+<meta name="twitter:title" content="Pod 开销">
 <meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
 
 <meta name="twitter:image:alt" content="Kubernetes">
@@ -89,9 +94,9 @@
 <script src="/k8sDocs/js/script.js"></script>
 
 
-    <title>集群架构 | Kubernetes</title>
+    <title>Pod 开销 | Kubernetes</title>
   </head>
-  <body class="td-section td-documentation">
+  <body class="td-page td-documentation">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
@@ -403,10 +408,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/architecture/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">集群架构</a>
+    <a  href="/k8sDocs/docs/concepts/architecture/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">集群架构</a>
   </li>
   <ul>
-    <li class="collapse show" id="k8sdocsdocsconceptsarchitecture">
+    <li class="collapse " id="k8sdocsdocsconceptsarchitecture">
       
       
       
@@ -969,10 +974,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/scheduling-eviction/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">调度与驱逐</a>
+    <a  href="/k8sDocs/docs/concepts/scheduling-eviction/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">调度与驱逐</a>
   </li>
   <ul>
-    <li class="collapse " id="k8sdocsdocsconceptsscheduling-eviction">
+    <li class="collapse show" id="k8sdocsdocsconceptsscheduling-eviction">
       
       
       
@@ -997,7 +1002,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsscheduling-evictionpod-overhead" href="/k8sDocs/docs/concepts/scheduling-eviction/pod-overhead/">Pod 开销</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsscheduling-evictionpod-overhead" href="/k8sDocs/docs/concepts/scheduling-eviction/pod-overhead/">Pod 开销</a>
       
       
     </li>
@@ -1037,6 +1042,9 @@
 
 
 
+
+
+
 <li class="breadcrumb-item" >
 	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
 </li>
@@ -1051,8 +1059,15 @@
 
 
 
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/">调度与驱逐</a>
+</li>
+
+
+
+
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/architecture/">集群架构</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/pod-overhead/">Pod 开销</a>
 </li>
 
 	</ol>
@@ -1062,238 +1077,346 @@
               
             
               
-	<div class="td-content">
-		
-		
-			
-				
-			
-		
-		
-			<h1>集群架构</h1>
-			
-		
-		<div class="section-index">
+    <div class="td-content">
     
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/architecture/nodes/">节点</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/architecture/control-plane-node-communication/">控制中心与节点的通信</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/architecture/controller/">控制器</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/architecture/cloud-controller/">Cloud Controller Manager</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-    
+<p>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/scheduling-eviction/pod-overhead.md" id="editPageButton" target="_blank" data-proofer-ignore>
+    Edit This Page
+  </a>
+</p>
+
+  <h1>Pod 开销</h1>
+  
+  
+
+<!--
+---
+reviewers:
+- dchen1107
+- egernst
+- tallclair
+title: Pod Overhead
+content_type: concept
+weight: 50
+---
+ -->
+<!-- overview -->
+
+
+
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.18 [beta]</code>
 </div>
 
-	</div>
+
+<!--
+When you run a Pod on a Node, the Pod itself takes an amount of system resources. These
+resources are additional to the resources needed to run the container(s) inside the Pod.
+_Pod Overhead_ is a feature for accounting for the resources consumed by the Pod infrastructure
+on top of the container requests & limits.
+ -->
+<p>当在节点上运行一个 Pod 时， Pod 本身也会占用一定量的系统资源。这些资源与 Pod 中运行的容器所需要
+的资源外额外的资源。 <em>Pod 开销</em> 就是一个用来计量 Pod 容器保底要求和限制之外消耗的资源。</p>
+<!-- body -->
+<!--
+In Kubernetes, the Pod's overhead is set at
+[admission](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks)
+time according to the overhead associated with the Pod's
+[RuntimeClass](/docs/concepts/containers/runtime-class/).
+ -->
+<p>在 k8s 中， Pod 的开销是在
+<a href="https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks">准入</a>
+时根据与 Pod 关联的
+<a href="/k8sDocs/docs/conceptscontainers/runtime-class/">RuntimeClass</a>
+上配置的开销来的。</p>
+<!--
+When Pod Overhead is enabled, the overhead is considered in addition to the sum of container
+resource requests when scheduling a Pod. Similarly, the kubelet will include the Pod overhead when sizing
+the Pod cgroup, and when carrying out Pod eviction ranking.
+ -->
+<p>在启用 Pod 开销后， 在 Pod 调度时就是考量这个开销加上 Pod 中所有容器的资源要求。 类似的，
+kubelet 在在进行 Pod 驱逐排名时也会计算 Pod 的 cgroup 时也会包含 Pod 的开销。</p>
+<!--
+## Enabling Pod Overhead {#set-up}
+
+You need to make sure that the `PodOverhead`
+[feature gate](/docs/reference/command-line-tools-reference/feature-gates/) is enabled (it is on by default as of 1.18)
+across your cluster, and a `RuntimeClass` is utilized which defines the `overhead` field.
+ -->
+<h2 id="set-up">启用 Pod 开销</h2>
+<p>需要确保集群中的 <code>PodOverhead</code>
+<a href="https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/">功能阀</a> 是开启的
+(v1.18 默认是开启的)
+并使用了定义了 <code>overhead</code> 字段的 <code>RuntimeClass</code> 。</p>
+<!--
+## Usage example
+
+To use the PodOverhead feature, you need a RuntimeClass that defines the `overhead` field. As
+an example, you could use the following RuntimeClass definition with a virtualizing container runtime
+that uses around 120MiB per Pod for the virtual machine and the guest OS:
+
+```yaml
+---
+kind: RuntimeClass
+apiVersion: node.k8s.io/v1
+metadata:
+    name: kata-fc
+handler: kata-fc
+overhead:
+    podFixed:
+        memory: "120Mi"
+        cpu: "250m"
+```
+
+Workloads which are created which specify the `kata-fc` RuntimeClass handler will take the memory and
+cpu overheads into account for resource quota calculations, node scheduling, as well as Pod cgroup sizing.
+
+Consider running the given example workload, test-pod:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+spec:
+  runtimeClassName: kata-fc
+  containers:
+  - name: busybox-ctr
+    image: busybox
+    stdin: true
+    tty: true
+    resources:
+      limits:
+        cpu: 500m
+        memory: 100Mi
+  - name: nginx-ctr
+    image: nginx
+    resources:
+      limits:
+        cpu: 1500m
+        memory: 100Mi
+```
+
+At admission time the RuntimeClass [admission controller](/docs/reference/access-authn-authz/admission-controllers/)
+updates the workload's PodSpec to include the `overhead` as described in the RuntimeClass. If the PodSpec already has this field defined,
+the Pod will be rejected. In the given example, since only the RuntimeClass name is specified, the admission controller mutates the Pod
+to include an `overhead`.
+
+After the RuntimeClass admission controller, you can check the updated PodSpec:
+
+```bash
+kubectl get pod test-pod -o jsonpath='{.spec.overhead}'
+```
+
+The output is:
+```
+map[cpu:250m memory:120Mi]
+```
+
+If a ResourceQuota is defined, the sum of container requests as well as the
+`overhead` field are counted.
+
+When the kube-scheduler is deciding which node should run a new Pod, the scheduler considers that Pod's
+`overhead` as well as the sum of container requests for that Pod. For this example, the scheduler adds the
+requests and the overhead, then looks for a node that has 2.25 CPU and 320 MiB of memory available.
+
+Once a Pod is scheduled to a node, the kubelet on that node creates a new <a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-cgroup' target='_blank'>cgroup<span class='tooltip-text'>A group of Linux processes with optional resource isolation, accounting and limits.</span>
+</a>
+for the Pod. It is within this pod that the underlying container runtime will create containers.
+
+If the resource has a limit defined for each container (Guaranteed QoS or Bustrable QoS with limits defined),
+the kubelet will set an upper limit for the pod cgroup associated with that resource (cpu.cfs_quota_us for CPU
+and memory.limit_in_bytes memory). This upper limit is based on the sum of the container limits plus the `overhead`
+defined in the PodSpec.
+
+For CPU, if the Pod is Guaranteed or Burstable QoS, the kubelet will set `cpu.shares` based on the sum of container
+requests plus the `overhead` defined in the PodSpec.
+
+Looking at our example, verify the container requests for the workload:
+```bash
+kubectl get pod test-pod -o jsonpath='{.spec.containers[*].resources.limits}'
+```
+
+The total container requests are 2000m CPU and 200MiB of memory:
+```
+map[cpu: 500m memory:100Mi] map[cpu:1500m memory:100Mi]
+```
+
+Check this against what is observed by the node:
+```bash
+kubectl describe node | grep test-pod -B2
+```
+
+The output shows 2250m CPU and 320MiB of memory are requested, which includes PodOverhead:
+```
+  Namespace                   Name                CPU Requests  CPU Limits   Memory Requests  Memory Limits  AGE
+  ---------                   ----                ------------  ----------   ---------------  -------------  ---
+  default                     test-pod            2250m (56%)   2250m (56%)  320Mi (1%)       320Mi (1%)     36m
+```
+ -->
+<h2 id="usage-example">使用示例</h2>
+<!--
+To use the PodOverhead feature, you need a RuntimeClass that defines the `overhead` field. As
+an example, you could use the following RuntimeClass definition with a virtualizing container runtime
+that uses around 120MiB per Pod for the virtual machine and the guest OS:
+ -->
+<p>要使用 <code>PodOverhead</code> 特性， 需要要有一个定义了 <code>overhead</code> 字段的 <code>RuntimeClass</code>。 下面
+这个示例，可以使用下面的这个 <code>RuntimeClass</code> 定义了一个包含虚拟容器运行时，其中每个 Pod 使用
+大约 120MiB 来运行虚拟机和客户机操作系统:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">---
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">RuntimeClass</span>
+<span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">node.k8s.io/v1</span>
+<span style="color:#f92672">metadata</span>:
+    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">kata-fc</span>
+<span style="color:#f92672">handler</span>: <span style="color:#ae81ff">kata-fc</span>
+<span style="color:#f92672">overhead</span>:
+    <span style="color:#f92672">podFixed</span>:
+        <span style="color:#f92672">memory</span>: <span style="color:#e6db74">&#34;120Mi&#34;</span>
+        <span style="color:#f92672">cpu</span>: <span style="color:#e6db74">&#34;250m&#34;</span>
+</code></pre></div><p>那些在配置中指定 <code>kata-fc</code> 作为 <code>RuntimeClass</code> 处理器的工作负载，在进行资源配额諸，节点调度，
+还有 Pod cgroup 计算是都会计算这部分内存和CPU开销。</p>
+<p>运行下面示例的工作负载, test-pod:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Pod</span>
+<span style="color:#f92672">metadata</span>:
+  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">test-pod</span>
+<span style="color:#f92672">spec</span>:
+  <span style="color:#f92672">runtimeClassName</span>: <span style="color:#ae81ff">kata-fc</span>
+  <span style="color:#f92672">containers</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">busybox-ctr</span>
+    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">busybox</span>
+    <span style="color:#f92672">stdin</span>: <span style="color:#66d9ef">true</span>
+    <span style="color:#f92672">tty</span>: <span style="color:#66d9ef">true</span>
+    <span style="color:#f92672">resources</span>:
+      <span style="color:#f92672">limits</span>:
+        <span style="color:#f92672">cpu</span>: <span style="color:#ae81ff">500m</span>
+        <span style="color:#f92672">memory</span>: <span style="color:#ae81ff">100Mi</span>
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">nginx-ctr</span>
+    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">nginx</span>
+    <span style="color:#f92672">resources</span>:
+      <span style="color:#f92672">limits</span>:
+        <span style="color:#f92672">cpu</span>: <span style="color:#ae81ff">1500m</span>
+        <span style="color:#f92672">memory</span>: <span style="color:#ae81ff">100Mi</span>
+</code></pre></div><p>在准入时 <code>RuntimeClass</code>
+<a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/">准入控制器</a>
+会更新工作负载的 <code>PodSpec</code> 把 <code>RuntimeClass</code> 中定义的 <code>overhead</code> 加进去， 如果 <code>PodSpec</code>
+中已经定义了这个字段，Pod 就会被拒绝。 在上面的这个例子中， 因为只指定了 <code>RuntimeClass</code> 名称，
+准入控制器会修改 Pod 配置将 <code>overhead</code> 加进去。</p>
+<p>After the RuntimeClass admission controller, you can check the updated PodSpec:</p>
+<p>在 <code>RuntimeClass</code> 准入控制器之后， 可以查看被更新后的 Pod 定义</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl get pod test-pod -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{.spec.overhead}&#39;</span>
+</code></pre></div><p>输出结果如下:</p>
+<pre><code>map[cpu:250m memory:120Mi]
+</code></pre><p>如果定义了一个 <code>ResourceQuota</code>， 也会同时计算容器资源和 <code>overhead</code> 字段。</p>
+<p>当 <code>kube-scheduler</code> 在决定由哪个节点来运行一个新的 Pod 时， 调度器也会同时计算这个 Pod 中
+容器资源和 <code>overhead</code> 字段。 就上面的这个例子，调度器会将资源要求和 Pod 开销加起来，寻找一个
+有 2.25 CPU 和 320 MiB 内存可用的节点。</p>
+<p>当一个 Pod 被调度到一个节点后， 这个节点上的 kubelet 会为这个 Pod 创建一个新的
+<a class='glossary-tooltip' href='/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-cgroup' target='_blank'>cgroup<span class='tooltip-text'>A group of Linux processes with optional resource isolation, accounting and limits.</span>
+</a>
+，底层的容器运行时再在其中创建这个 Pod 的容器。</p>
+<p>如果还为每个容器定义了资源限制(Guaranteed QoS or Bustrable QoS 中定义的限制)，kubelet 会为 Pod cgroup
+对应的资源(<code>cpu.cfs_quota_us</code> 是 CPU 然后 <code>memory.limit_in_bytes</code> 是内存)设置一个上限。
+这个上限是基于容器限制的上限加上 <code>PodSpec</code> 中定义的开销(<code>overhead</code>)</p>
+<p>对于 CPU， 如果 Pod 是 Guaranteed 或 Burstable QoS, kubelet 会基于容器请求加上
+<code>PodSpec</code> 中定义的开销(<code>overhead</code>) 来设置 <code>cpu.shares</code></p>
+<p>再看我们的示例， 检查工作负载的容器请求:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl get pod test-pod -o jsonpath<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;{.spec.containers[*].resources.limits}&#39;</span>
+</code></pre></div><p>容器请求的总和为 2000m CPU 和 200MiB 内存:</p>
+<pre><code>map[cpu: 500m memory:100Mi] map[cpu:1500m memory:100Mi]
+</code></pre><p>再通过观察节点来验证这一点:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">kubectl describe node | grep test-pod -B2
+</code></pre></div><p>输出显示要求 2250m CPU 和 320MiB 内存，其中包含了 Pod 开销(<code>PodOverhead</code>):</p>
+<pre><code>  Namespace                   Name                CPU Requests  CPU Limits   Memory Requests  Memory Limits  AGE
+  ---------                   ----                ------------  ----------   ---------------  -------------  ---
+  default                     test-pod            2250m (56%)   2250m (56%)  320Mi (1%)       320Mi (1%)     36m
+</code></pre><!--
+## Verify Pod cgroup limits
+
+Check the Pod's memory cgroups on the node where the workload is running. In the following example, [`crictl`](https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.md)
+is used on the node, which provides a CLI for CRI-compatible container runtimes. This is an
+advanced example to show PodOverhead behavior, and it is not expected that users should need to check
+cgroups directly on the node.
+
+First, on the particular node, determine the Pod identifier:
+
+```bash
+# Run this on the node where the Pod is scheduled
+POD_ID="$(sudo crictl pods --name test-pod -q)"
+```
+
+From this, you can determine the cgroup path for the Pod:
+```bash
+# Run this on the node where the Pod is scheduled
+sudo crictl inspectp -o=json $POD_ID | grep cgroupsPath
+```
+
+The resulting cgroup path includes the Pod's `pause` container. The Pod level cgroup is one directory above.
+```
+        "cgroupsPath": "/kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2/7ccf55aee35dd16aca4189c952d83487297f3cd760f1bbf09620e206e7d0c27a"
+```
+
+In this specific case, the pod cgroup path is `kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2`. Verify the Pod level cgroup setting for memory:
+```bash
+# Run this on the node where the Pod is scheduled.
+# Also, change the name of the cgroup to match the cgroup allocated for your pod.
+ cat /sys/fs/cgroup/memory/kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2/memory.limit_in_bytes
+```
+
+This is 320 MiB, as expected:
+```
+335544320
+```
+ -->
+<h2 id="verify-pod-cgroup-limits">验证 Pod cgroup 限制</h2>
+<p>检查工作负载运行节点上 Pod 的内存 cgroup。 在下面的例子中，在节点中使用了
+<a href="https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.md"><code>crictl</code></a>
+为 CRI 兼容的容器运行时提供 CLI。 这是一个显示 <code>PodOverhead</code> 行为的高级示例， 没有预期用户
+有必须直接在节点上检查 cgroup</p>
+<p>首先，在特定的节点上，定位 Pod 的标识符:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># 在 Pod 调度的目标节点上运行</span>
+POD_ID<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>sudo crictl pods --name test-pod -q<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</code></pre></div><p>从这里，可以确定 Pod 的 cgroup 路径:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># 在 Pod 调度的目标节点上运行</span>
+sudo crictl inspectp -o<span style="color:#f92672">=</span>json $POD_ID | grep cgroupsPath
+</code></pre></div><p>结果中的 cgroup 路径包含了 Pod 的 <code>pause</code> 容器。 Pod 级别的 cgroup 在这个路径向上一层</p>
+<pre><code>        &quot;cgroupsPath&quot;: &quot;/kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2/7ccf55aee35dd16aca4189c952d83487297f3cd760f1bbf09620e206e7d0c27a&quot;
+</code></pre><p>In this specific case, the pod cgroup path is <code>kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2</code>. Verify the Pod level cgroup setting for memory:
+在这个例子中， Pod cgroup 路径就是 <code>kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2</code>。
+验证 Pod 级别 cgroup 配置的中的内存配置:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># 在 Pod 调度的目标节点上运行</span>
+<span style="color:#75715e"># 同时，修改 cgroup 的名称，让它与为 Pod 分配的 cgroup 相同</span>
+ cat /sys/fs/cgroup/memory/kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2/memory.limit_in_bytes
+</code></pre></div><p>这个例子是 320 MiB, 所以就是:</p>
+<pre><code>335544320
+</code></pre><!--
+### Observability
+
+A `kube_pod_overhead` metric is available in [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics)
+to help identify when PodOverhead is being utilized and to help observe stability of workloads
+running with a defined Overhead. This functionality is not available in the 1.9 release of
+kube-state-metrics, but is expected in a following release. Users will need to build kube-state-metrics
+from source in the meantime.
+ -->
+<h3 id="observability">可观察性</h3>
+<p>在
+<a href="https://github.com/kubernetes/kube-state-metrics">kube-state-metrics</a>
+中有一个 <code>kube_pod_overhead</code> 指标，可以用来在使用 PodOverhead 帮助观测使用了 Pod 开销的
+工作负载的稳定性。 这个功能在 v1.9 的 <code>kube-state-metrics</code> 中是没有的，但应该会在接下来的
+版本中提供。同时需要用户从源码构建 <code>kube-state-metrics</code></p>
+<h2 id="相关资料">相关资料</h2>
+<!--
+* [RuntimeClass](/docs/concepts/containers/runtime-class/)
+* [PodOverhead Design](https://github.com/kubernetes/enhancements/tree/master/keps/sig-node/688-pod-overhead)
+ -->
+<ul>
+<li><a href="/k8sDocs/docs/conceptscontainers/runtime-class/">RuntimeClass</a></li>
+<li><a href="https://github.com/kubernetes/enhancements/tree/master/keps/sig-node/688-pod-overhead">PodOverhead 设计文稿</a></li>
+</ul>
+
+
 
             
             <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-02-07 16:33:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/603d4adf44157ecf123e14b9fe7af0cd4fe76111">publish pod overhead (603d4ad)</a>
@@ -1320,9 +1443,9 @@
 
 
 
-<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/architecture/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/architecture/_index.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=%e9%9b%86%e7%be%a4%e6%9e%b6%e6%9e%84" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/scheduling-eviction/pod-overhead.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/scheduling-eviction/pod-overhead.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=Pod%20%e5%bc%80%e9%94%80" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
 
 </div>
 
@@ -1330,6 +1453,19 @@
 
 
 
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#set-up">启用 Pod 开销</a></li>
+    <li><a href="#usage-example">使用示例</a></li>
+    <li><a href="#verify-pod-cgroup-limits">验证 Pod cgroup 限制</a>
+      <ul>
+        <li><a href="#observability">可观察性</a></li>
+      </ul>
+    </li>
+    <li><a href="#相关资料">相关资料</a></li>
+  </ul>
+</nav>
 
 
 
