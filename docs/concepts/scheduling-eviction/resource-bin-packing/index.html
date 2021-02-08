@@ -11,25 +11,27 @@
 
 <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 
-<link rel="alternate" type="application/rss&#43;xml" href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/index.xml">
 <link rel="shortcut icon" type="image/png" href="/k8sDocs/images/favicon.png">
 <link rel="apple-touch-icon" href="/k8sDocs/favicons/apple-touch-icon-180x180.png" sizes="180x180">
 <link rel="manifest" href="/k8sDocs/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/k8sDocs/images/kubernetes-192x192.png">
 
-<title>存储(Storage) | Kubernetes</title><meta property="og:title" content="存储(Storage)" />
-<meta property="og:description" content="向集群中 Pod 提供长期和临时存储的方式。
-" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/" />
-<meta property="og:site_name" content="Kubernetes" />
-<meta itemprop="name" content="存储(Storage)">
-<meta itemprop="description" content="向集群中 Pod 提供长期和临时存储的方式。
-">
+<title>Resource Bin Packing for Extended Resources | Kubernetes</title><meta property="og:title" content="Resource Bin Packing for Extended Resources" />
+<meta property="og:description" content="功能特性状态: Kubernetes v1.16 [alpha] kube-scheduler 可以通过使用 RequestedToCapacityRatioResourceAllocation 优先级函数 配置启用对扩展资源打包。 优先级函数可以用来根据每个自定义的需求对 kube-scheduler 进行微调 Enabling Bin Packing using RequestedToCapacityRatioResourceAllocation k8s 允许用户" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/resource-bin-packing/" />
+<meta property="article:modified_time" content="2021-02-08T16:32:53+08:00" /><meta property="og:site_name" content="Kubernetes" />
+<meta itemprop="name" content="Resource Bin Packing for Extended Resources">
+<meta itemprop="description" content="功能特性状态: Kubernetes v1.16 [alpha] kube-scheduler 可以通过使用 RequestedToCapacityRatioResourceAllocation 优先级函数 配置启用对扩展资源打包。 优先级函数可以用来根据每个自定义的需求对 kube-scheduler 进行微调 Enabling Bin Packing using RequestedToCapacityRatioResourceAllocation k8s 允许用户">
+<meta itemprop="dateModified" content="2021-02-08T16:32:53+08:00" />
+<meta itemprop="wordCount" content="877">
+
+
+
+<meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="存储(Storage)"/>
-<meta name="twitter:description" content="向集群中 Pod 提供长期和临时存储的方式。
-"/>
+<meta name="twitter:title" content="Resource Bin Packing for Extended Resources"/>
+<meta name="twitter:description" content="功能特性状态: Kubernetes v1.16 [alpha] kube-scheduler 可以通过使用 RequestedToCapacityRatioResourceAllocation 优先级函数 配置启用对扩展资源打包。 优先级函数可以用来根据每个自定义的需求对 kube-scheduler 进行微调 Enabling Bin Packing using RequestedToCapacityRatioResourceAllocation k8s 允许用户"/>
 
 
 
@@ -73,15 +75,12 @@
 
 
 
-<meta name="description" content="向集群中 Pod 提供长期和临时存储的方式。
-">
-<meta property="og:description" content="向集群中 Pod 提供长期和临时存储的方式。
-">
-<meta name="twitter:description" content="向集群中 Pod 提供长期和临时存储的方式。
-">
-<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/">
-<meta property="og:title" content="存储(Storage)">
-<meta name="twitter:title" content="存储(Storage)">
+<meta name="description" content="功能特性状态: Kubernetes v1.16 [alpha] kube-scheduler 可以通过使用 RequestedToCapacityRatioResourceAllocation 优先级函数 配置启用对扩展资源打包。 优先级函数可以用来根据每个自定义的需求对 kube-scheduler 进行微调 Enabling Bin Packing using RequestedToCapacityRatioResourceAllocation k8s 允许用户">
+<meta property="og:description" content="功能特性状态: Kubernetes v1.16 [alpha] kube-scheduler 可以通过使用 RequestedToCapacityRatioResourceAllocation 优先级函数 配置启用对扩展资源打包。 优先级函数可以用来根据每个自定义的需求对 kube-scheduler 进行微调 Enabling Bin Packing using RequestedToCapacityRatioResourceAllocation k8s 允许用户">
+<meta name="twitter:description" content="功能特性状态: Kubernetes v1.16 [alpha] kube-scheduler 可以通过使用 RequestedToCapacityRatioResourceAllocation 优先级函数 配置启用对扩展资源打包。 优先级函数可以用来根据每个自定义的需求对 kube-scheduler 进行微调 Enabling Bin Packing using RequestedToCapacityRatioResourceAllocation k8s 允许用户">
+<meta property="og:url" content="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/resource-bin-packing/">
+<meta property="og:title" content="Resource Bin Packing for Extended Resources">
+<meta name="twitter:title" content="Resource Bin Packing for Extended Resources">
 <meta name="twitter:image" content="https://kubernetes.io/images/favicon.png" />
 
 <meta name="twitter:image:alt" content="Kubernetes">
@@ -95,9 +94,9 @@
 <script src="/k8sDocs/js/script.js"></script>
 
 
-    <title>存储(Storage) | Kubernetes</title>
+    <title>Resource Bin Packing for Extended Resources | Kubernetes</title>
   </head>
-  <body class="td-section td-documentation">
+  <body class="td-page td-documentation">
     <header>
       
 <nav class="js-navbar-scroll navbar navbar-expand navbar-dark  flex-row td-navbar" data-auto-burger="primary">
@@ -745,10 +744,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
+    <a  href="/k8sDocs/docs/concepts/storage/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">存储(Storage)</a>
   </li>
   <ul>
-    <li class="collapse show" id="k8sdocsdocsconceptsstorage">
+    <li class="collapse " id="k8sdocsdocsconceptsstorage">
       
       
       
@@ -975,10 +974,10 @@
 
 <ul class="td-sidebar-nav__section pr-md-3">
   <li class="td-sidebar-nav__section-title">
-    <a  href="/k8sDocs/docs/concepts/scheduling-eviction/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">调度与驱逐</a>
+    <a  href="/k8sDocs/docs/concepts/scheduling-eviction/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">调度与驱逐</a>
   </li>
   <ul>
-    <li class="collapse " id="k8sdocsdocsconceptsscheduling-eviction">
+    <li class="collapse show" id="k8sdocsdocsconceptsscheduling-eviction">
       
       
       
@@ -1009,7 +1008,7 @@
       
       
       
-      <a class="td-sidebar-link td-sidebar-link__page " id="m-k8sdocsdocsconceptsscheduling-evictionresource-bin-packing" href="/k8sDocs/docs/concepts/scheduling-eviction/resource-bin-packing/">Resource Bin Packing for Extended Resources</a>
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-k8sdocsdocsconceptsscheduling-evictionresource-bin-packing" href="/k8sDocs/docs/concepts/scheduling-eviction/resource-bin-packing/">Resource Bin Packing for Extended Resources</a>
       
       
     </li>
@@ -1049,6 +1048,9 @@
 
 
 
+
+
+
 <li class="breadcrumb-item" >
 	<a href="https://lostsquirrel.github.io/k8sDocs/docs/">Kubernetes Documentation</a>
 </li>
@@ -1063,8 +1065,15 @@
 
 
 
+<li class="breadcrumb-item" >
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/">调度与驱逐</a>
+</li>
+
+
+
+
 <li class="breadcrumb-item active" aria-current="page">
-	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/storage/">存储(Storage)</a>
+	<a href="https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/resource-bin-packing/">Resource Bin Packing for Extended Resources</a>
 </li>
 
 	</ol>
@@ -1074,293 +1083,397 @@
               
             
               
-	<div class="td-content">
-		
-		
-			
-				
-			
-		
-		
-			
+    <div class="td-content">
+    
 <p>
-  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/storage/_index.md" id="editPageButton" target="_blank" data-proofer-ignore>
+  <a href="https://github.com/kubernetes/website/edit/master/content/zh/docs/concepts/scheduling-eviction/resource-bin-packing.md" id="editPageButton" target="_blank" data-proofer-ignore>
     Edit This Page
   </a>
 </p>
 
-  <h1>存储(Storage)</h1>
+  <h1>Resource Bin Packing for Extended Resources</h1>
   
-  <div class="lead">向集群中 Pod 提供长期和临时存储的方式。</div>
+  
+
+<!--
+---
+reviewers:
+- bsalamat
+- k82cn
+- ahg-g
+title: Resource Bin Packing for Extended Resources
+content_type: concept
+weight: 50
+---
+ -->
+<!-- overview -->
 
 
 
-		
-		<div class="section-index">
-    
-    
-    
-    
-    <hr class="panel-line">
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/storage/volumes/">卷(Volume)</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/storage/persistent-volumes/">持久化卷(PV)</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/storage/volume-snapshots/">卷快照</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/storage/volume-pvc-datasource/">CSI 卷克隆</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/storage/storage-classes/">StorageClass</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/storage/volume-snapshot-classes/">VolumeSnapshotClass</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/storage/dynamic-provisioning/">卷动态供应</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/storage/storage-capacity/">存储容量</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/storage/ephemeral-volumes/">临时卷</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-                <div class="entry">
-                    <h5>
-                        <a href="/k8sDocs/docs/concepts/storage/storage-limits/">节点级别的卷限制</a>
-                    </h5>
-                    <p></p>
-                </div>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-    
+
+
+<div style="margin-top: 10px; margin-bottom: 10px;">
+<b>功能特性状态:</b> <code>Kubernetes v1.16 [alpha]</code>
 </div>
 
-	</div>
+
+<!--
+The kube-scheduler can be configured to enable bin packing of resources along
+with extended resources using `RequestedToCapacityRatioResourceAllocation`
+priority function. Priority functions can be used to fine-tune the
+kube-scheduler as per custom needs.
+ -->
+<p><code>kube-scheduler</code> 可以通过使用 <code>RequestedToCapacityRatioResourceAllocation</code> 优先级函数
+配置启用对扩展资源打包。 优先级函数可以用来根据每个自定义的需求对 <code>kube-scheduler</code> 进行微调</p>
+<!-- body -->
+<!--
+## Enabling Bin Packing using RequestedToCapacityRatioResourceAllocation
+
+Kubernetes allows the users to specify the resources along with weights for
+each resource to score nodes based on the request to capacity ratio. This
+allows users to bin pack extended resources by using appropriate parameters
+and improves the utilization of scarce resources in large clusters. The
+behavior of the `RequestedToCapacityRatioResourceAllocation` priority function
+can be controlled by a configuration option called
+`requestedToCapacityRatioArguments`. This argument consists of two parameters
+`shape` and `resources`. The `shape` parameter allows the user to tune the
+function as least requested or most requested based on `utilization` and
+`score` values.  The `resources` parameter consists of `name` of the resource
+to be considered during scoring and `weight` specify the weight of each
+resource.
+
+
+Below is an example configuration that sets
+`requestedToCapacityRatioArguments` to bin packing behavior for extended
+resources `intel.com/foo` and `intel.com/bar`.
+
+```yaml
+apiVersion: v1
+kind: Policy
+# ...
+priorities:
+  # ...
+  - name: RequestedToCapacityRatioPriority
+    weight: 2
+    argument:
+      requestedToCapacityRatioArguments:
+        shape:
+          - utilization: 0
+            score: 0
+          - utilization: 100
+            score: 10
+        resources:
+          - name: intel.com/foo
+            weight: 3
+          - name: intel.com/bar
+            weight: 5
+```
+
+**This feature is disabled by default**
+ -->
+<h2 id="enabling-bin-packing-using-requestedtocapacityratioresourceallocation">Enabling Bin Packing using RequestedToCapacityRatioResourceAllocation</h2>
+<p>k8s 允许用户在设置资源时给每个资源指定权重，这个权重会被用在基于请求容量比的节点计分。
+这使得用户可以使用适当的参数来对扩展资源打包，并改善大型集群中稀缺资源的利用率。
+<code>RequestedToCapacityRatioResourceAllocation</code> 优先级函数 的行为可以由一个叫做
+<code>requestedToCapacityRatioArguments</code> 的选项控制。 这个参数由 <code>shape</code> 和 <code>resources</code>
+组成. 其中 <code>shape</code> 让用户可以基于 <code>utilization</code> 和 <code>score</code> 值的调整函数最低要求，或请求上限。
+<code>resources</code> 中的 <code>name</code> 是计分时考量的资源名称，<code>weight</code> 指定每种资源的权重</p>
+<p>下面的示例配置中，通过 <code>requestedToCapacityRatioArguments</code> 设置
+<code>intel.com/foo</code> 和 <code>intel.com/bar</code> 扩展资源的打包行为。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">v1</span>
+<span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Policy</span>
+<span style="color:#75715e"># ...</span>
+<span style="color:#f92672">priorities</span>:
+  <span style="color:#75715e"># ...</span>
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">RequestedToCapacityRatioPriority</span>
+    <span style="color:#f92672">weight</span>: <span style="color:#ae81ff">2</span>
+    <span style="color:#f92672">argument</span>:
+      <span style="color:#f92672">requestedToCapacityRatioArguments</span>:
+        <span style="color:#f92672">shape</span>:
+          - <span style="color:#f92672">utilization</span>: <span style="color:#ae81ff">0</span>
+            <span style="color:#f92672">score</span>: <span style="color:#ae81ff">0</span>
+          - <span style="color:#f92672">utilization</span>: <span style="color:#ae81ff">100</span>
+            <span style="color:#f92672">score</span>: <span style="color:#ae81ff">10</span>
+        <span style="color:#f92672">resources</span>:
+          - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">intel.com/foo</span>
+            <span style="color:#f92672">weight</span>: <span style="color:#ae81ff">3</span>
+          - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">intel.com/bar</span>
+            <span style="color:#f92672">weight</span>: <span style="color:#ae81ff">5</span>
+</code></pre></div><p><strong>该特性默认是禁用的</strong></p>
+<!--
+### Tuning the Priority Function
+
+`shape` is used to specify the behavior of the
+`RequestedToCapacityRatioPriority` function.
+
+```yaml
+shape:
+ - utilization: 0
+   score: 0
+ - utilization: 100
+   score: 10
+```
+
+The above arguments give the node a `score` of 0 if `utilization` is 0% and 10 for
+`utilization` 100%, thus enabling bin packing behavior. To enable least
+requested the score value must be reversed as follows.
+
+```yaml
+shape:
+  - utilization: 0
+    score: 10
+  - utilization: 100
+    score: 0
+```
+
+`resources` is an optional parameter which defaults to:
+
+``` yaml
+resources:
+  - name: CPU
+    weight: 1
+  - name: Memory
+    weight: 1
+```
+
+It can be used to add extended resources as follows:
+
+```yaml
+resources:
+  - name: intel.com/foo
+    weight: 5
+  - name: CPU
+    weight: 3
+  - name: Memory
+    weight: 1
+```
+
+The `weight` parameter is optional and is set to 1 if not specified. Also, the
+`weight` cannot be set to a negative value.
+ -->
+<h3 id="tuning-the-priority-function">调整优先级函数</h3>
+<p><code>shape</code> is used to specify the behavior of the
+<code>RequestedToCapacityRatioPriority</code> function.</p>
+<p><code>shape</code> 是用来指定 <code>RequestedToCapacityRatioPriority</code> 函数的行为。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">shape</span>:
+ - <span style="color:#f92672">utilization</span>: <span style="color:#ae81ff">0</span>
+   <span style="color:#f92672">score</span>: <span style="color:#ae81ff">0</span>
+ - <span style="color:#f92672">utilization</span>: <span style="color:#ae81ff">100</span>
+   <span style="color:#f92672">score</span>: <span style="color:#ae81ff">10</span>
+</code></pre></div><p>上面的参数表示，如果这个资源的利用率(<code>utilization</code>) 是 <code>0%</code> 节点的一个 <code>score</code> 就是 <code>0</code>,
+利用率(<code>utilization</code>) 是 <code>100%</code>, 则 <code>score</code> 是 <code>10</code>，这就是启用了打包行为。
+要启用分数值的最小值则要像下面这样反过来。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">shape</span>:
+  - <span style="color:#f92672">utilization</span>: <span style="color:#ae81ff">0</span>
+    <span style="color:#f92672">score</span>: <span style="color:#ae81ff">10</span>
+  - <span style="color:#f92672">utilization</span>: <span style="color:#ae81ff">100</span>
+    <span style="color:#f92672">score</span>: <span style="color:#ae81ff">0</span>
+</code></pre></div><p><code>resources</code> 是一个可靠参数，默认值如下:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">resources</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">CPU</span>
+    <span style="color:#f92672">weight</span>: <span style="color:#ae81ff">1</span>
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Memory</span>
+    <span style="color:#f92672">weight</span>: <span style="color:#ae81ff">1</span>
+</code></pre></div><p>也可以像下面这样添加扩展资源:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">resources</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">intel.com/foo</span>
+    <span style="color:#f92672">weight</span>: <span style="color:#ae81ff">5</span>
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">CPU</span>
+    <span style="color:#f92672">weight</span>: <span style="color:#ae81ff">3</span>
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Memory</span>
+    <span style="color:#f92672">weight</span>: <span style="color:#ae81ff">1</span>
+</code></pre></div><p><code>weight</code> 参数为可选，如果没有设置则默认为 1。 还有就是 <code>weight</code> 的值不能设置为负数</p>
+<!--
+### Node scoring for capacity allocation
+
+This section is intended for those who want to understand the internal details
+of this feature.
+Below is an example of how the node score is calculated for a given set of values.
+
+Requested resources:
+
+```
+intel.com/foo : 2
+Memory: 256MB
+CPU: 2
+```
+
+Resource weights:
+
+```
+intel.com/foo : 5
+Memory: 1
+CPU: 3
+```
+
+FunctionShapePoint {{0, 0}, {100, 10}}
+
+Node 1 spec:
+
+```
+Available:
+  intel.com/foo: 4
+  Memory: 1 GB
+  CPU: 8
+
+Used:
+  intel.com/foo: 1
+  Memory: 256MB
+  CPU: 1
+```
+
+Node score:
+
+```
+intel.com/foo  = resourceScoringFunction((2+1),4)
+               = (100 - ((4-3)*100/4)
+               = (100 - 25)
+               = 75                       # requested + used = 75% * available
+               = rawScoringFunction(75)
+               = 7                        # floor(75/10)
+
+Memory         = resourceScoringFunction((256+256),1024)
+               = (100 -((1024-512)*100/1024))
+               = 50                       # requested + used = 50% * available
+               = rawScoringFunction(50)
+               = 5                        # floor(50/10)
+
+CPU            = resourceScoringFunction((2+1),8)
+               = (100 -((8-3)*100/8))
+               = 37.5                     # requested + used = 37.5% * available
+               = rawScoringFunction(37.5)
+               = 3                        # floor(37.5/10)
+
+NodeScore   =  (7 * 5) + (5 * 1) + (3 * 3) / (5 + 1 + 3)
+            =  5
+```
+
+Node 2 spec:
+
+```
+Available:
+  intel.com/foo: 8
+  Memory: 1GB
+  CPU: 8
+Used:
+  intel.com/foo: 2
+  Memory: 512MB
+  CPU: 6
+```
+
+Node score:
+
+```
+intel.com/foo  = resourceScoringFunction((2+2),8)
+               =  (100 - ((8-4)*100/8)
+               =  (100 - 50)
+               =  50
+               =  rawScoringFunction(50)
+               = 5
+
+Memory         = resourceScoringFunction((256+512),1024)
+               = (100 -((1024-768)*100/1024))
+               = 75
+               = rawScoringFunction(75)
+               = 7
+
+CPU            = resourceScoringFunction((2+6),8)
+               = (100 -((8-8)*100/8))
+               = 100
+               = rawScoringFunction(100)
+               = 10
+
+NodeScore   =  (5 * 5) + (7 * 1) + (10 * 3) / (5 + 1 + 3)
+            =  7
+
+``` -->
+<h3 id="node-scoring-for-capacity-allocation">容量分配的节点计分</h3>
+<p>本节是为那些想要理解该特性内部细节的用户提供的。
+下面示例展示了基于示例中设置的值，节点分数是怎么计算出来的。</p>
+<p>资源要求:</p>
+<pre><code>intel.com/foo : 2
+Memory: 256MB
+CPU: 2
+</code></pre><p>资源权重:</p>
+<pre><code>intel.com/foo : 5
+Memory: 1
+CPU: 3
+</code></pre><p>FunctionShapePoint {{0, 0}, {100, 10}}</p>
+<p>节点 1 <code>spec</code>:</p>
+<pre><code>Available:
+  intel.com/foo: 4
+  Memory: 1 GB
+  CPU: 8
+
+Used:
+  intel.com/foo: 1
+  Memory: 256MB
+  CPU: 1
+</code></pre><p>节点 1 得分计算过程:</p>
+<pre><code>intel.com/foo  = resourceScoringFunction((2+1),4)
+               = (100 - ((4-3)*100/4)
+               = (100 - 25)
+               = 75                       # requested + used = 75% * available
+               = rawScoringFunction(75)
+               = 7                        # floor(75/10)
+
+Memory         = resourceScoringFunction((256+256),1024)
+               = (100 -((1024-512)*100/1024))
+               = 50                       # requested + used = 50% * available
+               = rawScoringFunction(50)
+               = 5                        # floor(50/10)
+
+CPU            = resourceScoringFunction((2+1),8)
+               = (100 -((8-3)*100/8))
+               = 37.5                     # requested + used = 37.5% * available
+               = rawScoringFunction(37.5)
+               = 3                        # floor(37.5/10)
+
+NodeScore   =  (7 * 5) + (5 * 1) + (3 * 3) / (5 + 1 + 3)
+            =  5
+</code></pre><p>节点 2 <code>.spec</code>:</p>
+<pre><code>Available:
+  intel.com/foo: 8
+  Memory: 1GB
+  CPU: 8
+Used:
+  intel.com/foo: 2
+  Memory: 512MB
+  CPU: 6
+</code></pre><p>节点 2 得分计算过程:</p>
+<pre><code>intel.com/foo  = resourceScoringFunction((2+2),8)
+               =  (100 - ((8-4)*100/8)
+               =  (100 - 50)
+               =  50
+               =  rawScoringFunction(50)
+               = 5
+
+Memory         = resourceScoringFunction((256+512),1024)
+               = (100 -((1024-768)*100/1024))
+               = 75
+               = rawScoringFunction(75)
+               = 7
+
+CPU            = resourceScoringFunction((2+6),8)
+               = (100 -((8-8)*100/8))
+               = 100
+               = rawScoringFunction(100)
+               = 10
+
+NodeScore   =  (5 * 5) + (7 * 1) + (10 * 3) / (5 + 1 + 3)
+            =  7
+
+</code></pre><h2 id="相关资料">相关资料</h2>
+<!--
+- Read more about the [scheduling framework](/docs/concepts/scheduling-eviction/scheduling-framework/)
+- Read more about [scheduler configuration](/docs/reference/scheduling/config/)
+ -->
+<ul>
+<li>概念 <a href="/docs/concepts/scheduling-eviction/scheduling-framework/">调度框架</a></li>
+<li>参考 <a href="/docs/reference/scheduling/config/">调度器配置</a></li>
+</ul>
+
+
 
             
             <div class="text-muted mt-5 pt-3 border-top">最后修改 2021-02-08 16:32:00: <a  href="https://github.com/lostsquirrel/k8sDocs/commit/cb33560b1b929bbb759076676d0a590d68bd3cbb">publish resource bin packing (cb33560)</a>
@@ -1387,9 +1500,9 @@
 
 
 
-<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/storage/_index.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/storage/_index.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
-<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=%e5%ad%98%e5%82%a8%28Storage%29" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/edit/master/content/zh/docs/concepts/scheduling-eviction/resource-bin-packing.md" target="_blank"><i class="fa fa-edit fa-fw"></i> 编辑此页</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/new/master/content/zh/docs/concepts/scheduling-eviction/resource-bin-packing.md?filename=change-me.md&amp;value=---%0Atitle%3A&#43;%22Long&#43;Page&#43;Title%22%0AlinkTitle%3A&#43;%22Short&#43;Nav&#43;Title%22%0Aweight%3A&#43;100%0Adescription%3A&#43;%3E-%0A&#43;&#43;&#43;&#43;&#43;Page&#43;description&#43;for&#43;heading&#43;and&#43;indexes.%0A---%0A%0A%23%23&#43;Heading%0A%0AEdit&#43;this&#43;template&#43;to&#43;create&#43;your&#43;new&#43;page.%0A%0A%2A&#43;Give&#43;it&#43;a&#43;good&#43;name%2C&#43;ending&#43;in&#43;%60.md%60&#43;-&#43;e.g.&#43;%60getting-started.md%60%0A%2A&#43;Edit&#43;the&#43;%22front&#43;matter%22&#43;section&#43;at&#43;the&#43;top&#43;of&#43;the&#43;page&#43;%28weight&#43;controls&#43;how&#43;its&#43;ordered&#43;amongst&#43;other&#43;pages&#43;in&#43;the&#43;same&#43;directory%3B&#43;lowest&#43;number&#43;first%29.%0A%2A&#43;Add&#43;a&#43;good&#43;commit&#43;message&#43;at&#43;the&#43;bottom&#43;of&#43;the&#43;page&#43;%28%3C80&#43;characters%3B&#43;use&#43;the&#43;extended&#43;description&#43;field&#43;for&#43;more&#43;detail%29.%0A%2A&#43;Create&#43;a&#43;new&#43;branch&#43;so&#43;you&#43;can&#43;preview&#43;your&#43;new&#43;file&#43;and&#43;request&#43;a&#43;review&#43;via&#43;Pull&#43;Request.%0A" target="_blank"><i class="fa fa-edit fa-fw"></i> 添加子页面</a>
+<a href="https://github.com/lostsquirrel/k8sDocs/issues/new?title=Resource%20Bin%20Packing%20for%20Extended%20Resources" target="_blank"><i class="fab fa-github fa-fw"></i> 提交文档问题</a>
 
 </div>
 
@@ -1397,6 +1510,18 @@
 
 
 
+
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#enabling-bin-packing-using-requestedtocapacityratioresourceallocation">Enabling Bin Packing using RequestedToCapacityRatioResourceAllocation</a>
+      <ul>
+        <li><a href="#tuning-the-priority-function">调整优先级函数</a></li>
+        <li><a href="#node-scoring-for-capacity-allocation">容量分配的节点计分</a></li>
+      </ul>
+    </li>
+    <li><a href="#相关资料">相关资料</a></li>
+  </ul>
+</nav>
 
 
 

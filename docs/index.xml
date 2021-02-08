@@ -19607,6 +19607,345 @@ Upon availability of the new PVC, the cloned PVC is consumed the same as other P
     </item>
     
     <item>
+      <title>Docs: Pod 开销</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/pod-overhead/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/pod-overhead/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- dchen1107
+- egernst
+- tallclair
+title: Pod Overhead
+content_type: concept
+weight: 50
+---
+ --&gt;
+&lt;!-- overview --&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.18 [beta]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;!--
+When you run a Pod on a Node, the Pod itself takes an amount of system resources. These
+resources are additional to the resources needed to run the container(s) inside the Pod.
+_Pod Overhead_ is a feature for accounting for the resources consumed by the Pod infrastructure
+on top of the container requests &amp; limits.
+ --&gt;
+&lt;p&gt;当在节点上运行一个 Pod 时， Pod 本身也会占用一定量的系统资源。这些资源与 Pod 中运行的容器所需要
+的资源外额外的资源。 &lt;em&gt;Pod 开销&lt;/em&gt; 就是一个用来计量 Pod 容器保底要求和限制之外消耗的资源。&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+In Kubernetes, the Pod&#39;s overhead is set at
+[admission](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks)
+time according to the overhead associated with the Pod&#39;s
+[RuntimeClass](/docs/concepts/containers/runtime-class/).
+ --&gt;
+&lt;p&gt;在 k8s 中， Pod 的开销是在
+&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks&#34;&gt;准入&lt;/a&gt;
+时根据与 Pod 关联的
+&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/conceptscontainers/runtime-class/&#34;&gt;RuntimeClass&lt;/a&gt;
+上配置的开销来的。&lt;/p&gt;
+&lt;!--
+When Pod Overhead is enabled, the overhead is considered in addition to the sum of container
+resource requests when scheduling a Pod. Similarly, the kubelet will include the Pod overhead when sizing
+the Pod cgroup, and when carrying out Pod eviction ranking.
+ --&gt;
+&lt;p&gt;在启用 Pod 开销后， 在 Pod 调度时就是考量这个开销加上 Pod 中所有容器的资源要求。 类似的，
+kubelet 在在进行 Pod 驱逐排名时也会计算 Pod 的 cgroup 时也会包含 Pod 的开销。&lt;/p&gt;
+&lt;!--
+## Enabling Pod Overhead {#set-up}
+
+You need to make sure that the `PodOverhead`
+[feature gate](/docs/reference/command-line-tools-reference/feature-gates/) is enabled (it is on by default as of 1.18)
+across your cluster, and a `RuntimeClass` is utilized which defines the `overhead` field.
+ --&gt;
+&lt;h2 id=&#34;set-up&#34;&gt;启用 Pod 开销&lt;/h2&gt;
+&lt;p&gt;需要确保集群中的 &lt;code&gt;PodOverhead&lt;/code&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;功能阀&lt;/a&gt; 是开启的
+(v1.18 默认是开启的)
+并使用了定义了 &lt;code&gt;overhead&lt;/code&gt; 字段的 &lt;code&gt;RuntimeClass&lt;/code&gt; 。&lt;/p&gt;
+&lt;!--
+## Usage example
+
+To use the PodOverhead feature, you need a RuntimeClass that defines the `overhead` field. As
+an example, you could use the following RuntimeClass definition with a virtualizing container runtime
+that uses around 120MiB per Pod for the virtual machine and the guest OS:
+
+```yaml
+---
+kind: RuntimeClass
+apiVersion: node.k8s.io/v1
+metadata:
+    name: kata-fc
+handler: kata-fc
+overhead:
+    podFixed:
+        memory: &#34;120Mi&#34;
+        cpu: &#34;250m&#34;
+```
+
+Workloads which are created which specify the `kata-fc` RuntimeClass handler will take the memory and
+cpu overheads into account for resource quota calculations, node scheduling, as well as Pod cgroup sizing.
+
+Consider running the given example workload, test-pod:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+spec:
+  runtimeClassName: kata-fc
+  containers:
+  - name: busybox-ctr
+    image: busybox
+    stdin: true
+    tty: true
+    resources:
+      limits:
+        cpu: 500m
+        memory: 100Mi
+  - name: nginx-ctr
+    image: nginx
+    resources:
+      limits:
+        cpu: 1500m
+        memory: 100Mi
+```
+
+At admission time the RuntimeClass [admission controller](/docs/reference/access-authn-authz/admission-controllers/)
+updates the workload&#39;s PodSpec to include the `overhead` as described in the RuntimeClass. If the PodSpec already has this field defined,
+the Pod will be rejected. In the given example, since only the RuntimeClass name is specified, the admission controller mutates the Pod
+to include an `overhead`.
+
+After the RuntimeClass admission controller, you can check the updated PodSpec:
+
+```bash
+kubectl get pod test-pod -o jsonpath=&#39;{.spec.overhead}&#39;
+```
+
+The output is:
+```
+map[cpu:250m memory:120Mi]
+```
+
+If a ResourceQuota is defined, the sum of container requests as well as the
+`overhead` field are counted.
+
+When the kube-scheduler is deciding which node should run a new Pod, the scheduler considers that Pod&#39;s
+`overhead` as well as the sum of container requests for that Pod. For this example, the scheduler adds the
+requests and the overhead, then looks for a node that has 2.25 CPU and 320 MiB of memory available.
+
+Once a Pod is scheduled to a node, the kubelet on that node creates a new &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-cgroup&#39; target=&#39;_blank&#39;&gt;cgroup&lt;span class=&#39;tooltip-text&#39;&gt;A group of Linux processes with optional resource isolation, accounting and limits.&lt;/span&gt;
+&lt;/a&gt;
+for the Pod. It is within this pod that the underlying container runtime will create containers.
+
+If the resource has a limit defined for each container (Guaranteed QoS or Bustrable QoS with limits defined),
+the kubelet will set an upper limit for the pod cgroup associated with that resource (cpu.cfs_quota_us for CPU
+and memory.limit_in_bytes memory). This upper limit is based on the sum of the container limits plus the `overhead`
+defined in the PodSpec.
+
+For CPU, if the Pod is Guaranteed or Burstable QoS, the kubelet will set `cpu.shares` based on the sum of container
+requests plus the `overhead` defined in the PodSpec.
+
+Looking at our example, verify the container requests for the workload:
+```bash
+kubectl get pod test-pod -o jsonpath=&#39;{.spec.containers[*].resources.limits}&#39;
+```
+
+The total container requests are 2000m CPU and 200MiB of memory:
+```
+map[cpu: 500m memory:100Mi] map[cpu:1500m memory:100Mi]
+```
+
+Check this against what is observed by the node:
+```bash
+kubectl describe node | grep test-pod -B2
+```
+
+The output shows 2250m CPU and 320MiB of memory are requested, which includes PodOverhead:
+```
+  Namespace                   Name                CPU Requests  CPU Limits   Memory Requests  Memory Limits  AGE
+  ---------                   ----                ------------  ----------   ---------------  -------------  ---
+  default                     test-pod            2250m (56%)   2250m (56%)  320Mi (1%)       320Mi (1%)     36m
+```
+ --&gt;
+&lt;h2 id=&#34;usage-example&#34;&gt;使用示例&lt;/h2&gt;
+&lt;!--
+To use the PodOverhead feature, you need a RuntimeClass that defines the `overhead` field. As
+an example, you could use the following RuntimeClass definition with a virtualizing container runtime
+that uses around 120MiB per Pod for the virtual machine and the guest OS:
+ --&gt;
+&lt;p&gt;要使用 &lt;code&gt;PodOverhead&lt;/code&gt; 特性， 需要要有一个定义了 &lt;code&gt;overhead&lt;/code&gt; 字段的 &lt;code&gt;RuntimeClass&lt;/code&gt;。 下面
+这个示例，可以使用下面的这个 &lt;code&gt;RuntimeClass&lt;/code&gt; 定义了一个包含虚拟容器运行时，其中每个 Pod 使用
+大约 120MiB 来运行虚拟机和客户机操作系统:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;---
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;RuntimeClass&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;node.k8s.io/v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kata-fc&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;handler&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kata-fc&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;overhead&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;podFixed&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;memory&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;120Mi&amp;#34;&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;cpu&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;250m&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;那些在配置中指定 &lt;code&gt;kata-fc&lt;/code&gt; 作为 &lt;code&gt;RuntimeClass&lt;/code&gt; 处理器的工作负载，在进行资源配额諸，节点调度，
+还有 Pod cgroup 计算是都会计算这部分内存和CPU开销。&lt;/p&gt;
+&lt;p&gt;运行下面示例的工作负载, test-pod:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-pod&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;runtimeClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kata-fc&lt;/span&gt;
+  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;busybox-ctr&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;busybox&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;stdin&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;tty&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;limits&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;cpu&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;500m&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;memory&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100Mi&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx-ctr&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;limits&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;cpu&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1500m&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;memory&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100Mi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在准入时 &lt;code&gt;RuntimeClass&lt;/code&gt;
+&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/&#34;&gt;准入控制器&lt;/a&gt;
+会更新工作负载的 &lt;code&gt;PodSpec&lt;/code&gt; 把 &lt;code&gt;RuntimeClass&lt;/code&gt; 中定义的 &lt;code&gt;overhead&lt;/code&gt; 加进去， 如果 &lt;code&gt;PodSpec&lt;/code&gt;
+中已经定义了这个字段，Pod 就会被拒绝。 在上面的这个例子中， 因为只指定了 &lt;code&gt;RuntimeClass&lt;/code&gt; 名称，
+准入控制器会修改 Pod 配置将 &lt;code&gt;overhead&lt;/code&gt; 加进去。&lt;/p&gt;
+&lt;p&gt;After the RuntimeClass admission controller, you can check the updated PodSpec:&lt;/p&gt;
+&lt;p&gt;在 &lt;code&gt;RuntimeClass&lt;/code&gt; 准入控制器之后， 可以查看被更新后的 Pod 定义&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl get pod test-pod -o jsonpath&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{.spec.overhead}&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果如下:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;map[cpu:250m memory:120Mi]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如果定义了一个 &lt;code&gt;ResourceQuota&lt;/code&gt;， 也会同时计算容器资源和 &lt;code&gt;overhead&lt;/code&gt; 字段。&lt;/p&gt;
+&lt;p&gt;当 &lt;code&gt;kube-scheduler&lt;/code&gt; 在决定由哪个节点来运行一个新的 Pod 时， 调度器也会同时计算这个 Pod 中
+容器资源和 &lt;code&gt;overhead&lt;/code&gt; 字段。 就上面的这个例子，调度器会将资源要求和 Pod 开销加起来，寻找一个
+有 2.25 CPU 和 320 MiB 内存可用的节点。&lt;/p&gt;
+&lt;p&gt;当一个 Pod 被调度到一个节点后， 这个节点上的 kubelet 会为这个 Pod 创建一个新的
+&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-cgroup&#39; target=&#39;_blank&#39;&gt;cgroup&lt;span class=&#39;tooltip-text&#39;&gt;A group of Linux processes with optional resource isolation, accounting and limits.&lt;/span&gt;
+&lt;/a&gt;
+，底层的容器运行时再在其中创建这个 Pod 的容器。&lt;/p&gt;
+&lt;p&gt;如果还为每个容器定义了资源限制(Guaranteed QoS or Bustrable QoS 中定义的限制)，kubelet 会为 Pod cgroup
+对应的资源(&lt;code&gt;cpu.cfs_quota_us&lt;/code&gt; 是 CPU 然后 &lt;code&gt;memory.limit_in_bytes&lt;/code&gt; 是内存)设置一个上限。
+这个上限是基于容器限制的上限加上 &lt;code&gt;PodSpec&lt;/code&gt; 中定义的开销(&lt;code&gt;overhead&lt;/code&gt;)&lt;/p&gt;
+&lt;p&gt;对于 CPU， 如果 Pod 是 Guaranteed 或 Burstable QoS, kubelet 会基于容器请求加上
+&lt;code&gt;PodSpec&lt;/code&gt; 中定义的开销(&lt;code&gt;overhead&lt;/code&gt;) 来设置 &lt;code&gt;cpu.shares&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;再看我们的示例， 检查工作负载的容器请求:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl get pod test-pod -o jsonpath&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{.spec.containers[*].resources.limits}&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;容器请求的总和为 2000m CPU 和 200MiB 内存:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;map[cpu: 500m memory:100Mi] map[cpu:1500m memory:100Mi]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;再通过观察节点来验证这一点:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl describe node | grep test-pod -B2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出显示要求 2250m CPU 和 320MiB 内存，其中包含了 Pod 开销(&lt;code&gt;PodOverhead&lt;/code&gt;):&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;  Namespace                   Name                CPU Requests  CPU Limits   Memory Requests  Memory Limits  AGE
+  ---------                   ----                ------------  ----------   ---------------  -------------  ---
+  default                     test-pod            2250m (56%)   2250m (56%)  320Mi (1%)       320Mi (1%)     36m
+&lt;/code&gt;&lt;/pre&gt;&lt;!--
+## Verify Pod cgroup limits
+
+Check the Pod&#39;s memory cgroups on the node where the workload is running. In the following example, [`crictl`](https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.md)
+is used on the node, which provides a CLI for CRI-compatible container runtimes. This is an
+advanced example to show PodOverhead behavior, and it is not expected that users should need to check
+cgroups directly on the node.
+
+First, on the particular node, determine the Pod identifier:
+
+```bash
+# Run this on the node where the Pod is scheduled
+POD_ID=&#34;$(sudo crictl pods --name test-pod -q)&#34;
+```
+
+From this, you can determine the cgroup path for the Pod:
+```bash
+# Run this on the node where the Pod is scheduled
+sudo crictl inspectp -o=json $POD_ID | grep cgroupsPath
+```
+
+The resulting cgroup path includes the Pod&#39;s `pause` container. The Pod level cgroup is one directory above.
+```
+        &#34;cgroupsPath&#34;: &#34;/kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2/7ccf55aee35dd16aca4189c952d83487297f3cd760f1bbf09620e206e7d0c27a&#34;
+```
+
+In this specific case, the pod cgroup path is `kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2`. Verify the Pod level cgroup setting for memory:
+```bash
+# Run this on the node where the Pod is scheduled.
+# Also, change the name of the cgroup to match the cgroup allocated for your pod.
+ cat /sys/fs/cgroup/memory/kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2/memory.limit_in_bytes
+```
+
+This is 320 MiB, as expected:
+```
+335544320
+```
+ --&gt;
+&lt;h2 id=&#34;verify-pod-cgroup-limits&#34;&gt;验证 Pod cgroup 限制&lt;/h2&gt;
+&lt;p&gt;检查工作负载运行节点上 Pod 的内存 cgroup。 在下面的例子中，在节点中使用了
+&lt;a href=&#34;https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.md&#34;&gt;&lt;code&gt;crictl&lt;/code&gt;&lt;/a&gt;
+为 CRI 兼容的容器运行时提供 CLI。 这是一个显示 &lt;code&gt;PodOverhead&lt;/code&gt; 行为的高级示例， 没有预期用户
+有必须直接在节点上检查 cgroup&lt;/p&gt;
+&lt;p&gt;首先，在特定的节点上，定位 Pod 的标识符:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 在 Pod 调度的目标节点上运行&lt;/span&gt;
+POD_ID&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;sudo crictl pods --name test-pod -q&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;从这里，可以确定 Pod 的 cgroup 路径:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 在 Pod 调度的目标节点上运行&lt;/span&gt;
+sudo crictl inspectp -o&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;json $POD_ID | grep cgroupsPath
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;结果中的 cgroup 路径包含了 Pod 的 &lt;code&gt;pause&lt;/code&gt; 容器。 Pod 级别的 cgroup 在这个路径向上一层&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;        &amp;quot;cgroupsPath&amp;quot;: &amp;quot;/kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2/7ccf55aee35dd16aca4189c952d83487297f3cd760f1bbf09620e206e7d0c27a&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;In this specific case, the pod cgroup path is &lt;code&gt;kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2&lt;/code&gt;. Verify the Pod level cgroup setting for memory:
+在这个例子中， Pod cgroup 路径就是 &lt;code&gt;kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2&lt;/code&gt;。
+验证 Pod 级别 cgroup 配置的中的内存配置:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 在 Pod 调度的目标节点上运行&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# 同时，修改 cgroup 的名称，让它与为 Pod 分配的 cgroup 相同&lt;/span&gt;
+ cat /sys/fs/cgroup/memory/kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2/memory.limit_in_bytes
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这个例子是 320 MiB, 所以就是:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;335544320
+&lt;/code&gt;&lt;/pre&gt;&lt;!--
+### Observability
+
+A `kube_pod_overhead` metric is available in [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics)
+to help identify when PodOverhead is being utilized and to help observe stability of workloads
+running with a defined Overhead. This functionality is not available in the 1.9 release of
+kube-state-metrics, but is expected in a following release. Users will need to build kube-state-metrics
+from source in the meantime.
+ --&gt;
+&lt;h3 id=&#34;observability&#34;&gt;可观察性&lt;/h3&gt;
+&lt;p&gt;在
+&lt;a href=&#34;https://github.com/kubernetes/kube-state-metrics&#34;&gt;kube-state-metrics&lt;/a&gt;
+中有一个 &lt;code&gt;kube_pod_overhead&lt;/code&gt; 指标，可以用来在使用 PodOverhead 帮助观测使用了 Pod 开销的
+工作负载的稳定性。 这个功能在 v1.9 的 &lt;code&gt;kube-state-metrics&lt;/code&gt; 中是没有的，但应该会在接下来的
+版本中提供。同时需要用户从源码构建 &lt;code&gt;kube-state-metrics&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;!--
+* [RuntimeClass](/docs/concepts/containers/runtime-class/)
+* [PodOverhead Design](https://github.com/kubernetes/enhancements/tree/master/keps/sig-node/688-pod-overhead)
+ --&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/conceptscontainers/runtime-class/&#34;&gt;RuntimeClass&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes/enhancements/tree/master/keps/sig-node/688-pod-overhead&#34;&gt;PodOverhead 设计文稿&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
       <title>Docs: 管理容器资源</title>
       <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/manage-resources-containers/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -21413,21 +21752,21 @@ EndpointSlice 的实现必须要能处理这种同一个网络端点出现在多
     </item>
     
     <item>
-      <title>Docs: Pod 开销</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/pod-overhead/</link>
+      <title>Docs: Resource Bin Packing for Extended Resources</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/resource-bin-packing/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/pod-overhead/</guid>
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/resource-bin-packing/</guid>
       <description>
         
         
         &lt;!--
 ---
 reviewers:
-- dchen1107
-- egernst
-- tallclair
-title: Pod Overhead
+- bsalamat
+- k82cn
+- ahg-g
+title: Resource Bin Packing for Extended Resources
 content_type: concept
 weight: 50
 ---
@@ -21439,313 +21778,364 @@ weight: 50
 
 
 &lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
-&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.18 [beta]&lt;/code&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.16 [alpha]&lt;/code&gt;
 &lt;/div&gt;
 
 
 &lt;!--
-When you run a Pod on a Node, the Pod itself takes an amount of system resources. These
-resources are additional to the resources needed to run the container(s) inside the Pod.
-_Pod Overhead_ is a feature for accounting for the resources consumed by the Pod infrastructure
-on top of the container requests &amp; limits.
+The kube-scheduler can be configured to enable bin packing of resources along
+with extended resources using `RequestedToCapacityRatioResourceAllocation`
+priority function. Priority functions can be used to fine-tune the
+kube-scheduler as per custom needs.
  --&gt;
-&lt;p&gt;当在节点上运行一个 Pod 时， Pod 本身也会占用一定量的系统资源。这些资源与 Pod 中运行的容器所需要
-的资源外额外的资源。 &lt;em&gt;Pod 开销&lt;/em&gt; 就是一个用来计量 Pod 容器保底要求和限制之外消耗的资源。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kube-scheduler&lt;/code&gt; 可以通过使用 &lt;code&gt;RequestedToCapacityRatioResourceAllocation&lt;/code&gt; 优先级函数
+配置启用对扩展资源打包。 优先级函数可以用来根据每个自定义的需求对 &lt;code&gt;kube-scheduler&lt;/code&gt; 进行微调&lt;/p&gt;
 &lt;!-- body --&gt;
 &lt;!--
-In Kubernetes, the Pod&#39;s overhead is set at
-[admission](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks)
-time according to the overhead associated with the Pod&#39;s
-[RuntimeClass](/docs/concepts/containers/runtime-class/).
- --&gt;
-&lt;p&gt;在 k8s 中， Pod 的开销是在
-&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks&#34;&gt;准入&lt;/a&gt;
-时根据与 Pod 关联的
-&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/conceptscontainers/runtime-class/&#34;&gt;RuntimeClass&lt;/a&gt;
-上配置的开销来的。&lt;/p&gt;
-&lt;!--
-When Pod Overhead is enabled, the overhead is considered in addition to the sum of container
-resource requests when scheduling a Pod. Similarly, the kubelet will include the Pod overhead when sizing
-the Pod cgroup, and when carrying out Pod eviction ranking.
- --&gt;
-&lt;p&gt;在启用 Pod 开销后， 在 Pod 调度时就是考量这个开销加上 Pod 中所有容器的资源要求。 类似的，
-kubelet 在在进行 Pod 驱逐排名时也会计算 Pod 的 cgroup 时也会包含 Pod 的开销。&lt;/p&gt;
-&lt;!--
-## Enabling Pod Overhead {#set-up}
+## Enabling Bin Packing using RequestedToCapacityRatioResourceAllocation
 
-You need to make sure that the `PodOverhead`
-[feature gate](/docs/reference/command-line-tools-reference/feature-gates/) is enabled (it is on by default as of 1.18)
-across your cluster, and a `RuntimeClass` is utilized which defines the `overhead` field.
- --&gt;
-&lt;h2 id=&#34;set-up&#34;&gt;启用 Pod 开销&lt;/h2&gt;
-&lt;p&gt;需要确保集群中的 &lt;code&gt;PodOverhead&lt;/code&gt;
-&lt;a href=&#34;https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/&#34;&gt;功能阀&lt;/a&gt; 是开启的
-(v1.18 默认是开启的)
-并使用了定义了 &lt;code&gt;overhead&lt;/code&gt; 字段的 &lt;code&gt;RuntimeClass&lt;/code&gt; 。&lt;/p&gt;
-&lt;!--
-## Usage example
+Kubernetes allows the users to specify the resources along with weights for
+each resource to score nodes based on the request to capacity ratio. This
+allows users to bin pack extended resources by using appropriate parameters
+and improves the utilization of scarce resources in large clusters. The
+behavior of the `RequestedToCapacityRatioResourceAllocation` priority function
+can be controlled by a configuration option called
+`requestedToCapacityRatioArguments`. This argument consists of two parameters
+`shape` and `resources`. The `shape` parameter allows the user to tune the
+function as least requested or most requested based on `utilization` and
+`score` values.  The `resources` parameter consists of `name` of the resource
+to be considered during scoring and `weight` specify the weight of each
+resource.
 
-To use the PodOverhead feature, you need a RuntimeClass that defines the `overhead` field. As
-an example, you could use the following RuntimeClass definition with a virtualizing container runtime
-that uses around 120MiB per Pod for the virtual machine and the guest OS:
 
-```yaml
----
-kind: RuntimeClass
-apiVersion: node.k8s.io/v1
-metadata:
-    name: kata-fc
-handler: kata-fc
-overhead:
-    podFixed:
-        memory: &#34;120Mi&#34;
-        cpu: &#34;250m&#34;
-```
-
-Workloads which are created which specify the `kata-fc` RuntimeClass handler will take the memory and
-cpu overheads into account for resource quota calculations, node scheduling, as well as Pod cgroup sizing.
-
-Consider running the given example workload, test-pod:
+Below is an example configuration that sets
+`requestedToCapacityRatioArguments` to bin packing behavior for extended
+resources `intel.com/foo` and `intel.com/bar`.
 
 ```yaml
 apiVersion: v1
-kind: Pod
-metadata:
-  name: test-pod
-spec:
-  runtimeClassName: kata-fc
-  containers:
-  - name: busybox-ctr
-    image: busybox
-    stdin: true
-    tty: true
-    resources:
-      limits:
-        cpu: 500m
-        memory: 100Mi
-  - name: nginx-ctr
-    image: nginx
-    resources:
-      limits:
-        cpu: 1500m
-        memory: 100Mi
+kind: Policy
+# ...
+priorities:
+  # ...
+  - name: RequestedToCapacityRatioPriority
+    weight: 2
+    argument:
+      requestedToCapacityRatioArguments:
+        shape:
+          - utilization: 0
+            score: 0
+          - utilization: 100
+            score: 10
+        resources:
+          - name: intel.com/foo
+            weight: 3
+          - name: intel.com/bar
+            weight: 5
 ```
 
-At admission time the RuntimeClass [admission controller](/docs/reference/access-authn-authz/admission-controllers/)
-updates the workload&#39;s PodSpec to include the `overhead` as described in the RuntimeClass. If the PodSpec already has this field defined,
-the Pod will be rejected. In the given example, since only the RuntimeClass name is specified, the admission controller mutates the Pod
-to include an `overhead`.
-
-After the RuntimeClass admission controller, you can check the updated PodSpec:
-
-```bash
-kubectl get pod test-pod -o jsonpath=&#39;{.spec.overhead}&#39;
-```
-
-The output is:
-```
-map[cpu:250m memory:120Mi]
-```
-
-If a ResourceQuota is defined, the sum of container requests as well as the
-`overhead` field are counted.
-
-When the kube-scheduler is deciding which node should run a new Pod, the scheduler considers that Pod&#39;s
-`overhead` as well as the sum of container requests for that Pod. For this example, the scheduler adds the
-requests and the overhead, then looks for a node that has 2.25 CPU and 320 MiB of memory available.
-
-Once a Pod is scheduled to a node, the kubelet on that node creates a new &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-cgroup&#39; target=&#39;_blank&#39;&gt;cgroup&lt;span class=&#39;tooltip-text&#39;&gt;A group of Linux processes with optional resource isolation, accounting and limits.&lt;/span&gt;
-&lt;/a&gt;
-for the Pod. It is within this pod that the underlying container runtime will create containers.
-
-If the resource has a limit defined for each container (Guaranteed QoS or Bustrable QoS with limits defined),
-the kubelet will set an upper limit for the pod cgroup associated with that resource (cpu.cfs_quota_us for CPU
-and memory.limit_in_bytes memory). This upper limit is based on the sum of the container limits plus the `overhead`
-defined in the PodSpec.
-
-For CPU, if the Pod is Guaranteed or Burstable QoS, the kubelet will set `cpu.shares` based on the sum of container
-requests plus the `overhead` defined in the PodSpec.
-
-Looking at our example, verify the container requests for the workload:
-```bash
-kubectl get pod test-pod -o jsonpath=&#39;{.spec.containers[*].resources.limits}&#39;
-```
-
-The total container requests are 2000m CPU and 200MiB of memory:
-```
-map[cpu: 500m memory:100Mi] map[cpu:1500m memory:100Mi]
-```
-
-Check this against what is observed by the node:
-```bash
-kubectl describe node | grep test-pod -B2
-```
-
-The output shows 2250m CPU and 320MiB of memory are requested, which includes PodOverhead:
-```
-  Namespace                   Name                CPU Requests  CPU Limits   Memory Requests  Memory Limits  AGE
-  ---------                   ----                ------------  ----------   ---------------  -------------  ---
-  default                     test-pod            2250m (56%)   2250m (56%)  320Mi (1%)       320Mi (1%)     36m
-```
+**This feature is disabled by default**
  --&gt;
-&lt;h2 id=&#34;usage-example&#34;&gt;使用示例&lt;/h2&gt;
-&lt;!--
-To use the PodOverhead feature, you need a RuntimeClass that defines the `overhead` field. As
-an example, you could use the following RuntimeClass definition with a virtualizing container runtime
-that uses around 120MiB per Pod for the virtual machine and the guest OS:
- --&gt;
-&lt;p&gt;要使用 &lt;code&gt;PodOverhead&lt;/code&gt; 特性， 需要要有一个定义了 &lt;code&gt;overhead&lt;/code&gt; 字段的 &lt;code&gt;RuntimeClass&lt;/code&gt;。 下面
-这个示例，可以使用下面的这个 &lt;code&gt;RuntimeClass&lt;/code&gt; 定义了一个包含虚拟容器运行时，其中每个 Pod 使用
-大约 120MiB 来运行虚拟机和客户机操作系统:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;---
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;RuntimeClass&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;node.k8s.io/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kata-fc&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;handler&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kata-fc&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;overhead&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;podFixed&lt;/span&gt;:
-        &lt;span style=&#34;color:#f92672&#34;&gt;memory&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;120Mi&amp;#34;&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;cpu&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;250m&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;那些在配置中指定 &lt;code&gt;kata-fc&lt;/code&gt; 作为 &lt;code&gt;RuntimeClass&lt;/code&gt; 处理器的工作负载，在进行资源配额諸，节点调度，
-还有 Pod cgroup 计算是都会计算这部分内存和CPU开销。&lt;/p&gt;
-&lt;p&gt;运行下面示例的工作负载, test-pod:&lt;/p&gt;
+&lt;h2 id=&#34;enabling-bin-packing-using-requestedtocapacityratioresourceallocation&#34;&gt;Enabling Bin Packing using RequestedToCapacityRatioResourceAllocation&lt;/h2&gt;
+&lt;p&gt;k8s 允许用户在设置资源时给每个资源指定权重，这个权重会被用在基于请求容量比的节点计分。
+这使得用户可以使用适当的参数来对扩展资源打包，并改善大型集群中稀缺资源的利用率。
+&lt;code&gt;RequestedToCapacityRatioResourceAllocation&lt;/code&gt; 优先级函数 的行为可以由一个叫做
+&lt;code&gt;requestedToCapacityRatioArguments&lt;/code&gt; 的选项控制。 这个参数由 &lt;code&gt;shape&lt;/code&gt; 和 &lt;code&gt;resources&lt;/code&gt;
+组成. 其中 &lt;code&gt;shape&lt;/code&gt; 让用户可以基于 &lt;code&gt;utilization&lt;/code&gt; 和 &lt;code&gt;score&lt;/code&gt; 值的调整函数最低要求，或请求上限。
+&lt;code&gt;resources&lt;/code&gt; 中的 &lt;code&gt;name&lt;/code&gt; 是计分时考量的资源名称，&lt;code&gt;weight&lt;/code&gt; 指定每种资源的权重&lt;/p&gt;
+&lt;p&gt;下面的示例配置中，通过 &lt;code&gt;requestedToCapacityRatioArguments&lt;/code&gt; 设置
+&lt;code&gt;intel.com/foo&lt;/code&gt; 和 &lt;code&gt;intel.com/bar&lt;/code&gt; 扩展资源的打包行为。&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;test-pod&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;runtimeClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;kata-fc&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;containers&lt;/span&gt;:
-  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;busybox-ctr&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;busybox&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;stdin&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;tty&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;limits&lt;/span&gt;:
-        &lt;span style=&#34;color:#f92672&#34;&gt;cpu&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;500m&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;memory&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100Mi&lt;/span&gt;
-  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx-ctr&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;nginx&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;limits&lt;/span&gt;:
-        &lt;span style=&#34;color:#f92672&#34;&gt;cpu&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1500m&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;memory&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100Mi&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在准入时 &lt;code&gt;RuntimeClass&lt;/code&gt;
-&lt;a href=&#34;https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/&#34;&gt;准入控制器&lt;/a&gt;
-会更新工作负载的 &lt;code&gt;PodSpec&lt;/code&gt; 把 &lt;code&gt;RuntimeClass&lt;/code&gt; 中定义的 &lt;code&gt;overhead&lt;/code&gt; 加进去， 如果 &lt;code&gt;PodSpec&lt;/code&gt;
-中已经定义了这个字段，Pod 就会被拒绝。 在上面的这个例子中， 因为只指定了 &lt;code&gt;RuntimeClass&lt;/code&gt; 名称，
-准入控制器会修改 Pod 配置将 &lt;code&gt;overhead&lt;/code&gt; 加进去。&lt;/p&gt;
-&lt;p&gt;After the RuntimeClass admission controller, you can check the updated PodSpec:&lt;/p&gt;
-&lt;p&gt;在 &lt;code&gt;RuntimeClass&lt;/code&gt; 准入控制器之后， 可以查看被更新后的 Pod 定义&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl get pod test-pod -o jsonpath&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{.spec.overhead}&amp;#39;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;map[cpu:250m memory:120Mi]
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如果定义了一个 &lt;code&gt;ResourceQuota&lt;/code&gt;， 也会同时计算容器资源和 &lt;code&gt;overhead&lt;/code&gt; 字段。&lt;/p&gt;
-&lt;p&gt;当 &lt;code&gt;kube-scheduler&lt;/code&gt; 在决定由哪个节点来运行一个新的 Pod 时， 调度器也会同时计算这个 Pod 中
-容器资源和 &lt;code&gt;overhead&lt;/code&gt; 字段。 就上面的这个例子，调度器会将资源要求和 Pod 开销加起来，寻找一个
-有 2.25 CPU 和 320 MiB 内存可用的节点。&lt;/p&gt;
-&lt;p&gt;当一个 Pod 被调度到一个节点后， 这个节点上的 kubelet 会为这个 Pod 创建一个新的
-&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/k8sDocs/.Site.baseURL/reference/glossary/?all=true#term-cgroup&#39; target=&#39;_blank&#39;&gt;cgroup&lt;span class=&#39;tooltip-text&#39;&gt;A group of Linux processes with optional resource isolation, accounting and limits.&lt;/span&gt;
-&lt;/a&gt;
-，底层的容器运行时再在其中创建这个 Pod 的容器。&lt;/p&gt;
-&lt;p&gt;如果还为每个容器定义了资源限制(Guaranteed QoS or Bustrable QoS 中定义的限制)，kubelet 会为 Pod cgroup
-对应的资源(&lt;code&gt;cpu.cfs_quota_us&lt;/code&gt; 是 CPU 然后 &lt;code&gt;memory.limit_in_bytes&lt;/code&gt; 是内存)设置一个上限。
-这个上限是基于容器限制的上限加上 &lt;code&gt;PodSpec&lt;/code&gt; 中定义的开销(&lt;code&gt;overhead&lt;/code&gt;)&lt;/p&gt;
-&lt;p&gt;对于 CPU， 如果 Pod 是 Guaranteed 或 Burstable QoS, kubelet 会基于容器请求加上
-&lt;code&gt;PodSpec&lt;/code&gt; 中定义的开销(&lt;code&gt;overhead&lt;/code&gt;) 来设置 &lt;code&gt;cpu.shares&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;再看我们的示例， 检查工作负载的容器请求:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl get pod test-pod -o jsonpath&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{.spec.containers[*].resources.limits}&amp;#39;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;容器请求的总和为 2000m CPU 和 200MiB 内存:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;map[cpu: 500m memory:100Mi] map[cpu:1500m memory:100Mi]
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;再通过观察节点来验证这一点:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;kubectl describe node | grep test-pod -B2
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出显示要求 2250m CPU 和 320MiB 内存，其中包含了 Pod 开销(&lt;code&gt;PodOverhead&lt;/code&gt;):&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;  Namespace                   Name                CPU Requests  CPU Limits   Memory Requests  Memory Limits  AGE
-  ---------                   ----                ------------  ----------   ---------------  -------------  ---
-  default                     test-pod            2250m (56%)   2250m (56%)  320Mi (1%)       320Mi (1%)     36m
-&lt;/code&gt;&lt;/pre&gt;&lt;!--
-## Verify Pod cgroup limits
-
-Check the Pod&#39;s memory cgroups on the node where the workload is running. In the following example, [`crictl`](https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.md)
-is used on the node, which provides a CLI for CRI-compatible container runtimes. This is an
-advanced example to show PodOverhead behavior, and it is not expected that users should need to check
-cgroups directly on the node.
-
-First, on the particular node, determine the Pod identifier:
-
-```bash
-# Run this on the node where the Pod is scheduled
-POD_ID=&#34;$(sudo crictl pods --name test-pod -q)&#34;
-```
-
-From this, you can determine the cgroup path for the Pod:
-```bash
-# Run this on the node where the Pod is scheduled
-sudo crictl inspectp -o=json $POD_ID | grep cgroupsPath
-```
-
-The resulting cgroup path includes the Pod&#39;s `pause` container. The Pod level cgroup is one directory above.
-```
-        &#34;cgroupsPath&#34;: &#34;/kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2/7ccf55aee35dd16aca4189c952d83487297f3cd760f1bbf09620e206e7d0c27a&#34;
-```
-
-In this specific case, the pod cgroup path is `kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2`. Verify the Pod level cgroup setting for memory:
-```bash
-# Run this on the node where the Pod is scheduled.
-# Also, change the name of the cgroup to match the cgroup allocated for your pod.
- cat /sys/fs/cgroup/memory/kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2/memory.limit_in_bytes
-```
-
-This is 320 MiB, as expected:
-```
-335544320
-```
- --&gt;
-&lt;h2 id=&#34;verify-pod-cgroup-limits&#34;&gt;验证 Pod cgroup 限制&lt;/h2&gt;
-&lt;p&gt;检查工作负载运行节点上 Pod 的内存 cgroup。 在下面的例子中，在节点中使用了
-&lt;a href=&#34;https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.md&#34;&gt;&lt;code&gt;crictl&lt;/code&gt;&lt;/a&gt;
-为 CRI 兼容的容器运行时提供 CLI。 这是一个显示 &lt;code&gt;PodOverhead&lt;/code&gt; 行为的高级示例， 没有预期用户
-有必须直接在节点上检查 cgroup&lt;/p&gt;
-&lt;p&gt;首先，在特定的节点上，定位 Pod 的标识符:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 在 Pod 调度的目标节点上运行&lt;/span&gt;
-POD_ID&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;sudo crictl pods --name test-pod -q&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;从这里，可以确定 Pod 的 cgroup 路径:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 在 Pod 调度的目标节点上运行&lt;/span&gt;
-sudo crictl inspectp -o&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;json $POD_ID | grep cgroupsPath
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;结果中的 cgroup 路径包含了 Pod 的 &lt;code&gt;pause&lt;/code&gt; 容器。 Pod 级别的 cgroup 在这个路径向上一层&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;        &amp;quot;cgroupsPath&amp;quot;: &amp;quot;/kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2/7ccf55aee35dd16aca4189c952d83487297f3cd760f1bbf09620e206e7d0c27a&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;In this specific case, the pod cgroup path is &lt;code&gt;kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2&lt;/code&gt;. Verify the Pod level cgroup setting for memory:
-在这个例子中， Pod cgroup 路径就是 &lt;code&gt;kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2&lt;/code&gt;。
-验证 Pod 级别 cgroup 配置的中的内存配置:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 在 Pod 调度的目标节点上运行&lt;/span&gt;
-&lt;span style=&#34;color:#75715e&#34;&gt;# 同时，修改 cgroup 的名称，让它与为 Pod 分配的 cgroup 相同&lt;/span&gt;
- cat /sys/fs/cgroup/memory/kubepods/podd7f4b509-cf94-4951-9417-d1087c92a5b2/memory.limit_in_bytes
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这个例子是 320 MiB, 所以就是:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;335544320
-&lt;/code&gt;&lt;/pre&gt;&lt;!--
-### Observability
-
-A `kube_pod_overhead` metric is available in [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics)
-to help identify when PodOverhead is being utilized and to help observe stability of workloads
-running with a defined Overhead. This functionality is not available in the 1.9 release of
-kube-state-metrics, but is expected in a following release. Users will need to build kube-state-metrics
-from source in the meantime.
- --&gt;
-&lt;h3 id=&#34;observability&#34;&gt;可观察性&lt;/h3&gt;
-&lt;p&gt;在
-&lt;a href=&#34;https://github.com/kubernetes/kube-state-metrics&#34;&gt;kube-state-metrics&lt;/a&gt;
-中有一个 &lt;code&gt;kube_pod_overhead&lt;/code&gt; 指标，可以用来在使用 PodOverhead 帮助观测使用了 Pod 开销的
-工作负载的稳定性。 这个功能在 v1.9 的 &lt;code&gt;kube-state-metrics&lt;/code&gt; 中是没有的，但应该会在接下来的
-版本中提供。同时需要用户从源码构建 &lt;code&gt;kube-state-metrics&lt;/code&gt;&lt;/p&gt;
-&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Policy&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;priorities&lt;/span&gt;:
+  &lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;RequestedToCapacityRatioPriority&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;argument&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;requestedToCapacityRatioArguments&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;shape&lt;/span&gt;:
+          - &lt;span style=&#34;color:#f92672&#34;&gt;utilization&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;score&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+          - &lt;span style=&#34;color:#f92672&#34;&gt;utilization&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;score&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+          - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;intel.com/foo&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+          - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;intel.com/bar&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;该特性默认是禁用的&lt;/strong&gt;&lt;/p&gt;
 &lt;!--
-* [RuntimeClass](/docs/concepts/containers/runtime-class/)
-* [PodOverhead Design](https://github.com/kubernetes/enhancements/tree/master/keps/sig-node/688-pod-overhead)
+### Tuning the Priority Function
+
+`shape` is used to specify the behavior of the
+`RequestedToCapacityRatioPriority` function.
+
+```yaml
+shape:
+ - utilization: 0
+   score: 0
+ - utilization: 100
+   score: 10
+```
+
+The above arguments give the node a `score` of 0 if `utilization` is 0% and 10 for
+`utilization` 100%, thus enabling bin packing behavior. To enable least
+requested the score value must be reversed as follows.
+
+```yaml
+shape:
+  - utilization: 0
+    score: 10
+  - utilization: 100
+    score: 0
+```
+
+`resources` is an optional parameter which defaults to:
+
+``` yaml
+resources:
+  - name: CPU
+    weight: 1
+  - name: Memory
+    weight: 1
+```
+
+It can be used to add extended resources as follows:
+
+```yaml
+resources:
+  - name: intel.com/foo
+    weight: 5
+  - name: CPU
+    weight: 3
+  - name: Memory
+    weight: 1
+```
+
+The `weight` parameter is optional and is set to 1 if not specified. Also, the
+`weight` cannot be set to a negative value.
+ --&gt;
+&lt;h3 id=&#34;tuning-the-priority-function&#34;&gt;调整优先级函数&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;shape&lt;/code&gt; is used to specify the behavior of the
+&lt;code&gt;RequestedToCapacityRatioPriority&lt;/code&gt; function.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;shape&lt;/code&gt; 是用来指定 &lt;code&gt;RequestedToCapacityRatioPriority&lt;/code&gt; 函数的行为。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;shape&lt;/span&gt;:
+ - &lt;span style=&#34;color:#f92672&#34;&gt;utilization&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+   &lt;span style=&#34;color:#f92672&#34;&gt;score&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+ - &lt;span style=&#34;color:#f92672&#34;&gt;utilization&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;
+   &lt;span style=&#34;color:#f92672&#34;&gt;score&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;上面的参数表示，如果这个资源的利用率(&lt;code&gt;utilization&lt;/code&gt;) 是 &lt;code&gt;0%&lt;/code&gt; 节点的一个 &lt;code&gt;score&lt;/code&gt; 就是 &lt;code&gt;0&lt;/code&gt;,
+利用率(&lt;code&gt;utilization&lt;/code&gt;) 是 &lt;code&gt;100%&lt;/code&gt;, 则 &lt;code&gt;score&lt;/code&gt; 是 &lt;code&gt;10&lt;/code&gt;，这就是启用了打包行为。
+要启用分数值的最小值则要像下面这样反过来。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;shape&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;utilization&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;score&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;utilization&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;score&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;resources&lt;/code&gt; 是一个可靠参数，默认值如下:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;CPU&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Memory&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;也可以像下面这样添加扩展资源:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;intel.com/foo&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;CPU&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Memory&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;weight&lt;/code&gt; 参数为可选，如果没有设置则默认为 1。 还有就是 &lt;code&gt;weight&lt;/code&gt; 的值不能设置为负数&lt;/p&gt;
+&lt;!--
+### Node scoring for capacity allocation
+
+This section is intended for those who want to understand the internal details
+of this feature.
+Below is an example of how the node score is calculated for a given set of values.
+
+Requested resources:
+
+```
+intel.com/foo : 2
+Memory: 256MB
+CPU: 2
+```
+
+Resource weights:
+
+```
+intel.com/foo : 5
+Memory: 1
+CPU: 3
+```
+
+FunctionShapePoint {{0, 0}, {100, 10}}
+
+Node 1 spec:
+
+```
+Available:
+  intel.com/foo: 4
+  Memory: 1 GB
+  CPU: 8
+
+Used:
+  intel.com/foo: 1
+  Memory: 256MB
+  CPU: 1
+```
+
+Node score:
+
+```
+intel.com/foo  = resourceScoringFunction((2+1),4)
+               = (100 - ((4-3)*100/4)
+               = (100 - 25)
+               = 75                       # requested + used = 75% * available
+               = rawScoringFunction(75)
+               = 7                        # floor(75/10)
+
+Memory         = resourceScoringFunction((256+256),1024)
+               = (100 -((1024-512)*100/1024))
+               = 50                       # requested + used = 50% * available
+               = rawScoringFunction(50)
+               = 5                        # floor(50/10)
+
+CPU            = resourceScoringFunction((2+1),8)
+               = (100 -((8-3)*100/8))
+               = 37.5                     # requested + used = 37.5% * available
+               = rawScoringFunction(37.5)
+               = 3                        # floor(37.5/10)
+
+NodeScore   =  (7 * 5) + (5 * 1) + (3 * 3) / (5 + 1 + 3)
+            =  5
+```
+
+Node 2 spec:
+
+```
+Available:
+  intel.com/foo: 8
+  Memory: 1GB
+  CPU: 8
+Used:
+  intel.com/foo: 2
+  Memory: 512MB
+  CPU: 6
+```
+
+Node score:
+
+```
+intel.com/foo  = resourceScoringFunction((2+2),8)
+               =  (100 - ((8-4)*100/8)
+               =  (100 - 50)
+               =  50
+               =  rawScoringFunction(50)
+               = 5
+
+Memory         = resourceScoringFunction((256+512),1024)
+               = (100 -((1024-768)*100/1024))
+               = 75
+               = rawScoringFunction(75)
+               = 7
+
+CPU            = resourceScoringFunction((2+6),8)
+               = (100 -((8-8)*100/8))
+               = 100
+               = rawScoringFunction(100)
+               = 10
+
+NodeScore   =  (5 * 5) + (7 * 1) + (10 * 3) / (5 + 1 + 3)
+            =  7
+
+``` --&gt;
+&lt;h3 id=&#34;node-scoring-for-capacity-allocation&#34;&gt;容量分配的节点计分&lt;/h3&gt;
+&lt;p&gt;本节是为那些想要理解该特性内部细节的用户提供的。
+下面示例展示了基于示例中设置的值，节点分数是怎么计算出来的。&lt;/p&gt;
+&lt;p&gt;资源要求:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;intel.com/foo : 2
+Memory: 256MB
+CPU: 2
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;资源权重:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;intel.com/foo : 5
+Memory: 1
+CPU: 3
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;FunctionShapePoint {{0, 0}, {100, 10}}&lt;/p&gt;
+&lt;p&gt;节点 1 &lt;code&gt;spec&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Available:
+  intel.com/foo: 4
+  Memory: 1 GB
+  CPU: 8
+
+Used:
+  intel.com/foo: 1
+  Memory: 256MB
+  CPU: 1
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;节点 1 得分计算过程:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;intel.com/foo  = resourceScoringFunction((2+1),4)
+               = (100 - ((4-3)*100/4)
+               = (100 - 25)
+               = 75                       # requested + used = 75% * available
+               = rawScoringFunction(75)
+               = 7                        # floor(75/10)
+
+Memory         = resourceScoringFunction((256+256),1024)
+               = (100 -((1024-512)*100/1024))
+               = 50                       # requested + used = 50% * available
+               = rawScoringFunction(50)
+               = 5                        # floor(50/10)
+
+CPU            = resourceScoringFunction((2+1),8)
+               = (100 -((8-3)*100/8))
+               = 37.5                     # requested + used = 37.5% * available
+               = rawScoringFunction(37.5)
+               = 3                        # floor(37.5/10)
+
+NodeScore   =  (7 * 5) + (5 * 1) + (3 * 3) / (5 + 1 + 3)
+            =  5
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;节点 2 &lt;code&gt;.spec&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Available:
+  intel.com/foo: 8
+  Memory: 1GB
+  CPU: 8
+Used:
+  intel.com/foo: 2
+  Memory: 512MB
+  CPU: 6
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;节点 2 得分计算过程:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;intel.com/foo  = resourceScoringFunction((2+2),8)
+               =  (100 - ((8-4)*100/8)
+               =  (100 - 50)
+               =  50
+               =  rawScoringFunction(50)
+               = 5
+
+Memory         = resourceScoringFunction((256+512),1024)
+               = (100 -((1024-768)*100/1024))
+               = 75
+               = rawScoringFunction(75)
+               = 7
+
+CPU            = resourceScoringFunction((2+6),8)
+               = (100 -((8-8)*100/8))
+               = 100
+               = rawScoringFunction(100)
+               = 10
+
+NodeScore   =  (5 * 5) + (7 * 1) + (10 * 3) / (5 + 1 + 3)
+            =  7
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;!--
+- Read more about the [scheduling framework](/docs/concepts/scheduling-eviction/scheduling-framework/)
+- Read more about [scheduler configuration](/docs/reference/scheduling/config/)
  --&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/conceptscontainers/runtime-class/&#34;&gt;RuntimeClass&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes/enhancements/tree/master/keps/sig-node/688-pod-overhead&#34;&gt;PodOverhead 设计文稿&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/scheduling-framework/&#34;&gt;调度框架&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;参考 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/scheduling/config/&#34;&gt;调度器配置&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>
@@ -31251,155 +31641,6 @@ Pod &lt;code&gt;overhead&lt;/code&gt; 是通过 RuntimeClass 的 overhead 字段
 &lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/runtime-class-scheduling.md&#34;&gt;RuntimeClass Scheduling Design&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Read about the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-overhead/&#34;&gt;Pod Overhead&lt;/a&gt; concept&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/20190226-pod-overhead.md&#34;&gt;PodOverhead Feature Design&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: 容器生命周期钩子</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/</link>
-      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/container-lifecycle-hooks/</guid>
-      <description>
-        
-        
-        &lt;!-- overview --&gt;
-&lt;!--
-This page describes how kubelet managed Containers can use the Container lifecycle hook framework
-to run code triggered by events during their management lifecycle.
---&gt;
-&lt;p&gt;本文主要介绍如何使用容器生命周期钩子框架来实现由 kubelet 管理的容器通过在管理过程中的生命周期事件来触发代理运行。&lt;/p&gt;
-&lt;!-- body --&gt;
-&lt;h2 id=&#34;概述&#34;&gt;概述&lt;/h2&gt;
-&lt;!--
-Analogous to many programming language frameworks that have component lifecycle hooks, such as Angular,
-Kubernetes provides Containers with lifecycle hooks.
-The hooks enable Containers to be aware of events in their management lifecycle
-and run code implemented in a handler when the corresponding lifecycle hook is executed.
---&gt;
-&lt;p&gt;与许多编程语言的框架的组件有生命周期钩子(如: &lt;code&gt;Angular&lt;/code&gt;)一样， k8s 也为容器提供了生命周期钩子。
-生命周期钩子可以是容器收到自身生命周期管理时发生的事件，当这些事件发生时就会触发对应的钩子调用执行处理器中的代码实现&lt;/p&gt;
-&lt;h2 id=&#34;容器钩子&#34;&gt;容器钩子&lt;/h2&gt;
-&lt;!--
-There are two hooks that are exposed to Containers:
-
-`PostStart`
-
-This hook executes immediately after a container is created.
-However, there is no guarantee that the hook will execute before the container ENTRYPOINT.
-No parameters are passed to the handler.
-
-`PreStop`
-
-This hook is called immediately before a container is terminated due to an API request or management event such as liveness probe failure, preemption, resource contention and others. A call to the preStop hook fails if the container is already in terminated or completed state.
-It is blocking, meaning it is synchronous,
-so it must complete before the call to delete the container can be sent.
-No parameters are passed to the handler.
-
-A more detailed description of the termination behavior can be found in
-[Termination of Pods](/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination).
-
---&gt;
-&lt;p&gt;容器钩子有以下两个：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;PostStart&lt;/code&gt;
-这个钩子在容器创建后马上执行。
-但是不能保证鑫子会在容器执行 &lt;code&gt;ENTRYPOINT&lt;/code&gt; 之前执行。&lt;/p&gt;
-&lt;p&gt;这个钩子不会向处理器传递任何参数&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;PreStop&lt;/code&gt;
-在容器被终结，比如因为一个 API 请求或诸如存活探针失败，优先级较低，资源竞争等原因，会立即执行这个钩子。 如果容器已经为终止或完成状态则调用 &lt;code&gt;preStop&lt;/code&gt; 钩子会失败。
-该钩子会造成阻塞，也就是说它是同步的，所以必须在钩子调用处理器执行完成后，才能发送删除容器指令。&lt;/p&gt;
-&lt;p&gt;这个钩子不会向处理器传递任何参数&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;钩子处理器的实现方式&#34;&gt;钩子处理器的实现方式&lt;/h3&gt;
-&lt;!--
-Containers can access a hook by implementing and registering a handler for that hook.
-There are two types of hook handlers that can be implemented for Containers:
-
-* Exec - Executes a specific command, such as `pre-stop.sh`, inside the cgroups and namespaces of the Container.
-Resources consumed by the command are counted against the Container.
-* HTTP - Executes an HTTP request against a specific endpoint on the Container.
---&gt;
-&lt;p&gt;容器可以用过为钩子实现并注册处理器来达成钩子的使用，以下为容器可实现的两种类型的钩子处理器&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Exec - 在容器的 &lt;code&gt;cgroups&lt;/code&gt; 和 &lt;code&gt;namespaces&lt;/code&gt; 权限内执行指定的命令，例如 &lt;code&gt;pre-stop.sh&lt;/code&gt;， 所需要的资源包含在容器申请的资源中&lt;/li&gt;
-&lt;li&gt;HTTP - 向容器上的指定接口发送一个请求&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;钩子处理器的执行&#34;&gt;钩子处理器的执行&lt;/h3&gt;
-&lt;!--
-When a Container lifecycle management hook is called,
-the Kubernetes management system executes the handler in the Container registered for that hook. 
-
-Hook handler calls are synchronous within the context of the Pod containing the Container.
-This means that for a `PostStart` hook,
-the Container ENTRYPOINT and hook fire asynchronously.
-However, if the hook takes too long to run or hangs,
-the Container cannot reach a `running` state.
-
-The behavior is similar for a `PreStop` hook.
-If the hook hangs during execution,
-the Pod phase stays in a `Terminating` state and is killed after `terminationGracePeriodSeconds` of pod ends.
-If a `PostStart` or `PreStop` hook fails,
-it kills the Container.
-
-Users should make their hook handlers as lightweight as possible.
-There are cases, however, when long running commands make sense,
-such as when saving state prior to stopping a Container.
---&gt;
-&lt;p&gt;当一个容器的生命周期管理钩子被调用时， k8s 管理系统就会执行注册到那个钩子上的处理器。&lt;/p&gt;
-&lt;p&gt;钩子处理器调用在容器所在的 Pod 的上下文中是同步的。 也就是说对于一个 &lt;code&gt;PostStart&lt;/code&gt; 钩子， 它与容器的 &lt;code&gt;ENTRYPOINT&lt;/code&gt; 是异步执行的。
-但是，如果钩子执行时间过长或挂起，容器便不会进入到 &lt;code&gt;running&lt;/code&gt; 的状态。&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;PreStop&lt;/code&gt; 钩子的行为模式也是相似的。 如果钩子在执行过程中挂起，则 Pod 在终结前的 &lt;code&gt;terminationGracePeriodSeconds&lt;/code&gt; 时间内都是 &lt;code&gt;Terminating&lt;/code&gt; 状态。
-如果 &lt;code&gt;PostStart&lt;/code&gt; 或 &lt;code&gt;PreStop&lt;/code&gt; 执行失败，会导致对应容器被杀死&lt;/p&gt;
-&lt;p&gt;用户应该尽可能地让钩子处理器越轻量越好。 但是也有些场景，运行长时间的钩子命令是有意义的，比如当保存状态比停止容器更重要时&lt;/p&gt;
-&lt;h3 id=&#34;钩子的送达可靠性&#34;&gt;钩子的送达可靠性&lt;/h3&gt;
-&lt;!--
-Hook delivery is intended to be *at least once*,
-which means that a hook may be called multiple times for any given event,
-such as for `PostStart` or `PreStop`.
-It is up to the hook implementation to handle this correctly.
-
-Generally, only single deliveries are made.
-If, for example, an HTTP hook receiver is down and is unable to take traffic,
-there is no attempt to resend.
-In some rare cases, however, double delivery may occur.
-For instance, if a kubelet restarts in the middle of sending a hook,
-the hook might be resent after the kubelet comes back up.
---&gt;
-&lt;p&gt;对于 &lt;code&gt;PostStart&lt;/code&gt; 或 &lt;code&gt;PreStop&lt;/code&gt; 钩子投递被定为 &lt;em&gt;至少一次&lt;/em&gt;， 也就是说对于任意一个事件可能多次调用钩子。 这就需要实现的钩子处理器需要正确的应对这种情况。&lt;/p&gt;
-&lt;p&gt;通常情况下，只能投递一次。如果钩子所调用的 HTTP 目标接口不可用，这种情况下不会尝试重发。 在有些不常见的场景中，也可能发生两次投递的情况。到目前为止，如果 kubelet 在钩子发送过程中重启，这个钩子可能在 kubelet 启动后再次发送&lt;/p&gt;
-&lt;h3 id=&#34;如何调试钩子处理器&#34;&gt;如何调试钩子处理器&lt;/h3&gt;
-&lt;!--
-The logs for a Hook handler are not exposed in Pod events.
-If a handler fails for some reason, it broadcasts an event.
-For `PostStart`, this is the `FailedPostStartHook` event,
-and for `PreStop`, this is the `FailedPreStopHook` event.
-You can see these events by running `kubectl describe pod &lt;pod_name&gt;`.
-Here is some example output of events from running this command:
---&gt;
-&lt;p&gt;钩子处理器的日志不会输出到 Pod 的事件中。 如果一个处理器因为某些原因失败，会发送一个广播事件。 &lt;code&gt;PostStart&lt;/code&gt; 是 &lt;code&gt;FailedPostStartHook&lt;/code&gt;事件， &lt;code&gt;PreStop&lt;/code&gt;是 &lt;code&gt;FailedPreStopHook&lt;/code&gt;事件。 可以通过执行命令 &lt;code&gt;kubectl describe pod &amp;lt;pod_name&amp;gt;&lt;/code&gt; 查看这些事件， 命令输出结果类似如下:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Events:
-  FirstSeen  LastSeen  Count  From                                                   SubObjectPath          Type      Reason               Message
-  ---------  --------  -----  ----                                                   -------------          --------  ------               -------
-  1m         1m        1      {default-scheduler }                                                          Normal    Scheduled            Successfully assigned test-1730497541-cq1d2 to gke-test-cluster-default-pool-a07e5d30-siqd
-  1m         1m        1      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}  spec.containers{main}  Normal    Pulling              pulling image &amp;quot;test:1.0&amp;quot;
-  1m         1m        1      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}  spec.containers{main}  Normal    Created              Created container with docker id 5c6a256a2567; Security:[seccomp=unconfined]
-  1m         1m        1      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}  spec.containers{main}  Normal    Pulled               Successfully pulled image &amp;quot;test:1.0&amp;quot;
-  1m         1m        1      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}  spec.containers{main}  Normal    Started              Started container with docker id 5c6a256a2567
-  38s        38s       1      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}  spec.containers{main}  Normal    Killing              Killing container with docker id 5c6a256a2567: PostStart handler: Error executing in Docker Container: 1
-  37s        37s       1      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}  spec.containers{main}  Normal    Killing              Killing container with docker id 8df9fdfd7054: PostStart handler: Error executing in Docker Container: 1
-  38s        37s       2      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}                         Warning   FailedSync           Error syncing pod, skipping: failed to &amp;quot;StartContainer&amp;quot; for &amp;quot;main&amp;quot; with RunContainerError: &amp;quot;PostStart handler: Error executing in Docker Container: 1&amp;quot;
-  1m         22s       2      {kubelet gke-test-cluster-default-pool-a07e5d30-siqd}  spec.containers{main}  Warning   FailedPostStartHook
-&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;实践指导
-&lt;a href=&#34;../../../3-tasks/02-configure-pod-container/16-attach-handler-lifecycle-event/&#34;&gt;挂载处理器到容器生命周期事件&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>

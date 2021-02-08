@@ -2294,5 +2294,395 @@ from source in the meantime.
       </description>
     </item>
     
+    <item>
+      <title>Docs: Resource Bin Packing for Extended Resources</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/resource-bin-packing/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/resource-bin-packing/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+reviewers:
+- bsalamat
+- k82cn
+- ahg-g
+title: Resource Bin Packing for Extended Resources
+content_type: concept
+weight: 50
+---
+ --&gt;
+&lt;!-- overview --&gt;
+
+
+
+
+
+&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
+&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.16 [alpha]&lt;/code&gt;
+&lt;/div&gt;
+
+
+&lt;!--
+The kube-scheduler can be configured to enable bin packing of resources along
+with extended resources using `RequestedToCapacityRatioResourceAllocation`
+priority function. Priority functions can be used to fine-tune the
+kube-scheduler as per custom needs.
+ --&gt;
+&lt;p&gt;&lt;code&gt;kube-scheduler&lt;/code&gt; 可以通过使用 &lt;code&gt;RequestedToCapacityRatioResourceAllocation&lt;/code&gt; 优先级函数
+配置启用对扩展资源打包。 优先级函数可以用来根据每个自定义的需求对 &lt;code&gt;kube-scheduler&lt;/code&gt; 进行微调&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## Enabling Bin Packing using RequestedToCapacityRatioResourceAllocation
+
+Kubernetes allows the users to specify the resources along with weights for
+each resource to score nodes based on the request to capacity ratio. This
+allows users to bin pack extended resources by using appropriate parameters
+and improves the utilization of scarce resources in large clusters. The
+behavior of the `RequestedToCapacityRatioResourceAllocation` priority function
+can be controlled by a configuration option called
+`requestedToCapacityRatioArguments`. This argument consists of two parameters
+`shape` and `resources`. The `shape` parameter allows the user to tune the
+function as least requested or most requested based on `utilization` and
+`score` values.  The `resources` parameter consists of `name` of the resource
+to be considered during scoring and `weight` specify the weight of each
+resource.
+
+
+Below is an example configuration that sets
+`requestedToCapacityRatioArguments` to bin packing behavior for extended
+resources `intel.com/foo` and `intel.com/bar`.
+
+```yaml
+apiVersion: v1
+kind: Policy
+# ...
+priorities:
+  # ...
+  - name: RequestedToCapacityRatioPriority
+    weight: 2
+    argument:
+      requestedToCapacityRatioArguments:
+        shape:
+          - utilization: 0
+            score: 0
+          - utilization: 100
+            score: 10
+        resources:
+          - name: intel.com/foo
+            weight: 3
+          - name: intel.com/bar
+            weight: 5
+```
+
+**This feature is disabled by default**
+ --&gt;
+&lt;h2 id=&#34;enabling-bin-packing-using-requestedtocapacityratioresourceallocation&#34;&gt;Enabling Bin Packing using RequestedToCapacityRatioResourceAllocation&lt;/h2&gt;
+&lt;p&gt;k8s 允许用户在设置资源时给每个资源指定权重，这个权重会被用在基于请求容量比的节点计分。
+这使得用户可以使用适当的参数来对扩展资源打包，并改善大型集群中稀缺资源的利用率。
+&lt;code&gt;RequestedToCapacityRatioResourceAllocation&lt;/code&gt; 优先级函数 的行为可以由一个叫做
+&lt;code&gt;requestedToCapacityRatioArguments&lt;/code&gt; 的选项控制。 这个参数由 &lt;code&gt;shape&lt;/code&gt; 和 &lt;code&gt;resources&lt;/code&gt;
+组成. 其中 &lt;code&gt;shape&lt;/code&gt; 让用户可以基于 &lt;code&gt;utilization&lt;/code&gt; 和 &lt;code&gt;score&lt;/code&gt; 值的调整函数最低要求，或请求上限。
+&lt;code&gt;resources&lt;/code&gt; 中的 &lt;code&gt;name&lt;/code&gt; 是计分时考量的资源名称，&lt;code&gt;weight&lt;/code&gt; 指定每种资源的权重&lt;/p&gt;
+&lt;p&gt;下面的示例配置中，通过 &lt;code&gt;requestedToCapacityRatioArguments&lt;/code&gt; 设置
+&lt;code&gt;intel.com/foo&lt;/code&gt; 和 &lt;code&gt;intel.com/bar&lt;/code&gt; 扩展资源的打包行为。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Policy&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;priorities&lt;/span&gt;:
+  &lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;RequestedToCapacityRatioPriority&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;argument&lt;/span&gt;:
+      &lt;span style=&#34;color:#f92672&#34;&gt;requestedToCapacityRatioArguments&lt;/span&gt;:
+        &lt;span style=&#34;color:#f92672&#34;&gt;shape&lt;/span&gt;:
+          - &lt;span style=&#34;color:#f92672&#34;&gt;utilization&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;score&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+          - &lt;span style=&#34;color:#f92672&#34;&gt;utilization&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;score&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+          - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;intel.com/foo&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+          - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;intel.com/bar&lt;/span&gt;
+            &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;该特性默认是禁用的&lt;/strong&gt;&lt;/p&gt;
+&lt;!--
+### Tuning the Priority Function
+
+`shape` is used to specify the behavior of the
+`RequestedToCapacityRatioPriority` function.
+
+```yaml
+shape:
+ - utilization: 0
+   score: 0
+ - utilization: 100
+   score: 10
+```
+
+The above arguments give the node a `score` of 0 if `utilization` is 0% and 10 for
+`utilization` 100%, thus enabling bin packing behavior. To enable least
+requested the score value must be reversed as follows.
+
+```yaml
+shape:
+  - utilization: 0
+    score: 10
+  - utilization: 100
+    score: 0
+```
+
+`resources` is an optional parameter which defaults to:
+
+``` yaml
+resources:
+  - name: CPU
+    weight: 1
+  - name: Memory
+    weight: 1
+```
+
+It can be used to add extended resources as follows:
+
+```yaml
+resources:
+  - name: intel.com/foo
+    weight: 5
+  - name: CPU
+    weight: 3
+  - name: Memory
+    weight: 1
+```
+
+The `weight` parameter is optional and is set to 1 if not specified. Also, the
+`weight` cannot be set to a negative value.
+ --&gt;
+&lt;h3 id=&#34;tuning-the-priority-function&#34;&gt;调整优先级函数&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;shape&lt;/code&gt; is used to specify the behavior of the
+&lt;code&gt;RequestedToCapacityRatioPriority&lt;/code&gt; function.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;shape&lt;/code&gt; 是用来指定 &lt;code&gt;RequestedToCapacityRatioPriority&lt;/code&gt; 函数的行为。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;shape&lt;/span&gt;:
+ - &lt;span style=&#34;color:#f92672&#34;&gt;utilization&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+   &lt;span style=&#34;color:#f92672&#34;&gt;score&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+ - &lt;span style=&#34;color:#f92672&#34;&gt;utilization&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;
+   &lt;span style=&#34;color:#f92672&#34;&gt;score&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;上面的参数表示，如果这个资源的利用率(&lt;code&gt;utilization&lt;/code&gt;) 是 &lt;code&gt;0%&lt;/code&gt; 节点的一个 &lt;code&gt;score&lt;/code&gt; 就是 &lt;code&gt;0&lt;/code&gt;,
+利用率(&lt;code&gt;utilization&lt;/code&gt;) 是 &lt;code&gt;100%&lt;/code&gt;, 则 &lt;code&gt;score&lt;/code&gt; 是 &lt;code&gt;10&lt;/code&gt;，这就是启用了打包行为。
+要启用分数值的最小值则要像下面这样反过来。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;shape&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;utilization&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;score&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;utilization&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;score&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;resources&lt;/code&gt; 是一个可靠参数，默认值如下:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;CPU&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Memory&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;也可以像下面这样添加扩展资源:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;resources&lt;/span&gt;:
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;intel.com/foo&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;CPU&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
+  - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Memory&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;weight&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;weight&lt;/code&gt; 参数为可选，如果没有设置则默认为 1。 还有就是 &lt;code&gt;weight&lt;/code&gt; 的值不能设置为负数&lt;/p&gt;
+&lt;!--
+### Node scoring for capacity allocation
+
+This section is intended for those who want to understand the internal details
+of this feature.
+Below is an example of how the node score is calculated for a given set of values.
+
+Requested resources:
+
+```
+intel.com/foo : 2
+Memory: 256MB
+CPU: 2
+```
+
+Resource weights:
+
+```
+intel.com/foo : 5
+Memory: 1
+CPU: 3
+```
+
+FunctionShapePoint {{0, 0}, {100, 10}}
+
+Node 1 spec:
+
+```
+Available:
+  intel.com/foo: 4
+  Memory: 1 GB
+  CPU: 8
+
+Used:
+  intel.com/foo: 1
+  Memory: 256MB
+  CPU: 1
+```
+
+Node score:
+
+```
+intel.com/foo  = resourceScoringFunction((2+1),4)
+               = (100 - ((4-3)*100/4)
+               = (100 - 25)
+               = 75                       # requested + used = 75% * available
+               = rawScoringFunction(75)
+               = 7                        # floor(75/10)
+
+Memory         = resourceScoringFunction((256+256),1024)
+               = (100 -((1024-512)*100/1024))
+               = 50                       # requested + used = 50% * available
+               = rawScoringFunction(50)
+               = 5                        # floor(50/10)
+
+CPU            = resourceScoringFunction((2+1),8)
+               = (100 -((8-3)*100/8))
+               = 37.5                     # requested + used = 37.5% * available
+               = rawScoringFunction(37.5)
+               = 3                        # floor(37.5/10)
+
+NodeScore   =  (7 * 5) + (5 * 1) + (3 * 3) / (5 + 1 + 3)
+            =  5
+```
+
+Node 2 spec:
+
+```
+Available:
+  intel.com/foo: 8
+  Memory: 1GB
+  CPU: 8
+Used:
+  intel.com/foo: 2
+  Memory: 512MB
+  CPU: 6
+```
+
+Node score:
+
+```
+intel.com/foo  = resourceScoringFunction((2+2),8)
+               =  (100 - ((8-4)*100/8)
+               =  (100 - 50)
+               =  50
+               =  rawScoringFunction(50)
+               = 5
+
+Memory         = resourceScoringFunction((256+512),1024)
+               = (100 -((1024-768)*100/1024))
+               = 75
+               = rawScoringFunction(75)
+               = 7
+
+CPU            = resourceScoringFunction((2+6),8)
+               = (100 -((8-8)*100/8))
+               = 100
+               = rawScoringFunction(100)
+               = 10
+
+NodeScore   =  (5 * 5) + (7 * 1) + (10 * 3) / (5 + 1 + 3)
+            =  7
+
+``` --&gt;
+&lt;h3 id=&#34;node-scoring-for-capacity-allocation&#34;&gt;容量分配的节点计分&lt;/h3&gt;
+&lt;p&gt;本节是为那些想要理解该特性内部细节的用户提供的。
+下面示例展示了基于示例中设置的值，节点分数是怎么计算出来的。&lt;/p&gt;
+&lt;p&gt;资源要求:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;intel.com/foo : 2
+Memory: 256MB
+CPU: 2
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;资源权重:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;intel.com/foo : 5
+Memory: 1
+CPU: 3
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;FunctionShapePoint {{0, 0}, {100, 10}}&lt;/p&gt;
+&lt;p&gt;节点 1 &lt;code&gt;spec&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Available:
+  intel.com/foo: 4
+  Memory: 1 GB
+  CPU: 8
+
+Used:
+  intel.com/foo: 1
+  Memory: 256MB
+  CPU: 1
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;节点 1 得分计算过程:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;intel.com/foo  = resourceScoringFunction((2+1),4)
+               = (100 - ((4-3)*100/4)
+               = (100 - 25)
+               = 75                       # requested + used = 75% * available
+               = rawScoringFunction(75)
+               = 7                        # floor(75/10)
+
+Memory         = resourceScoringFunction((256+256),1024)
+               = (100 -((1024-512)*100/1024))
+               = 50                       # requested + used = 50% * available
+               = rawScoringFunction(50)
+               = 5                        # floor(50/10)
+
+CPU            = resourceScoringFunction((2+1),8)
+               = (100 -((8-3)*100/8))
+               = 37.5                     # requested + used = 37.5% * available
+               = rawScoringFunction(37.5)
+               = 3                        # floor(37.5/10)
+
+NodeScore   =  (7 * 5) + (5 * 1) + (3 * 3) / (5 + 1 + 3)
+            =  5
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;节点 2 &lt;code&gt;.spec&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Available:
+  intel.com/foo: 8
+  Memory: 1GB
+  CPU: 8
+Used:
+  intel.com/foo: 2
+  Memory: 512MB
+  CPU: 6
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;节点 2 得分计算过程:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;intel.com/foo  = resourceScoringFunction((2+2),8)
+               =  (100 - ((8-4)*100/8)
+               =  (100 - 50)
+               =  50
+               =  rawScoringFunction(50)
+               = 5
+
+Memory         = resourceScoringFunction((256+512),1024)
+               = (100 -((1024-768)*100/1024))
+               = 75
+               = rawScoringFunction(75)
+               = 7
+
+CPU            = resourceScoringFunction((2+6),8)
+               = (100 -((8-8)*100/8))
+               = 100
+               = rawScoringFunction(100)
+               = 10
+
+NodeScore   =  (5 * 5) + (7 * 1) + (10 * 3) / (5 + 1 + 3)
+            =  7
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;!--
+- Read more about the [scheduling framework](/docs/concepts/scheduling-eviction/scheduling-framework/)
+- Read more about [scheduler configuration](/docs/reference/scheduling/config/)
+ --&gt;
+&lt;ul&gt;
+&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/scheduling-framework/&#34;&gt;调度框架&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;参考 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/scheduling/config/&#34;&gt;调度器配置&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
   </channel>
 </rss>
