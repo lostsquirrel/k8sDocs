@@ -22134,8 +22134,8 @@ NodeScore   =  (5 * 5) + (7 * 1) + (10 * 3) / (5 + 1 + 3)
 - Read more about [scheduler configuration](/docs/reference/scheduling/config/)
  --&gt;
 &lt;ul&gt;
-&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/scheduling-framework/&#34;&gt;调度框架&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;参考 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/scheduling/config/&#34;&gt;调度器配置&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/scheduling-eviction/scheduling-framework/&#34;&gt;调度框架&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;参考 &lt;a href=&#34;https://kubernetes.io/docs/reference/scheduling/config/&#34;&gt;调度器配置&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>
@@ -26035,6 +26035,58 @@ You can expose a Service in multiple ways that don&#39;t directly involve the In
 &lt;li&gt;查阅 &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#ingress-v1beta1-networking-k8s-io&#34;&gt;Ingress API&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/services-networking/ingress-controllers/&#34;&gt;Ingress 控制器&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;实践 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/tasks/access-application-cluster/ingress-minikube/&#34;&gt;使用 NGINX 控制器在 Minikube 上设置 Ingress&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Eviction Policy</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/eviction-policy/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/eviction-policy/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+title: Eviction Policy
+content_type: concept
+weight: 60
+---
+ --&gt;
+&lt;!-- overview --&gt;
+&lt;!--
+This page is an overview of Kubernetes&#39; policy for eviction.
+ --&gt;
+&lt;p&gt;本文简单介绍 k8s 驱逐策略&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## Eviction Policy
+
+The &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubelet&#39; target=&#39;_blank&#39;&gt;kubelet&lt;span class=&#39;tooltip-text&#39;&gt;An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.&lt;/span&gt;
+&lt;/a&gt; proactively monitors for
+and prevents total starvation of a compute resource. In those cases, the `kubelet` can reclaim
+the starved resource by failing one or more Pods. When the `kubelet` fails
+a Pod, it terminates all of its containers and transitions its `PodPhase` to `Failed`.
+If the evicted Pod is managed by a Deployment, the Deployment creates another Pod
+to be scheduled by Kubernetes.
+ --&gt;
+&lt;h2 id=&#34;eviction-policy&#34;&gt;驱逐策略&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubelet&#39; target=&#39;_blank&#39;&gt;Kubelet&lt;span class=&#39;tooltip-text&#39;&gt;An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.&lt;/span&gt;
+&lt;/a&gt;
+会主要监控并防止出现一个计算资源总体不足。 如果出现这种情况， &lt;code&gt;kubelet&lt;/code&gt; 可以通过让一个
+或多个 Pod 失效的方式回收不足的资源。 当 &lt;code&gt;kubelet&lt;/code&gt; 使 Pod 失效时， 它就是将 Pod 内所有
+的容器终止并将其 &lt;code&gt;PodPhase&lt;/code&gt; 修改为  &lt;code&gt;Failed&lt;/code&gt;. 如果被驱逐的 Pod 是被 Deployment 管理的，
+则 Deployment 分创建另一个 Pod 并由 k8s 调度。&lt;/p&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;!--
+- Learn how to [configure out of resource handling](/docs/tasks/administer-cluster/out-of-resource/) with eviction signals and thresholds.
+ --&gt;
+&lt;ul&gt;
+&lt;li&gt;从 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/out-of-resource/&#34;&gt;对资源不足处理的配置&lt;/a&gt;
+中学习驱逐信号和阈值&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>
@@ -31505,142 +31557,6 @@ FOO_SERVICE_PORT=&amp;lt;the port the service is running on&amp;gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;../03-container-lifecycle-hooks/&#34;&gt;容器生命周期钩子&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;../../../3-tasks/02-configure-pod-container/16-attach-handler-lifecycle-event/&#34;&gt;生命周期事件处理器&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-      </description>
-    </item>
-    
-    <item>
-      <title>Docs: Runtime Class</title>
-      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/02-runtime-class/</link>
-      <pubDate>Mon, 27 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/containers/02-runtime-class/</guid>
-      <description>
-        
-        
-        &lt;!-- overview --&gt;
-&lt;p&gt;
-
-
-
-
-&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
-&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.14 [beta]&lt;/code&gt;
-&lt;/div&gt;
-
-
-本文介绍 &lt;code&gt;RuntimeClass&lt;/code&gt; 资源和运行时选择机制。
-&lt;code&gt;RuntimeClass&lt;/code&gt; 是一个选择容器运行时配置的特性。而容器运行时配置则用于运行 Pod 中的容器的。&lt;/p&gt;
-&lt;!-- body --&gt;
-&lt;h2 id=&#34;motivation&#34;&gt;Motivation&lt;/h2&gt;
-&lt;p&gt;用户可以在不同的 Pod 上配置不同的 &lt;code&gt;RuntimeClass&lt;/code&gt; 以达成性能与安全之间的平衡。 例如，有一部分工作负载需要一个高级别的信息安全保降。这时就需要选择装 Pod 调度到运行在物理虚拟化的容器运行时。 这样才有相对其它运行时更高的隔离级别同时也会有额外的资源开销。
-&lt;code&gt;RuntimeClass&lt;/code&gt; 也可以用于在同一个运行时上，对不同的 Pod 使用不同的配置。&lt;/p&gt;
-&lt;h2 id=&#34;设置&#34;&gt;设置&lt;/h2&gt;
-&lt;p&gt;确保 &lt;code&gt;RuntimeClass&lt;/code&gt; 功能特性是开启的(默认开启)。关于如何开启或关闭功能特性见&lt;a href=&#34;../../../reference/command-line-tools-reference/feature-gates/&#34;&gt;这里&lt;/a&gt;。 apiserver 和 kubelet 的&lt;code&gt;RuntimeClass&lt;/code&gt; 功能特性必须要开启。&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;配置节点上的 CRI 实现(各种运行时配置方式不同)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;创建相应的 &lt;code&gt;RuntimeClass&lt;/code&gt; 资源&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;配置节点上的 CRI 实现&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;基于 RuntimeClass 的配置因 容器运行时接口(CRI)具体实现的不同而不同。 具体配置文档见&lt;a href=&#34;#cri-configuration&#34;&gt;下面章节&lt;/a&gt;
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 默认情况下 &lt;code&gt;RuntimeClass&lt;/code&gt; 假定整个集群中所有节点的配置是相同的(也就是说所有节点针对容器运行时的配置是一样的)，为了支持这样的配置请见&lt;a href=&#34;#scheduling&#34;&gt;下面章节-调度&lt;/a&gt;&lt;/div&gt;
-&lt;/blockquote&gt;
-
-配置上有一个想对应的 handler 的名称， 被 &lt;code&gt;RuntimeClass&lt;/code&gt; 所引用。 这个字段的命名必须符合 DNS-1123 标签的标准(字母，数字，中划线(&lt;code&gt;-&lt;/code&gt;)组成)&lt;/p&gt;
-&lt;ol start=&#34;2&#34;&gt;
-&lt;li&gt;创建相应的 &lt;code&gt;RuntimeClass&lt;/code&gt; 资源&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;上一步提到的每个配置都有对应的 &lt;code&gt;handler&lt;/code&gt; 名称，用于区分不同的配置。 每一个 &lt;code&gt;handler&lt;/code&gt; 都会创建一个对就的 &lt;code&gt;RuntimeClass&lt;/code&gt; 对象。
-&lt;code&gt;RuntimeClass&lt;/code&gt; 资源目前只有两个有意义的字段： 名称 (&lt;code&gt;metadata.name&lt;/code&gt;)和处理器 (&lt;code&gt;handler&lt;/code&gt;), 对象定义类似如下:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;node.k8s.io/v1beta1  # RuntimeClass 定义在 node.k8s.io API 组中&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;RuntimeClass&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myclass  # The name the RuntimeClass will be referenced by&lt;/span&gt;
-  &lt;span style=&#34;color:#75715e&#34;&gt;# RuntimeClass is a non-namespaced resource&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;handler&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myconfiguration  # The name of the corresponding CRI configuration&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;RuntimeClass&lt;/code&gt; 对象命名必须是一个有效的 &lt;a href=&#34;../../00-overview/03-working-with-objects/01-names/#dns-subdomain-names&#34;&gt;DNS 子域名格式&lt;/a&gt;
-&lt;blockquote class=&#34;note&#34;&gt;
-  &lt;div&gt;&lt;strong&gt;说明：&lt;/strong&gt; 建议只有集群管理员对 &lt;code&gt;RuntimeClass&lt;/code&gt; 对象有写权限(create/update/patch/delete). 一般情况这是默认配置。 更多信息见 &lt;a href=&#34;../../../reference/03-access-authn-authz/07-authorization/&#34;&gt;授权概览&lt;/a&gt;&lt;/div&gt;
-&lt;/blockquote&gt;
-&lt;/p&gt;
-&lt;h2 id=&#34;使用说明&#34;&gt;使用说明&lt;/h2&gt;
-&lt;p&gt;当在集群中配置好了 &lt;code&gt;RuntimeClasses&lt;/code&gt;， 使用就是一件简单的事情，只需要在 Pod 定义中添加 &lt;code&gt;runtimeClassName&lt;/code&gt;就行， 例：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Pod&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mypod&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;runtimeClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;myclass&lt;/span&gt;
-  &lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这个配置会让 kublet 使用对应名称的 &lt;code&gt;RuntimeClass&lt;/code&gt; 来运行这个 Pod， 如果没有叫这个名称的 &lt;code&gt;RuntimeClass&lt;/code&gt;， 或者 CRI 不能运行这个名称对应的处理器，则这个进入 &lt;code&gt;Failed&lt;/code&gt; &lt;a href=&#34;../../03-workloads/00-pods/00-pod-lifecycle/#pod-phase&#34;&gt;状态&lt;/a&gt; 。 错误信息在对应的&lt;a href=&#34;../../../3-tasks/08-debug-application-cluster/00-debug-application-introspection/&#34;&gt;事件&lt;/a&gt;对象中
-如果没有 runtimeClassName 字段则使用默认的运行时处理器，与 &lt;code&gt;RuntimeClass&lt;/code&gt; 功能特性关闭等同&lt;/p&gt;
-&lt;h3 id=&#34;cri-配置&#34;&gt;CRI 配置&lt;/h3&gt;
-&lt;p&gt;更多关于 CRI 运行时配置见&lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/setup/production-environment/&#34;&gt;这里&lt;/a&gt;&lt;/p&gt;
-&lt;h4 id=&#34;dockershim&#34;&gt;dockershim&lt;/h4&gt;
-&lt;p&gt;k8s 内置的 dockershim CRI 不支持运行时处理器&lt;/p&gt;
-&lt;h4 id=&#34;containerd&#34;&gt;containerd&lt;/h4&gt;
-&lt;p&gt;运行时处理器通过 containerd 的 &lt;code&gt;/etc/containerd/config.toml&lt;/code&gt; 配置文件时行配置， 有效的处理器配置在运行时配置区:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-toml&#34; data-lang=&#34;toml&#34;&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;plugins&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;cri&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;containerd&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;runtimes&lt;/span&gt;.&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;$&lt;/span&gt;{&lt;span style=&#34;color:#a6e22e&#34;&gt;HANDLER_NAME&lt;/span&gt;}]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;更多 containerd 的配置见文档:  &lt;a href=&#34;https://github.com/containerd/cri/blob/master/docs/config.md&#34;&gt;https://github.com/containerd/cri/blob/master/docs/config.md&lt;/a&gt;&lt;/p&gt;
-&lt;h4 id=&#34;cri-o&#34;&gt;CRI-O&lt;/h4&gt;
-&lt;p&gt;运行时处理器通过 CRI-O 的 &lt;code&gt;/etc/crio/crio.conf&lt;/code&gt; 配置文件时行配置，有效的处理器配置在 &lt;a href=&#34;https://github.com/cri-o/cri-o/blob/master/docs/crio.conf.5.md#crioruntime-table&#34;&gt;crio.runtime table&lt;/a&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;[crio.runtime.runtimes.${HANDLER_NAME}]
-  runtime_path = &amp;quot;${PATH_TO_BINARY}&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;更多 CRI-O 的配置见文档: &lt;a href=&#34;https://raw.githubusercontent.com/cri-o/cri-o/9f11d1d/docs/crio.conf.5.md&#34;&gt;https://raw.githubusercontent.com/cri-o/cri-o/9f11d1d/docs/crio.conf.5.md&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&#34;调度&#34;&gt;调度&lt;/h2&gt;
-
-
-
-
-
-&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
-&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.16 [beta]&lt;/code&gt;
-&lt;/div&gt;
-
-
-&lt;p&gt;k8s v1.16， RuntimeClass 通过 scheduling 字段实现了对异构系统集群的支持. 通过对这些字段的配置实现让带有对应 RuntimeClass Pod 被调度到受到支持的节点上。而要实现支持这个调度，需要开启 &lt;a href=&#34;../../../reference/03-access-authn-authz/04-admission-controllers/#runtimeclass&#34;&gt;RuntimeClass 准入控制器&lt;/a&gt;(k8s v1.16 默认开启)&lt;/p&gt;
-&lt;p&gt;为了保证 Pod 会落到 RuntimeClass 指定的节点上，需要要在节点上设置通用标签，让 &lt;code&gt;runtimeclass.scheduling.nodeSelector&lt;/code&gt; 可以选择到对应的节点。RuntimeClass 的节点选择器与 Pod 的节点选择器的交集会作为最终的节点选择条件。 如果两都有冲突，则 Pod 会被拒绝。
-&lt;blockquote&gt;
-  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
-&lt;/blockquote&gt;
-
-如果支持的节点上有防止其它 RuntimeClass 的 Pod 在其上运行的一毒点(Taint), 则需要在 RuntimeClass 上添加 &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#39; target=&#39;_blank&#39;&gt;耐受(tolerations)&lt;span class=&#39;tooltip-text&#39;&gt;A core object consisting of three required properties: key, value, and effect. Tolerations enable the scheduling of pods on nodes or node groups that have a matching taint.&lt;/span&gt;
-&lt;/a&gt; 与 nodeSelector 相似， RuntimeClass 的耐受(tolerations) 会与 Pod 的 耐受(tolerations)的并集组成最终的节点&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#39; target=&#39;_blank&#39;&gt;耐受(tolerations)&lt;span class=&#39;tooltip-text&#39;&gt;A core object consisting of three required properties: key, value, and effect. Tolerations enable the scheduling of pods on nodes or node groups that have a matching taint.&lt;/span&gt;
-&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;要了解更多关于节点选择与&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/taint-and-toleration/&#39; target=&#39;_blank&#39;&gt;耐受(tolerations)&lt;span class=&#39;tooltip-text&#39;&gt;A core object consisting of three required properties: key, value, and effect. Tolerations enable the scheduling of pods on nodes or node groups that have a matching taint.&lt;/span&gt;
-&lt;/a&gt;信息，见 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/scheduling-eviction/assign-pod-node/&#34;&gt;分配 Pod 到节点&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&#34;pod-overhead&#34;&gt;Pod Overhead&lt;/h2&gt;
-&lt;p&gt;
-
-
-
-
-&lt;div style=&#34;margin-top: 10px; margin-bottom: 10px;&#34;&gt;
-&lt;b&gt;功能特性状态:&lt;/b&gt; &lt;code&gt;Kubernetes v1.18 [beta]&lt;/code&gt;
-&lt;/div&gt;
-
-
-用户可以在 Pod 上配置 &lt;code&gt;overhead&lt;/code&gt; 进行资源限制。 声明 &lt;code&gt;overhead&lt;/code&gt; 可以让集群(包括调度器)在调度 Pod 时计算合适的资源。
-要使用 Pod &lt;code&gt;overhead&lt;/code&gt; 需要打开功&lt;a href=&#34;../../../reference/command-line-tools-reference/feature-gates/&#34;&gt;能特性开关&lt;/a&gt;(默认开启) PodOverhead
-Pod &lt;code&gt;overhead&lt;/code&gt; 是通过 RuntimeClass 的 overhead 字段进行定义的， 用户可以利用 RuntimeClass 来设置正在运行的 Pod的 &lt;code&gt;overhead&lt;/code&gt;， 并保证k8s 能够计算到这些 &lt;code&gt;overhead&lt;/code&gt;
-&lt;blockquote&gt;
-  &lt;div&gt;&lt;strong&gt;TODO: &lt;/strong&gt;说得不太清楚，需要实践理解后再考虑怎么修改&lt;/div&gt;
-&lt;/blockquote&gt;
-&lt;/p&gt;
-&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/runtime-class.md&#34;&gt;RuntimeClass Design&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/runtime-class-scheduling.md&#34;&gt;RuntimeClass Scheduling Design&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Read about the &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/configuration/pod-overhead/&#34;&gt;Pod Overhead&lt;/a&gt; concept&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes/enhancements/blob/master/keps/sig-node/20190226-pod-overhead.md&#34;&gt;PodOverhead Feature Design&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>

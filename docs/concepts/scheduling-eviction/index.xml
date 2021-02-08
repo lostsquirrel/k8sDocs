@@ -2677,8 +2677,60 @@ NodeScore   =  (5 * 5) + (7 * 1) + (10 * 3) / (5 + 1 + 3)
 - Read more about [scheduler configuration](/docs/reference/scheduling/config/)
  --&gt;
 &lt;ul&gt;
-&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/scheduling-framework/&#34;&gt;调度框架&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;参考 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/docs/reference/scheduling/config/&#34;&gt;调度器配置&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;概念 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/concepts/scheduling-eviction/scheduling-framework/&#34;&gt;调度框架&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;参考 &lt;a href=&#34;https://kubernetes.io/docs/reference/scheduling/config/&#34;&gt;调度器配置&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs: Eviction Policy</title>
+      <link>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/eviction-policy/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lostsquirrel.github.io/k8sDocs/docs/concepts/scheduling-eviction/eviction-policy/</guid>
+      <description>
+        
+        
+        &lt;!--
+---
+title: Eviction Policy
+content_type: concept
+weight: 60
+---
+ --&gt;
+&lt;!-- overview --&gt;
+&lt;!--
+This page is an overview of Kubernetes&#39; policy for eviction.
+ --&gt;
+&lt;p&gt;本文简单介绍 k8s 驱逐策略&lt;/p&gt;
+&lt;!-- body --&gt;
+&lt;!--
+## Eviction Policy
+
+The &lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubelet&#39; target=&#39;_blank&#39;&gt;kubelet&lt;span class=&#39;tooltip-text&#39;&gt;An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.&lt;/span&gt;
+&lt;/a&gt; proactively monitors for
+and prevents total starvation of a compute resource. In those cases, the `kubelet` can reclaim
+the starved resource by failing one or more Pods. When the `kubelet` fails
+a Pod, it terminates all of its containers and transitions its `PodPhase` to `Failed`.
+If the evicted Pod is managed by a Deployment, the Deployment creates another Pod
+to be scheduled by Kubernetes.
+ --&gt;
+&lt;h2 id=&#34;eviction-policy&#34;&gt;驱逐策略&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#39;glossary-tooltip&#39; href=&#39;https://lostsquirrel.github.io/k8sDocs/docs/reference/generated/kubelet&#39; target=&#39;_blank&#39;&gt;Kubelet&lt;span class=&#39;tooltip-text&#39;&gt;An agent that runs on each node in the cluster. It makes sure that containers are running in a pod.&lt;/span&gt;
+&lt;/a&gt;
+会主要监控并防止出现一个计算资源总体不足。 如果出现这种情况， &lt;code&gt;kubelet&lt;/code&gt; 可以通过让一个
+或多个 Pod 失效的方式回收不足的资源。 当 &lt;code&gt;kubelet&lt;/code&gt; 使 Pod 失效时， 它就是将 Pod 内所有
+的容器终止并将其 &lt;code&gt;PodPhase&lt;/code&gt; 修改为  &lt;code&gt;Failed&lt;/code&gt;. 如果被驱逐的 Pod 是被 Deployment 管理的，
+则 Deployment 分创建另一个 Pod 并由 k8s 调度。&lt;/p&gt;
+&lt;h2 id=&#34;相关资料&#34;&gt;相关资料&lt;/h2&gt;
+&lt;!--
+- Learn how to [configure out of resource handling](/docs/tasks/administer-cluster/out-of-resource/) with eviction signals and thresholds.
+ --&gt;
+&lt;ul&gt;
+&lt;li&gt;从 &lt;a href=&#34;https://lostsquirrel.github.io/k8sDocs/k8sDocs/docs/tasks/administer-cluster/out-of-resource/&#34;&gt;对资源不足处理的配置&lt;/a&gt;
+中学习驱逐信号和阈值&lt;/li&gt;
 &lt;/ul&gt;
 
       </description>
