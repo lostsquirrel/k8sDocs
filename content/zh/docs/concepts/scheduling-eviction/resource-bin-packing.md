@@ -424,5 +424,5 @@ NodeScore   =  (5 * 5) + (7 * 1) + (10 * 3) / (5 + 1 + 3)
 - Read more about the [scheduling framework](/docs/concepts/scheduling-eviction/scheduling-framework/)
 - Read more about [scheduler configuration](/docs/reference/scheduling/config/)
  -->
-- 概念 [调度框架](/docs/concepts/scheduling-eviction/scheduling-framework/)
-- 参考 [调度器配置](/docs/reference/scheduling/config/)
+- 概念 [调度框架](/k8sDocs/docs/concepts/scheduling-eviction/scheduling-framework/)
+- 参考 [调度器配置](https://kubernetes.io/docs/reference/scheduling/config/)
